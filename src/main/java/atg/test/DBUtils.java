@@ -1,18 +1,15 @@
-/*
- * <ATGCOPYRIGHT> Copyright (C) 1997-2005 Art Technology Group, Inc. All Rights
- * Reserved. No use, copying or distribution ofthis work may be made except in
- * accordance with a valid license agreement from Art Technology Group. This
- * notice must be included on all copies, modifications and derivatives of this
- * work.
+/**
+ * Copyright 2007 ATG DUST Project
  * 
- * Art Technology Group (ATG) MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE
- * SUITABILITY OF THE SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT
- * LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
- * PARTICULAR PURPOSE, OR NON-INFRINGEMENT. ATG SHALL NOT BE LIABLE FOR ANY
- * DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
- * THIS SOFTWARE OR ITS DERIVATIVES.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * 
- * "Dynamo" is a trademark of Art Technology Group, Inc. </ATGCOPYRIGHT>
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
  */
 
 package atg.test;
@@ -33,6 +30,13 @@ import atg.adapter.gsa.GSATestUtils;
 import atg.adapter.gsa.SQLFileParser;
 import atg.core.util.StringUtils;
 
+/**
+ * Utility code for getting a connection to a database.
+ * The most common method is getHSQLDBInMemoryDBConnection.
+ * This returns a connection to an in-memory HSQL database.
+ * @author adamb
+ *
+ */
 public class DBUtils {
 
   public Connection conn; //our connnection to the db - presist for life of
