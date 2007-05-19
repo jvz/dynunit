@@ -1,0 +1,261 @@
+
+Your First Test
+
+  NOTE: This is a first draft and it's still incomplete.
+  Please send feedback to atgdust-general@lists.sourceforge.net.
+
+  I'm assuming that the reader is familiar with quite a few things here.
+  These things are:
+
+ * ATG  -- Art Technology Group, eCommerce software vendor http://www.atg.com/.
+ * JUnit -- A Unit testing framework for Java
+ * Maven -- An apache project, this is a build system.
+ * Subversion -- A source control system
+  
+
+* Getting the source code
+
+  There are no builds yet of dust, so in this example we will checkout and compile the 
+  dust test classes. Source code is stored in a subversion repository, and the project is built with
+  Maven 2. You'll need to download and install subversion and maven 2 before continuing.
+
+
++------------------------------------------+
+svn checkout https://svn.sourceforge.net/svnroot/atgdust atgdust
++------------------------------------------+
+
+
+* Building the Source
+
+  Once you have checked out the project and installed maven, build the source code.
+  We'll use the 'mvn install' command to do that.
+
++------------------------------------------+
+% cd atgdust
+% mvn install
++------------------------------------------+
+
+
+  Note that you now have a src/target directory under your 'atgdust' directory.
+  In here is a jar file containg all the classes of the dust project. 
+
+  To make this example simpler we'll instead just write a test in the src/test directory of this project.
+
+
+* Writing a Test
+
+  Change directory to the 'src/test' directory. Then make a new directory called 'test'. 
+  This will be the package name of our test.
+
++------------------------------------------+
+% cd atgdust/src/test
+% mkdir test
++------------------------------------------+
+
+  The goal of this test is to test a class that depends upon a running Nucleus.
+  Our class being tested contains code that calls Nucleus.resolveName() so we'll
+  need a Nucleus available to allow our class to be tested in JUnit.
+
+** Class to be Tested
+
+  Let's take a look at the class we would like to test. This class is a typical Nucleus component.
+  It extends the base class atg.nucleus.GenericService and implements the doStartService() and doStopService()
+  methods. If our class starts up correctly it will set the mCleanStart member variable to true. Otherwise,
+  doStartService() will throw an exception and mCleanStart will remain false. Shutting down this service should
+  result in mCleanStart being reset to false again.
+
+
++------------------------------------------+
+package com.mycompany;
+
+import atg.nucleus.GenericService;
+import atg.nucleus.Nucleus;
+import atg.nucleus.ServiceException;
+import atg.nucleus.logging.ApplicationLogging;
+
+/**
+ * This is an example class created for the purpose
+ * of demonstrating how to write test code with DUST.
+ * 
+ * @author adamb
+ *
+ */
+public class ToBeTested extends GenericService {
+
+  boolean mCleanStart = false;
+  
+  // -------------------------
+  /**
+   * Called when this component is started.
+   */
+  public void doStartService() throws ServiceException {
+    prepare();
+  }
+  
+  // -------------------------
+  /**
+   * Called when this component is shut down.
+   */
+  public void doStopService() throws ServiceException {
+    mCleanStart = false;
+  }
+  
+  // -------------------------
+  /**
+   * Checks that Nucleus is running, if its not, then throw
+   * a ServiceException.
+   * If Nucleus is running, the log an info message.
+   * @throws ServiceException
+   */
+  public void prepare() throws ServiceException {
+    Nucleus n = Nucleus.getGlobalNucleus();
+    if (n == null)
+      throw new ServiceException("Nucleus is not running.");
+    else
+      ((ApplicationLogging)n).logInfo("Prepared.");
+    mCleanStart = true;
+  }
+}
+
+
++------------------------------------------+
+
+
+
+** Creating the Test Class
+
+  Let's create our JUnit test class under the atgdust/src/test/java/test directory. The name of this class should end with "Test".
+  Note that this is a JUnit 3.8 convention. JUnit 4 allows the use of java5 annotations to make a class as a test.
+
+  This test class will first create a directory to be used as the configpath for Nucleus.
+  In that directory we'll generate one .properties file to be used to start our component being tested.
+
+
+  Note: We really don't want to point this test at the full configpath of a given ATG project.
+  It'll attempt (unsuccessfully) to startup *everything* in the configpath of that project which pretty much defeats
+  the purpose of a unit test.
+
+  The atg.nucleus.NucleusTestUtils class is a handy class to deal with starting up Nucleus. 
+  In this case , just for fun, we want our test component to start up as soon as Nucleus starts.
+  The NucleusTestUtils.createInitial method is used to create an Initial.properties file including the Nucleus
+  path of our component.  
+
+  Note how we pass in our generated configpath to the NucleusTestUtils.startNucleus() method.
+  Once this method is called, Nucleus will start. 
+
+  Inside the try block we can resolve our test component, check that it's not null and confirm that
+  it started cleanly. In the finally block we tell Nucleus to shut down by calling stopService(). 
+  After stopService() has been called we confirm that the mCleanStart member variable has been
+  set back to false.
+  
+
+
++------------------------------------------+
+
+package test;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import junit.framework.TestCase;
+import atg.nucleus.Nucleus;
+import atg.nucleus.NucleusTestUtils;
+
+import com.mycompany.ToBeTested;
+
+public class FirstTest extends TestCase {
+  
+  /**
+   * Start up a nucleus given a local test "configpath".
+   * In that configpath is a .properties file for our TestComponent
+   * @throws Exception
+   */
+  public void testComponentStartup() throws Exception {
+    File configpath = NucleusTestUtils.getConfigpath(this.getClass(),"config");
+    // Put test .properties file in configpath path
+    Properties props = new Properties();
+    File propFile = NucleusTestUtils.createProperties("test/TestComponent", configpath, "com.mycompany.ToBeTested", props);
+    propFile.deleteOnExit();
+    List initial = new ArrayList();
+    initial.add("/test/TestComponent");
+    NucleusTestUtils.createInitial(configpath, initial);
+    Nucleus n = NucleusTestUtils.startNucleus(configpath);
+    ToBeTested testComponent = null;
+    try {
+      testComponent = (ToBeTested) n.resolveName("/test/TestComponent");
+      assertNotNull("Could not resolve test componet",testComponent);
+      assertTrue("Test component did not start up cleanly.",testComponent.mCleanStart);
+      
+    } finally {
+      n.stopService();
+      assertNotNull(testComponent);
+      assertFalse("Test component did not shut down cleanly.",testComponent.mCleanStart);
+      testComponent = null;
+    }
+    
+  }
+
+}
+
++------------------------------------------+
+
+
+* Running the test
+
+  You may run this test either in your favorite IDE or maven. In this example i'll show the output of running the test from maven.
+  To start the test simply use the "mvn test" command from your command line. Note that "mvn test" runs all the 
+  tests in the "src/test" directory of the DUST projects. There's another test in there called GSATestUtilsTest as well.
+  You can ignore the output from that test. But take a look at the source to see how it's implemented!
+
++------------------------------------------+
+
+$ mvn test
+[INFO] Scanning for projects...
+[INFO] ----------------------------------------------------------------------------
+[INFO] Building ATG DUST
+[INFO]    task-segment: [test]
+[INFO] ----------------------------------------------------------------------------
+[INFO] [resources:resources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [compiler:compile]
+Compiling 1 source file to c:\work\atg\dust\target\classes
+[INFO] [resources:testResources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [compiler:testCompile]
+Compiling 1 source file to c:\work\atg\dust\target\test-classes
+[INFO] [surefire:test]
+[INFO] Surefire report directory: c:\work\atg\dust\target\surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running atg.nucleus.NucleusTestUtilsTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.281 sec
+Running atg.adapter.gsa.GSATestUtilsTest
+Connected to HSQL Database Engine Version: 1.8.0
+DROPPING DAS_ID_GENERATOR
+c:\work\atg\dust\.\testingconfig\foo\bar\Repository.properties
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.375 sec
+Running test.FirstTest
+
+Nucleus running
+
+**** info       Sat May 19 14:01:18 EDT 2007    1179597678906   /       Creating service "/test/TestComponent" 
+**** info       Sat May 19 14:01:18 EDT 2007    1179597678968   /       Starting service "/test/TestComponent"
+**** info       Sat May 19 14:01:18 EDT 2007    1179597678968   /       Done creating service "/test/TestComponent" 
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.172 sec
+
+Results :
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 5 seconds
+[INFO] Finished at: Sat May 19 14:01:19 EDT 2007
+[INFO] Final Memory: 4M/17M
+[INFO] ------------------------------------------------------------------------
+
++------------------------------------------+

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>atg</groupId>
-  <artifactId>repositorybeans</artifactId>
+  <artifactId>atgdust</artifactId>
   <name>ATG DUST</name>
   <version>1.0-SNAPSHOT</version>
   <description>ATG DUST is a framework for building JUnit tests for applications built on the ATG Dynamo platform</description>
@@ -100,6 +100,21 @@
       <artifactId>DAS</artifactId>
       <version>2006.3</version>
     </dependency>
+    
+    <!-- NOTE: You must import DAS/classes.jar from 
+         an ATG installation into your maven repository
+         to satify this dependency.
+         For example:
+         mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS-resources -Dversion=2006.3 -Dpackaging=jar 
+-Dfile=c:\ATG\ATG2006.3\DAS\lib\resources.jar -DgeneratePom=true -Durl=file://c:\maven\repository -DlocalRepository=local
+     -->
+    <dependency>
+      <groupId>atg</groupId>
+      <artifactId>DAS-resources</artifactId>
+      <version>2006.3</version>
+    </dependency>
+    
+    
     <dependency>
       <groupId>hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
@@ -109,6 +124,12 @@
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.4</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jsp-api</artifactId>
+      <version>2.0</version>
     </dependency>
   </dependencies>
   <reporting>

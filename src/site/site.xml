@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="${outputEncoding}"?>
+<project name="${project.name}">
+  <bannerLeft>
+    <name>${project.name}</name>
+  </bannerLeft>
+  <body>
+    <links>
+      <item name="${project.name}" href="${project.url}"/>
+    </links>
+    <menu ref="parent" />
+    <menu ref="modules" />
+    <menu ref="reports" />
+    <menu name="Getting Started">
+      <item name="Your first DUST test." href="first-test.html"/>
+    </menu>
+
+  </body>
+</project>

@@ -165,25 +165,25 @@ public class NucleusTestUtils {
    * 
    * @return
    */
-  public static File getConfigpath(String pConfigDirectory) {
+  public static File getConfigpath(Class pClass,String pConfigDirectory) {
     if (sConfigDir.get(pConfigDirectory) == null) {
       String configdirname = "config";
-      String packageName = StringUtils.replace(NucleusTestUtils.class.getClass().getPackage()
+      String packageName = StringUtils.replace(pClass.getPackage()
           .getName(), '.', "/");
       if (pConfigDirectory != null)
         configdirname = pConfigDirectory;
 
       String configFolder = packageName + "/data/" + configdirname;
 
-      URL dataURL = NucleusTestUtils.class.getClass().getClassLoader().getResource(configFolder);
+      URL dataURL = pClass.getClassLoader().getResource(configFolder);
       // Mkdir
       if (dataURL == null) {
-        URL root = NucleusTestUtils.class.getClass().getClassLoader().getResource(packageName);
+        URL root = pClass.getClassLoader().getResource(packageName);
 
         File f = new File(root.getFile());
         File f2 = new File(f, "/data/" + configdirname);
         f2.mkdirs();
-        dataURL = NucleusTestUtils.class.getClassLoader().getResource(configFolder);
+        dataURL = pClass.getClassLoader().getResource(configFolder);
       }
 
       sConfigDir.put(pConfigDirectory ,new File(dataURL.getFile()));
