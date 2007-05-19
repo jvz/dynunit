@@ -64,6 +64,7 @@
           <target>1.5</target>
         </configuration>
       </plugin>
+<!--
       <plugin>
         <artifactId>maven-clover-plugin</artifactId>
         <executions>
@@ -78,22 +79,22 @@
           <jdk>1.5</jdk>
         </configuration>
       </plugin>
+-->
     </plugins>
   </build>
-  <repositories>
-    <repository>
-      <id>atg_road_repository</id>
-      <name>ROAD's Maven2 Repository</name>
-      <url>http://road.atg.com/road/maven/</url>
-    </repository>
-  </repositories>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
-      <scope>test</scope>
     </dependency>
+    <!-- NOTE: You must import DAS/classes.jar from 
+         an ATG installation into your maven repository
+         to satify this dependency.
+         For example:
+         mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS -Dversion=2006.3 -Dpackaging=jar 
+-Dfile=c:\ATG\ATG2006.3\DAS\lib\classes.jar -DgeneratePom=true -Durl=file://c:\maven\repository -DlocalRepository=local
+     -->
     <dependency>
       <groupId>atg</groupId>
       <artifactId>DAS</artifactId>
@@ -103,7 +104,6 @@
       <groupId>hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <version>1.8.0.1</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -113,9 +113,11 @@
   </dependencies>
   <reporting>
     <plugins>
+<!--
       <plugin>
         <artifactId>maven-clover-plugin</artifactId>
       </plugin>
+-->
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
@@ -158,11 +160,6 @@
     </plugins>
   </reporting>
   <distributionManagement>
-    <snapshotRepository>
-      <id>atg_road_repository</id>
-      <name>ROAD's Maven2 Repository</name>
-      <url>ftp://road.atg.com//work/road/web/docs/road/maven/</url>
-    </snapshotRepository>
     <site>
       <id>atgdust.sourceforge.net</id>
       <url>scp://shell.sourceforge.net/home/groups/a/at/atgdust/htdocs</url>
