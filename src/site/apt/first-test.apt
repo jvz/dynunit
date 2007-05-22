@@ -4,12 +4,20 @@ Your First Test
   NOTE: This is a first draft and it's still incomplete.
   Please send feedback to atgdust-general@lists.sourceforge.net.
 
+  This tutorial walks you through the steps of writing a test which does not need to run
+  in an application server. This is one of the main benefis of writing unit tests. Because 
+  the test does not depend upon starting up an application server, turnaround time is very quick.
+  Tests can be started and finished in just a matter of seconds (or less).
+
   I'm assuming that the reader is familiar with quite a few things here.
   These things are:
 
- * ATG  -- Art Technology Group, eCommerce software vendor http://www.atg.com/.
+ * ATG  -- Art Technology Group, eCommerce software vendor http://www.atg.com/
+
  * JUnit -- A Unit testing framework for Java
+
  * Maven -- An apache project, this is a build system.
+
  * Subversion -- A source control system
   
 
@@ -22,6 +30,34 @@ Your First Test
 
 +------------------------------------------+
 svn checkout https://svn.sourceforge.net/svnroot/atgdust atgdust
++------------------------------------------+
+
+
+* Pointing Maven at ATG classes
+
+  The DUST project uses Maven to compile its classes and run tests.
+  Located in the pom.xml file of this project there are two dependencies on
+  ATG classes. One is on ${DYNAMO_ROOT}/DAS/lib/classes.jar the other is on ${DYNAMO_ROOT}/DAS/lib/resources.jar.
+
+  Because these libraries are not available on a public maven repository, you'll need to import
+  them into your maven repository. Fortunatly, Maven has a command to do just this.
+
+  Here's an example assuming you are on Windows and your ATG installation is C:\ATG\ATG2006.3.
+  The forward slashes below are on purpose.
+
+  First the DAS/lib/classes.jar
+
++------------------------------------------+
+mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS -Dversion=2006.3 -Dpackaging=jar 
+-Dfile=c:/ATG/ATG2006.3/DAS/lib/classes.jar -DgeneratePom=true -Durl=file://c:/maven/repository -DlocalRepository=local
++------------------------------------------+
+
+
+  Then DAS/lib/resources.jar
+
++------------------------------------------+
+mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS-resources -Dversion=2006.3 -Dpackaging=jar
+-Dfile=c:/ATG/ATG2006.3/DAS/lib/resources.jar -DgeneratePom=true -Durl=file://c:/maven/repository -DlocalRepository=local
 +------------------------------------------+
 
 
