@@ -14,17 +14,20 @@
 
 package atg.adapter.gsa ;
 
-import java.util.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
 
-import javax.transaction.*;
 import javax.sql.DataSource;
-import java.sql.*;
 
-import atg.dtm.*;
-import atg.adapter.gsa.*;
-
-import atg.nucleus.logging.*;
-import atg.nucleus.*;
+import atg.dtm.TransactionDemarcation;
+import atg.dtm.TransactionDemarcationException;
+import atg.nucleus.GenericService;
+import atg.nucleus.ServiceException;
 
 /**
  * This class is designed to assist with database table manipulation such as

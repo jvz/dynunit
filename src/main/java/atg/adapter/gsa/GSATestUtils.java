@@ -65,8 +65,8 @@ import atg.versionmanager.exceptions.VersionException;
  */
 public class GSATestUtils {
   public static List mFilesCreated = new ArrayList();
-  public static String sClassName = "atg.test.apiauto.util.InitializingGSA";
-  public static String sVersionedClassName = "atg.test.apiauto.util.InitializingVersionRepository";
+  public static String sClassName = "atg.adapter.gsa.InitializingGSA";
+  public static String sVersionedClassName = "atg.adapter.gsa.InitializingVersionRepository";
   private boolean mVersioned = false;
   private static GSATestUtils SINGLETON_DEFAULT = null;
   private static GSATestUtils SINGLETON_VERSIONED = null;
@@ -617,7 +617,7 @@ public class GSATestUtils {
   /**
    * Creates a .properties file for the given repository.
    * The actual repository implementation is a
-   * <code>atg.test.apiauto.util.InitializingGSA</code> class.
+   * <code>atg.adapter.gsa.InitializingGSA</code> class.
    * This implementation is used instead because it has the ability
    * to create tables and import data before the repository starts.
    * @param pRoot
@@ -636,7 +636,7 @@ public class GSATestUtils {
   /**
    * Creates a .properties file for the given repository.
    * The actual repository implementation is a
-   * <code>atg.test.apiauto.util.InitializingGSA</code> class.
+   * <code>atg.adapter.gsa.InitializingGSA</code> class.
    * This implementation is used instead because it has the ability
    * to create tables and import data before the repository starts.
    * @param pRoot
@@ -849,7 +849,7 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
   /**
    * Creates a .properties file for the given repository.
    * The actual repository implementation is a
-   * <code>atg.test.apiauto.util.InitializingGSA</code> class.
+   * <code>atg.adapter.gsa.InitializingGSA</code> class.
    * This implementation is used instead because it has the ability
    * to create tables and import data before the repository starts.
    * @param pRoot
@@ -874,7 +874,7 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
      * useSetUnicodeStream=true ---- #
      */
     //    String clazz = "atg.adapter.gsa.GSARepository";
-    String clazz = "atg.test.apiauto.util.InitializingVersionRepository";
+    String clazz = "atg.adapter.gsa.InitializingVersionRepository";
     Properties props = new Properties();
     props.put("repositoryName", "TestRepository");
     StringBuffer definitionFiles = new StringBuffer();

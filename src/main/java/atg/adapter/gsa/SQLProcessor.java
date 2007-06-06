@@ -14,15 +14,23 @@
 
 package atg.adapter.gsa ;
 
-import java.util.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Vector;
 
-import javax.transaction.*;
 import javax.sql.DataSource;
-import java.sql.*;
+import javax.transaction.TransactionManager;
 
-import atg.dtm.*;
-import atg.service.jdbc.BasicDataSource;
+import atg.dtm.TransactionDemarcation;
+import atg.dtm.TransactionDemarcationException;
 import atg.nucleus.GenericService;
+import atg.service.jdbc.BasicDataSource;
 
 /** A generic class to execute SQL actions against a database.
  *

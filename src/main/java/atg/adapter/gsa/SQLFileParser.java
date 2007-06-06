@@ -14,15 +14,15 @@
 
 package atg.adapter.gsa;
 
-import java.io.*;
-import java.sql.*;
-import java.util.*;
-import java.sql.Timestamp.*;
-import java.sql.Date.*;
-import java.util.Date.*;
-import java.util.Calendar.*;
-import java.lang.*;
-import atg.nucleus.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 /**
 * THIS IS A REALLY SIMPLE APPLICATION THAT

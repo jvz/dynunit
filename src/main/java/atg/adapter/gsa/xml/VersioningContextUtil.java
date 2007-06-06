@@ -14,10 +14,6 @@
 
 package atg.adapter.gsa.xml;
 
-import java.util.HashSet;
-
-import atg.epub.project.CreateProject;
-import atg.epub.project.ProjectException;
 
 /**
  *

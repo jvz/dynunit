@@ -1,0 +1,119 @@
+
+Testing with ATG Repositories
+
+  This section describes how to write a unit test for code which depends upon ATG Repositories.
+  There are several implementations of repositories, specifically this section is referring to
+  SQL repositories, a.k.a. the GSA (Generic SQL Adapter).
+  You might think that if you have written code that makes a direct call to a repository
+  it's a death sentence for writing a Unit Test with JUnit. Starting up an application server
+  running ATG really is overkill for a JUnit test. Luckily DUST includes some utilities that
+  will start up a given repository within JUnit. There are some excellent benefits of using this utility.
+
+ * Support for connecting to an external database, or starting and stopping HSQL (Hypersonic) DB withing your test.
+
+ * SQL Schema initialization on the fly. Creates tables and imports data each time the test is run.
+
+ * Generates required Nucleus components for your repository. SQLEventServer,ClientLockManager etc...
+
+* Getting Started
+
+  It's assumed that you have already read {{{first-test.html}Your First Test}}  and know how to check out DUST from svn and build it.
+  If not, go back and read that article!
+  Ok, at this point you should already have DUST checked out and compiled. Now it's time to make a test.
+
+* The GSATest utility class
+
+  Included in DUST is a utility class that allows an ATG SQL Repository  (aka "GSA") to start up within JUnit.
+  The fully qualified name of this class is atg.adapter.gsa.GSATest. It extends junit.framework.TestCase.
+  Let's say you have some code that uses a SQL Repository for data persistence and you need to test that code.
+  In this example, we'll use the GSATest class to accomplish this goal.
+  
+* A Simple GSA Test
+
+  Here's an example that uses the GSA test. This test requires only a single external file, that's
+  the repository definition file. Note that there's no need for DDL scripts (though, you could use them if you wished to).
+  This test actually generates a wrapper Repository that creates and drops its own schema. Actually in this
+  example we are using an in memory database, so there really is no need to drop the schema since it will all be
+  gone when the test has finished.
+  
+  Here are the steps this test is going through:
+  
+  * Create a testing configpath using the GSATestUtils.getConfigpath() method.
+  
+  * Start an HSQLDB testing database using the DBUtils utility class.
+  
+  * Populate our CONFIGPATH with prerequisite Nucleus components for starting our test repository using GSATestUtils.initializeMinimalConfigpath()
+  
+  * Start Nucleus with GSATest.startNucleus(), hand in the configpath created at the start of the test.
+  
+  * Write the test code now with a running repository, transaction manager and Nucleus in place
+  
+  * In the finally block, do cleanup. End the current transaction, stop Nucleus and shut down HSQLDB
+  
+  * NOTE: It's very important to call Nucleus.stopService() in a finally block at the end of your test. When you run multiple tests using mvn the tests may "leak" configpath values among themselves since they are run in the same JVM.
+
++-------------------
+  /**
+   * This test starts a repository, adds an item to that repository, then shuts
+   * down. The repository is started up against an in-memory Hypersonic Database.
+   */
+public class SimpleGSATest extends GSATest {
+
+  public void testSimple() throws Exception {
+
+    // setup the repository
+    File configpath = getConfigpath();
+    
+    // Define the path to our repository definition file called
+    // "simpleRepository.xml"
+    String[] definitionFiles = { StringUtils.replace(getClass().getPackage()
+        .getName(), '.', "/")
+        + "/simpleRepository.xml" };
+    System.out.println(" definitionFile[0]=" + definitionFiles[0]);
+    // Use the DBUtils utility class to get JDBC properties for an in memory
+    // HSQL DB called "testdb".
+    Properties props = DBUtils.getHSQLDBInMemoryDBConnection("testdb");
+
+    // Start up our database
+    DBUtils db = initDB(props);
+
+    boolean rollback = true;
+
+    // Setup our testing configpath
+    GSATestUtils.getGSATestUtils().initializeMinimalConfigpath(configpath,
+        "/SimpleRepository", definitionFiles, props, null, null, null, true);
+
+    // Start Nucleus
+    Nucleus n = startNucleus(configpath);
+
+    TransactionDemarcation td = new TransactionDemarcation();
+    MutableRepository r = (MutableRepository) n
+        .resolveName("/SimpleRepository");
+
+    try {
+      // Start a new transaction
+      td.begin(((GSARepository) r).getTransactionManager());
+      // Create the item
+      MutableRepositoryItem item = r.createItem("simpleItem");
+      item.setPropertyValue("name", "simpleName");
+      // Persist to the repository
+      r.addItem(item);
+      // Try to get it back from the repository
+      String id = item.getRepositoryId();
+      RepositoryItem item2 = r.getItem(id,"simpleItem");
+      assertNotNull(
+          " We did not get back the item just created from the repository.",
+          item2);
+      rollback = false;
+    } finally {
+      // End the transaction, rollback on error
+      if (td != null)
+        td.end(rollback);
+      // shut down Nucleus
+      n.stopService();
+      // Shut down HSQLDB
+      db.shutdown();
+    }
+  }
+}
++------------

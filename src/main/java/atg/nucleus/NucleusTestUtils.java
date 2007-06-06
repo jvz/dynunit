@@ -27,6 +27,9 @@ import java.util.Properties;
 import atg.core.util.StringUtils;
 import atg.nucleus.naming.ComponentName;
 import atg.nucleus.servlet.NucleusServlet;
+import atg.vfs.VirtualFile;
+import atg.vfs.VirtualFileSystem;
+import atg.vfs.VirtualPath;
 
 /**
  * NucleusTestUtils
@@ -34,54 +37,79 @@ import atg.nucleus.servlet.NucleusServlet;
  * Utilities for creating a Nucleus that can be used by test code.
  * 
  * @author adamb
- * @version $Id: //test/UnitTests/base/main/src/Java/atg/nucleus/NucleusTestUtils.java#7 $
+ * @version $Id:
+ *          //test/UnitTests/base/main/src/Java/atg/nucleus/NucleusTestUtils.java#7 $
  * 
- * This class contains some utility methods to make it faster
- * to write a unit test that needs to resolve componants against Nucleus.
- *
+ * This class contains some utility methods to make it faster to write a unit
+ * test that needs to resolve componants against Nucleus.
+ * 
  */
 public class NucleusTestUtils {
-  
+
   /**
-   * Creates an Initial.properties file
-   * pRoot The root directory of the configpath
-   * pInitialServices A list of initial services
+   * Searches for a given file in Nucleus' configpath.
+   * Prints to System.out the file systems involved in the search
+   * and the file if found.
+   * @param n
+   * @param pPath
    */
-  public static File createInitial(File pRoot,List pInitialServices) throws IOException {
+  public static void printConfigurationFileSystems(Nucleus n, String pPath) {
+    // Get the list of VFS directories
+
+    ConfigurationFileSystems cfs = n.getConfigurationFileSystems();
+    VirtualPath path = new VirtualPath(pPath, "/");
+    VirtualFileSystem[] vfss = cfs.getFileSystems();
+    for (int i = 0; i < vfss.length; i++) {
+      System.out.println("file system[" + i + "] " + vfss[i]);
+      VirtualFile vfile = vfss[i].getFile(path);
+      System.out.println(" virtual file for " + path + " = " + vfile);
+    }
+  }
+
+  /**
+   * Creates an Initial.properties file pRoot The root directory of the
+   * configpath pInitialServices A list of initial services
+   */
+  public static File createInitial(File pRoot, List pInitialServices)
+      throws IOException {
     Properties prop = new Properties();
     Iterator iter = pInitialServices.iterator();
     StringBuffer services = new StringBuffer();
     while (iter.hasNext()) {
-      if (services.length() != 0) services.append(",");
-      services.append((String)iter.next());
+      if (services.length() != 0)
+        services.append(",");
+      services.append((String) iter.next());
     }
-    prop.put("initialServices",services.toString());
-    return NucleusTestUtils.createProperties("Initial", new File(pRoot.getAbsolutePath()),"atg.nucleus.InitialService", prop);
+    prop.put("initialServices", services.toString());
+    return NucleusTestUtils.createProperties("Initial", new File(pRoot
+        .getAbsolutePath()), "atg.nucleus.InitialService", prop);
   }
-  
+
   /**
    * Allows the absoluteName of the given service to be explicitly defined.
-   * Normally this is determined by the object's location in the Nucleus hierarchy.
-   * For test items that are not really bound to Nucleus, it's convenient to just give
-   * it an absolute name rather than going through the whole configuration and binding process.
+   * Normally this is determined by the object's location in the Nucleus
+   * hierarchy. For test items that are not really bound to Nucleus, it's
+   * convenient to just give it an absolute name rather than going through the
+   * whole configuration and binding process.
+   * 
    * @param pName
    * @param pService
    */
   public static void setAbsoluteName(String pName, GenericService pService) {
     pService.mAbsoluteName = pName;
   }
+
   // ---------------------
   /**
-   * Adds the given object, pComponent to Nucleus, pNucleus at the path given
-   * by pComponentPath.
+   * Adds the given object, pComponent to Nucleus, pNucleus at the path given by
+   * pComponentPath.
+   * 
    * @param pNucleus
    * @param pComponentPath
    * @param pComponent
    */
-  public static void addComponent(
-    Nucleus pNucleus,
-    String pComponentPath,
-    Object pComponent) {
+  public static void addComponent(Nucleus pNucleus, String pComponentPath,
+      Object pComponent) {
     // make sure it's not already there
     if (pNucleus.resolveName(pComponentPath) != null)
       return;
@@ -92,19 +120,20 @@ public class NucleusTestUtils {
     for (int i = 1; i < subNames.length - 1; i++) {
       contexts[i] = new GenericContext();
       // Make sure it's not there
-      GenericContext tmpContext =
-        (GenericContext) contexts[i - 1].getElement(subNames[i].getName());
+      GenericContext tmpContext = (GenericContext) contexts[i - 1]
+          .getElement(subNames[i].getName());
       if (tmpContext == null)
         contexts[i - 1].putElement(subNames[i].getName(), contexts[i]);
       else
         contexts[i] = tmpContext;
     }
-    contexts[contexts.length
-      - 1].putElement(subNames[subNames.length - 1].getName(), pComponent);
+    contexts[contexts.length - 1].putElement(subNames[subNames.length - 1]
+        .getName(), pComponent);
   }
-  
+
   /**
    * Creates a .properties file
+   * 
    * @param pComponentName
    * @param pConfigDir
    * @param pClass
@@ -112,44 +141,49 @@ public class NucleusTestUtils {
    * @return
    * @throws IOException
    */
-  public static File createProperties(String pComponentName, File pConfigDir, String pClass, Properties pProps)
-  throws IOException {
-  File prop;
-  if (pConfigDir == null)
-    prop = new File("./" + pComponentName + ".properties");
-  else {
-    pConfigDir.mkdirs();
-    prop = new File(pConfigDir, pComponentName + ".properties");
-    new File(prop.getParent()).mkdirs();
-  }
-  
-  if (prop.exists()) prop.delete();
-  prop.createNewFile();
-  FileWriter fw = new FileWriter(prop);
-  String classLine = "$class=" + pClass + "\n";
-  try {
-    if (pClass != null) fw.write(classLine);
-    if (pProps != null) {
-      Iterator iter = pProps.keySet().iterator();
-      while (iter.hasNext()) {
-        String key = (String) iter.next();
-        String thisLine = key + "=" + StringUtils.replace(pProps.getProperty(key),'\\', "\\\\") + "\n";
-        fw.write(thisLine);
-      }
+  public static File createProperties(String pComponentName, File pConfigDir,
+      String pClass, Properties pProps) throws IOException {
+    File prop;
+    if (pConfigDir == null)
+      prop = new File("./" + pComponentName + ".properties");
+    else {
+      pConfigDir.mkdirs();
+      prop = new File(pConfigDir, pComponentName + ".properties");
+      new File(prop.getParent()).mkdirs();
     }
+
+    if (prop.exists())
+      prop.delete();
+    prop.createNewFile();
+    FileWriter fw = new FileWriter(prop);
+    String classLine = "$class=" + pClass + "\n";
+    try {
+      if (pClass != null)
+        fw.write(classLine);
+      if (pProps != null) {
+        Iterator iter = pProps.keySet().iterator();
+        while (iter.hasNext()) {
+          String key = (String) iter.next();
+          String thisLine = key + "="
+              + StringUtils.replace(pProps.getProperty(key), '\\', "\\\\")
+              + "\n";
+          fw.write(thisLine);
+        }
+      }
+    } finally {
+      fw.flush();
+      fw.close();
+    }
+    return prop;
   }
-  finally {
-    fw.flush();
-    fw.close();
-  }
-  return prop;
-}
+
   /**
    * Starts Nucleus using the given config directory
+   * 
    * @param configpath
    * @return
    */
-  public static  Nucleus startNucleus(File configpath) {
+  public static Nucleus startNucleus(File configpath) {
     System.setProperty("atg.dynamo.license.read", "true");
     System.setProperty("atg.license.read", "true");
     String[] configpathStr = { configpath.getAbsolutePath() };
@@ -157,19 +191,20 @@ public class NucleusTestUtils {
     Nucleus n = Nucleus.startNucleus(configpathStr);
     return n;
   }
-  
+
   static Map sConfigDir = new HashMap();
+
   /**
    * A convenience method for returning the configpath for a test.
    * pConfigDirectory is the top level name to be used for the configpath.
    * 
    * @return
    */
-  public static File getConfigpath(Class pClass,String pConfigDirectory) {
+  public static File getConfigpath(Class pClass, String pConfigDirectory) {
     if (sConfigDir.get(pConfigDirectory) == null) {
       String configdirname = "config";
-      String packageName = StringUtils.replace(pClass.getPackage()
-          .getName(), '.', "/");
+      String packageName = StringUtils.replace(pClass.getPackage().getName(),
+          '.', "/");
       if (pConfigDirectory != null)
         configdirname = pConfigDirectory;
 
@@ -186,9 +221,10 @@ public class NucleusTestUtils {
         dataURL = pClass.getClassLoader().getResource(configFolder);
       }
 
-      sConfigDir.put(pConfigDirectory ,new File(dataURL.getFile()));
+      sConfigDir.put(pConfigDirectory, new File(dataURL.getFile()));
     }
-    System.setProperty("atg.configpath",((File) sConfigDir.get(pConfigDirectory)).getAbsolutePath());
+    System.setProperty("atg.configpath", ((File) sConfigDir
+        .get(pConfigDirectory)).getAbsolutePath());
     return (File) sConfigDir.get(pConfigDirectory);
   }
 }

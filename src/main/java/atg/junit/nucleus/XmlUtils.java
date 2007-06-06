@@ -14,12 +14,24 @@
 
 package atg.junit.nucleus;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
-import atg.xml.tools.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+
 import atg.nucleus.logging.ApplicationLoggingImpl;
-import org.w3c.dom.*;
+import atg.xml.tools.DefaultErrorHandler;
+import atg.xml.tools.DefaultXMLToolsFactory;
+import atg.xml.tools.XMLToDOMParser;
+import atg.xml.tools.XMLToolsFactory;
 
 /** A utility class to help with common XML manipulation functions.
  *

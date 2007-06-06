@@ -11,7 +11,8 @@
     <menu ref="modules" />
     <menu ref="reports" />
     <menu name="Getting Started">
-      <item name="Your first DUST test." href="first-test.html"/>
+      <item name="Your First DUST Test." href="first-test.html"/>
+      <item name="ATG Repository Testing." href="repository-test.html"/>
     </menu>
 
   </body>

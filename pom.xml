@@ -4,7 +4,11 @@
   <artifactId>atgdust</artifactId>
   <name>ATG DUST</name>
   <version>1.0-SNAPSHOT</version>
-  <description>ATG DUST is a framework for building JUnit tests for applications built on the ATG Dynamo platform</description>
+  <description>ATG DUST is a framework for building JUnit tests for applications built on the ATG Dynamo platform.
+  This framework allows one to quickly write test code that depends up Nucleus or ATG Repositories. By using this framework 
+  one can drastically cut down on development time. It takes only a few seconds to start up a test with a repository,
+  but it may take multiple minutes to start up an application server.
+  </description>
   <url>http://atgdust.sourceforge.net/</url>
   <issueManagement>
     <system>Issue Tracker</system>
@@ -50,6 +54,15 @@
     <url>http://svn.sourceforge.net/viewvc/atgdust/</url>
   </scm>
   <build>
+     <resources>
+      <resource>
+        <directory>src/test/java</directory>
+        <includes>
+          <include>**/*.xml</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+     </resources>
     <plugins>
       <plugin>
         <artifactId>maven-scm-plugin</artifactId>

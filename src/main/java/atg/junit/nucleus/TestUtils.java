@@ -14,25 +14,48 @@
 
 package atg.junit.nucleus;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
-import java.net.*;
-
-import atg.service.email.*;
-import javax.mail.internet.*;
-import javax.mail.*;
-import javax.activation.*;
-
-import atg.nucleus.*;
-import atg.service.dynamo.LicenseImpl;
-import atg.applauncher.AppLauncher;
-import atg.applauncher.AppModule;
-import atg.core.util.Debug;
-import atg.servlet.ServletUtil;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.Vector;
 import java.util.jar.Manifest;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
+
 import org.w3c.dom.Node;
+
+import atg.applauncher.AppLauncher;
+import atg.applauncher.AppModule;
+import atg.nucleus.DynamoEnv;
+import atg.nucleus.Nucleus;
+import atg.service.dynamo.LicenseImpl;
+import atg.service.email.ContentPart;
+import atg.service.email.EmailEvent;
+import atg.service.email.MimeMessageUtils;
+import atg.service.email.SMTPEmailSender;
+import atg.servlet.ServletUtil;
 
 /**
  * This class is used to hold useful utilty methods people may
