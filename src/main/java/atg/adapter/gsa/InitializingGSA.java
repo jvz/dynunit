@@ -46,7 +46,7 @@ import atg.repository.RepositoryException;
  * SQLProcessorEngine to create the tables. Additionally, it uses the GSA's
  * import facility to allow data to be loaded into the tables after creation.
  * 
- * @author M Frenzel
+ * @author mf
  * @version 1.0
  */
 

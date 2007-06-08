@@ -35,7 +35,7 @@ import atg.nucleus.ServiceException;
  *
  * Parts copied from atg.service.idgen.?? by mgk
  *
- * @author marty frenzel
+ * @author mf
  * @version 1.0
  **/
 public

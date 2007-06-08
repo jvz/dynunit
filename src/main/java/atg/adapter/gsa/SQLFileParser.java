@@ -32,7 +32,7 @@ import java.util.Vector;
 * DATE: MAY 23, 2000
 * 
 *
-* @author Jonathan Busconi - modified by marty frenzel
+* @author jb
 * 7/14/2002
 */
 public class SQLFileParser

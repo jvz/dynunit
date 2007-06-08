@@ -18,7 +18,6 @@ import atg.core.exception.ContainerException;
 
 /** A general utility exception thrown if a file is formatted in an unexpected manner.
  *
- * @author m frenzel
  * @version 1.0
  */
 public class FileFormatException

@@ -35,7 +35,6 @@ import atg.xml.tools.XMLToolsFactory;
 
 /** A utility class to help with common XML manipulation functions.
  *
- * @author marty frenzel
  * @version 1.0
  */
 public class XmlUtils
