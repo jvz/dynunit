@@ -23,7 +23,7 @@ Your First Test
 
 * Getting the source code
 
-  There are no builds yet of dust, so in this example we will checkout and compile the 
+  In this example we will checkout and compile the 
   dust test classes. Source code is stored in a subversion repository, and the project is built with
   Maven 2. You'll need to download and install subversion and maven 2 before continuing.
 

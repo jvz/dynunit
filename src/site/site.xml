@@ -10,6 +10,9 @@
     <menu ref="parent" />
     <menu ref="modules" />
     <menu ref="reports" />
+    <menu name="Download">
+      <item name="Download ATG Dust" href="download.html"/>
+    </menu>
     <menu name="Getting Started">
       <item name="Your First DUST Test." href="first-test.html"/>
       <item name="ATG Repository Testing." href="repository-test.html"/>
