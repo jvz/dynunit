@@ -1,0 +1,66 @@
+<!DOCTYPE gsa-template PUBLIC "-//Art Technology Group, Inc.//DTD Dynamo Security//EN" 
+"http://www.atg.com/dtds/gsa/gsa_1.0.dtd">
+
+<gsa-template>
+
+  <header>
+    <name>SongsRepository</name>
+    <author>Diana Carroll</author>
+    <description>
+      This file defines the Songs repository for the Dynamusic-base
+      module for use in the Developing ATG Applications Part I course.
+    </description>
+  </header>
+
+  <item-descriptor name="song" display-property="title">
+    <table name="dynamusic_song" type="primary" id-column-name="id">
+      <property name="id" data-type="string" />
+      <property name="title" column-name="title" data-type="string" />
+      <property name="genre" column-name="genre"
+        data-type="enumerated">
+        <attribute name="useCodeForValue" value="false" />
+        <option value="jazz" />
+        <option value="country" />
+        <option value="pop" />
+        <option value="blues" />
+        <option value="classical" />
+      </property>
+      <property name="downloadURL" column-name="download"
+        data-type="string" />
+      <property name="artist" column-name="artist" item-type="artist" />
+      <property name="description" column-name="lyrics"
+        data-type="string" />
+    </table>
+  </item-descriptor>
+
+  <item-descriptor name="artist" display-property="name">
+    <table name="dynamusic_artist" type="primary" id-column-name="id">
+      <property name="id" data-type="string" />
+      <property name="name" column-name="name" data-type="string" />
+      <property name="description" column-name="description"
+        data-type="string" />
+      <property name="photoURL" column-name="image" data-type="string" />
+    </table>
+  </item-descriptor>
+
+  <item-descriptor name="album" display-property="title">
+    <table name="dynamusic_album" type="primary" id-column-name="id">
+      <property name="id" data-type="string" />
+      <property name="title" column-name="title" data-type="string" />
+      <property name="coverURL" column-name="cover" data-type="string" />
+      <property name="description" column-name="description"
+        data-type="string" />
+      <property name="date" column-name="published" data-type="date" />
+      <property name="artist" column-name="artist" item-type="artist" />
+    </table>
+    <table name="dynamusic_album_songs" type="multi"
+      id-column-name="album_id">
+      <property name="songList" data-type="set"
+        component-item-type="song" column-name="song_list"
+        cascade="delete" />
+    </table>
+
+  </item-descriptor>
+
+
+</gsa-template>

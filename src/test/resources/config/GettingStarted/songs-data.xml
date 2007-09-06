@@ -1,0 +1,1386 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE gsa-template SYSTEM "dynamosystemresource:/atg/dtds/gsa/gsa_1.0.dtd">
+<gsa-template>
+<import-items>
+<!-- 38 items of type album -->
+
+<add-item item-descriptor="album" id="300031">
+  <set-property name="songList"><![CDATA[200083,200082,200081]]></set-property>
+  <set-property name="title"><![CDATA[Favourite Piano Sonatas]]></set-property>
+  <set-property name="artist"><![CDATA[100005]]></set-property>
+  <set-property name="description"><![CDATA[This collection by pianist Vladimir Ashkenazy brings together twenty-two of Beethoven's most beautiful and memorable...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/FavoritePianoSonatas.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300003">
+  <set-property name="songList"><![CDATA[200023,200022,200021]]></set-property>
+  <set-property name="title"><![CDATA[Blues on the Bayou]]></set-property>
+  <set-property name="artist"><![CDATA[100002]]></set-property>
+  <set-property name="description"><![CDATA[Opting for simplicity this time around, B.B. King gets by with a little help from his excellent backing band, producing an album that's evocative of...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/BluesOnTheBayou.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300002">
+  <set-property name="songList"><![CDATA[200014,200013,200012,200011]]></set-property>
+  <set-property name="title"><![CDATA[Deuces Wild]]></set-property>
+  <set-property name="artist"><![CDATA[100002]]></set-property>
+  <set-property name="description"><![CDATA[This CD illustrates just how far BB King has come from Itta Bena, Mississippi.  A series of guest shots by such artists as Van Morrison, Tracy Chapman...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/DeucesWild.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300001">
+  <set-property name="songList"><![CDATA[200003,200002,200001]]></set-property>
+  <set-property name="title"><![CDATA[Live in Cook County Jail]]></set-property>
+  <set-property name="artist"><![CDATA[100002]]></set-property>
+  <set-property name="description"><![CDATA[One of the greatest concert recordings of all time, this is an essential recording for BB King fans and blues fans in general.  The "captive audience" in an Illinois prison...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/LiveInCookCountyJail.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300133">
+  <set-property name="songList"><![CDATA[213303,213302,213301]]></set-property>
+  <set-property name="title"><![CDATA[The Heat]]></set-property>
+  <set-property name="artist"><![CDATA[100016]]></set-property>
+  <set-property name="description"><![CDATA[After a nearly four-year absence from recording, Toni Braxton returns with The Heat, her third album. Full of drama--sometimes melodrama--it unsurprisingly puts Braxton's rich voice and command of nuance front and center...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/TheHeat.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300132">
+  <set-property name="songList"><![CDATA[213203,213202,213201]]></set-property>
+  <set-property name="title"><![CDATA[Toni Braxton]]></set-property>
+  <set-property name="artist"><![CDATA[100016]]></set-property>
+  <set-property name="description"><![CDATA[The perfect matchup of singer, song, and producer is a wondrous thing, and no more so in the producer-driven realm of black pop. Such a wonderful moment was the debut from Toni Braxton who...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/ToniBraxton1st.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300131">
+  <set-property name="songList"><![CDATA[213103,213102,213101]]></set-property>
+  <set-property name="title"><![CDATA[Secrets]]></set-property>
+  <set-property name="artist"><![CDATA[100016]]></set-property>
+  <set-property name="description"><![CDATA[Toni Braxton released her second album "Secrets" in 1996 and it was an instant smash. It gave her some of the biggest hits of her career including two #1 singles. "You're Making Me High" is probably one of the...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/Secrets.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300103">
+  <set-property name="songList"><![CDATA[210303,210302,210301]]></set-property>
+  <set-property name="title"><![CDATA[Vespertine]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="description"><![CDATA[Ever since Bjork's vital, effusive 1993 debut, her music has been increasingly intimate, gently private, and concerned with seclusion. It's typical then that Vespertine's first single...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/Vespertine.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300102">
+  <set-property name="songList"><![CDATA[210201,210205,210204,210203,210202]]></set-property>
+  <set-property name="title"><![CDATA[Post]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="description"><![CDATA[This Icelandic marvel is such an original that, even after four Sugarcubes albums and a brilliant solo Debut, she remains an acquired taste. "Army of Me" is a turbulent, darkling tune that's almost conventional next...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/Post.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300083">
+  <set-property name="songList"><![CDATA[208302,208301]]></set-property>
+  <set-property name="title"><![CDATA[The Woman In Me]]></set-property>
+  <set-property name="artist"><![CDATA[100011]]></set-property>
+  <set-property name="description"><![CDATA[Shania Twain comes full circle on this album, cowriting 11 out of 12 cuts and proving that she can do more than sing. Once again she crosses over into pop-rock territory with this multiplatinum affair, bringing legions of new fans...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/TheWomanInMe.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300101">
+  <set-property name="songList"><![CDATA[210104,210103,210102,210101]]></set-property>
+  <set-property name="title"><![CDATA[Homogenic]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="description"><![CDATA[Headline-grabbing personal upheavals turn into introspective surges on Homogenic, the third album by Icelandic singer Bjork. Driven inward after a bizarre year accented by a much publicized...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/Homogenic.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300082">
+  <set-property name="songList"><![CDATA[208204,208203,208202,208201]]></set-property>
+  <set-property name="title"><![CDATA[Come On Over]]></set-property>
+  <set-property name="artist"><![CDATA[100011]]></set-property>
+  <set-property name="description"><![CDATA[The come-from-nowhere success of Shania Twain's previous album, The Woman in Me, proved that the world was ready for a combination of traditional instruments, girl-power themes, and dance-pop dynamics...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/ComeOnOver.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300081">
+  <set-property name="songList"><![CDATA[208103,208102,208101]]></set-property>
+  <set-property name="title"><![CDATA[Up!]]></set-property>
+  <set-property name="artist"><![CDATA[100011]]></set-property>
+  <set-property name="description"><![CDATA[Give Shania Twain points for honesty. Up!, her first new release in five years, offers both pop and country versions of the same 19 songs, the red disc boasting pop renditions while the green proffers country...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/Up.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300053">
+  <set-property name="songList"><![CDATA[205303,205302,205301]]></set-property>
+  <set-property name="title"><![CDATA[Orange Blossom Special]]></set-property>
+  <set-property name="artist"><![CDATA[100007]]></set-property>
+  <set-property name="description"><![CDATA[Perhaps this should have been titled The Freewheelin' Johnny Cash in homage to the watershed Bob Dylan album. Though conservative country music and liberal folk shared little audience base at the time, Cash crossed that bridge by covering three Dylan tunes...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/OrangeBlossomSpecial.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300052">
+  <set-property name="songList"><![CDATA[205202,205201,205203]]></set-property>
+  <set-property name="title"><![CDATA[At Folsom Prison]]></set-property>
+  <set-property name="artist"><![CDATA[100007]]></set-property>
+  <set-property name="description"><![CDATA[Johnny Cash had been breaking new ground for a decade when At Folsom Prison suddenly made the world at large take notice. The interaction of a volatile prison population starved for entertainment and a desperately on-form Johnny Cash was electrifying. ...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/AtFolsomPrison.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300051">
+  <set-property name="songList"><![CDATA[205103,205102,205101]]></set-property>
+  <set-property name="title"><![CDATA[American IV: The Man Comes Around]]></set-property>
+  <set-property name="artist"><![CDATA[100007]]></set-property>
+  <set-property name="description"><![CDATA[American IV: The Man Comes Around, which draws on Cash?s original songs as well as those by Nine Inch Nails ("Hurt"), Sting ("I Hung My Head"), and Depeche Mode ("Personal Jesus"), may be one of the most autobiographical albums of the 70-year old singer-songwriter?s career...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/AmericanIV.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300023">
+  <set-property name="songList"><![CDATA[200073,200072,200071]]></set-property>
+  <set-property name="title"><![CDATA[Abbey Road]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="description"><![CDATA[The Beatles' last days as a band were as productive as any major pop phenomenon that was about to split. After recording the ragged-but-right Let It Be, the group held on for this ambitious effort, an album that was to become their best-selling....]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/AbbeyRoad.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300022">
+  <set-property name="songList"><![CDATA[200064,200063,200062,200061]]></set-property>
+  <set-property name="title"><![CDATA[Let It Be]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="description"><![CDATA[This controversial album was produced during the Beatle's wind-down years.  Although it didn't produce as many hits as prior albums, it still manages to...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/LetItBe.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300021">
+  <set-property name="songList"><![CDATA[200059,200058,200057,200056,200055,200054,200053,200052,200051]]></set-property>
+  <set-property name="title"><![CDATA[Sgt. Pepper's Lonely Hearts Club Band]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="description"><![CDATA[Before Sgt. Pepper, no one seriously thought of rock music as actual art. That all changed in 1967, though, when John, Paul, George and Ringo (with "A Little Help" from their friend, producer George Martin) created an undeniable work of art which remains...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/SgtPeppersLonelyHeartsClubBand.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300124">
+  <set-property name="songList"><![CDATA[212403,212402,212401]]></set-property>
+  <set-property name="title"><![CDATA[Oh Mercy]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="description"><![CDATA[The '80s was a particularly shifting, uncertain decade for Bob Dylan's creative voice. But he capped it off with his first album of all-original material in several years and his best since Infidels. A lot of the credit...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/OhMercy.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300123">
+  <set-property name="songList"><![CDATA[212302,212301,212303]]></set-property>
+  <set-property name="title"><![CDATA[Blood On The Tracks]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="description"><![CDATA[Inevitably, when critics praise a new Dylan album, they label it the "best since Blood on the Tracks," and with good reason. Inspired by a crumbled marriage, and recorded after a tour with The Band had...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/BloodOnTheTracks.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300122">
+  <set-property name="songList"><![CDATA[212203,212202,212201]]></set-property>
+  <set-property name="title"><![CDATA[Highway 61 Revisited]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="description"><![CDATA[Dylan was virtually gushing great songs when this masterpiece arrived in the summer of 1965. From the epochal opening of "Like a Rolling Stone" through the absurdly apocalyptic closer, "Desolation Row," his command...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/Highway61Revisited.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300121">
+  <set-property name="songList"><![CDATA[212104,212103,212102,212101]]></set-property>
+  <set-property name="title"><![CDATA[Blonde On Blonde]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="description"><![CDATA[Considered an unprecedented magnum opus when it arrived on two records in May of 1966, Blonde on Blonde featured Dylan continuing...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/BlondeOnBlonde.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300072">
+  <set-property name="songList"><![CDATA[207203,207202,207201]]></set-property>
+  <set-property name="title"><![CDATA[The Elegiaque Piano Trios]]></set-property>
+  <set-property name="artist"><![CDATA[100010]]></set-property>
+  <set-property name="description"><![CDATA[This CD is unusual for its intense subject material. Rachmaninoff was 20 years old when Tchaikovsky died of cholera, and the news plunged him into an anguish that he could only express in a way he knew how...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/TheElegiaquePianoTrios.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300071">
+  <set-property name="songList"><![CDATA[207103,207102,207101]]></set-property>
+  <set-property name="title"><![CDATA[Rachmaninoff Plays Rachmaninoff]]></set-property>
+  <set-property name="artist"><![CDATA[100010]]></set-property>
+  <set-property name="description"><![CDATA[Unlike most composer/pianists, Rachmaninoff's instrumental prowess was fully commensurate with his creative gifts. He embraces his youthful First Concertos as if he had encountered an old lover, consumating his passion with...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/RachmaninoffPlaysRachmaninoff.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300043">
+  <set-property name="songList"><![CDATA[204301,204304,204303,204302]]></set-property>
+  <set-property name="title"><![CDATA[Armed Forces]]></set-property>
+  <set-property name="artist"><![CDATA[100006]]></set-property>
+  <set-property name="description"><![CDATA[Less hot under the collar than This Year's Model, Armed Forces was partly inspired by Elvis Costello and the Attractions' 1978 American tour. The songs are...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/ArmedForces.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300042">
+  <set-property name="songList"><![CDATA[204204,204203,204202,204201]]></set-property>
+  <set-property name="title"><![CDATA[Imperial Bedroom]]></set-property>
+  <set-property name="artist"><![CDATA[100006]]></set-property>
+  <set-property name="description"><![CDATA[By far the most ambitious album of Elvis Costello's early stretch, IMPERIAL BEDROOM was originally advertised, much to Costello's embarrassment, in a campaign featuring the word "masterpiece." ...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/ImperialBedroom.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300041">
+  <set-property name="songList"><![CDATA[204103,204102,204101]]></set-property>
+  <set-property name="title"><![CDATA[My Aim Is True]]></set-property>
+  <set-property name="artist"><![CDATA[100006]]></set-property>
+  <set-property name="description"><![CDATA[Elvis Costello kicked off his debut album with a formal device that would also serve his next two long-players well: the first thing you hear is his voice. That opening phrase...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/MyAimIsTrue.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300012">
+  <set-property name="songList"><![CDATA[200044,200043,200042,200041]]></set-property>
+  <set-property name="title"><![CDATA[First Time: The Count Meets the Duke]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="description"><![CDATA[The two greatest big bands in jazz history, side by side at last.  What more could you ask?  This rousing album...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/FirstTime.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300011">
+  <set-property name="songList"><![CDATA[200038,200037,200036,200035,200034,200033,200032,200031,200040,200039]]></set-property>
+  <set-property name="title"><![CDATA[April in Paris]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="description"><![CDATA[Count Basie's band endured because of its leader's uncanny ability to put together fresh arrangements and strong soloists while maintaining the band's unique devotion to swing; this CD is among the most enduring of the big band recordings of the 1950s....]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/AprilInParis.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300112">
+  <set-property name="songList"><![CDATA[211102,211201,211103]]></set-property>
+  <set-property name="title"><![CDATA[Place In The Sun]]></set-property>
+  <set-property name="artist"><![CDATA[100014]]></set-property>
+  <set-property name="description"><![CDATA[The party-hearty raucousness of "I Like It, I Love It" seems like a lifetime ago for Tim McGraw, whose fifth album strikes a more reflective chord. Whether ruminating on how it felt...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/PlaceInTheSun.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300093">
+  <set-property name="songList"><![CDATA[209303,209302,209301]]></set-property>
+  <set-property name="title"><![CDATA[I'm Ready]]></set-property>
+  <set-property name="artist"><![CDATA[100012]]></set-property>
+  <set-property name="description"><![CDATA[TBD]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/ImReady.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300111">
+  <set-property name="songList"><![CDATA[211102,211101,211103]]></set-property>
+  <set-property name="title"><![CDATA[Set This Circus Down]]></set-property>
+  <set-property name="artist"><![CDATA[100014]]></set-property>
+  <set-property name="description"><![CDATA[This easy-listening collection features a generous 14 cuts, heavy on power ballads with soaring choruses and frothy sentiments, but light on...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/SetThisCircusDown.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300092">
+  <set-property name="songList"><![CDATA[209201,209203,209202]]></set-property>
+  <set-property name="title"><![CDATA[King Bee]]></set-property>
+  <set-property name="artist"><![CDATA[100012]]></set-property>
+  <set-property name="description"><![CDATA[TBD]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/KingBee.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300091">
+  <set-property name="songList"><![CDATA[209103,209102,209101]]></set-property>
+  <set-property name="title"><![CDATA[Hard Again]]></set-property>
+  <set-property name="artist"><![CDATA[100012]]></set-property>
+  <set-property name="description"><![CDATA[It's seems strange now to think of Muddy Waters's having to make a "comeback," but that's what the 1977 Hard Again came down to. The great bluesman's first post-Chess recording after 30 years with that company...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/HardAgain.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300063">
+  <set-property name="songList"><![CDATA[206305,206304,206303,206302,206301]]></set-property>
+  <set-property name="title"><![CDATA[Boys Don't Cry]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="description"><![CDATA[When Robert Smith's long-running group made this debut (actually the resequenced American version of the British Three Imaginary Boys), they weren't the Goth-and-reverb, new wave heroes they later became...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/BoysDontCry.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300062">
+  <set-property name="songList"><![CDATA[206204,206203,206202,206201]]></set-property>
+  <set-property name="title"><![CDATA[Kiss Me Kiss Me Kiss Me]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="description"><![CDATA[Released in 1987, at the height of the compact-disc revolution, Kiss Me, Kiss Me, Kiss Me is the prototypical CD album. Cure architect Robert Smith knew that the newly popular format could handle almost twice as much music...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/KissMeKissMeKissMe.jpg]]></set-property>
+</add-item>
+
+<add-item item-descriptor="album" id="300061">
+  <set-property name="songList"><![CDATA[206103,206102,206101,206104]]></set-property>
+  <set-property name="title"><![CDATA[Disintegration]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="description"><![CDATA[Disintegration is a pop album realized on an epic scale. Most of its 12 songs are long mood pieces that develop slowly around the listener. Anchored by complex drum patterns, the layered guitars, soaring bass lines, and rich...]]></set-property>
+  <set-property name="coverURL"><![CDATA[images/Disintegration.jpg]]></set-property>
+</add-item>
+
+<!-- 141 items of type song -->
+
+<add-item item-descriptor="song" id="200064">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Let It Be]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="207103">
+  <set-property name="genre"><![CDATA[classical]]></set-property>
+  <set-property name="title"><![CDATA[Concerto No. 1, Op. 1: Allegro Vivace]]></set-property>
+  <set-property name="artist"><![CDATA[100010]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200063">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Maggie Mae]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="207102">
+  <set-property name="genre"><![CDATA[classical]]></set-property>
+  <set-property name="title"><![CDATA[Concerto No. 1, Op. 1: Andante]]></set-property>
+  <set-property name="artist"><![CDATA[100010]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200062">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[I Me Mine]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="207101">
+  <set-property name="genre"><![CDATA[classical]]></set-property>
+  <set-property name="title"><![CDATA[Concerto No. 1, Op. 1: Vivace]]></set-property>
+  <set-property name="artist"><![CDATA[100010]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="204204">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Kid About It]]></set-property>
+  <set-property name="artist"><![CDATA[100006]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200061">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[The Long and Winding Road]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="204203">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Man Out of Time]]></set-property>
+  <set-property name="artist"><![CDATA[100006]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="204202">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Shabby Doll]]></set-property>
+  <set-property name="artist"><![CDATA[100006]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="204201">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Beyond Belief]]></set-property>
+  <set-property name="artist"><![CDATA[100006]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="212104">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[I Want You]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="209203">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[I Feel Like Going Home]]></set-property>
+  <set-property name="artist"><![CDATA[100012]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="212103">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Visions of Johanna]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="209202">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[Mean Old Frisco Blues]]></set-property>
+  <set-property name="artist"><![CDATA[100012]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="206305">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Three Imaginary Boys]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="212102">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Temporary Like Achilles]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="209201">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[I'm a King Bee]]></set-property>
+  <set-property name="artist"><![CDATA[100012]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="206304">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[10:15 Saturday Night]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="212101">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Leopard-Skin Pill-Box Hat]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="206303">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Fire in Cairo]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="206302">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Jumping Someone Else's Train]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="206301">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Boys Don't Cry]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200059">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Day in the Life]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200058">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Within You, Without You]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200057">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Lucy in the Sky With Diamonds]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200056">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Sgt. Pepper's Lonely Hearts Club Band]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200055">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[With a Little Help from My Friends]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200054">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Getting Better]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200053">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Lovely Rita]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200052">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Being for the Benefit of Mr. Kite]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200051">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[When I'm Sixty-Four]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="206104">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Fascination Street]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="206103">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Lullaby]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="206102">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Pictures of You]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="206101">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Plainsong]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="208204">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[From This Moment On]]></set-property>
+  <set-property name="artist"><![CDATA[100011]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="208203">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[That Don't Impress Me Much]]></set-property>
+  <set-property name="artist"><![CDATA[100011]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="211103">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Set This Circus Down]]></set-property>
+  <set-property name="artist"><![CDATA[100014]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="208202">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[You're Still the One]]></set-property>
+  <set-property name="artist"><![CDATA[100011]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="211102">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Telluride]]></set-property>
+  <set-property name="artist"><![CDATA[100014]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="208201">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Man! I Feel Like a Woman!]]></set-property>
+  <set-property name="artist"><![CDATA[100011]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="211101">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Cowboy in Me]]></set-property>
+  <set-property name="artist"><![CDATA[100014]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="205303">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Mama, You've Been On My Mind]]></set-property>
+  <set-property name="artist"><![CDATA[100007]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="205302">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[It Ain't Me Babe]]></set-property>
+  <set-property name="artist"><![CDATA[100007]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="205301">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Orange Blossom Special]]></set-property>
+  <set-property name="artist"><![CDATA[100007]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200044">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[Until I Met You]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200043">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[Battle Royal]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200042">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[To You]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200041">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[Take the "A" Train]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200040">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[What am I Here For?]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="213203">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Candlelight]]></set-property>
+  <set-property name="artist"><![CDATA[100016]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="213202">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Breathe Again]]></set-property>
+  <set-property name="artist"><![CDATA[100016]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="213201">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Another Sad Love Song]]></set-property>
+  <set-property name="artist"><![CDATA[100016]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="210303">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[It's Not Up to You]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="210302">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Cocoon]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="210301">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Hidden Place]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="205103">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Streets of Laredo]]></set-property>
+  <set-property name="artist"><![CDATA[100007]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="205102">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Hurt]]></set-property>
+  <set-property name="artist"><![CDATA[100007]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="205101">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[The Man Comes Around]]></set-property>
+  <set-property name="artist"><![CDATA[100007]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="212403">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Most of the Time]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="212402">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Everything Is Broken]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200039">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[Midgets]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="212401">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Political World]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200038">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[Mambo Inn]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200037">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[Dinner With Friends]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200036">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[April in Paris]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200035">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[Corner Pocket]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200034">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[Didn't You?]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200033">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[Sweetie Cakes]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="210104">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[All Is Full of Love]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="207203">
+  <set-property name="genre"><![CDATA[classical]]></set-property>
+  <set-property name="title"><![CDATA[Piano Trio in D minor, Op. 9: Allegro Risoluto]]></set-property>
+  <set-property name="artist"><![CDATA[100010]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200032">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[Magic]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="210103">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Bachelorette]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="207202">
+  <set-property name="genre"><![CDATA[classical]]></set-property>
+  <set-property name="title"><![CDATA[Piano Trio in D minor, Op. 9: Quasi Variazone]]></set-property>
+  <set-property name="artist"><![CDATA[100010]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200031">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[Shiny Stockings]]></set-property>
+  <set-property name="artist"><![CDATA[100003]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="210102">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Joga]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="207201">
+  <set-property name="genre"><![CDATA[classical]]></set-property>
+  <set-property name="title"><![CDATA[Piano Trio in D minor, Op. 9: Moderato-Allegro-Moderato]]></set-property>
+  <set-property name="artist"><![CDATA[100010]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="204304">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[(What's So Funny 'Bout) Peace, Love, and Understanding?]]></set-property>
+  <set-property name="artist"><![CDATA[100006]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="210101">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Hunter]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="204303">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Green Shirt]]></set-property>
+  <set-property name="artist"><![CDATA[100006]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="204302">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Oliver's Army]]></set-property>
+  <set-property name="artist"><![CDATA[100006]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="204301">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Accidents Will Happen]]></set-property>
+  <set-property name="artist"><![CDATA[100006]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="209303">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[33 Years]]></set-property>
+  <set-property name="artist"><![CDATA[100012]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="212203">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Queen Jane Approximately]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="209302">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[Copper Brown]]></set-property>
+  <set-property name="artist"><![CDATA[100012]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="212202">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Tombstone Blues]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="209301">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[I'm Ready]]></set-property>
+  <set-property name="artist"><![CDATA[100012]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="212201">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Like a Rolling Stone]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="204103">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Watching the Detectives]]></set-property>
+  <set-property name="artist"><![CDATA[100006]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="204102">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[(The Angels Want to Wear My) Red Shoes]]></set-property>
+  <set-property name="artist"><![CDATA[100006]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="204101">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Allison]]></set-property>
+  <set-property name="artist"><![CDATA[100006]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200023">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[I'll Survive ]]></set-property>
+  <set-property name="artist"><![CDATA[100002]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200022">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[Blues Boys Tune ]]></set-property>
+  <set-property name="artist"><![CDATA[100002]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200021">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[Bad Case of Love ]]></set-property>
+  <set-property name="artist"><![CDATA[100002]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="209103">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[The Blues Had a Baby and They Named It Rock and Roll]]></set-property>
+  <set-property name="artist"><![CDATA[100012]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="209102">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[Cross-Eyed Cat]]></set-property>
+  <set-property name="artist"><![CDATA[100012]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="209101">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[Mannish Boy]]></set-property>
+  <set-property name="artist"><![CDATA[100012]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="206204">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Hot! Hot! Hot!]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="206203">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Just Like Heaven]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="206202">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Why Can't I Be You?]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="206201">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[The Kiss]]></set-property>
+  <set-property name="artist"><![CDATA[100009]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="600039">
+  <set-property name="genre"><![CDATA[jazz]]></set-property>
+  <set-property name="title"><![CDATA[]]></set-property>
+  <set-property name="description"><![CDATA[]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="211203">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Something Like That]]></set-property>
+  <set-property name="artist"><![CDATA[100014]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="208302">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[No One Needs to Know]]></set-property>
+  <set-property name="artist"><![CDATA[100011]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200083">
+  <set-property name="genre"><![CDATA[classical]]></set-property>
+  <set-property name="title"><![CDATA[Piano Sonata No. 8 In C Minor, Op. 13 'Pathetique': III Rondo: Allegro ]]></set-property>
+  <set-property name="artist"><![CDATA[100005]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="211202">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Place in the Sun]]></set-property>
+  <set-property name="artist"><![CDATA[100014]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="208301">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Any Man of Mine]]></set-property>
+  <set-property name="artist"><![CDATA[100011]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200082">
+  <set-property name="genre"><![CDATA[classical]]></set-property>
+  <set-property name="title"><![CDATA[Piano Sonata No. 14 In C Sharp Minor, Op. 27 No. 2 'Moonlight': II. Allegretto & Trio ]]></set-property>
+  <set-property name="artist"><![CDATA[100005]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="211201">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Trouble With Never]]></set-property>
+  <set-property name="artist"><![CDATA[100014]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200081">
+  <set-property name="genre"><![CDATA[classical]]></set-property>
+  <set-property name="title"><![CDATA[Piano Sonata No. 15 In D Major, Op. 28 'Pastoral': I Allegro ]]></set-property>
+  <set-property name="artist"><![CDATA[100005]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200014">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[Thrill is Gone - Tracy Chapman]]></set-property>
+  <set-property name="artist"><![CDATA[100002]]></set-property>
+  <set-property name="downloadURL"><![CDATA[/media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200013">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[Rock Me Baby - Eric Clapton]]></set-property>
+  <set-property name="artist"><![CDATA[100002]]></set-property>
+  <set-property name="downloadURL"><![CDATA[/media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200012">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[Please Send Me Someone to Love ]]></set-property>
+  <set-property name="artist"><![CDATA[100002]]></set-property>
+  <set-property name="downloadURL"><![CDATA[/media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200011">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[If You Love Me]]></set-property>
+  <set-property name="artist"><![CDATA[100002]]></set-property>
+  <set-property name="downloadURL"><![CDATA[/media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="213303">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Spanish Guitar]]></set-property>
+  <set-property name="artist"><![CDATA[100016]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="213302">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Heat]]></set-property>
+  <set-property name="artist"><![CDATA[100016]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="213301">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[He Wasn't Man Enough]]></set-property>
+  <set-property name="artist"><![CDATA[100016]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="208103">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[She's Not Just a Pretty Face]]></set-property>
+  <set-property name="artist"><![CDATA[100011]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="208102">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Gonna Getcha Good!]]></set-property>
+  <set-property name="artist"><![CDATA[100011]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="208101">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Up!]]></set-property>
+  <set-property name="artist"><![CDATA[100011]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="205203">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Green, Green Grass of Home]]></set-property>
+  <set-property name="artist"><![CDATA[100007]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="205202">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[The Long Black Veil]]></set-property>
+  <set-property name="artist"><![CDATA[100007]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="205201">
+  <set-property name="genre"><![CDATA[country]]></set-property>
+  <set-property name="title"><![CDATA[Folsom Prison Blues]]></set-property>
+  <set-property name="artist"><![CDATA[100007]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200073">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Come Together]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200072">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Something]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200071">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Octopus's Garden ]]></set-property>
+  <set-property name="artist"><![CDATA[100004]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="213103">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Un-break My Heart]]></set-property>
+  <set-property name="artist"><![CDATA[100016]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200003">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[How Blue Can You Get?]]></set-property>
+  <set-property name="artist"><![CDATA[100002]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="213102">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[You're Making Me High]]></set-property>
+  <set-property name="artist"><![CDATA[100016]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="210205">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Possibly Maybe]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200002">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[The Thrill is Gone]]></set-property>
+  <set-property name="artist"><![CDATA[100002]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="213101">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Come On Over Here]]></set-property>
+  <set-property name="artist"><![CDATA[100016]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="210204">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Isobel]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="200001">
+  <set-property name="genre"><![CDATA[blues]]></set-property>
+  <set-property name="title"><![CDATA[Worry, Worry]]></set-property>
+  <set-property name="artist"><![CDATA[100002]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="210203">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[It's Oh So Quiet]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="210202">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Hyper-Ballad]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="210201">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Army of Me]]></set-property>
+  <set-property name="artist"><![CDATA[100013]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="212303">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Lily, Rosemary, and the Jack of Hearts]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="212302">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Simple Twist of Fate]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<add-item item-descriptor="song" id="212301">
+  <set-property name="genre"><![CDATA[pop]]></set-property>
+  <set-property name="title"><![CDATA[Tangled Up in Blue]]></set-property>
+  <set-property name="artist"><![CDATA[100015]]></set-property>
+  <set-property name="downloadURL"><![CDATA[media/dummy.mp3]]></set-property>
+</add-item>
+
+<!-- 14 items of type artist -->
+
+<add-item item-descriptor="artist" id="100002">
+  <set-property name="photoURL"><![CDATA[images/BBKing.jpg]]></set-property>
+  <set-property name="description"><![CDATA[His sweet, fluid, jazzy guitar style is legendary, but B.B. King's gospel-drenched singing would've been enough to make him...]]></set-property>
+  <set-property name="name"><![CDATA[B.B. King]]></set-property>
+</add-item>
+
+<add-item item-descriptor="artist" id="100003">
+  <set-property name="photoURL"><![CDATA[images/CountBasie.jpg]]></set-property>
+  <set-property name="description"><![CDATA[In a genre dominated by effusive virtuosity, Count Basie carved out a distinctive niche for himself as a jazz minimalist, and over the course of...]]></set-property>
+  <set-property name="name"><![CDATA[Count Basie]]></set-property>
+</add-item>
+
+<add-item item-descriptor="artist" id="100004">
+  <set-property name="photoURL"><![CDATA[images/TheBeatles.jpg]]></set-property>
+  <set-property name="description"><![CDATA[In 1964, the Beatles appeared on the Ed Sullivan show and the world of music has never been the same.  The 'Fab Four' ...]]></set-property>
+  <set-property name="name"><![CDATA[The Beatles]]></set-property>
+</add-item>
+
+<add-item item-descriptor="artist" id="100005">
+  <set-property name="photoURL"><![CDATA[images/Beethoven.jpg]]></set-property>
+  <set-property name="description"><![CDATA[Arguably the most famous of the composers of the Classical era, Beethoven is best known for his symphonies...]]></set-property>
+  <set-property name="name"><![CDATA[Ludwig van Beethoven]]></set-property>
+</add-item>
+
+<add-item item-descriptor="artist" id="100006">
+  <set-property name="photoURL"><![CDATA[images/ElvisCostello.jpg]]></set-property>
+  <set-property name="description"><![CDATA[Dubbed "the most talented pop tunesmith of his generation" by the New York Times in 1982, Elvis Costello (b. Declan Patrick McManus, August 25, 1955, Paddington, London) was by...]]></set-property>
+  <set-property name="name"><![CDATA[Elvis Costello]]></set-property>
+</add-item>
+
+<add-item item-descriptor="artist" id="100007">
+  <set-property name="photoURL"><![CDATA[images/JohnnyCash.jpg]]></set-property>
+  <set-property name="description"><![CDATA[One of the towering figures of American music, Johhny Cash is part country singer, part folk hero.  Known as a prolific...]]></set-property>
+  <set-property name="name"><![CDATA[Johnny Cash]]></set-property>
+</add-item>
+
+<add-item item-descriptor="artist" id="100009">
+  <set-property name="photoURL"><![CDATA[images/TheCure.jpg]]></set-property>
+  <set-property name="description"><![CDATA[For over 20 years, the Cure's ever-revolving lineup has served as a vehicle for the prolific genius of Robert Smith, one of the 1980s' most unlikely yet enduring rock stars...]]></set-property>
+  <set-property name="name"><![CDATA[The Cure]]></set-property>
+</add-item>
+
+<add-item item-descriptor="artist" id="100010">
+  <set-property name="photoURL"><![CDATA[images/Rachmaninoff.jpg]]></set-property>
+  <set-property name="description"><![CDATA[Sergei Rachmaninoff began to study piano with his mother at the age of four. He continued his studies with the great pianists Zvereff and Arenski. While still a student...]]></set-property>
+  <set-property name="name"><![CDATA[Sergei Rachmaninoff]]></set-property>
+</add-item>
+
+<add-item item-descriptor="artist" id="100011">
+  <set-property name="photoURL"><![CDATA[images/ShaniaTwain.jpg]]></set-property>
+  <set-property name="description"><![CDATA[Although now ubiquituous in the world of country music, Shania Twain's first album, released in 1993, barely made...]]></set-property>
+  <set-property name="name"><![CDATA[Shania Twain]]></set-property>
+</add-item>
+
+<add-item item-descriptor="artist" id="100012">
+  <set-property name="photoURL"><![CDATA[images/MuddyWaters.jpg]]></set-property>
+  <set-property name="description"><![CDATA[Muddy Waters, king of Chicago style blues, was perhaps the single most important link between Delta acoustic blues and electric...]]></set-property>
+  <set-property name="name"><![CDATA[Muddy Waters]]></set-property>
+</add-item>
+
+<add-item item-descriptor="artist" id="100013">
+  <set-property name="photoURL"><![CDATA[images/Bjork.jpg]]></set-property>
+  <set-property name="description"><![CDATA[The one-time frontwoman of Iceland's intensely colorful, now-defunct Sugarcubes has often been depicted as a compulsively creative, impish sexpot, and while there...]]></set-property>
+  <set-property name="name"><![CDATA[Bjork]]></set-property>
+</add-item>
+
+<add-item item-descriptor="artist" id="100014">
+  <set-property name="photoURL"><![CDATA[images/TimMcGraw.gif]]></set-property>
+  <set-property name="description"><![CDATA[The most consistently successful male artist, in terms of overall chart success, to emerge from the country ranks during the past four years, Tim McGraw is the model modern star...]]></set-property>
+  <set-property name="name"><![CDATA[Tim McGraw]]></set-property>
+</add-item>
+
+<add-item item-descriptor="artist" id="100015">
+  <set-property name="photoURL"><![CDATA[images/BobDylan.jpg]]></set-property>
+  <set-property name="description"><![CDATA[The most profoundly influential singer-songwriter of the rock era, Bob Dylan (b. Robert Allen Zimmerman, May 24, 1941, Duluth, Minnesota) has released over 45 albums since his...]]></set-property>
+  <set-property name="name"><![CDATA[Bob Dylan]]></set-property>
+</add-item>
+
+<add-item item-descriptor="artist" id="100016">
+  <set-property name="photoURL"><![CDATA[images/ToniBraxton.jpg]]></set-property>
+  <set-property name="description"><![CDATA[Although barely out of her teens when her career began, Toni Braxton has always sounded far more mature than peers like Whitney Houston and Mariah Carey. Braxton admittedly has...]]></set-property>
+  <set-property name="name"><![CDATA[Toni Braxton]]></set-property>
+</add-item>
+
+</import-items>
+
+</gsa-template>

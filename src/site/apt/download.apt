@@ -1,0 +1,21 @@
+
+Download ATG Dust
+
+  ATG Dust is available in two formats. You may either download a pre compiled jar file
+  containing classes or you may check out the entire project from SubVersion.
+  
+* Check out from Sub Version
+
+ ATG Dust source code is available at the following URL:
+
++------------------------------------------+
+svn checkout https://svn.sourceforge.net/svnroot/atgdust/trunk atgdust
++------------------------------------------+
+
+* Download
+
+ ATG Dust is also available as a precompiled jar file.
+ You can download it from {{{http://sourceforge.net/projects/atgdust/}HERE}}.
+ 
+ 
+  

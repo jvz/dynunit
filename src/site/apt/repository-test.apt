@@ -117,3 +117,14 @@ public class SimpleGSATest extends GSATest {
   }
 }
 +------------
+
+* Testing with a connection to a "real" database
+
+  The example above shows how to run a test against HSQLDB. Of course this is a real database, but it's
+  not supported by ATG for a production application. Most people will be using one of Oracle,DB2 or MSSQL.
+  In the case when you want your test to run against one of these databases, there's a little more setup work 
+  to be done. HSQL is very handy since it can run in-memory. Therefore when your test is done, your database
+  gets cleaned up. When you run your test against Oracle, you don't get that same benefit.
+
+
+  
