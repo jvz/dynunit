@@ -29,9 +29,7 @@ import atg.nucleus.servlet.NucleusServlet;
 /**
  * Wrapper class to make life a bit easier when using the
  * http://atgdust.sourceforge.net test harness (which in fact is a wrapper for
- * the junit test harness). More or less modeled to spring's way of handling
- * props/application context and looking up beans. Not suited for Repository
- * based tests. For these tests use {@link atg.adapter.gsa.GSATest}}
+ * the junit test harness).
  * 
  * @author robert
  */
@@ -158,7 +156,8 @@ public class AtgDustTestCase extends TestCase {
       final File f = new File(configpath + File.separator + serviceDir);
       if (f.exists() ? true : f.mkdirs()) {
         log.info("Created: " + f.getPath());
-      } else {
+      }
+      else {
         log.error("unable to create: " + f.getPath());
       }
 
@@ -176,7 +175,8 @@ public class AtgDustTestCase extends TestCase {
         dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
         srcChannel.close();
         dstChannel.close();
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         log.error("Error: ", e);
       }
     }
@@ -189,7 +189,8 @@ public class AtgDustTestCase extends TestCase {
     try {
       if (db != null)
         db.shutdown();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       log.error("Error: ", e);
     }
   }
