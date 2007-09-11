@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><project>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>atg</groupId>
   <artifactId>atgdust</artifactId>
@@ -40,6 +42,15 @@
       </roles>
       <timezone>-5</timezone>
     </developer>
+    <developer>
+      <id>rob_ert</id>
+      <name>Robert</name>
+      <email>rob_ert@users.sourceforge.net</email>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
   </developers>
   <licenses>
     <license>
@@ -49,9 +60,9 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:svn:https://svn.sourceforge.net/svnroot/atgdust</connection>
-    <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/atgdust</developerConnection>
-    <url>http://svn.sourceforge.net/viewvc/atgdust/</url>
+    <connection>scm:svn:https://atgdust.svn.sourceforge.net/svnroot/atgdust</connection>
+    <developerConnection>scm:svn:https://atgdust.svn.sourceforge.net/svnroot/atgdust</developerConnection>
+    <url>http://atgdust.svn.sourceforge.net/viewvc/atgdust/</url>
   </scm>
   <build>
      <resources>
@@ -169,7 +180,7 @@
       <plugin>
         <artifactId>maven-pmd-plugin</artifactId>
         <configuration>
-          <targetjdk>1.5</targetjdk>
+          <targetJdk>1.5</targetJdk>
           <rulesets>
             <ruleset>/rulesets/basic.xml</ruleset>
             <ruleset>/rulesets/controversial.xml</ruleset>
@@ -178,6 +189,15 @@
           <linkXref>true</linkXref>
           <sourceEncoding>utf-8</sourceEncoding>
           <minimumTokens>100</minimumTokens>
+        </configuration>
+      </plugin>
+      <plugin>
+      <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <configuration>
+          <threshold>Normal</threshold>
+          <effort>Max</effort>
+          <visitors>FindDeadLocalStores,UnreadFields</visitors>
         </configuration>
       </plugin>
       <plugin>
