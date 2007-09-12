@@ -65,15 +65,6 @@
     <url>http://atgdust.svn.sourceforge.net/viewvc/atgdust/</url>
   </scm>
   <build>
-     <resources>
-      <resource>
-        <directory>src/test/java</directory>
-        <includes>
-          <include>**/*.xml</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-     </resources>
     <plugins>
       <plugin>
         <artifactId>maven-scm-plugin</artifactId>
