@@ -1,15 +1,12 @@
 package test;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import atg.adapter.gsa.GSARepository;
 import atg.dtm.TransactionDemarcation;
 import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryItem;
 import atg.test.AtgDustTestCase;
-import atg.test.AtgDustTestCase.DB_VENDOR;
 
 /**
  * 
@@ -28,10 +25,8 @@ public class SongRepositoryTest extends AtgDustTestCase {
 
     super.setUp();
 
-    setConfigPath("src/test/resources/config".replace("/", File.separator));
-    final List<String> propertyFiles = new ArrayList<String>();
-    propertyFiles.add("/GettingStarted/SongsRepository");
-    useExistingPropertyFiles(propertyFiles);
+    final String[] propertyFiles = new String[] { "/GettingStarted/SongsRepository" };
+    useExistingPropertyFiles("src/test/resources/config", propertyFiles);
 
   }
 
@@ -41,13 +36,13 @@ public class SongRepositoryTest extends AtgDustTestCase {
     // shut down Nucleus
     stopNucleus();
     // Shut down HSQLDB
-    stopDb();
+    stopEmbeddedDb();
     cleanUp();
-
   }
 
   /**
    * Runs a test using an in-memory HSQL database
+   * 
    * @throws Exception
    */
   public void testWithInMemoryDb() throws Exception {
@@ -94,19 +89,20 @@ public class SongRepositoryTest extends AtgDustTestCase {
   }
 
   /**
-   * Example test with MySQL Database.
-   * This test is disabled by default (starts with "X")
-   * because the MySQL JDBC drivers are not included in the atg dust package.   * 
+   * Example test with MySQL Database. This test is disabled by default (starts
+   * with "X") because the MySQL JDBC drivers are not included in the atg dust
+   * package. *
+   * 
    * @throws Exception
    */
-  public void XtestWithExistingMysqlDb() throws Exception {
+  public void testWithExistingMysqlDb() throws Exception {
 
-    final String userName = "username";
-    final String password = "password";
+    final String userName = "bol-webshop";
+    final String password = "bol-webshop";
     final String host = "localhost";
 
     final String port = "3306";
-    final String dbName = "database_one";
+    final String dbName = "bol-webshop2";
     final DB_VENDOR dbVendor = DB_VENDOR.MySQLDBConnection;
 
     prepareGsaTest(new File("target/test-classes/config/"),

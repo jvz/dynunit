@@ -11,7 +11,6 @@ import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -20,6 +19,7 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import test.SongRepositoryTest;
 import atg.adapter.gsa.GSATestUtils;
 import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusTestUtils;
@@ -28,8 +28,8 @@ import atg.nucleus.servlet.NucleusServlet;
 
 /**
  * Wrapper class to make life a bit easier when using the
- * http://atgdust.sourceforge.net test harness (which in fact is a wrapper for
- * the junit test harness).
+ * http://atgdust.sourceforge.net test harness. Example usage can be found in
+ * {@link SongRepositoryTest}.
  * 
  * @author robert
  */
@@ -39,38 +39,36 @@ public class AtgDustTestCase extends TestCase {
     HSQLDBInMemoryDB, HSQLDBRegularDBConnection, HSQLDBFileDBConnection, MSSQLDBConnection, MySQLDBConnection, DB2DBConnection, OracleDBConnection, SolidDBConnection, SybaseDBConnection, HSQLDBDefaultInMemoryDBConnection;
   }
 
-  private final Log log = LogFactory.getLog(getClass());
+  private static final Log log = LogFactory.getLog(AtgDustTestCase.class);
 
-  private File configpath;
+  private File configDir;
 
   private Nucleus nucleus;
 
-  private String cpath;
+  private String configPath;
 
-  private atg.test.DBUtils db;
+  private DBUtils dbUtils;
 
   /**
    * @param configPath
-   *          the configPath to set. Default location is
-   *          src/main/resources/config e.g. the root ATG config directory
-   *          relative to the project dir.F <br/> Example: project/config then
-   *          set this value to config
+   *          the configPath to be used. If the configuration files are located
+   *          in project/config then set this value to config.
    */
-  protected final void setConfigPath(final String cpath) {
-    this.cpath = cpath;
-    configpath = NucleusTestUtils.getConfigpath(this.getClass(), cpath);
+  protected final void setConfigPath(final String configPath) {
+    this.configPath = configPath;
+    configDir = NucleusTestUtils.getConfigpath(this.getClass(), configPath);
   }
 
   /**
-   * Will start the {@link Nucleus} if {@link AtgDustTestCase#configpath} is set
+   * Will start the {@link Nucleus} if {@link AtgDustTestCase#configDir} is set
    * correctly
    */
   protected final void startNucleus() {
-    nucleus = NucleusTestUtils.startNucleus(configpath);
+    nucleus = NucleusTestUtils.startNucleus(configDir);
   }
 
   /**
-   * Will stop the {@link Nucleus} if {@link AtgDustTestCase#configpath} is set
+   * Will stop the {@link Nucleus} if {@link AtgDustTestCase#configDir} is set
    * correctly
    * 
    * @throws ServiceException
@@ -100,7 +98,7 @@ public class AtgDustTestCase extends TestCase {
   /**
    * @param servicePath
    *          where to store the created property file for the given service,
-   *          relative to the {@link AtgDustTestCase#configpath} directory, set
+   *          relative to the {@link AtgDustTestCase#configDir} directory, set
    *          by {@link #AtgDuster()#setConfigPath(String)}
    * @param serviceClass
    *          a class that will be resolved by
@@ -129,47 +127,51 @@ public class AtgDustTestCase extends TestCase {
     for (final Iterator<String> it = servicePathsServiceClasses.keySet()
         .iterator(); it.hasNext();) {
       final String path = it.next();
-      final File property = NucleusTestUtils.createProperties(path, configpath,
+      final File property = NucleusTestUtils.createProperties(path, configDir,
           servicePathsServiceClasses.get(path).getName(), new Properties());
-      System.out.println("file: " + property.getAbsolutePath());
+      log.debug("file: " + property.getAbsolutePath());
       property.deleteOnExit();
     }
   }
 
   /**
-   * @param services
-   *          a {@link java.util.List} with file path's as
-   *          {@link java.lang.String}'s with all needed properties files
-   *          relative to {@link AtgDustTestCase#configpath} <br/> Example:
+   * @param confPath
+   *          the configPath to be used. If the configuration files are for
+   *          example located in project/config then set this value to config
+   * @param propertyFiles
+   *          an {@link String[]} with file path's as {@link java.lang.String}'s
+   *          with all needed properties files relative to
+   *          {@link AtgDustTestCase#configDir} <br/> Example:
    *          /some/service/SomeService (Pay attention to the leading slash!)
    * @throws IOException
    */
-  protected final void useExistingPropertyFiles(final List<String> services)
-      throws IOException {
+  protected final void useExistingPropertyFiles(final String confPath,
+      final String[] propertyFiles) throws IOException {
 
-    log.info("default config path: " + cpath);
-    for (final String service : services) {
-      log.info("Service: " + service);
+    this.configPath = confPath.replace("/", File.separator);
+    configDir = NucleusTestUtils.getConfigpath(this.getClass(), configPath);
+
+    for (final String service : propertyFiles) {
+      log.debug("Service: " + service);
 
       final String serviceDir = service.substring(0, service.lastIndexOf('/'));
-      log.info("Service dir: " + serviceDir);
-      final File f = new File(configpath + File.separator + serviceDir);
+      final File f = new File(configDir + File.separator + serviceDir);
       if (f.exists() ? true : f.mkdirs()) {
-        log.info("Created: " + f.getPath());
+        log.debug("Created: " + f.getPath());
       }
       else {
         log.error("unable to create: " + f.getPath());
       }
 
       try {
-        final String src = cpath + File.separator
+        final String src = configPath + File.separator
             + service.replace("/", File.separator) + ".properties";
 
-        final String dst = configpath.getPath() + service
+        final String dst = configDir.getPath() + service
             + ".properties".replaceAll("/", File.separator);
 
-        log.info("Source: " + src);
-        log.info("Dest: " + dst);
+        log.debug("Source: " + src);
+        log.debug("Dest: " + dst);
         final FileChannel srcChannel = new FileInputStream(src).getChannel();
         final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
         dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
@@ -185,10 +187,11 @@ public class AtgDustTestCase extends TestCase {
   /**
    * Will stop the embedded test database
    */
-  protected void stopDb() {
+  protected void stopEmbeddedDb() {
     try {
-      if (db != null)
-        db.shutdown();
+      if (dbUtils != null) {
+        dbUtils.shutdown();
+      }
     }
     catch (SQLException e) {
       log.error("Error: ", e);
@@ -213,11 +216,12 @@ public class AtgDustTestCase extends TestCase {
 
     // Use the DBUtils utility class to get JDBC properties for an in memory
     // HSQL DB called "testdb".
-    Properties props = DBUtils.getHSQLDBInMemoryDBConnection("testdb");
+    final Properties props = DBUtils.getHSQLDBInMemoryDBConnection("testdb");
 
     // Start up our database
-    db = new DBUtils(props.getProperty("URL"), props.getProperty("driver"),
-        props.getProperty("user"), props.getProperty("password"));
+    dbUtils = new DBUtils(props.getProperty("URL"),
+        props.getProperty("driver"), props.getProperty("user"), props
+            .getProperty("password"));
 
     // Setup our testing configpath
     GSATestUtils.getGSATestUtils().initializeMinimalConfigpath(configpath,
@@ -353,8 +357,9 @@ public class AtgDustTestCase extends TestCase {
     }
 
     // Start up our database
-    db = new DBUtils(props.getProperty("URL"), props.getProperty("driver"),
-        props.getProperty("user"), props.getProperty("password"));
+    dbUtils = new DBUtils(props.getProperty("URL"),
+        props.getProperty("driver"), props.getProperty("user"), props
+            .getProperty("password"));
 
     // Setup our testing configpath
     GSATestUtils.getGSATestUtils().initializeMinimalConfigpath(configpath,
@@ -374,8 +379,8 @@ public class AtgDustTestCase extends TestCase {
   protected void cleanUp() {
     // delete old properties that are on the configpath
     // configpath.getPath()
-    log.info("Deleting: " + configpath.getAbsolutePath());
-    deleteDir(configpath);
+    log.info("Deleting: " + configDir.getAbsolutePath());
+    deleteDir(configDir);
 
   }
 
