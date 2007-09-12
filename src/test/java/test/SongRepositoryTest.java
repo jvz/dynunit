@@ -95,14 +95,13 @@ public class SongRepositoryTest extends AtgDustTestCase {
    * 
    * @throws Exception
    */
-  public void testWithExistingMysqlDb() throws Exception {
-
-    final String userName = "bol-webshop";
-    final String password = "bol-webshop";
+  public void _testWithExistingMysqlDb() throws Exception {
+    final String userName = "userName";
+    final String password = "password";
     final String host = "localhost";
-
     final String port = "3306";
-    final String dbName = "bol-webshop2";
+    final String dbName = "dbName";
+    
     final DB_VENDOR dbVendor = DB_VENDOR.MySQLDBConnection;
 
     prepareGsaTest(new File("target/test-classes/config/"),
@@ -113,7 +112,6 @@ public class SongRepositoryTest extends AtgDustTestCase {
 
     TransactionDemarcation td = new TransactionDemarcation();
     assertNotNull(td);
-    boolean rollback = true;
 
     assertNotNull(songsRepository);
 
@@ -137,12 +135,11 @@ public class SongRepositoryTest extends AtgDustTestCase {
       //
       // assertNotNull(gs.getAllPopSongs());
 
-      rollback = false;
     }
     finally {
-      // End the transaction, rollback on error
+      // End the transaction, rollback on to restore original database state
       if (td != null) {
-        td.end(rollback);
+        td.end(true);
       }
     }
   }
