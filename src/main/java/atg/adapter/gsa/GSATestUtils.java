@@ -79,7 +79,7 @@ public class GSATestUtils {
      
   }
   /**
-   * Deplicates the given array of repositories.
+   * Duplicates the given array of repositories.
    * This method first binds the repositories into nucleus under the name XXXX-Shadow,
    * where XXXX is the original name.
    * After all repositories are bound, then they are started.
