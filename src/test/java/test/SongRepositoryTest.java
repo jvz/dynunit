@@ -2,6 +2,8 @@ package test;
 
 import java.io.File;
 
+import static atg.test.AtgDustTestCase.ATG_DUST_SYSTEM_PROPERTIES.ATG_DUST_DO_NOT_DROP_TABLES;
+
 import atg.adapter.gsa.GSARepository;
 import atg.dtm.TransactionDemarcation;
 import atg.repository.MutableRepositoryItem;
@@ -13,6 +15,7 @@ import atg.test.AtgDustTestCase;
  * Example test case to illustrate the usage of AtgDustTestCase built-in
  * database functionalities.
  * 
+ * 
  * @author Robert Hellwig
  * 
  */
@@ -22,12 +25,10 @@ public class SongRepositoryTest extends AtgDustTestCase {
 
   @Override
   public void setUp() throws Exception {
-
     super.setUp();
 
     final String[] propertyFiles = new String[] { "/GettingStarted/SongsRepository" };
     useExistingPropertyFiles("src/test/resources/config", propertyFiles);
-
   }
 
   @Override
@@ -90,7 +91,7 @@ public class SongRepositoryTest extends AtgDustTestCase {
 
   /**
    * Example test with MySQL Database. This test is disabled by default (starts
-   * with "X") because the MySQL JDBC drivers are not included in the atg dust
+   * with "_") because the MySQL JDBC drivers are not included in the atg dust
    * package. *
    * 
    * @throws Exception
@@ -99,15 +100,17 @@ public class SongRepositoryTest extends AtgDustTestCase {
     final String userName = "userName";
     final String password = "password";
     final String host = "localhost";
-    final String port = "3306";
+    final String port = "1234";
     final String dbName = "dbName";
-    
     final DB_VENDOR dbVendor = DB_VENDOR.MySQLDBConnection;
+    
+    System.setProperty(ATG_DUST_DO_NOT_DROP_TABLES.getPropertyName(), "true");
 
     prepareGsaTest(new File("target/test-classes/config/"),
         new String[] { "GettingStarted/songs.xml" },
         "/GettingStarted/SongsRepository", userName, password, host, port,
         dbName, dbVendor);
+
     songsRepository = (GSARepository) getService("/GettingStarted/SongsRepository");
 
     TransactionDemarcation td = new TransactionDemarcation();

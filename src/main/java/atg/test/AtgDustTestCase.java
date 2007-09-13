@@ -29,7 +29,7 @@ import atg.nucleus.servlet.NucleusServlet;
 /**
  * Wrapper class to make life a bit easier when using the
  * http://atgdust.sourceforge.net test harness. Example usage can be found in
- * {@link SongRepositoryTest}.
+ * test.SongRepositoryTest.
  * 
  * @author robert
  */
@@ -37,6 +37,38 @@ public class AtgDustTestCase extends TestCase {
 
   public static enum DB_VENDOR {
     HSQLDBInMemoryDB, HSQLDBRegularDBConnection, HSQLDBFileDBConnection, MSSQLDBConnection, MySQLDBConnection, DB2DBConnection, OracleDBConnection, SolidDBConnection, SybaseDBConnection, HSQLDBDefaultInMemoryDBConnection;
+  }
+
+  /**
+   * An enum containing frequently set System properties
+   * 
+   * @author robert
+   * 
+   */
+  public static enum ATG_DUST_SYSTEM_PROPERTIES {
+
+    /**
+     * Override Property. If this one is set to true at te beginning of your
+     * test (System.setProperty(ATG_DUST_DO_NOT_DROP_TABLES.getPropertyName(),
+     * "true")) then the InitializingGSA will not drop tables. This one was
+     * needed (?) because never the less I configured the property file with
+     * 'dropTablesIfExist=false' the tables would still be dropped because some
+     * generated config file overwrote the existing one. <br/><br/> <b>This should be a
+     * temporarily solution and should be fixed in future! </b>
+     * 
+     */
+    ATG_DUST_DO_NOT_DROP_TABLES("ATG_DUST_DO_NOT_DROP_TABLES");
+
+    final String propertyName;
+
+    private ATG_DUST_SYSTEM_PROPERTIES(final String propertyName) {
+      this.propertyName = propertyName;
+    }
+
+    public String getPropertyName() {
+      return propertyName;
+    }
+
   }
 
   private static final Log log = LogFactory.getLog(AtgDustTestCase.class);
@@ -151,6 +183,8 @@ public class AtgDustTestCase extends TestCase {
     this.configPath = confPath.replace("/", File.separator);
     configDir = NucleusTestUtils.getConfigpath(this.getClass(), configPath);
 
+    log.info("configPath: " + configPath);
+
     for (final String service : propertyFiles) {
       log.debug("Service: " + service);
 
@@ -170,8 +204,8 @@ public class AtgDustTestCase extends TestCase {
         final String dst = configDir.getPath() + service
             + ".properties".replaceAll("/", File.separator);
 
-        log.debug("Source: " + src);
-        log.debug("Dest: " + dst);
+        log.info("Source: " + src);
+        log.info("Dest: " + dst);
         final FileChannel srcChannel = new FileInputStream(src).getChannel();
         final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
         dstChannel.transferFrom(srcChannel, 0, srcChannel.size());

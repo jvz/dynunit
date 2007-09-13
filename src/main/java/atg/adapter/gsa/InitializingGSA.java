@@ -14,6 +14,8 @@
 
 package atg.adapter.gsa;
 
+import static atg.test.AtgDustTestCase.ATG_DUST_SYSTEM_PROPERTIES.ATG_DUST_DO_NOT_DROP_TABLES;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -74,7 +76,10 @@ public class InitializingGSA extends GSARepository {
   }
 
   public boolean isDropTablesIfExist() {
-    return mDropTables;
+    // this should be a temporarily solution and should be fixed in future!
+    return System.getProperty(ATG_DUST_DO_NOT_DROP_TABLES.getPropertyName()) == null
+        || System.getProperty(ATG_DUST_DO_NOT_DROP_TABLES.getPropertyName())
+            .equalsIgnoreCase("false") ? mDropTables : false;
   }
 
   // the XML files containing export data from the TemplateParser
