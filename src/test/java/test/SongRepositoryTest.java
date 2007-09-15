@@ -14,8 +14,6 @@ import atg.repository.RepositoryException;
 import atg.repository.RepositoryItem;
 import atg.test.AtgDustTestCase;
 
-import com.mycompany.ToBeTested;
-
 /**
  * 
  * Example test case to illustrate the usage of AtgDustTestCase built-in
@@ -58,9 +56,12 @@ public class SongRepositoryTest extends AtgDustTestCase {
    * @throws Exception
    */
   public void testWithInMemoryDb() throws Exception {
-    prepareGsaTest(new File("target/test-classes/config/"),
+    prepareRepositoryTest(new File("target/test-classes/config/"),
         new String[] { "GettingStarted/songs.xml" },
         "/GettingStarted/SongsRepository");
+
+    // The actual test is quite generic. The only difference is the way the
+    // repository is prepared by the prepareRepositoryTest method
     songsRepositoryTest();
   }
 
@@ -79,28 +80,16 @@ public class SongRepositoryTest extends AtgDustTestCase {
    */
   public void _testWithExistingMysqlDb() throws Exception {
 
-    final DbVendor dbVendor = MySQLDBConnection;
-
-    prepareGsaTest(new File("target/test-classes/config/"),
+    prepareRepositoryTest(new File("target/test-classes/config/"),
         new String[] { "GettingStarted/songs.xml" },
         "/GettingStarted/SongsRepository", userName, password, host, port,
-        dbName, dbVendor, false);
-    songsRepositoryTest();
-  }
+        dbName, MySQLDBConnection, false);
 
-  /**
-   * Also disabled because it's a test against a mysql repository
-   * 
-   * @throws Exception
-   */
-  public void _testConfigBug() throws Exception {
-    final DbVendor dbVendor = MySQLDBConnection;
-    prepareGsaTest(new File("target/test-classes/config/"),
-        new String[] { "GettingStarted/songs.xml" },
-        "/GettingStarted/SongsRepository", userName, password, host, port,
-        dbName, dbVendor, false);
-    final ToBeTested simpleComponent = (ToBeTested) getService("/test/TestComponent");
-    assertNotNull(simpleComponent);
+    // this was a small test to fix some configuration related bug I was having
+    assertNotNull(getService("/test/TestComponent"));
+
+    // The actual test is quite generic. The only difference is the way the
+    // repository is prepared by the prepareRepositoryTest method
     songsRepositoryTest();
   }
 
@@ -123,8 +112,8 @@ public class SongRepositoryTest extends AtgDustTestCase {
       // Try to get it back from the repository
       String id = artist.getRepositoryId();
       RepositoryItem retrievedArtist = songsRepository.getItem(id, "artist");
-      assertEquals(artist, retrievedArtist);
 
+      assertEquals(artist, retrievedArtist);
     }
     finally {
       // End the transaction, roll-back to restore original database state
