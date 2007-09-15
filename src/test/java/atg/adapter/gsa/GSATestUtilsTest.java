@@ -19,6 +19,9 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Unit Test for the GSATestUtils class.
  * 
@@ -26,6 +29,8 @@ import junit.framework.TestCase;
  * @version $Revision: #4 $
  */
 public class GSATestUtilsTest extends TestCase {
+
+  private static final Log log = LogFactory.getLog(GSATestUtilsTest.class);
 
   public static void main(String[] args) {
     junit.textui.TestRunner.run(GSATestUtilsTest.class);
@@ -47,27 +52,32 @@ public class GSATestUtilsTest extends TestCase {
 
   /**
    * Constructor for GSATestUtilsTest.
+   * 
    * @param arg0
    */
   public GSATestUtilsTest(String arg0) {
     super(arg0);
   }
 
-  public void testInitializeMinimalConfigpath() throws Exception{
-    String [] defFiles = {"atg/adapter/gsa/rep1.xml","atg/adapter/gsa/rep2.xml"};
+  public void testInitializeMinimalConfigpath() throws Exception {
+    String[] defFiles = { "atg/adapter/gsa/rep1.xml",
+        "atg/adapter/gsa/rep2.xml" };
 
-    File root = new File("./testingconfig");
-    File propFile = new File(root.getAbsolutePath() + "/foo/bar/Repository.properties");
-    if (propFile.exists()) propFile.delete();
+    File root = new File("target/test-classes/".replace("/", File.separator));
+    File propFile = new File(root.getAbsolutePath()
+        + "/foo/bar/Repository.properties");
+    if (propFile.exists())
+      propFile.delete();
     assertFalse(propFile.exists());
     Properties props = new Properties();
     props.put("driver", "org.hsqldb.jdbcDriver");
     props.put("URL", "jdbc:hsqldb:mem:testdb");
     props.put("user", "sa");
     props.put("password", "");
-    GSATestUtils.getGSATestUtils().initializeMinimalConfigpath(root, "/foo/bar/Repository", defFiles, props, null, null, null);
+    GSATestUtils.getGSATestUtils().initializeMinimalConfigpath(root,
+        "/foo/bar/Repository", defFiles, props, null, null, null);
     assertTrue(propFile.exists());
-    System.out.println(propFile.getAbsolutePath());
+    log.info(propFile.getAbsolutePath());
     GSATestUtils.getGSATestUtils().cleanup();
 
   }

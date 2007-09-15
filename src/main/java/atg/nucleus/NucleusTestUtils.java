@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import atg.core.util.StringUtils;
 import atg.nucleus.naming.ComponentName;
 import atg.nucleus.servlet.NucleusServlet;
@@ -45,6 +48,8 @@ import atg.vfs.VirtualPath;
  * 
  */
 public class NucleusTestUtils {
+  
+  private static final Log log = LogFactory.getLog(NucleusTestUtils.class);
 
   /**
    * Searches for a given file in Nucleus' configpath.
@@ -59,10 +64,10 @@ public class NucleusTestUtils {
     ConfigurationFileSystems cfs = n.getConfigurationFileSystems();
     VirtualPath path = new VirtualPath(pPath, "/");
     VirtualFileSystem[] vfss = cfs.getFileSystems();
-    for (int i = 0; i < vfss.length; i++) {
-      System.out.println("file system[" + i + "] " + vfss[i]);
-      VirtualFile vfile = vfss[i].getFile(path);
-      System.out.println(" virtual file for " + path + " = " + vfile);
+    for (final VirtualFileSystem vfs : vfss) {
+      log.info("file system: " + vfs);
+      VirtualFile vfile = vfs.getFile(path);
+      log.info(" virtual file for " + path + " = " + vfile);
     }
   }
 
@@ -70,15 +75,15 @@ public class NucleusTestUtils {
    * Creates an Initial.properties file pRoot The root directory of the
    * configpath pInitialServices A list of initial services
    */
-  public static File createInitial(File pRoot, List pInitialServices)
+  public static File createInitial(File pRoot, List<String> pInitialServices)
       throws IOException {
     Properties prop = new Properties();
-    Iterator iter = pInitialServices.iterator();
-    StringBuffer services = new StringBuffer();
+    Iterator<String> iter = pInitialServices.iterator();
+    StringBuilder services = new StringBuilder();
     while (iter.hasNext()) {
       if (services.length() != 0)
         services.append(",");
-      services.append((String) iter.next());
+      services.append(iter.next());
     }
     prop.put("initialServices", services.toString());
     return NucleusTestUtils.createProperties("Initial", new File(pRoot

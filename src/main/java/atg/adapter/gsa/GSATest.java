@@ -24,6 +24,10 @@ import java.util.Properties;
 import java.util.Random;
 
 import junit.framework.TestCase;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import atg.beans.DynamicPropertyDescriptor;
 import atg.core.util.StringUtils;
 import atg.nucleus.Nucleus;
@@ -42,8 +46,9 @@ import atg.test.DBUtils;
  *
  */
 public  class GSATest extends TestCase {
+  private static final Log log = LogFactory.getLog(GSATest.class);
 
-  private HashMap mConfigDir = new HashMap();
+  private HashMap<String, File> mConfigDir = new HashMap<String, File>();
   /**
    * 
    */
@@ -260,7 +265,7 @@ public  class GSATest extends TestCase {
     if (gen == null)
       return null;
   
-    Class[] types = desc.getIdTypes();
+    Class<?>[] types = desc.getIdTypes();
     String[] idSpaceNames = desc.getIdSpaceNames();
     Object[] newId = new Object[types.length];
   
@@ -302,6 +307,8 @@ public  class GSATest extends TestCase {
   
     return desc.generateGSAId(newId);
   }
+  
+  @SuppressWarnings("unchecked")
   protected Object generateDummyValue(RepositoryPropertyDescriptor propertyDescriptor) {
     if (getEnumeratedValues(propertyDescriptor) != null) {
       return null;// ignore enums for now.
@@ -356,7 +363,7 @@ public  class GSATest extends TestCase {
     String[] ret = (pe == null) ? null : pe.getTags();
   
     // make sure it's not just a boolean value
-    Class type = pDescriptor.getPropertyType();
+    Class<?> type = pDescriptor.getPropertyType();
     if ((type == Boolean.class || type == Boolean.TYPE)
         && ret != null
         && ret.length == 2
@@ -374,19 +381,17 @@ public  class GSATest extends TestCase {
    **/
   PropertyEditor getPropertyEditor(DynamicPropertyDescriptor pDescriptor) {
     if(pDescriptor == null ) return null;
-    Class peclass = pDescriptor.getPropertyEditorClass();
+    Class<?> peclass = pDescriptor.getPropertyEditorClass();
     if (peclass == null) {
       return pDescriptor.getUIPropertyEditor();
     } else {
       Object peinst = null;
       try {
         peinst = peclass.newInstance();
-      } catch (InstantiationException exp) {
-        // TODO:ashish Auto-generated catch block
-        exp.printStackTrace();
-      } catch (IllegalAccessException exp) {
-        // TODO:ashish Auto-generated catch block
-        exp.printStackTrace();
+      } catch (InstantiationException e) {
+        log.error("Error: ", e);
+      } catch (IllegalAccessException e) {
+        log.error("Error: ", e);
       }
       if (peinst instanceof PropertyEditor) {
         return (PropertyEditor) peinst;
@@ -407,15 +412,15 @@ public  class GSATest extends TestCase {
   private Object generateTimestamp() {
     return new Timestamp(System.currentTimeMillis());
   }
-  /**
-   * @return
-   */
-  private Object generateBinary() {
-    byte[] bytes = new byte[100];
-    Random random = new Random();
-    random.nextBytes(bytes);
-    return bytes;
-  }
+//  /**
+//   * @return
+//   */
+//  private Object generateBinary() {
+//    byte[] bytes = new byte[100];
+//    Random random = new Random();
+//    random.nextBytes(bytes);
+//    return bytes;
+//  }
   /**
    * @return
    */

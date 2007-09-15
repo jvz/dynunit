@@ -23,6 +23,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import atg.adapter.gsa.xml.TemplateParser;
 import atg.adapter.gsa.xml.VersioningContextUtil;
 import atg.adapter.version.VersionRepository;
@@ -81,6 +84,9 @@ import atg.repository.RepositoryException;
  */
 
 public class InitializingVersionRepository extends VersionRepository {
+  
+  private static final Log log = LogFactory.getLog(InitializingVersionRepository.class);
+  
   // -----------------------------------
   // ---From Properties File------------	
   // do we want to create tables if they don't exist
@@ -657,7 +663,7 @@ public class InitializingVersionRepository extends VersionRepository {
       // before executing the createFiles we always execute the drop files
       String[] dropFiles = getSpecifiedDropFiles();
       executeSqlFiles(dropFiles, false);
-      System.out.println(createFiles);
+      log.info(createFiles);
       executeSqlFiles(createFiles, true);
       return true;
     }

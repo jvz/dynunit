@@ -66,6 +66,23 @@
   </scm>
   <build>
     <plugins>
+    
+     <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>.</directory>
+              <includes>
+                <include>testingconfig</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+    
+    
       <plugin>
         <artifactId>maven-scm-plugin</artifactId>
         <configuration>
@@ -79,7 +96,7 @@
           <target>1.5</target>
         </configuration>
       </plugin>
-<!--
+      <!--
       <plugin>
         <artifactId>maven-clover-plugin</artifactId>
         <executions>
@@ -94,7 +111,7 @@
           <jdk>1.5</jdk>
         </configuration>
       </plugin>
--->
+      -->
     </plugins>
   </build>
   <dependencies>
@@ -146,14 +163,27 @@
       <artifactId>jsp-api</artifactId>
       <version>2.0</version>
     </dependency>
+    
+    <!--
+    <dependency>
+      <groupId>mysql-connector</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.0.7</version>
+      <scope>provided</scope>
+    </dependency>
+    -->
   </dependencies>
   <reporting>
     <plugins>
-<!--
+    <!--
       <plugin>
         <artifactId>maven-clover-plugin</artifactId>
+         <configuration>
+         <jdk>1.5</jdk>
+         </configuration>
       </plugin>
--->
+      -->
+      
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>

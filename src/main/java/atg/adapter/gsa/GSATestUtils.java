@@ -38,6 +38,10 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import junit.framework.Assert;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import atg.adapter.gsa.xml.TemplateParser;
 import atg.adapter.gsa.xml.VersioningContextUtil;
 import atg.adapter.version.VersionRepository;
@@ -64,12 +68,14 @@ import atg.versionmanager.exceptions.VersionException;
  * @version $Revision: #28 $
  */
 public class GSATestUtils {
-  public static List mFilesCreated = new ArrayList();
+  public static List<File> mFilesCreated = new ArrayList<File>();
   public static String sClassName = "atg.adapter.gsa.InitializingGSA";
   public static String sVersionedClassName = "atg.adapter.gsa.InitializingVersionRepository";
   private boolean mVersioned = false;
   private static GSATestUtils SINGLETON_DEFAULT = null;
   private static GSATestUtils SINGLETON_VERSIONED = null;
+  
+  private static final Log log = LogFactory.getLog(GSATestUtils.class);
 
   /**
    * @param pB
@@ -283,9 +289,9 @@ public class GSATestUtils {
    *  
    */
   public  void cleanup() {
-    Iterator iter = mFilesCreated.iterator();
+    Iterator<File> iter = mFilesCreated.iterator();
     while (iter.hasNext()) {
-      File f = (File) iter.next();
+      File f =  iter.next();
       f.delete();
     }
     mFilesCreated.clear();
@@ -674,14 +680,13 @@ public class GSATestUtils {
     for (int i = 0; i < pDefinitionFiles.length; i++) {
       Object obj = this.getClass().getClassLoader().getResource(pDefinitionFiles[i]);
       if (obj != null) {
-        System.out
-            .println("DEBUG: Repository definition file "
+        log.debug("Repository definition file "
                 + pDefinitionFiles[i]
                 + " Does not exist in configpath. But it does in classpath. Copying over to configpath");
         copyToConfigpath(pRoot, pDefinitionFiles[i]);
       } else if(obj == null && !new File(pRoot, pDefinitionFiles[i]).exists()){
         throw new AssertionError("ERROR: Repository definition file "
-            + pDefinitionFiles[i] + "  not found in classpath or configpath." + pRoot);
+            + pDefinitionFiles[i] + "  not found in classpath or configpath: " + pRoot);
       }
         
       definitionFiles.append("/"+pDefinitionFiles[i]);
@@ -918,7 +923,7 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
    * Returns all the tables names used for the given repository.
    */
   public   String []  getTableNames(GSARepository pRepository) throws Exception {
-    ArrayList names = new ArrayList();
+    ArrayList<String> names = new ArrayList<String>();
     String[] descriptorNames = pRepository.getItemDescriptorNames();
     
     GSAItemDescriptor itemDescriptors[];
@@ -930,8 +935,8 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
       itemDescriptors[i] = (GSAItemDescriptor)pRepository.getItemDescriptor(descriptorNames[i]);
     }
     
-    String create = null;
-    String index = null;
+  //  String create = null;
+ //   String index = null;
     for (i=0; i<length; i++) {
       GSAItemDescriptor desc = itemDescriptors[i];
       Table[] tables = desc.getTables();
@@ -956,7 +961,7 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
   public  void assertEmptyRepository(DBUtils dbTwo, GSARepository storeRepository) throws Exception, SQLException {
     String [] namesAfter  = getTableNames(storeRepository);
     for (int i = 0 ; i < namesAfter.length; i++) {
-      System.out.println(namesAfter[i] + ":" + dbTwo.getRowCount(namesAfter[i]));
+      log.info(namesAfter[i] + ":" + dbTwo.getRowCount(namesAfter[i]));
       Assert.assertEquals(0,dbTwo.getRowCount(namesAfter[i]));
     }
   }
@@ -981,7 +986,7 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
     }
     catch (SQLException e) {
       // drop and try again
-      System.out.println("DROPPING DAS_ID_GENERATOR");
+      log.info("DROPPING DAS_ID_GENERATOR");
       db.update("drop table das_id_generator");
       if(!db.isDB2())
         db
@@ -1045,14 +1050,14 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
    * @param pTable
    * @throws SQLException
    */
-  public static void dumpTable(Table pTable, Collection pPrintColumnNames) throws SQLException {
+  public static void dumpTable(Table pTable, Collection<String> pPrintColumnNames) throws SQLException {
     GSARepository gsa = pTable.getItemDescriptor().getGSARepository();
     Connection c = null;
     PreparedStatement st = null;
     try {
       c = gsa.getConnection();
       pTable.loadColumnInfo(c);
-      Collection colNames = pPrintColumnNames;
+      Collection<String> colNames = pPrintColumnNames;
       Map map = ((Map) gsa.getColumnInfoCache().get(
           pTable.mName));
       if(map == null)
@@ -1060,7 +1065,7 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
           pTable.mName.toUpperCase()));
       if(pPrintColumnNames.isEmpty())
       colNames = map.keySet();
-      Iterator iter0 = colNames.iterator();
+      Iterator<String> iter0 = colNames.iterator();
       String sql = "SELECT ";
       while (iter0.hasNext()) {
         Object obj = iter0.next();
@@ -1074,10 +1079,10 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
       ResultSet rs = st.executeQuery();
       System.out.print("DUMP FOR TABLE: " + pTable.getBaseName().toUpperCase()
           + "\n");
-      Iterator iter1 = colNames.iterator();
+      Iterator<String> iter1 = colNames.iterator();
       int truncateThreshold = 20;
       while (iter1.hasNext()) {
-        String colname  = (String) iter1.next();
+        String colname  =  iter1.next();
         System.out.print( colname.substring(0, colname.length() > 18 ? 18:colname.length()));
         for (int i = 0; i < truncateThreshold-colname.length(); i++) {
           System.out.print(" ");
@@ -1087,9 +1092,10 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
       System.out.print("\n");
       while (rs.next()) {
         int i = 1;
-        Iterator iter = colNames.iterator();
+        Iterator<String> iter = colNames.iterator();
         while (iter.hasNext()) {
-          String columnName = (String) iter.next();
+          //String columnName =  iter.next();
+          iter.next();
           Object obj = rs.getObject(i++);
           if(obj == null) obj = "NULL";
           System.out.print( obj.toString().substring(0, obj.toString().length() > truncateThreshold ? truncateThreshold:obj.toString().length()));
@@ -1102,7 +1108,6 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
 //            }
 //          System.out.print(obj.toString().substring(0, (obj.toString().length() > columnName.length()+18 ? columnName.length(): obj.toString().length()) ) + "        ");
         }
-        System.out.println();
       }
     } finally {
       if (st != null)
@@ -1117,7 +1122,7 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
   public static void dumpTables(GSARepository pRepository, String pItemDescriptorName) throws RepositoryException, SQLException {
     GSAItemDescriptor itemdesc = (GSAItemDescriptor) pRepository.getItemDescriptor(pItemDescriptorName);
     Table[] tables = itemdesc.getTables();
-    HashSet doneTables = new HashSet();
+    HashSet<String> doneTables = new HashSet<String>();
     for (int i = 0; tables != null && i < tables.length; i++) {
       Table table = tables[i];
       if(doneTables.contains(table.getName())) continue;

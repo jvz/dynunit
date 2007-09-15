@@ -18,11 +18,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
 * THIS IS A REALLY SIMPLE APPLICATION THAT
@@ -37,6 +41,8 @@ import java.util.Vector;
 */
 public class SQLFileParser
 {
+  
+  private static final Log log = LogFactory.getLog(SQLFileParser.class);
 
 // ****************************************
 // THERE IS ONLY ONE CLASS VARIABLE
@@ -295,7 +301,7 @@ public class SQLFileParser
 
 
 
-	private Vector readFileAndLoadData ()
+	private List<String> readFileAndLoadData ()
 	{
 
 // ****************************************
@@ -330,7 +336,7 @@ public class SQLFileParser
 		boolean bKeywordAlreadyFound = false;
 		boolean bKeywordInString = false;
 
-		Vector vSql = new Vector();
+		List<String> vSql = new ArrayList<String>();
 
 		BufferedReader in = null;
 
@@ -381,7 +387,7 @@ public class SQLFileParser
 
 				while (line != null) // It is not the end of the file, LOOK FOR KEY WORDS
 				{
-					//System.out.println ("DEBUG:" + line);
+					//log.info ("DEBUG:" + line);
 
 					lineTemp = line;
 					lineTemp = checkForComments(lineTemp);
@@ -393,7 +399,7 @@ public class SQLFileParser
 					if ( bKeywordInString && isStartOfStoredProcedure( lineTemp ) ) {
 
 						String command = parseStoredProcedure( lineTemp, in );
-						vSql.addElement( command );
+						vSql.add( command );
 						line = in.readLine();
 						continue;
 					}
@@ -402,7 +408,7 @@ public class SQLFileParser
                                         // if specially.  added to work around bug 64622
                                         if ( bKeywordInString && isStartOfIfExistsCommand( lineTemp ) ) {
                                                 String command = parseIfExistsCommand( lineTemp, in );
-                                                vSql.addElement( command );
+                                                vSql.add( command );
                                                 line = in.readLine();
                                                 continue;
                                         }
@@ -413,7 +419,7 @@ public class SQLFileParser
 						{
 							sSqlBuffer = checkForSemiColons(sSqlBuffer);
 							sSqlBuffer = checkForEndLines(sSqlBuffer);
-							vSql.addElement(sSqlBuffer);
+							vSql.add(sSqlBuffer);
 							sSqlBuffer = lineTemp;
 						}
 						else // (!bKeywordInString}
@@ -438,7 +444,7 @@ public class SQLFileParser
 				{
 					sSqlBuffer = checkForSemiColons(sSqlBuffer);
 					sSqlBuffer = checkForEndLines(sSqlBuffer);
-					vSql.addElement(sSqlBuffer);
+					vSql.add(sSqlBuffer);
 				}
 				catch (Exception ex)
 				{
@@ -530,7 +536,7 @@ public class SQLFileParser
 	}
 
 
-	public synchronized Collection parseSQLFiles( String[] pFiles )
+	public synchronized Collection<String> parseSQLFiles( String[] pFiles )
 	{
                 setFileNameArray( pFiles );
 // ****************************************
@@ -540,16 +546,16 @@ public class SQLFileParser
 // STATEMENTS.  MOST OF THESE WILL TEND
 // TO BE CREATE AND DROP STATEMENTS.
 // ****************************************
-		Vector v = new Vector();
+		List<String> v = new ArrayList<String>();
 		v = readFileAndLoadData();
 		String s = "";
 		for (int i=0;i<v.size();i++)
 		{
-			s = v.elementAt(i).toString();
+			s = v.get(i).toString();
 			s = trimDebuggingCharacters (s);
 
 			if ( logToSystemOut ) {
-				//System.out.println("\n\n" + s );
+				//log.info("\n\n" + s );
 			} else {
 			  //  if (isLoggingInfo ()) logInfo(s);
 			}
@@ -558,7 +564,7 @@ public class SQLFileParser
 		return v;
 	}
 
-        public Collection parseSQLFile( String pFile )
+        public Collection<String> parseSQLFile( String pFile )
         {
             String[] files = { pFile };
             return parseSQLFiles( files );
@@ -570,9 +576,9 @@ public class SQLFileParser
 	{
 		SQLFileParser t = new SQLFileParser();
 		t.logToSystemOut = true;
-		Iterator cmds = t.parseSQLFiles( args ).iterator();
+		Iterator<String> cmds = t.parseSQLFiles( args ).iterator();
 		  while ( cmds.hasNext() ) {
-		   System.out.println("\n\n" + cmds.next() );
+		   log.info("\n\n" + cmds.next() );
 		  }
 	}
 

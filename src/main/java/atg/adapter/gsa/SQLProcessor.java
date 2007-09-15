@@ -27,6 +27,9 @@ import java.util.Vector;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import atg.dtm.TransactionDemarcation;
 import atg.dtm.TransactionDemarcationException;
 import atg.nucleus.GenericService;
@@ -43,6 +46,8 @@ public
 class SQLProcessor
 {
   // =============== MEMBER VARIABLES =================
+  
+  private static final Log log = LogFactory.getLog(SQLProcessor.class);
 
   DataSource mDataSource;
   /** sets the DataSource from which to get DB connections
@@ -406,7 +411,7 @@ class SQLProcessor
           String sql = getDropTableSQL() + " " + pName;
           if ( pCascadeConstraints ) sql = sql + " CASCADE CONSTRAINTS";
 
-          if ( pPreview ) System.out.println( sql );
+          if ( pPreview ) log.info( sql );
           else executeSQL( sql );
        }
 

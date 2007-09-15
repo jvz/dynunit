@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -39,6 +41,8 @@ import atg.xml.tools.XMLToolsFactory;
  */
 public class XmlUtils
 {
+  
+  private static final Log log = LogFactory.getLog(XmlUtils.class);
       /** Initializes the XML file to be parsed and gets the Document tree for it.
        *  @param File the XML file to parse
        *  @param boolean true if the file should be validated against its DTD; otherwise false.
@@ -319,7 +323,7 @@ public class XmlUtils
       public static void main( String[] pArgs ) {
           String file = "C:\\temp\\registry.xml";
 		  //String file = "/work/systest/qma/temp/registry.xml";
-          System.out.println("bea's registry file:=[" + file + "]");
+          log.info("bea's registry file:=[" + file + "]");
           String[] children = { "host", "product", "release" };
           try {
             List nodes = getNodes( new File(file), false, children );
@@ -331,17 +335,17 @@ public class XmlUtils
                 Iterator iter = nodes.iterator();
                 while ( iter.hasNext() ) {
                     Node n = (Node) iter.next();
-                    System.out.println("Got Node: " + getAttribute(n, "level") + "/" + getAttribute(n,"ServicePackLevel") );
+                    log.info("Got Node: " + getAttribute(n, "level") + "/" + getAttribute(n,"ServicePackLevel") );
                 }
             }
           } catch (Throwable t) {
               t.printStackTrace();
           }
 
-          System.out.println("-------------------");
-          System.out.println("BEA Version: " + atg.junit.nucleus.TestUtils.getBeaVersion() );
+          log.info("-------------------");
+          log.info("BEA Version: " + atg.junit.nucleus.TestUtils.getBeaVersion() );
           //System.setProperty("bea.home","c:\\bea");
-          //System.out.println("BEA Version: " + atg.junit.nucleus.TestUtils.getBeaVersion() );
+          //log.info("BEA Version: " + atg.junit.nucleus.TestUtils.getBeaVersion() );
 
       }
 }

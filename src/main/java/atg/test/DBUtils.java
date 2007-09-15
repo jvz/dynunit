@@ -26,6 +26,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import atg.adapter.gsa.GSATestUtils;
 import atg.adapter.gsa.SQLFileParser;
 import atg.core.util.StringUtils;
@@ -41,6 +44,8 @@ public class DBUtils {
 
   public Connection conn; //our connnection to the db - presist for life of
   private Properties mJDBCProperties;
+  
+  private static final Log log = LogFactory.getLog(DBUtils.class);
   // ---------------------------
   /**
    * Returns a Properties object preconfigured to create
@@ -276,7 +281,7 @@ public class DBUtils {
         pPassword); // password
     mDatabaseType = conn.getMetaData().getDatabaseProductName();
     mDatabaseVersion = conn.getMetaData().getDatabaseProductVersion();
-    System.out.println("Connected to "
+    log.info("Connected to "
         + mDatabaseType + " Version: "+ mDatabaseVersion);
     executeCreateIdGenerator();
   }
@@ -339,7 +344,7 @@ public class DBUtils {
 
   //use for SQL commands CREATE, DROP, INSERT and UPDATE
   public synchronized void update(String expression) throws SQLException {
-    //System.out.println("DBUtils.update : " + expression);
+    //log.info("DBUtils.update : " + expression);
     Statement st = null;
 
     st = conn.createStatement(); // statements
@@ -347,7 +352,7 @@ public class DBUtils {
     int i = st.executeUpdate(expression); // run the query
 
     if (i == -1) {
-      System.out.println("db error : " + expression);
+      log.info("db error : " + expression);
     }
 
     st.close();
@@ -375,7 +380,7 @@ public class DBUtils {
         System.out.print(o.toString() + " ");
       }
 
-      System.out.println(" ");
+      log.info(" ");
     }
   } //void dump( ResultSet rs )
   
@@ -395,7 +400,7 @@ public class DBUtils {
               + " suffix  varchar(10)   default  null, primary key (id_space_name)) ");
     } catch (SQLException e) {
       // drop and try again
-      System.out.println("DROPPING DAS_ID_GENERATOR");
+      log.info("DROPPING DAS_ID_GENERATOR");
       try {
         update("drop table das_id_generator");
       } catch (SQLException ex) {
@@ -414,12 +419,12 @@ public class DBUtils {
   }
   
   public void executeSQLFile(File pFile) {
-    System.out.println("Attemping to execute " + pFile);
+    log.info("Attemping to execute " + pFile);
     SQLFileParser parser = new SQLFileParser();
-    Collection c = parser.parseSQLFile(pFile.getAbsolutePath());
-    Iterator cmds = c.iterator();
+    Collection<String> c = parser.parseSQLFile(pFile.getAbsolutePath());
+    Iterator<String> cmds = c.iterator();
     while (cmds.hasNext()) {
-      String cmd = (String) cmds.next();
+      String cmd =  cmds.next();
       try {
         if ("Oracle".equals(mDatabaseType)) {
           cmd = StringUtils.replace(cmd, "numeric", "NUMBER");
@@ -427,11 +432,11 @@ public class DBUtils {
           cmd = StringUtils.replace(cmd, "varchar(", "VARCHAR2(");
           cmd = StringUtils.replace(cmd, "binary", "RAW (250)");
         }
-        System.out.println("Executing " + cmd);
+        log.info("Executing " + cmd);
         update(cmd);
       }    
       catch (SQLException e) {
-        System.out.println(e.getMessage());
+        log.info(e.getMessage());
       }
     }    
   }

@@ -13,17 +13,15 @@
  */
 
 package atg.adapter.gsa;
-
-import static atg.test.AtgDustTestCase.ATG_DUST_SYSTEM_PROPERTIES.ATG_DUST_DO_NOT_DROP_TABLES;
+import static atg.test.AtgDustTestCase.AtgDustSystemProperties.ATG_DUST_DROP_TABLES;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
-import java.util.Set;
-import java.util.Vector;
 
 import javax.transaction.TransactionManager;
 
@@ -31,10 +29,8 @@ import atg.adapter.gsa.xml.TemplateParser;
 import atg.dtm.TransactionDemarcation;
 import atg.dtm.TransactionDemarcationException;
 import atg.junit.nucleus.TestUtils;
-import atg.naming.NameContext;
 import atg.naming.NameContextBindingEvent;
 import atg.nucleus.Configuration;
-import atg.nucleus.GenericService;
 import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusNameResolver;
 import atg.nucleus.ServiceEvent;
@@ -77,9 +73,30 @@ public class InitializingGSA extends GSARepository {
 
   public boolean isDropTablesIfExist() {
     // this should be a temporarily solution and should be fixed in future!
-    return System.getProperty(ATG_DUST_DO_NOT_DROP_TABLES.getPropertyName()) == null
-        || System.getProperty(ATG_DUST_DO_NOT_DROP_TABLES.getPropertyName())
-            .equalsIgnoreCase("false") ? mDropTables : false;
+
+    final String dropTableProperty = System.getProperty(ATG_DUST_DROP_TABLES
+        .getPropertyName());
+
+    if (dropTableProperty == null) {
+      return mDropTables;
+    }
+
+    else if (dropTableProperty.equalsIgnoreCase("false")) {
+      return false;
+    }
+
+    else if (dropTableProperty.equalsIgnoreCase("true") && mDropTables
+        || mDropTables) {
+      return true;
+    }
+
+    else if (!mDropTables) {
+      return false;
+    }
+    else {
+      return false;
+    }
+
   }
 
   // the XML files containing export data from the TemplateParser
@@ -102,7 +119,7 @@ public class InitializingGSA extends GSARepository {
     if (f == null)
       return null;
 
-    Vector v = new Vector();
+    List<String> v = new ArrayList<String>();
     for (int i = 0; i < f.length; i++) {
       if (!v.contains(f[i].getAbsolutePath()))
         v.add(f[i].getAbsolutePath());
@@ -533,7 +550,7 @@ public class InitializingGSA extends GSARepository {
     // bound to the same name context as the original repository
     // This changes will make sure that getAbsoluteName() returns
     // a correct value.
-    NameContext nc = ((GenericService) this).getNameContext();
+    //NameContext nc = ((GenericService) this).getNameContext();
     NameContextBindingEvent bindingEvent = new NameContextBindingEvent(this
         .getName(), newRepository, this.getNameContext());
     newRepository.nameContextElementBound(bindingEvent);
@@ -610,7 +627,7 @@ public class InitializingGSA extends GSARepository {
     }
 
     // otherwise, just drop tables based on startSQLRepository SQL
-    Vector statements = getCreateStatements(null, null);
+    List<String> statements = getCreateStatements(null, null);
     SQLProcessorEngine processor = getSQLProcessor();
     processor.dropTablesFromCreateStatements(statements);
   }
@@ -655,7 +672,7 @@ public class InitializingGSA extends GSARepository {
       if (isLoggingDebug())
         spe.setLoggingDebug(true);
 
-      Vector createStatements = getCreateStatements(null, null);
+      List<String> createStatements = getCreateStatements(null, null);
       createdTables = spe.createTables(createStatements, isDropTablesIfExist());
     }
 
@@ -779,10 +796,10 @@ public class InitializingGSA extends GSARepository {
    * @exception RepositoryException
    *              if an error occurs with the Repository
    */
-  private Vector getCreateStatements(PrintWriter pOut, String pDatabaseName)
+  private List<String> getCreateStatements(PrintWriter pOut, String pDatabaseName)
       throws RepositoryException {
-    Vector tableStatements = new Vector();
-    Vector indexStatements = new Vector();
+    List<String> tableStatements = new ArrayList<String>();
+    List<String> indexStatements = new ArrayList<String>();
 
     // use current database if none is supplied
     if (pDatabaseName == null)
@@ -791,7 +808,7 @@ public class InitializingGSA extends GSARepository {
     String[] descriptorNames = getItemDescriptorNames();
     OutputSQLContext sqlContext = new OutputSQLContext(pOut);
     GSAItemDescriptor itemDescriptors[];
-    DatabaseTableInfo dti = getDatabaseTableInfo(pDatabaseName);
+//    DatabaseTableInfo dti = getDatabaseTableInfo(pDatabaseName);
     int i, length = descriptorNames.length;
 
     itemDescriptors = new GSAItemDescriptor[length];
@@ -973,10 +990,10 @@ public class InitializingGSA extends GSARepository {
     if (getSqlDropFiles() == null)
       setSqlDropFiles(new Properties());
     // make sure all the keys are valid
-    Set keys = new HashSet();
+    List<Object> keys = new ArrayList<Object>();
     keys.addAll(getSqlCreateFiles().keySet());
     keys.addAll(getSqlDropFiles().keySet());
-    Set allow_keys = new HashSet();
+    List<String> allow_keys = new ArrayList<String>();
     for (int i = 0; i < dbTypes.length; i++) {
       keys.remove(dbTypes[i]);
       if (!dbTypes[i].equals(SYBASE2))
@@ -1045,7 +1062,7 @@ public class InitializingGSA extends GSARepository {
         // switch the file path so everything is forward slashes
         file = file.replace('\\', '/');
         String cmd = null;
-        Iterator cmds = null;
+        Iterator<String> cmds = null;
         if (isLoggingInfo())
           logInfo("Executing SQL file: " + file);
         if (!new File(file).exists())
@@ -1053,7 +1070,7 @@ public class InitializingGSA extends GSARepository {
         
         // parse the file to get commands...
         try {
-          Collection c = parser.parseSQLFile(file);
+          Collection<String> c = parser.parseSQLFile(file);
           if (isLoggingDebug())
             logDebug("Parsed " + c.size() + " SQL command(s) from file.");
           cmds = c.iterator();
@@ -1066,7 +1083,7 @@ public class InitializingGSA extends GSARepository {
         
         // then execute the commands...
         while (cmds.hasNext()) {
-          cmd = (String) cmds.next();
+          cmd = cmds.next();
           if (cmd.trim().length() == 0) continue;
           if (isLoggingDebug() || isLoggingCreateTables())
             logDebug("Executing SQL cmd [" + cmd + "]");

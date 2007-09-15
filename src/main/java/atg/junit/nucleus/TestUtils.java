@@ -44,6 +44,8 @@ import javax.mail.Multipart;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Node;
 
 import atg.applauncher.AppLauncher;
@@ -64,6 +66,8 @@ import atg.servlet.ServletUtil;
 public class TestUtils
   extends atg.nucleus.GenericService
 {
+  
+  private static final Log log = LogFactory.getLog(TestUtils.class);
   // names of app servers types that may be specified by the
   // 'atg.dynamo.appserver' system property
   // Dynamo currently does not distinguish between generic
@@ -849,7 +853,7 @@ public class TestUtils
       sender.setEmailHandlerHostName( MAILHOST );
       sender.sendEmailEvent( em );
     } catch (Exception e) {
-      System.out.println("Caught exception sending email: " + e.toString() );
+      log.info("Caught exception sending email: " + e.toString() );
       return false;
     }
     return true;
@@ -993,7 +997,7 @@ public class TestUtils
       sender.setEmailHandlerHostName( MAILHOST );
       sender.sendEmailEvent( em );
     } catch (Exception e) {
-      System.out.println("Caught exception sending email: " + e.toString() );
+      log.info("Caught exception sending email: " + e.toString() );
       e.printStackTrace();
     }
   }
@@ -1435,11 +1439,11 @@ public class TestUtils
 	    // to be running.
 	    try {
 	      AppModule mod = getAppLauncher().getModule(APPLICATION_PRODUCT_MODULES[i].substring(idx+1));
-	      System.out.println("\nMod: " + mod );
+	      log.info("\nMod: " + mod );
 	      if ( mod != null ) apps.add( mod );
 	      else throw new Exception(APPLICATION_PRODUCT_MODULES[i].substring(idx+1) + " not found.");
 	    } catch (Exception ale) {
-	      System.out.println("*** WARNING [atg.junit.nucleus.TestUtils] "
+	      log.info("*** WARNING [atg.junit.nucleus.TestUtils] "
 				 + "Can not resolve module '"
 				 + APPLICATION_PRODUCT_MODULES[i].substring(idx+1)
 				 + "'. "
@@ -1519,7 +1523,7 @@ public class TestUtils
   }
   /**
    * Logs a message using Nucleus.logInfo() if Nucleus is available.
-   * Otherwise it logs using System.out.println()
+   * Otherwise it logs using log.info()
    * @param pMessage
    */
   public static void log (String pMessage) {
@@ -1527,7 +1531,7 @@ public class TestUtils
     if (n != null)
       n.logInfo(pMessage);
     else
-      System.out.println(new java.util.Date() + ":" + pMessage);
+      log.info(new java.util.Date() + ":" + pMessage);
   }
     
   /** Retrieves a piece of information from the specified Manifest file.

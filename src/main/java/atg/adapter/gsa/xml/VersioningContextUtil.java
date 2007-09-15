@@ -49,10 +49,10 @@ public static VersioningContext versioningContextHelper(String pWorkspaceId, Str
 //	VersioningContext versioningContext = new VersioningContext(pWorkspaceId, pBranchId, pComment, pDoCheckin);
 
     /*
-	System.out.println("=============pWrokspaceId = " + versioningContext.getWorkspaceId());
-	System.out.println("=============pBranchId = " + versioningContext.getBranchId());
-	System.out.println("=============pComment = " + versioningContext.getComment());
-	System.out.println("=============pDoCheckin = " + versioningContext.isDoCheckin());
+	log.info("=============pWrokspaceId = " + versioningContext.getWorkspaceId());
+	log.info("=============pBranchId = " + versioningContext.getBranchId());
+	log.info("=============pComment = " + versioningContext.getComment());
+	log.info("=============pDoCheckin = " + versioningContext.isDoCheckin());
 	*/
 //	return versioningContext;
 }

@@ -1,149 +1,119 @@
 package test;
 
+import static atg.test.AtgDustTestCase.DbVendor.MySQLDBConnection;
+
 import java.io.File;
 
-import static atg.test.AtgDustTestCase.ATG_DUST_SYSTEM_PROPERTIES.ATG_DUST_DO_NOT_DROP_TABLES;
+import com.mycompany.ToBeTested;
 
 import atg.adapter.gsa.GSARepository;
 import atg.dtm.TransactionDemarcation;
+import atg.dtm.TransactionDemarcationException;
 import atg.repository.MutableRepositoryItem;
+import atg.repository.RepositoryException;
 import atg.repository.RepositoryItem;
 import atg.test.AtgDustTestCase;
 
 /**
  * 
  * Example test case to illustrate the usage of AtgDustTestCase built-in
- * database functionalities.
+ * database functionalities. Before running this test from your ide do a mvn
+ * resources:testResources to copy all needed file to the expected locations.
  * 
  * 
- * @author Robert Hellwig
+ * @author robert
  * 
  */
 public class SongRepositoryTest extends AtgDustTestCase {
 
-  private GSARepository songsRepository;
+  private final String userName = "bol-webshop";
+  private final String password = "bol-webshop";
+  private final String host = "localhost";
+  private final String port = "3306";
+  private final String dbName = "bol-webshop2";
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
-
-    final String[] propertyFiles = new String[] { "/GettingStarted/SongsRepository" };
-    useExistingPropertyFiles("src/test/resources/config", propertyFiles);
   }
 
   @Override
   public void tearDown() throws Exception {
     super.tearDown();
-    // shut down Nucleus
-    stopNucleus();
-    // Shut down HSQLDB
-    stopEmbeddedDb();
-    cleanUp();
   }
 
   /**
-   * Runs a test using an in-memory HSQL database
+   * Runs a test against an in-memory HSQL database
    * 
    * @throws Exception
    */
   public void testWithInMemoryDb() throws Exception {
-
     prepareGsaTest(new File("target/test-classes/config/"),
         new String[] { "GettingStarted/songs.xml" },
         "/GettingStarted/SongsRepository");
-    songsRepository = (GSARepository) getService("/GettingStarted/SongsRepository");
-
-    TransactionDemarcation td = new TransactionDemarcation();
-    assertNotNull(td);
-    boolean rollback = true;
-
-    assertNotNull(songsRepository);
-
-    try {
-      // Start a new transaction
-      td.begin(((GSARepository) songsRepository).getTransactionManager());
-      // Create the item
-      MutableRepositoryItem item = songsRepository.createItem("artist");
-      item.setPropertyValue("name", "name");
-      // Persist to the repository
-      songsRepository.addItem(item);
-      // Try to get it back from the repository
-      String id = item.getRepositoryId();
-      RepositoryItem item2 = songsRepository.getItem(id, "artist");
-      assertNotNull(
-          " We did not get back the item just created from the repository.",
-          item2);
-
-      // GettingStartedService gs = new GettingStartedService();
-      // gs.setSongsRepository(songsRepository);
-      //
-      // assertNotNull(gs.getAllPopSongs());
-
-      rollback = false;
-    }
-    finally {
-      // End the transaction, rollback on error
-      if (td != null) {
-        td.end(rollback);
-      }
-    }
+    songsRepositoryTest();
   }
 
   /**
    * Example test with MySQL Database. This test is disabled by default (starts
    * with "_") because the MySQL JDBC drivers are not included in the atg dust
-   * package. *
+   * package.
+   * 
+   * To make use of this test, install a mysql-connector-java (mysql jdbc
+   * driver) into your .m2/repository, un-comment the mysql dependency in the
+   * pom.xml. Test data can be found in
+   * src/test/resources/config/GettingStarted/songs-data.xml.
+   * 
    * 
    * @throws Exception
    */
   public void _testWithExistingMysqlDb() throws Exception {
-    final String userName = "userName";
-    final String password = "password";
-    final String host = "localhost";
-    final String port = "1234";
-    final String dbName = "dbName";
-    final DB_VENDOR dbVendor = DB_VENDOR.MySQLDBConnection;
-    
-    System.setProperty(ATG_DUST_DO_NOT_DROP_TABLES.getPropertyName(), "true");
+
+    final DbVendor dbVendor = MySQLDBConnection;
 
     prepareGsaTest(new File("target/test-classes/config/"),
         new String[] { "GettingStarted/songs.xml" },
         "/GettingStarted/SongsRepository", userName, password, host, port,
-        dbName, dbVendor);
+        dbName, dbVendor, false);
+    songsRepositoryTest();
+  }
 
-    songsRepository = (GSARepository) getService("/GettingStarted/SongsRepository");
+  public void _testConfigBug() throws Exception {
+    final DbVendor dbVendor = MySQLDBConnection;
+    prepareGsaTest(new File("target/test-classes/config/"),
+        new String[] { "GettingStarted/songs.xml" },
+        "/GettingStarted/SongsRepository", userName, password, host, port,
+        dbName, dbVendor, false);
+    final ToBeTested simpleComponent = (ToBeTested) getService("/test/TestComponent");
+    assertNotNull(simpleComponent);
+    songsRepositoryTest();
+  }
 
-    TransactionDemarcation td = new TransactionDemarcation();
-    assertNotNull(td);
-
+  private void songsRepositoryTest() throws TransactionDemarcationException,
+      RepositoryException {
+    GSARepository songsRepository = (GSARepository) getService("/GettingStarted/SongsRepository");
     assertNotNull(songsRepository);
+
+    final TransactionDemarcation td = new TransactionDemarcation();
+    assertNotNull(td);
 
     try {
       // Start a new transaction
-      td.begin(((GSARepository) songsRepository).getTransactionManager());
-      // Create the item
-      MutableRepositoryItem item = songsRepository.createItem("artist");
-      item.setPropertyValue("name", "name");
+      td.begin(songsRepository.getTransactionManager());
+      // Create a new artist
+      MutableRepositoryItem artist = songsRepository.createItem("artist");
+      artist.setPropertyValue("name", "joe");
       // Persist to the repository
-      songsRepository.addItem(item);
+      songsRepository.addItem(artist);
       // Try to get it back from the repository
-      String id = item.getRepositoryId();
-      RepositoryItem item2 = songsRepository.getItem(id, "artist");
-      assertNotNull(
-          " We did not get back the item just created from the repository.",
-          item2);
-
-      // GettingStartedService gs = new GettingStartedService();
-      // gs.setSongsRepository(songsRepository);
-      //
-      // assertNotNull(gs.getAllPopSongs());
+      String id = artist.getRepositoryId();
+      RepositoryItem retrievedArtist = songsRepository.getItem(id, "artist");
+      assertEquals(artist, retrievedArtist);
 
     }
     finally {
-      // End the transaction, rollback on to restore original database state
-      if (td != null) {
-        td.end(true);
-      }
+      // End the transaction, roll-back to restore original database state
+      td.end(true);
     }
   }
 }

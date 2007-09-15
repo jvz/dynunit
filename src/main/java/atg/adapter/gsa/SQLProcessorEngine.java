@@ -18,8 +18,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.sql.DataSource;
@@ -327,7 +329,7 @@ class SQLProcessorEngine
    * @exception SQLProcessorException if an error occurs trying to
    * create the tables
    */
-    public boolean createTables( Vector pStatements, boolean pDrop )
+    public boolean createTables( List<String> pStatements, boolean pDrop )
 	  throws SQLProcessorException
   {
 	  boolean createdTables = false;
@@ -336,11 +338,11 @@ class SQLProcessorEngine
 	  // in the proper order with regard to 'references' clauses
 	  if ( isLoggingDebug() )
 		  logDebug("Reordering CREATE TABLE statements so references don't fail...");
-          Vector statements = reorderCreateStatements( pStatements );
+	  List<String> statements = reorderCreateStatements( pStatements );
 
 	  // if dropping tables, do that before trying to create them
 	  // throws exception if all tables can't be dropped
-	  Vector tableNames = getTableNames( statements );
+	  List<String> tableNames = getTableNames( statements );
 	  if ( pDrop ) {
 		if ( isLoggingInfo() )
 			  logInfo("Dropping tables...");
@@ -353,9 +355,9 @@ class SQLProcessorEngine
 	  // be executed
 	  if ( isLoggingInfo() )
 		  logInfo("Creating tables...");
-	  Iterator iter = statements.iterator();
+	  Iterator<String> iter = statements.iterator();
 	  while ( iter.hasNext() ) {
-		    String statement = (String) iter.next();
+		    String statement = iter.next();
 			String name = getTableName( statement );
 			boolean exists = tableExists( name );
 
@@ -418,10 +420,10 @@ class SQLProcessorEngine
 	 * @exception SQLProcessorException thrown if all tables can not be
 	 * dropped
 	 */
-         public void dropTablesFromCreateStatements( Vector pCreateStatements )
+         public void dropTablesFromCreateStatements( List<String> pCreateStatements )
               throws SQLProcessorException
          {
-              Vector names = getTableNames( pCreateStatements );
+           List<String> names = getTableNames( pCreateStatements );
               dropTables( names );
          }
 
@@ -435,7 +437,7 @@ class SQLProcessorEngine
 	 * @exception SQLProcessorException thrown if all tables can not be
 	 * dropped
 	 */
-        private void dropTables( Vector pNames )
+        private void dropTables( List<String> pNames )
                 throws SQLProcessorException
         {
 	  // assuming only one table can be dropped each time, this should take
@@ -443,15 +445,15 @@ class SQLProcessorEngine
 	  int maxIterations = pNames.size();
 
 	  // every table is tried at least once
-	  Vector tablesToDrop = pNames;
+	  List<String> tablesToDrop = pNames;
 
-	  Vector remainingTables;
+	  List<String> remainingTables;
 	  int attempt = 0;
 	  do {
-		  remainingTables = new Vector();
-		  Iterator tables = tablesToDrop.iterator();
+		  remainingTables = new ArrayList<String>();
+		  Iterator<String> tables = tablesToDrop.iterator();
 		  while ( tables.hasNext() ) {
-			  String table = (String) tables.next();
+			  String table =  tables.next();
 			  if ( tableExists( table ) ) {
 				  try {
             logInfo("Attempting to drop table: " + table );
@@ -505,19 +507,19 @@ class SQLProcessorEngine
 	 *
 	 * @return Vector of table names
 	 */
-	private Vector getTableNames( Vector pStatements ) {
+	private List<String> getTableNames( List<String> pStatements ) {
 		if (isLoggingDebug() )
 			logDebug("Getting table names...");
 
-		Vector names = new Vector();
+		List<String> names = new ArrayList<String>();
 
 		// split the big string into a bunch of create table statements
-		Vector createStatements = pStatements;
+		List<String> createStatements = pStatements;
 
 		// now get the table name from each statement
-		Iterator iter = createStatements.iterator();
+		Iterator<String> iter = createStatements.iterator();
 		while ( iter.hasNext() ) {
-			String thisName = getTableName( (String) iter.next() );
+			String thisName = getTableName(  iter.next() );
 
 			if (thisName != null && !names.contains( thisName )) {
 				names.add( thisName );
@@ -640,12 +642,12 @@ class SQLProcessorEngine
    * @exception SQLProcessorException if we detect a bad loop trying to resolve
    * references
    */
-    private Vector reorderCreateStatements( Vector pStatements )
+    private List<String> reorderCreateStatements( List<String> pStatements )
 		throws SQLProcessorException
 	{
-                Vector statements = pStatements;
-		Vector names = getTableNames( statements );
-		Vector orderedStatements = new Vector();
+      List<String> statements = pStatements;
+      List<String> names = getTableNames( statements );
+      List<String> orderedStatements = new ArrayList<String>();
 
 		// hashmap containing one entry for every table that references
 		// another, and holds Vector of those tables it is waiting to be made
@@ -826,10 +828,10 @@ class SQLProcessorEngine
 	 * @param Vector of the names of all the tables to check for
 	 * @return boolean true if all items are in the Vector; false otherwise
 	 */
-	private boolean checkReferencesInRepository( Vector pRepositoryTables, Vector pCheckTables ) {
-		Iterator iter = pCheckTables.iterator();
+	private boolean checkReferencesInRepository( List<String> pRepositoryTables, List<String> pCheckTables ) {
+		Iterator<String> iter = pCheckTables.iterator();
 		while ( iter.hasNext() ) {
-			String name = (String) iter.next();
+			String name = iter.next();
 			if ( ! pRepositoryTables.contains( name ) )
 				return false;
 		}

@@ -3,38 +3,36 @@ package test;
 import java.io.File;
 import java.util.Properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import atg.adapter.gsa.GSARepository;
 import atg.adapter.gsa.GSATest;
 import atg.adapter.gsa.GSATestUtils;
-import atg.core.util.StringUtils;
 import atg.dtm.TransactionDemarcation;
-import atg.nucleus.ConfigurationFileSystems;
 import atg.nucleus.Nucleus;
 import atg.repository.MutableRepository;
 import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryItem;
 import atg.test.DBUtils;
-import atg.vfs.VirtualFile;
-import atg.vfs.VirtualFileSystem;
-import atg.vfs.VirtualPath;
 
 /**
  * This test starts a repository, adds an item to that repository, then shuts
  * down. The repository is started up against an in-memory Hypersonic Database.
  */
 public class SimpleGSATest extends GSATest {
+  
+  private static final Log log = LogFactory.getLog(SimpleGSATest.class);
 
   public void testSimple() throws Exception {
 
     // setup the repository
-    File configpath = getConfigpath();
-    
+    File configpath = new File("target/test-classes/config".replace("/", File.separator));
+
     // Define the path to our repository definition file called
     // "simpleRepository.xml"
-    String[] definitionFiles = { StringUtils.replace(getClass().getPackage()
-        .getName(), '.', "/")
-        + "/simpleRepository.xml" };
-    System.out.println(" definitionFile[0]=" + definitionFiles[0]);
+    String[] definitionFiles = { "/test/simpleRepository.xml" };
+    log.info(" definitionFile[0]=" + definitionFiles[0]);
     // Use the DBUtils utility class to get JDBC properties for an in memory
     // HSQL DB called "testdb".
     Properties props = DBUtils.getHSQLDBInMemoryDBConnection("testdb");
