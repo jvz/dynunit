@@ -3,8 +3,8 @@ package test;
 import static atg.test.AtgDustTestCase.DbVendor.MySQLDBConnection;
 
 import java.io.File;
-
-import com.mycompany.ToBeTested;
+import java.io.FileInputStream;
+import java.util.Properties;
 
 import atg.adapter.gsa.GSARepository;
 import atg.dtm.TransactionDemarcation;
@@ -13,6 +13,8 @@ import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryException;
 import atg.repository.RepositoryItem;
 import atg.test.AtgDustTestCase;
+
+import com.mycompany.ToBeTested;
 
 /**
  * 
@@ -26,15 +28,23 @@ import atg.test.AtgDustTestCase;
  */
 public class SongRepositoryTest extends AtgDustTestCase {
 
-  private final String userName = "userName";
-  private final String password = "password";
-  private final String host = "localhost";
-  private final String port = "3306";
-  private final String dbName = "dbName";
+  private String userName;
+  private String password;
+  private String host;
+  private String port;
+  private String dbName;
+
+  private final Properties properties = new Properties();
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
+    properties.load(new FileInputStream("src/test/resources/env.properties"));
+    userName = properties.getProperty("userName");
+    password = properties.getProperty("password");
+    host = properties.getProperty("host");
+    port = properties.getProperty("port");
+    dbName = properties.getProperty("dbName");
   }
 
   @Override
@@ -78,6 +88,11 @@ public class SongRepositoryTest extends AtgDustTestCase {
     songsRepositoryTest();
   }
 
+  /**
+   * Also disabled because it's a test against a mysql repository
+   * 
+   * @throws Exception
+   */
   public void _testConfigBug() throws Exception {
     final DbVendor dbVendor = MySQLDBConnection;
     prepareGsaTest(new File("target/test-classes/config/"),
