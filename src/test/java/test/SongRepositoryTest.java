@@ -26,11 +26,11 @@ import atg.test.AtgDustTestCase;
  */
 public class SongRepositoryTest extends AtgDustTestCase {
 
-  private final String userName = "bol-webshop";
-  private final String password = "bol-webshop";
+  private final String userName = "userName";
+  private final String password = "password";
   private final String host = "localhost";
   private final String port = "3306";
-  private final String dbName = "bol-webshop2";
+  private final String dbName = "dbName";
 
   @Override
   public void setUp() throws Exception {
