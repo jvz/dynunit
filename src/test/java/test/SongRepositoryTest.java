@@ -31,18 +31,13 @@ public class SongRepositoryTest extends AtgDustTestCase {
   private String host;
   private String port;
   private String dbName;
-
+  private String enabled;
   private final Properties properties = new Properties();
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    properties.load(new FileInputStream("src/test/resources/env.properties"));
-    userName = properties.getProperty("userName");
-    password = properties.getProperty("password");
-    host = properties.getProperty("host");
-    port = properties.getProperty("port");
-    dbName = properties.getProperty("dbName");
+
   }
 
   @Override
@@ -66,9 +61,9 @@ public class SongRepositoryTest extends AtgDustTestCase {
   }
 
   /**
-   * Example test with MySQL Database. This test is disabled by default (starts
-   * with "_") because the MySQL JDBC drivers are not included in the atg dust
-   * package.
+   * Example test with MySQL Database. This test is disabled by default (set to
+   * false in the env.properties) because the MySQL JDBC drivers are not
+   * included in the atg dust package.
    * 
    * To make use of this test, install a mysql-connector-java (mysql jdbc
    * driver) into your .m2/repository, un-comment the mysql dependency in the
@@ -78,7 +73,19 @@ public class SongRepositoryTest extends AtgDustTestCase {
    * 
    * @throws Exception
    */
-  public void _testWithExistingMysqlDb() throws Exception {
+  public void testWithExistingMysqlDb() throws Exception {
+
+    properties.load(new FileInputStream("src/test/resources/env.properties"));
+    userName = properties.getProperty("userName");
+    password = properties.getProperty("password");
+    host = properties.getProperty("host");
+    port = properties.getProperty("port");
+    dbName = properties.getProperty("dbName");
+    enabled = properties.getProperty("enabled");
+
+    if (enabled == null || enabled.equalsIgnoreCase("false")) {
+      return;
+    }
 
     prepareRepositoryTest(new File("target/test-classes/config/"),
         new String[] { "GettingStarted/songs.xml" },
