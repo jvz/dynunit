@@ -167,9 +167,9 @@ public class AtgDustTestCase extends TestCase {
    * @param repoPath
    *          the location of the repository in the 'nucleus'
    */
-  public void prepareGsaTest(final File configpath,
+  public void prepareRepositoryTest(final File configpath,
       final String[] definitionFiles, final String repoPath) throws Exception {
-    prepareGsaTest(configpath, definitionFiles, repoPath, null, null, null,
+    prepareRepositoryTest(configpath, definitionFiles, repoPath, null, null, null,
         null, null, HSQLDBDefaultInMemoryDBConnection, false);
 
   }
@@ -241,7 +241,7 @@ public class AtgDustTestCase extends TestCase {
    *          will be used
    * @throws Exception
    */
-  protected void prepareGsaTest(final File configpath,
+  protected void prepareRepositoryTest(final File configpath,
       final String[] definitionFiles, final String repoPath,
       final String userName, final String password, final String host,
       final String port, final String dbName, final DbVendor dbVendor,
