@@ -3,6 +3,9 @@ package atg.test;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import junit.framework.TestCase;
 
 /**
@@ -12,6 +15,7 @@ import junit.framework.TestCase;
 public class AtgDustTestCaseTest extends TestCase {
 
   private final AtgDustTestCase atgDustTestCase = new AtgDustTestCase();
+  private static final Log log = LogFactory.getLog(AtgDustTestCase.class);
 
   /*
    * (non-Javadoc)
@@ -20,7 +24,8 @@ public class AtgDustTestCaseTest extends TestCase {
    */
   protected void setUp() throws Exception {
     super.setUp();
-    atgDustTestCase.setConfigPath("target/test-classes/config/");
+    atgDustTestCase.setConfigPath("target/test-classes/config/".replace("/",
+        File.separator));
   }
 
   /*
@@ -33,76 +38,6 @@ public class AtgDustTestCaseTest extends TestCase {
   }
 
   /**
-   * Test method for
-   * {@link atg.test.AtgDustTestCase#createPropertyFile(java.lang.String, java.lang.Class)}.
-   */
-  public void testCreatePropertyFile() {
-    try {
-      atgDustTestCase.createPropertyFile(System.getProperty("java.io.tmpdir")
-          + File.separator + "atgdust", new Object().getClass());
-    }
-    catch (IOException e) {
-      fail();
-    }
-    // assertTrue(new File(
-    // "target/test-classes/atg/test/data/target/test-classes/config/tmp/test.properties")
-    // .exists());
-  }
-
-  // /**
-  // * Test method for
-  // * {@link atg.test.AtgDustTestCase#createPropertyFiles(java.util.Map)}.
-  // */
-  // public void testCreatePropertyFiles() {
-  // fail("Not yet implemented");
-  // }
-
-  // /**
-  // * Test method for
-  // * {@link atg.test.AtgDustTestCase#prepareDefaultGsaTest(java.io.File,
-  // java.lang.String[], java.lang.String)}.
-  // */
-  // public void testPrepareDefaultGsaTest() {
-  // fail("Not yet implemented");
-  // }
-  //
-  // /**
-  // * Test method for
-  // * {@link atg.test.AtgDustTestCase#prepareGsaTest(java.io.File,
-  // java.lang.String[], java.lang.String, java.lang.String, java.lang.String,
-  // java.lang.String, java.lang.String, java.lang.String,
-  // atg.test.AtgDustTestCase.DbVendor, boolean)}.
-  // */
-  // public void testPrepareGsaTest() {
-  // fail("Not yet implemented");
-  // }
-  //
-  // /**
-  // * Test method for
-  // * {@link atg.test.AtgDustTestCase#setConfigPath(java.lang.String)}.
-  // */
-  // public void testSetConfigPath() {
-  // fail("Not yet implemented");
-  // }
-  //
-  // /**
-  // * Test method for {@link atg.test.AtgDustTestCase#startNucleus()}.
-  // */
-  // public void testStartNucleus() {
-  // fail("Not yet implemented");
-  // }
-
-  // /**
-  // * Test method for
-  // * {@link
-  // atg.test.AtgDustTestCase#useExistingPropertyFiles(java.lang.String,
-  // java.lang.String[])}.
-  // */
-  // public void testUseExistingPropertyFiles() {
-  // fail("Not yet implemented");
-  // }
-
-  /**
    * Test method for {@link atg.test.AtgDustTestCase#tearDown()}.
    */
   public void testTearDown() {
@@ -110,6 +45,7 @@ public class AtgDustTestCaseTest extends TestCase {
       atgDustTestCase.tearDown();
     }
     catch (Exception e) {
+      log.error("Error: ", e);
       fail();
     }
   }
@@ -120,15 +56,16 @@ public class AtgDustTestCaseTest extends TestCase {
    */
   public void testGetService() {
     try {
-      atgDustTestCase.createPropertyFile("/tmp/test", new Object().getClass());
+      atgDustTestCase.createPropertyFile("test", new Object().getClass());
     }
     catch (IOException e) {
       fail();
+      log.error("Error: ", e);
     }
     assertTrue(new File(
-        "target/test-classes/atg/test/data/target/test-classes/config/tmp/test.properties")
-        .exists());
-    assertNotNull(atgDustTestCase.getService("/tmp/test"));
+        "target/test-classes/atg/test/data/target/test-classes/config/test.properties"
+            .replace("/", File.separator)).exists());
+    assertNotNull(atgDustTestCase.getService("test"));
 
   }
 }
