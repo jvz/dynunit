@@ -38,14 +38,15 @@ public class AtgDustTestCaseTest extends TestCase {
    */
   public void testCreatePropertyFile() {
     try {
-      atgDustTestCase.createPropertyFile("/tmp/test", new Object().getClass());
+      atgDustTestCase.createPropertyFile(System.getProperty("java.io.tmpdir")
+          + File.separator + "atgdust", new Object().getClass());
     }
     catch (IOException e) {
       fail();
     }
-//    assertTrue(new File(
-//        "target/test-classes/atg/test/data/target/test-classes/config/tmp/test.properties")
-//        .exists());
+    // assertTrue(new File(
+    // "target/test-classes/atg/test/data/target/test-classes/config/tmp/test.properties")
+    // .exists());
   }
 
   // /**
