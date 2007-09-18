@@ -9,7 +9,7 @@ Download ATG Dust
  ATG Dust source code is available at the following URL:
 
 +------------------------------------------+
-svn checkout https://svn.sourceforge.net/svnroot/atgdust/trunk atgdust
+svn checkout https://atgdust.svn.sourceforge.net/svnroot/atgdust/trunk atgdust
 +------------------------------------------+
 
 * Download

@@ -29,7 +29,7 @@ Your First Test
 
 
 +------------------------------------------+
-svn checkout https://svn.sourceforge.net/svnroot/atgdust/trunk atgdust
+svn checkout https://atgdust.svn.sourceforge.net/svnroot/atgdust/trunk atgdust
 +------------------------------------------+
 
 
