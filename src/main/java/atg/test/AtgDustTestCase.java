@@ -134,7 +134,7 @@ public class AtgDustTestCase extends TestCase {
       final Entry<String, Class<?>> entry = it.next();
       final File property = NucleusTestUtils.createProperties(entry.getKey(),
           configDir, entry.getValue().getName(), new Properties());
-      log.info("file: " + property.getAbsolutePath());
+      log.info("created properties file: " + property.getAbsolutePath());
       property.deleteOnExit();
     }
   }

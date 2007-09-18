@@ -210,6 +210,7 @@ public class NucleusTestUtils {
       String configdirname = "config";
       String packageName = StringUtils.replace(pClass.getPackage().getName(),
           '.', "/");
+      String classAsResourceString = packageName + "/" + pClass.getSimpleName() + ".class";
       if (pConfigDirectory != null)
         configdirname = pConfigDirectory;
 
@@ -218,12 +219,18 @@ public class NucleusTestUtils {
       URL dataURL = pClass.getClassLoader().getResource(configFolder);
       // Mkdir
       if (dataURL == null) {
-        URL root = pClass.getClassLoader().getResource(packageName);
-
-        File f = new File(root.getFile());
+        // Need to be careful here. The given package name
+        // might be in a jar file in the classpath. We don't want that!
+        // See: http://sourceforge.net/tracker/index.php?func=detail&aid=1796753&group_id=196325&atid=957004
+        URL root = pClass.getClassLoader().getResource(classAsResourceString);
+        
+        File f = new File(root.getFile()).getParentFile();
         File f2 = new File(f, "/data/" + configdirname);
-        f2.mkdirs();
+        if (!f2.mkdirs())
+          throw new RuntimeException("Failed to complete mkdirs on " + f2.getAbsolutePath());
         dataURL = pClass.getClassLoader().getResource(configFolder);
+        if (dataURL == null)
+          throw new RuntimeException("Cannot access configpath entry at " + configFolder);
       }
 
       sConfigDir.put(pConfigDirectory, new File(dataURL.getFile()));

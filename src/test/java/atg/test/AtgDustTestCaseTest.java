@@ -2,9 +2,12 @@ package atg.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import atg.nucleus.NucleusTestUtils;
 
 import junit.framework.TestCase;
 
@@ -16,6 +19,7 @@ public class AtgDustTestCaseTest extends TestCase {
 
   private final AtgDustTestCase atgDustTestCase = new AtgDustTestCase();
   private static final Log log = LogFactory.getLog(AtgDustTestCase.class);
+  private String configPathString = "target/test-classes/config/";
 
   /*
    * (non-Javadoc)
@@ -24,8 +28,7 @@ public class AtgDustTestCaseTest extends TestCase {
    */
   protected void setUp() throws Exception {
     super.setUp();
-    atgDustTestCase.setConfigPath("target/test-classes/config/".replace("/",
-        File.separator));
+    atgDustTestCase.setConfigPath(configPathString);
   }
 
   /*
@@ -61,10 +64,11 @@ public class AtgDustTestCaseTest extends TestCase {
     catch (IOException e) {
       fail();
       log.error("Error: ", e);
-    }
-    assertTrue(new File(
-        "target/test-classes/atg/test/data/target/test-classes/config/test.properties"
-            .replace("/", File.separator)).exists());
+    }    
+    File configpath = NucleusTestUtils.getConfigpath(this.getClass(), configPathString);
+    File f = new File(configpath,"test.properties");
+    assertTrue("Couldn't find " + f.getAbsolutePath(),
+        f.exists());
     assertNotNull(atgDustTestCase.getService("test"));
 
   }
