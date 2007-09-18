@@ -62,8 +62,8 @@ public class SongRepositoryTest extends AtgDustTestCase {
 
   /**
    * Example test with MySQL Database. This test is disabled by default (set to
-   * false in the env.properties) because the MySQL JDBC drivers are not
-   * included in the atg dust package.
+   * false/or not set in the env.properties) because the MySQL JDBC drivers are
+   * not included in the atg dust package.
    * 
    * To make use of this test, install a mysql-connector-java (mysql jdbc
    * driver) into your .m2/repository, un-comment the mysql dependency in the

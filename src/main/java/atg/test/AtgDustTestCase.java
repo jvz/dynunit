@@ -28,9 +28,20 @@ import atg.nucleus.NucleusTestUtils;
 import atg.nucleus.ServiceException;
 
 /**
- * Wrapper class to make life a bit easier when using the
- * http://atgdust.sourceforge.net test harness. Example usage can be found in
- * test.SongRepositoryTest.
+ * Base class comparable to Junit's TestCase. Extend this class and use the
+ * following 'pattern' when using it:
+ * <ul>
+ * <li>call: {@link AtgDustTestCase#setConfigPath(String)} in combination with:
+ * {@link AtgDustTestCase#createPropertyFile(String, Class)} or
+ * {@link AtgDustTestCase#createPropertyFiles(Map)} or
+ * {@link AtgDustTestCase#useExistingPropertyFiles(String, String[])}</li>
+ * <li>and or call: call:
+ * {@link AtgDustTestCase#useExistingPropertyFiles(String, String[])}</li>
+ * <li>and finally call: {@link AtgDustTestCase#getService(String)}</li>
+ * <li>when test has finished call: {@link AtgDustTestCase#tearDown()} for
+ * cleaning up and stopping nucleus, db</li>
+ * </ul>
+ * Example usage can be found in test.SongRepositoryTest.
  * 
  * @author robert
  */
@@ -169,8 +180,8 @@ public class AtgDustTestCase extends TestCase {
    */
   public void prepareRepositoryTest(final File configpath,
       final String[] definitionFiles, final String repoPath) throws Exception {
-    prepareRepositoryTest(configpath, definitionFiles, repoPath, null, null, null,
-        null, null, HSQLDBDefaultInMemoryDBConnection, false);
+    prepareRepositoryTest(configpath, definitionFiles, repoPath, null, null,
+        null, null, null, HSQLDBDefaultInMemoryDBConnection, false);
 
   }
 
@@ -300,9 +311,6 @@ public class AtgDustTestCase extends TestCase {
       log.error("Unsupported Database Vendor: " + dbVendor);
       break;
     }
-
-    stopNucleus();
-    tearDown();
 
     // TODO: Still have to come up with something better...
     System.setProperty(ATG_DUST_DROP_TABLES.getPropertyName(), Boolean
