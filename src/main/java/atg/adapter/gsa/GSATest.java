@@ -37,7 +37,7 @@ import atg.repository.RepositoryException;
 import atg.repository.RepositoryPropertyDescriptor;
 import atg.service.idgen.IdGenerator;
 import atg.service.idgen.IdGeneratorException;
-import atg.test.DBUtils;
+import atg.test.util.DBUtils;
 
 /**
  * A basic GSA test which is expected to be extended than used directly.

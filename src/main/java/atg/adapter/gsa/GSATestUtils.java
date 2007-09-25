@@ -55,7 +55,7 @@ import atg.nucleus.ServiceEvent;
 import atg.nucleus.ServiceException;
 import atg.repository.Repository;
 import atg.repository.RepositoryException;
-import atg.test.DBUtils;
+import atg.test.util.DBUtils;
 import atg.versionmanager.VersionManager;
 import atg.versionmanager.Workspace;
 import atg.versionmanager.exceptions.VersionException;

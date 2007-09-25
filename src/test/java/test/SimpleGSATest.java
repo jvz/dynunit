@@ -14,7 +14,7 @@ import atg.nucleus.Nucleus;
 import atg.repository.MutableRepository;
 import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryItem;
-import atg.test.DBUtils;
+import atg.test.util.DBUtils;
 
 /**
  * This test starts a repository, adds an item to that repository, then shuts

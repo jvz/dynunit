@@ -7,12 +7,14 @@ import static atg.test.AtgDustTestCase.DbVendor.HSQLDBFileDBConnection;
 import static atg.test.AtgDustTestCase.DbVendor.HSQLDBRegularDBConnection;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
@@ -23,9 +25,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import atg.adapter.gsa.GSATestUtils;
+import atg.nucleus.GenericService;
 import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusTestUtils;
 import atg.nucleus.ServiceException;
+import atg.nucleus.logging.ConsoleLogListener;
+import atg.test.util.DBUtils;
+import atg.test.util.FileUtils;
 
 /**
  * Base class comparable to Junit's TestCase. Extend this class and use the
@@ -56,6 +62,8 @@ public class AtgDustTestCase extends TestCase {
   private transient DBUtils dbUtils;
 
   private transient Nucleus nucleus;
+
+  private List<String> excludes = new ArrayList<String>();
 
   /**
    * An enum containing frequently set System properties
@@ -164,7 +172,7 @@ public class AtgDustTestCase extends TestCase {
    */
   protected final Object getService(final String serviceName) {
     startNucleus();
-    return nucleus.resolveName(serviceName);
+    return prepareLogService(nucleus.resolveName(serviceName));
   }
 
   /**
@@ -331,6 +339,8 @@ public class AtgDustTestCase extends TestCase {
     GSATestUtils.getGSATestUtils().initializeMinimalConfigpath(configDir,
         repoPath, definitionFiles, props, null, null, null, true);
 
+    forceGlobalScopeOnAllConfigs(configDir.getPath());
+
   }
 
   protected void startNucleus() {
@@ -382,59 +392,120 @@ public class AtgDustTestCase extends TestCase {
     log.info("configPath: " + configPath);
 
     for (final String service : propertyFiles) {
-      log.debug("Service: " + service);
+      // log.debug("Service: " + service);
 
       final String serviceDir = service.substring(0, service.lastIndexOf('/'));
       final File path = new File(configDir + File.separator + serviceDir);
       if (path.exists() ? true : path.mkdirs()) {
-        log.debug("Created: " + path.getPath());
+        // log.debug("Created: " + path.getPath());
       }
       else {
         log.error("unable to create: " + path.getPath());
       }
 
-      copyFile(configPath + File.separator
+      FileUtils.copyFile(configPath + File.separator
           + service.replace("/", File.separator) + ".properties", configDir
           .getPath()
           + service + ".properties".replaceAll("/", File.separator));
+      forceGlobalScope(configDir.getPath() + service
+          + ".properties".replaceAll("/", File.separator));
 
     }
   }
 
-  private void copyFile(final String src, final String dst) {
-    try {
-      log.info("Source: " + src);
-      log.info("Dest: " + dst);
-      final FileChannel srcChannel = new FileInputStream(src).getChannel();
-      final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
-      dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-      srcChannel.close();
-      dstChannel.close();
+  /**
+   * 
+   * This method should be called if you have properties in another
+   * module/project and need them in the current test.
+   * 
+   * @param srcDir
+   *          the location of existing properties that are needed for the
+   *          test(s)
+   * @param dstDir
+   *          the destination of the 'external' properties that are needed for
+   *          the test(s).
+   * @param excludes
+   *          a list of excludes (Example: .svn, CVS)
+   * @throws IOException
+   */
+  public void copyFiles(final String srcDir, final String dstDir,
+      final String[] excludes) throws IOException {
+
+    if (excludes != null && excludes.length > 0) {
+      this.excludes = Arrays.asList(excludes);
     }
-    catch (IOException e) {
-      log.error("Error: ", e);
+
+    FileUtils.copyDir(srcDir, dstDir, this.excludes);
+    forceGlobalScopeOnAllConfigs(dstDir);
+
+  }
+
+  private void forceGlobalScope(final String propertyFile) throws IOException {
+    final File f = new File(propertyFile);
+    // find all .properties in config path
+    if (f.getPath().contains(".properties")) {
+      // find scope other than global and replace with global
+      FileUtils.searchAndReplace("$scope=request", "$scope=global\n", f);
+      FileUtils.searchAndReplace("$scope=session", "$scope=global\n", f);
+
     }
 
   }
 
-  // Delete all files and sub directories under dir.
-  // Returns true if all deletions were successful.
-  // If a deletion fails, the method stops attempting to delete and returns
-  // false.
-  @SuppressWarnings("unused")
-  private boolean deleteDir(final File dir) {
-    if (dir.isDirectory()) {
-      final String[] children = dir.list();
-      for (int i = 0; i < children.length; i++) {
-        final boolean success = deleteDir(new File(dir, children[i]));
-        if (!success) {
-          return false;
-        }
+  private void forceGlobalScopeOnAllConfigs(final String configurationDirectory)
+      throws IOException {
+
+    // find all .properties in config path
+    for (final File f : getFileListing(new File(configurationDirectory))) {
+      if (f.getPath().contains(".properties")) {
+        // find scope other than global and replace with global
+        FileUtils.searchAndReplace("$scope=request", "$scope=global\n", f);
+        FileUtils.searchAndReplace("$scope=session", "$scope=global\n", f);
       }
+
     }
 
-    // The directory is now empty so delete it
-    return dir.delete();
+  }
+
+  protected List<File> getFileListing(File aStartingDir)
+      throws FileNotFoundException {
+    List<File> result = new ArrayList<File>();
+
+    File[] filesAndDirs = aStartingDir.listFiles();
+    List<File> filesDirs = Arrays.asList(filesAndDirs);
+    for (File file : filesDirs) {
+      result.add(file); // always add, even if directory
+      if (!file.isFile()) {
+        // must be a directory
+        // recursive call!
+        List<File> deeperList = getFileListing(file);
+        result.addAll(deeperList);
+      }
+
+    }
+    Collections.sort(result);
+    return result;
+  }
+
+  /**
+   * Will enable logging on the object that was passed in (as a method argument)
+   * if it's an instance of {@link GenericService}
+   * 
+   * @param service
+   *          an instance of GenericService
+   * 
+   * @return the object that as passed in with all log levels enabled, if it's a
+   *         {@link GenericService}
+   */
+  protected Object prepareLogService(final Object service) {
+    if (service instanceof GenericService) {
+      ((GenericService) service).setLoggingDebug(true);
+      ((GenericService) service).setLoggingInfo(true);
+      ((GenericService) service).setLoggingWarning(true);
+      ((GenericService) service).setLoggingError(true);
+      ((GenericService) service).addLogListener(new ConsoleLogListener());
+    }
+    return service;
   }
 
 }
