@@ -153,7 +153,7 @@ public class AtgDustTestCase extends TestCase {
       final Entry<String, Class<?>> entry = it.next();
       final File property = NucleusTestUtils.createProperties(entry.getKey(),
           configDir, entry.getValue().getName(), new Properties());
-      log.info("created properties file: " + property.getAbsolutePath());
+      //log.info("created properties file: " + property.getAbsolutePath());
       property.deleteOnExit();
     }
   }
@@ -389,22 +389,22 @@ public class AtgDustTestCase extends TestCase {
     this.configPath = confPath.replace("/", File.separator);
     configDir = NucleusTestUtils.getConfigpath(this.getClass(), configPath);
 
-    log.info("configPath: " + configPath);
+    //log.info("configPath: " + configPath);
 
     for (final String service : propertyFiles) {
-      // log.debug("Service: " + service);
+      //log.info("Service: " + service);
 
       final String serviceDir = service.substring(0, service.lastIndexOf('/'));
       final File path = new File(configDir + File.separator + serviceDir);
       if (path.exists() ? true : path.mkdirs()) {
-        // log.debug("Created: " + path.getPath());
+        log.info("Created: " + path.getPath());
       }
       else {
         log.error("unable to create: " + path.getPath());
       }
 
       FileUtils.copyFile(configPath + File.separator
-          + service.replace("/", File.separator) + ".properties", configDir
+          + service.replaceAll("/", File.separator) + ".properties", configDir
           .getPath()
           + service + ".properties".replaceAll("/", File.separator));
       forceGlobalScope(configDir.getPath() + service

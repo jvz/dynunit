@@ -63,8 +63,8 @@ public class FileUtils {
 
   public static void copyFile(final String src, final String dst) {
     try {
-      log.debug("Source: " + src);
-      log.debug("Dest: " + dst);
+      //log.debug("Source: " + src);
+      //log.debug("Dest: " + dst);
       final FileChannel srcChannel = new FileInputStream(src).getChannel();
       final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
       dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
