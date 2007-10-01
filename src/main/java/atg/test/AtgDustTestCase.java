@@ -404,11 +404,11 @@ public class AtgDustTestCase extends TestCase {
       }
 
       FileUtils.copyFile(configPath + File.separator
-          + service.replaceAll("/", File.separator) + ".properties", configDir
+          + service.replace("/", File.separator) + ".properties", configDir
           .getPath()
-          + service + ".properties".replaceAll("/", File.separator));
+          + service + ".properties".replace("/", File.separator));
       forceGlobalScope(configDir.getPath() + service
-          + ".properties".replaceAll("/", File.separator));
+          + ".properties".replace("/", File.separator));
 
     }
   }
