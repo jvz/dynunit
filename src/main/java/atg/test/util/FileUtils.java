@@ -35,7 +35,7 @@ public class FileUtils {
 
     if (!fdstDir.exists()) {
       fdstDir.mkdirs();
-      //log.info("creating  " + dstDir);
+      // log.info("creating " + dstDir);
     }
 
     String[] fileList = new File(srcDir).list();
@@ -63,8 +63,8 @@ public class FileUtils {
 
   public static void copyFile(final String src, final String dst) {
     try {
-      // log.debug("Source: " + src);
-      // log.debug("Dest: " + dst);
+      log.debug("Source: " + src);
+      log.debug("Dest: " + dst);
       final FileChannel srcChannel = new FileInputStream(src).getChannel();
       final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
       dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
@@ -99,10 +99,12 @@ public class FileUtils {
   public static void searchAndReplace(final String searchString,
       final String value, final File file) throws IOException {
     // create tmp-file
-    File tmp = File.createTempFile("atg-dust", ".tmp");
-    BufferedWriter out = new BufferedWriter(new FileWriter(tmp));
+    final File tmp = new File(System.getProperty("java.io.tmpdir") + File.separator
+        + "atg-dust.tmp");
+    tmp.deleteOnExit();
+    final BufferedWriter out = new BufferedWriter(new FileWriter(tmp));
 
-    BufferedReader in = new BufferedReader(new FileReader(file));
+    final BufferedReader in = new BufferedReader(new FileReader(file));
     String str;
     while ((str = in.readLine()) != null) {
       if (str.contains(searchString)) {
