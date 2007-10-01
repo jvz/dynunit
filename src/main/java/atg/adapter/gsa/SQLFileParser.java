@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,11 +55,12 @@ public class SQLFileParser
     {
             sFileNameArray = pFileNameArray;
     }
-    /** returns the names of files to be parsed */
-    private String[] getFileNameArray()
-    {
-            return (sFileNameArray);
-    }
+    
+//    /** returns the names of files to be parsed */
+//    private String[] getFileNameArray()
+//    {
+//            return (sFileNameArray);
+//    }
 
 // ============== CONSTRUCTORS =================
       /**
@@ -110,7 +110,7 @@ public class SQLFileParser
 // **********************************************************************************
 		char[] ch = new char [sText.length()];
 		ch = sText.toCharArray();
-		String sTemp;
+		//String sTemp;
 		for (int i=0; i < sText.length(); i++)
 		{
 			if ((ch[i] == '\n') || (ch[i] == '\r') || (ch[i] == '\t')|| (ch[i] == ' ') || (ch[i] == '	'))
@@ -125,28 +125,28 @@ public class SQLFileParser
 		return (sText);
 	}
 
-	private  String RemoveWhiteSpaceInEnd (String sText)
-	{
-// **********************************************************************************
-//  THIS FUNCTION REMOVES WHITESPACE IN THE END OF A STRING. FOR INSTANCE
-//  IF A STRING IS PASSED TO IT AS 'SPACE   ', THEN IT WILL RETURN 'SPACE.
-// **********************************************************************************
-		char[] ch = new char [sText.length()];
-		ch = sText.toCharArray();
-		String sTemp;
-		for (int i= sText.length() - 1; i > 0; i--)
-		{
-			if ((ch[i] == '\n') || (ch[i] == '\r') || (ch[i] == '\t')|| (ch[i] == ' ') || (ch[i] == '	'))
-			{
-				// Keep going
-			}
-			else
-			{
-				return (sText.substring (0, i +1));
-			}
-		}
-		return (sText);
-	}
+//	private  String RemoveWhiteSpaceInEnd (String sText)
+//	{
+//// **********************************************************************************
+////  THIS FUNCTION REMOVES WHITESPACE IN THE END OF A STRING. FOR INSTANCE
+////  IF A STRING IS PASSED TO IT AS 'SPACE   ', THEN IT WILL RETURN 'SPACE.
+//// **********************************************************************************
+//		char[] ch = new char [sText.length()];
+//		ch = sText.toCharArray();
+//		String sTemp;
+//		for (int i= sText.length() - 1; i > 0; i--)
+//		{
+//			if ((ch[i] == '\n') || (ch[i] == '\r') || (ch[i] == '\t')|| (ch[i] == ' ') || (ch[i] == '	'))
+//			{
+//				// Keep going
+//			}
+//			else
+//			{
+//				return (sText.substring (0, i +1));
+//			}
+//		}
+//		return (sText);
+//	}
 
 	private  String RemoveWhiteSpaceFromString (String sText)
 	{
@@ -178,7 +178,7 @@ public class SQLFileParser
 // SINCE IT IS A CLASS VARIABLE
 // ****************************************
 
-		List newList = Arrays.asList(sArray);
+		List<String> newList = Arrays.asList(sArray);
 		return (newList.size());
 	}
 
@@ -196,7 +196,7 @@ public class SQLFileParser
 // ****************************************
 
 		String[] sKeywordList = {"BEGIN ", "CREATE ", "INSERT ", "UPDATE ", "DELETE ", "COMMIT ", "COMMIT", "ALTER ", "DROP ", "GRANT ", "GO", "IF OBJECT_ID"};
-		List lList = Arrays.asList(sKeywordList);
+		List<String> lList = Arrays.asList(sKeywordList);
 		int iArraySize = lList.size();
 
 		sLineRead = RemoveWhiteSpaceInFront(sLineRead);
@@ -239,7 +239,7 @@ public class SQLFileParser
 // ****************************************
 
 		String[] sKeywordList = {"--", "//"};
-		List lList = Arrays.asList(sKeywordList);
+		List<String> lList = Arrays.asList(sKeywordList);
 		int iArraySize = lList.size();
 
 		//sLineRead = sLineRead;
@@ -285,7 +285,7 @@ public class SQLFileParser
 // ****************************************
 		sCurrentLine = RemoveWhiteSpaceFromString(sCurrentLine);
 		int iLength = sCurrentLine.length() -2;
-		int iIndex = sCurrentLine.indexOf("/");
+		//int iIndex = sCurrentLine.indexOf("/");
 		if ((sCurrentLine.indexOf("/") > -1) && (sCurrentLine.indexOf("/") >= iLength))
 		{
 			sCurrentLine = sCurrentLine.substring (0, sCurrentLine.indexOf("/"));
@@ -331,7 +331,7 @@ public class SQLFileParser
 		String line = "";
 		String lineTemp = "";
 		String sSqlBuffer = "";
-		String sFindSemiColon = "";
+		//String sFindSemiColon = "";
 
 		boolean bKeywordAlreadyFound = false;
 		boolean bKeywordInString = false;
@@ -345,7 +345,7 @@ public class SQLFileParser
 
 		InputStreamReader Fin = null;
 
-		Object obj = null;
+		//Object obj = null;
 
 		int iSizeOfVector = countFileArraySize(sFileNameArray);
 // END VARIABLE DECLARATIONS

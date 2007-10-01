@@ -199,7 +199,7 @@ class SQLProcessor
       TransactionDemarcation td = new TransactionDemarcation();
       try
         {
-          td.begin ( getTransactionManager(), td.REQUIRES_NEW);
+          td.begin ( getTransactionManager(), TransactionDemarcation.REQUIRES_NEW);
           Connection c = null;
           Statement s = null;
           try
@@ -235,15 +235,15 @@ class SQLProcessor
      *  @exception SQLException if a sql error occurs
      *  @exception TransactionDemarcationException if a tx error occurs
      */
-     public List executeQuery( String pQuery, String pColumnName )
+     public List<?> executeQuery( String pQuery, String pColumnName )
         throws SQLException, TransactionDemarcationException
      {
-        List results = new LinkedList();
+        List<Object> results = new LinkedList<Object>();
         TransactionDemarcation td = new TransactionDemarcation();
-        int rows = 0;
+        //int rows = 0;
         try
           {
-            td.begin ( getTransactionManager(), td.REQUIRES_NEW);
+            td.begin ( getTransactionManager(), TransactionDemarcation.REQUIRES_NEW);
             Connection c = null;
             Statement s = null;
             ResultSet rs = null;
@@ -292,14 +292,14 @@ class SQLProcessor
      * to be disabled since it doesn't make sense if drops are not being executed.
      * @exception SQLException thrown if all tables can not be dropped
      */
-    public void dropTables( Collection pNames, boolean pCascadeConstraints, boolean pPreview )
+    public void dropTables( Collection<String> pNames, boolean pCascadeConstraints, boolean pPreview )
             throws SQLException, TransactionDemarcationException
     {
       // just show drops once if preview is true
       if ( pPreview ) {
-          Iterator tables = pNames.iterator();
+          Iterator<String> tables = pNames.iterator();
           while ( tables.hasNext() ) {
-              dropTable( (String) tables.next(), pCascadeConstraints, pPreview );
+              dropTable(tables.next(), pCascadeConstraints, pPreview );
           }
           return;
       }
@@ -309,7 +309,7 @@ class SQLProcessor
       int maxIterations = pNames.size();
 
       // every table is tried at least once
-      Collection tablesToDrop = pNames;
+      Collection<String> tablesToDrop = pNames;
 
       Vector remainingTables;
       int attempt = 0;

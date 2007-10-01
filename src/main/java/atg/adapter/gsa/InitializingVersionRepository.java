@@ -16,12 +16,12 @@ package atg.adapter.gsa;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
-import java.util.Set;
-import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -132,7 +132,7 @@ public class InitializingVersionRepository extends VersionRepository {
     if (f == null)
       return null;
 
-    Vector v = new Vector();
+    List<String> v = new ArrayList<String>();
     for (int i = 0; i < f.length; i++) {
       if (!v.contains(f[i].getAbsolutePath()))
         v.add(f[i].getAbsolutePath());
@@ -678,7 +678,7 @@ public class InitializingVersionRepository extends VersionRepository {
       if (isLoggingDebug())
         spe.setLoggingDebug(true);
 
-      Vector createStatements = getCreateStatements(null, null);
+      List<String> createStatements = getCreateStatements(null, null);
       createdTables = spe.createTables(createStatements, isDropTablesIfExist());
     }
 
@@ -692,10 +692,10 @@ public class InitializingVersionRepository extends VersionRepository {
    * @exception RepositoryException
    *              if an error occurs with the Repository
    */
-  private Vector getCreateStatements(PrintWriter pOut, String pDatabaseName)
+  private List<String> getCreateStatements(PrintWriter pOut, String pDatabaseName)
       throws RepositoryException {
-    Vector tableStatements = new Vector();
-    Vector indexStatements = new Vector();
+    List<String> tableStatements = new ArrayList<String>();
+    List<String> indexStatements = new ArrayList<String>();
 
     // use current database if none is supplied
     if (pDatabaseName == null)
@@ -704,7 +704,7 @@ public class InitializingVersionRepository extends VersionRepository {
     String[] descriptorNames = getWrappedRepository().getItemDescriptorNames();
     OutputSQLContext sqlContext = new OutputSQLContext(pOut);
     GSAItemDescriptor itemDescriptors[];
-    DatabaseTableInfo dti = getDatabaseTableInfo(pDatabaseName);
+    //DatabaseTableInfo dti = getDatabaseTableInfo(pDatabaseName);
     int i, length = descriptorNames.length;
 
     itemDescriptors = new GSAItemDescriptor[length];
@@ -715,7 +715,7 @@ public class InitializingVersionRepository extends VersionRepository {
 
     String create = null;
     String index = null;
-    HashSet tableNames = new HashSet();
+    HashSet<String> tableNames = new HashSet<String>();
     for (i = 0; i < length; i++) {
       GSAItemDescriptor desc = itemDescriptors[i];
       Table[] tables = desc.getTables();
@@ -1037,56 +1037,56 @@ public class InitializingVersionRepository extends VersionRepository {
     }
   }
 
-  /** verifies that SQL files specified by user are ok.  in particular, that if
-   *  the user mapped a 'createSqlFile' for a db type there is a corresponding
-   *  'dropSqlFile' entry, and vice-versa.
-   *  @exception RepositoryException if anything is wrong
-   */
-  private void validateUserSpecifiedSqlFiles() throws RepositoryException {
-    // don't let them be null
-    if (getSqlCreateFiles() == null)
-      setSqlCreateFiles(new Properties());
-    if (getSqlDropFiles() == null)
-      setSqlDropFiles(new Properties());
-    // make sure all the keys are valid
-    Set keys = new HashSet();
-    keys.addAll(getSqlCreateFiles().keySet());
-    keys.addAll(getSqlDropFiles().keySet());
-    Set allow_keys = new HashSet();
-    for (int i = 0; i < dbTypes.length; i++) {
-      keys.remove(dbTypes[i]);
-      if (!dbTypes[i].equals(SYBASE2))
-        allow_keys.add(dbTypes[i]);
-    }
-    if (keys.size() > 0)
-      throw new RepositoryException(
-          "The following keys used in the 'sqlCreateFiles' and/or 'sqlDropFiles' properties "
-              + "are invalid: " + keys + ".  Allowable keys are: " + allow_keys);
-
-    boolean isDefaultCreate = (getSqlCreateFiles().get(DEFAULT) != null);
-    boolean isDefaultDrop = (getSqlDropFiles().get(DEFAULT) != null);
-    // if there are defaults it will always be ok, so just return
-    if (isDefaultCreate && isDefaultDrop)
-      return;
-
-    // otherwise, check each dbType individually
-    for (int i = 0; i < dbTypes.length; i++) {
-      boolean isCreate = (getSqlCreateFiles().get(dbTypes[i]) != null);
-      boolean isDrop = (getSqlDropFiles().get(dbTypes[i]) != null);
-      if (isCreate && !isDrop && !isDefaultDrop)
-        throw new RepositoryException(
-            "Mapping exists for database type "
-                + dbTypes[i]
-                + " in property 'sqlCreateFiles', but not in property 'sqlDropFiles', and "
-                + "there is no default specified.");
-      if (isDrop && !isCreate && !isDefaultCreate)
-        throw new RepositoryException(
-            "Mapping exists for database type "
-                + dbTypes[i]
-                + " in property 'sqlDropFiles', but not in property 'sqlCreateFiles', and "
-                + "there is no default specified.");
-    }
-  }
+//  /** verifies that SQL files specified by user are ok.  in particular, that if
+//   *  the user mapped a 'createSqlFile' for a db type there is a corresponding
+//   *  'dropSqlFile' entry, and vice-versa.
+//   *  @exception RepositoryException if anything is wrong
+//   */
+//  private void validateUserSpecifiedSqlFiles() throws RepositoryException {
+//    // don't let them be null
+//    if (getSqlCreateFiles() == null)
+//      setSqlCreateFiles(new Properties());
+//    if (getSqlDropFiles() == null)
+//      setSqlDropFiles(new Properties());
+//    // make sure all the keys are valid
+//    Set<Object> keys = new HashSet<Object>();
+//    keys.addAll(getSqlCreateFiles().keySet());
+//    keys.addAll(getSqlDropFiles().keySet());
+//    Set<String> allow_keys = new HashSet<String>();
+//    for (int i = 0; i < dbTypes.length; i++) {
+//      keys.remove(dbTypes[i]);
+//      if (!dbTypes[i].equals(SYBASE2))
+//        allow_keys.add(dbTypes[i]);
+//    }
+//    if (keys.size() > 0)
+//      throw new RepositoryException(
+//          "The following keys used in the 'sqlCreateFiles' and/or 'sqlDropFiles' properties "
+//              + "are invalid: " + keys + ".  Allowable keys are: " + allow_keys);
+//
+//    boolean isDefaultCreate = (getSqlCreateFiles().get(DEFAULT) != null);
+//    boolean isDefaultDrop = (getSqlDropFiles().get(DEFAULT) != null);
+//    // if there are defaults it will always be ok, so just return
+//    if (isDefaultCreate && isDefaultDrop)
+//      return;
+//
+//    // otherwise, check each dbType individually
+//    for (int i = 0; i < dbTypes.length; i++) {
+//      boolean isCreate = (getSqlCreateFiles().get(dbTypes[i]) != null);
+//      boolean isDrop = (getSqlDropFiles().get(dbTypes[i]) != null);
+//      if (isCreate && !isDrop && !isDefaultDrop)
+//        throw new RepositoryException(
+//            "Mapping exists for database type "
+//                + dbTypes[i]
+//                + " in property 'sqlCreateFiles', but not in property 'sqlDropFiles', and "
+//                + "there is no default specified.");
+//      if (isDrop && !isCreate && !isDefaultCreate)
+//        throw new RepositoryException(
+//            "Mapping exists for database type "
+//                + dbTypes[i]
+//                + " in property 'sqlDropFiles', but not in property 'sqlCreateFiles', and "
+//                + "there is no default specified.");
+//    }
+//  }
 
   /** executes the specified SQL files against this Repository's DataSource.
    *  @param String[] the files to execute
@@ -1106,7 +1106,7 @@ public class InitializingVersionRepository extends VersionRepository {
       // switch the file path so everything is forward slashes
       file = file.replace('\\', '/');
       String cmd = null;
-      Iterator cmds = null;
+      Iterator<?> cmds = null;
       if (isLoggingInfo())
         logInfo("Executing SQL file: " + file);
       if (!new File(file).exists())
@@ -1114,7 +1114,7 @@ public class InitializingVersionRepository extends VersionRepository {
 
       // parse the file to get commands...
       try {
-        Collection c = parser.parseSQLFile(file);
+        Collection<?> c = parser.parseSQLFile(file);
         if (isLoggingDebug())
           logDebug("Parsed " + c.size() + " SQL command(s) from file.");
         cmds = c.iterator();
