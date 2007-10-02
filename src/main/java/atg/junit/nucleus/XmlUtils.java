@@ -78,7 +78,7 @@ public class XmlUtils
        *  @exception FileNotFoundException if the specified file can not be located.
        *  @exception Exception if an error occurs parsing the file to a DOM.
        */
-      public static List getNodes( File pXmlFile, boolean pValidateDoc, String[] pChildren )
+      public static List<Node>  getNodes( File pXmlFile, boolean pValidateDoc, String[] pChildren )
           throws FileNotFoundException, Exception
       {
           return getNodes( initializeFile( pXmlFile, pValidateDoc ), pChildren );
@@ -101,7 +101,7 @@ public class XmlUtils
        *  @return List the requested child Nodes.  an empty List if no child Nodes exist.
        *  null if the specified Document was null.
        */
-      public static List getNodes( Document pDocument, String[] pChildren )
+      public static List<Node>  getNodes( Document pDocument, String[] pChildren )
       {
           if ( pDocument == null ) return null;
           return getNodes( pDocument.getDocumentElement(), pChildren );
@@ -123,8 +123,8 @@ public class XmlUtils
        *  </pre>
        *  @return List the requested child Nodes.  an empty List if no child Nodes exist.
        */
-      public static List getNodes( Node pNode, String[] pChildren ) {
-          List nodes = new LinkedList();
+      public static List<Node> getNodes( Node pNode, String[] pChildren ) {
+          List<Node>  nodes = new LinkedList<Node>();
 
           if ( pNode == null ) {
               // do nothing
@@ -326,15 +326,15 @@ public class XmlUtils
           log.info("bea's registry file:=[" + file + "]");
           String[] children = { "host", "product", "release" };
           try {
-            List nodes = getNodes( new File(file), false, children );
+            List<Node>  nodes = getNodes( new File(file), false, children );
             if ( nodes == null ) {
                 System.out.print("Nodes is null.");
             } else if ( nodes.size() == 0 ) {
                 System.out.print("Nodes is empty.");
             } else {
-                Iterator iter = nodes.iterator();
+                Iterator<Node>  iter = nodes.iterator();
                 while ( iter.hasNext() ) {
-                    Node n = (Node) iter.next();
+                    Node n = iter.next();
                     log.info("Got Node: " + getAttribute(n, "level") + "/" + getAttribute(n,"ServicePackLevel") );
                 }
             }
