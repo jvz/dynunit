@@ -193,10 +193,8 @@ public class NucleusTestUtils {
   public static Nucleus startNucleus(File configpath) {
     System.setProperty("atg.dynamo.license.read", "true");
     System.setProperty("atg.license.read", "true");
-    String[] configpathStr = { configpath.getAbsolutePath() };
     NucleusServlet.addNamingFactoriesAndProtocolHandlers();
-    Nucleus n = Nucleus.startNucleus(configpathStr);
-    return n;
+    return Nucleus.startNucleus(new String[]{configpath.getAbsolutePath()});
   }
 
 
