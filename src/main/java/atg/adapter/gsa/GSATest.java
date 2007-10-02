@@ -46,6 +46,9 @@ import atg.test.util.DBUtils;
  *
  */
 public  class GSATest extends TestCase {
+  
+  private final transient Random random = new Random();
+  
   private static final Log log = LogFactory.getLog(GSATest.class);
 
   private HashMap<String, File> mConfigDir = new HashMap<String, File>();
@@ -136,7 +139,8 @@ public  class GSATest extends TestCase {
       throw new AssertionError("Please declare a method with name "+pMethodName + " in your class. It must take an atg.adapter.gsa.GSARepository as the only parameter.");
     }
     finally{
-      if(n != null)
+      // if it were null a NPE would have occurred at the earlier dereference
+      //if(n != null)
         n.stopService();
     }
   }
@@ -182,8 +186,7 @@ public  class GSATest extends TestCase {
     System.setProperty("atg.dynamo.license.read", "true");
     System.setProperty("atg.license.read", "true");
     NucleusServlet.addNamingFactoriesAndProtocolHandlers();
-    Nucleus n = Nucleus.startNucleus(new String[] {configpathStr});
-    return n;
+    return Nucleus.startNucleus(new String[] {configpathStr});
   }
   /**
    * @param dbName
@@ -286,17 +289,17 @@ public  class GSATest extends TestCase {
         {
           long val = gen.generateLongId(idSpaceNames[i]);
           if (types[i] == Long.class)
-            newId[i] = new Long(val);
+            newId[i] =  Long.valueOf(val);
           else if (types[i] == Float.class)
-            newId[i] = new Float((float) val);
+            newId[i] =  Float.valueOf((float) val);
           else if (types[i] == Double.class)
-            newId[i] = new Double((float) val);
+            newId[i] =  Double.valueOf((float) val);
           else if (types[i] == java.sql.Timestamp.class)
             newId[i] = new java.sql.Timestamp(val);
           else if (types[i] == java.util.Date.class)
             newId[i] = new java.util.Date(val);
           else
-            newId[i] =  new Integer((int)val);
+            newId[i] =   Integer.valueOf((int)val);
         }
       }
     }
@@ -425,52 +428,52 @@ public  class GSATest extends TestCase {
    * @return
    */
   private Object generateDouble() {
-    return new Double(new Random().nextDouble());
+    return new Double(random.nextDouble());
   }
   /**
    * @return
    */
   private Object generateInteger() {
-    return new Integer(new Random().nextInt(32768));
+    return  Integer.valueOf(random.nextInt(32768));
   }
   /**
    * @return
    */
   private Object generateFloat() {
-    return new Float(new Random().nextFloat());
+    return new Float(random.nextFloat());
   }
   /**
    * @return
    */
   private Object generateLong() {
-    return new Long(new Random().nextInt(32278));
+    return  Long.valueOf(random.nextInt(32278));
   }
   /**
    * @return
    */
   private Object generateShort() {
-    return new Short((short) (new Random().nextInt(100)));
+    return  Short.valueOf((short) (random.nextInt(100)));
   }
   /**
    * @return
    */
   private Object generateByte() {
     byte[] bytes = new byte[1];
-    new Random().nextBytes(bytes);
-    return new Byte(bytes[0]);
+    random.nextBytes(bytes);
+    return  Byte.valueOf(bytes[0]);
   }
   /**
    * @return
    */
   private Object generateBoolean() {
-    return new Boolean(new Random().nextBoolean());
+    return  Boolean.valueOf(random.nextBoolean());
   }
   /**
    * @return
    */
   private Object generateString() {
   
-    return new String("DUMMY STRING " + generateInteger());
+    return "DUMMY STRING " + generateInteger();
   }
 
 
