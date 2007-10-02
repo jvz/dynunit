@@ -39,8 +39,8 @@ public class SimpleGSATest extends GSATest {
 
     // Copy all related properties and definition files to the previously
     // configured configpath
-    FileUtils.copyDir("src/test/resources/config", configpath.getPath(),
-        Arrays.asList(new String[] { ".svn" }));
+    FileUtils.copyDir("src/test/resources/config", configpath.getPath(), Arrays
+        .asList(new String[] { ".svn" }));
 
     // Use the DBUtils utility class to get JDBC properties for an in memory
     // HSQL DB called "testdb".
@@ -52,8 +52,10 @@ public class SimpleGSATest extends GSATest {
     boolean rollback = true;
 
     // Setup our testing configpath
+    // RH: disabled logging (last argument to false) to get rid of the double
+    // logging statements
     GSATestUtils.getGSATestUtils().initializeMinimalConfigpath(configpath,
-        "/SimpleRepository", definitionFiles, props, null, null, null, true);
+        "/SimpleRepository", definitionFiles, props, null, null, null, false);
 
     // Start Nucleus
     Nucleus n = startNucleus(configpath);
