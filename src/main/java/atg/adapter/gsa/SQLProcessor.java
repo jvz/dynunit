@@ -18,11 +18,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
@@ -311,13 +311,13 @@ class SQLProcessor
       // every table is tried at least once
       Collection<String> tablesToDrop = pNames;
 
-      Vector remainingTables;
+      List<String> remainingTables;
       int attempt = 0;
       do {
-              remainingTables = new Vector();
-              Iterator tables = tablesToDrop.iterator();
+              remainingTables = new ArrayList<String>();
+              Iterator<String> tables = tablesToDrop.iterator();
               while ( tables.hasNext() ) {
-                      String table = (String) tables.next();
+                      String table =  tables.next();
                       if ( tableExists( table ) ) {
                               try {
                                       dropTable( table, pCascadeConstraints, pPreview );

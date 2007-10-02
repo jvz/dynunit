@@ -28,7 +28,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -763,7 +763,7 @@ public class GSATestUtils {
  * @return
  * @throws IOException
    */
-  protected  Map additionalVersionProperties(File pRoot, String pRepositoryPath, String pRepositoryName) throws IOException {
+  protected  Map<String, String> additionalVersionProperties(File pRoot, String pRepositoryPath, String pRepositoryName) throws IOException {
     
     copyToConfigpath(pRoot, "atg/adapter/version/versionmanager/versionManagerRepository.xml");
     GSATestUtils.getGSATestUtils()
@@ -807,10 +807,10 @@ public class GSATestUtils {
 
     //create a version manager and version manager repository
     //createVersionManager();
-    props = new Properties();
+    Map<String, String> extraProps= new HashMap<String, String>();
     props.put("versionManager", "/atg/adapter/version/versionmanager/VersionManagerService");
     props.put("versionItemsByDefault", "true");
-    return props;
+    return extraProps;
   }
 
   /**
@@ -1057,15 +1057,15 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
     try {
       c = gsa.getConnection();
       pTable.loadColumnInfo(c);
-      Collection<String> colNames = pPrintColumnNames;
-      Map map = ((Map) gsa.getColumnInfoCache().get(
+      Collection<?> colNames = pPrintColumnNames;
+      Map<?, ?> map = ((Map<?, ?>) gsa.getColumnInfoCache().get(
           pTable.mName));
       if(map == null)
-        map = ((Map) gsa.getColumnInfoCache().get(
+        map = ((Map<?, ?>) gsa.getColumnInfoCache().get(
           pTable.mName.toUpperCase()));
       if(pPrintColumnNames.isEmpty())
       colNames = map.keySet();
-      Iterator<String> iter0 = colNames.iterator();
+      Iterator<?> iter0 = colNames.iterator();
       String sql = "SELECT ";
       while (iter0.hasNext()) {
         Object obj = iter0.next();
@@ -1079,10 +1079,10 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
       ResultSet rs = st.executeQuery();
       System.out.print("DUMP FOR TABLE: " + pTable.getBaseName().toUpperCase()
           + "\n");
-      Iterator<String> iter1 = colNames.iterator();
+      Iterator<?> iter1 = colNames.iterator();
       int truncateThreshold = 20;
       while (iter1.hasNext()) {
-        String colname  =  iter1.next();
+        String colname  =  (String)iter1.next();
         System.out.print( colname.substring(0, colname.length() > 18 ? 18:colname.length()));
         for (int i = 0; i < truncateThreshold-colname.length(); i++) {
           System.out.print(" ");
@@ -1092,7 +1092,7 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
       System.out.print("\n");
       while (rs.next()) {
         int i = 1;
-        Iterator<String> iter = colNames.iterator();
+        Iterator<?> iter = colNames.iterator();
         while (iter.hasNext()) {
           //String columnName =  iter.next();
           iter.next();
@@ -1126,7 +1126,7 @@ public void copyToConfigpath(File pConfigRoot, String pString, String configPath
     for (int i = 0; tables != null && i < tables.length; i++) {
       Table table = tables[i];
       if(doneTables.contains(table.getName())) continue;
-      dumpTable(table, Collections.EMPTY_LIST);
+      dumpTable(table, new ArrayList<String>());
       doneTables.add(table.getName());
     }
   }

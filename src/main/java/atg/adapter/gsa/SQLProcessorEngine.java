@@ -15,14 +15,12 @@
 package atg.adapter.gsa ;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.sql.DataSource;
 
@@ -191,21 +189,21 @@ class SQLProcessorEngine
    * null here
    * @param pResultSet result set to close, may be null
    **/
-  private final void close(ResultSet pResultSet)
-  {
-    if (pResultSet != null)
-      {
-        try
-          {
-            pResultSet.close();
-          }
-        catch (SQLException sqle)
-          {
-            if (isLoggingError())
-              logError(sqle);
-          }
-      }
-  }
+//  private final void close(ResultSet pResultSet)
+//  {
+//    if (pResultSet != null)
+//      {
+//        try
+//          {
+//            pResultSet.close();
+//          }
+//        catch (SQLException sqle)
+//          {
+//            if (isLoggingError())
+//              logError(sqle);
+//          }
+//      }
+//  }
 
   //-------------------------------------
   /**
@@ -246,7 +244,7 @@ class SQLProcessorEngine
     int rows = 0;
    try
       {
-        td.begin (mRepository.getTransactionManager(), td.REQUIRES_NEW);
+        td.begin (mRepository.getTransactionManager(), TransactionDemarcation.REQUIRES_NEW);
         Connection c = null;
         Statement s = null;
         try
@@ -651,17 +649,17 @@ class SQLProcessorEngine
 
 		// hashmap containing one entry for every table that references
 		// another, and holds Vector of those tables it is waiting to be made
-		HashMap refersTo = new HashMap();
+		HashMap<String, List<String>> refersTo = new HashMap<String, List<String>>();
 		// hashmap containing one entry for every table that is references by
 		// another, and holds Vector of all the tables that reference it
-		HashMap referencedBy = new HashMap();
+		HashMap<String, List<String>> referencedBy = new HashMap<String, List<String>>();
 
 		// setup the tables so we know who makes which references
-		Iterator iter = statements.iterator();
+		Iterator<String> iter = statements.iterator();
 		while ( iter.hasNext() ) {
-			String statement = (String) iter.next();
+			String statement = iter.next();
 			String tableName = getTableName( statement );
-			Vector references = getTableReferences( statement, tableName );
+			List<String> references = getTableReferences( statement, tableName );
 
 			if ( references.size() < 1 ) {
 				orderedStatements.add( statement );
@@ -676,16 +674,16 @@ class SQLProcessorEngine
 				refersTo.put( tableName, references );
 
 				// update referencedBy to include this table
-				Iterator refs = references.iterator();
+				Iterator<String> refs = references.iterator();
 				while ( refs.hasNext() ) {
-					String ref = (String) refs.next();
-					Vector v;
+					String ref =  refs.next();
+					List<String> v;
 					if ( ! referencedBy.containsKey( ref ) ) {
-						v = new Vector();
+						v = new ArrayList<String>();
 						v.add( tableName );
 						referencedBy.put( ref, v );
 					} else {
-						v = (Vector) referencedBy.get( ref );
+						v =  referencedBy.get( ref );
 						v.add( tableName );
 					}
 				}
@@ -695,7 +693,7 @@ class SQLProcessorEngine
 		// removed all of the previously the ordered statements
 		iter = orderedStatements.iterator();
 		while ( iter.hasNext() ) {
-			String statement = (String) iter.next();
+			String statement = iter.next();
 			statements.remove( statement );
 		}
 
@@ -705,21 +703,21 @@ class SQLProcessorEngine
 		int maxTries = statements.size();
 		int attempt = 0;
 		while ( statements.size() > 0 ) {
-			Iterator iterator = statements.iterator();
-			Vector newlyAdded = new Vector();
+			Iterator<String> iterator = statements.iterator();
+			List<String> newlyAdded = new ArrayList<String>();
 			while ( iterator.hasNext() ) {
-				String statement = (String) iterator.next();
+				String statement = iterator.next();
 				String tableName = getTableName( statement );
 
 				// is this table isn't waiting for another table, add it
 				if ( ! refersTo.containsKey( tableName ) ) {
 					// this would be an error condition !!
 				} else {
-					Vector waitingOnTables = (Vector) refersTo.get( tableName );
+					List<String> waitingOnTables =  refersTo.get( tableName );
 					boolean okToAdd = true;
-					Iterator i = waitingOnTables.iterator();
+					Iterator<String> i = waitingOnTables.iterator();
 					while ( i.hasNext() ) {
-						String waitingOn = (String) i.next();
+						String waitingOn = i.next();
 						if ( refersTo.containsKey( waitingOn ) ) {
 							okToAdd = false;
 						}
@@ -730,11 +728,11 @@ class SQLProcessorEngine
 						newlyAdded.add( statement );
 						// let the other tables know this one is made
 						if ( referencedBy.containsKey( tableName ) ) {
-							Vector tablesWaiting = (Vector) referencedBy.get( tableName );
-							Iterator j = tablesWaiting.iterator();
+						  List<String> tablesWaiting =  referencedBy.get( tableName );
+							Iterator<String> j = tablesWaiting.iterator();
 							while ( j.hasNext() ) {
-								String table = (String) j.next();
-								Vector v = (Vector) refersTo.get( table );
+								String table =  j.next();
+								List<String> v =  refersTo.get( table );
 								v.remove( tableName );
 							}
 						}
@@ -743,9 +741,9 @@ class SQLProcessorEngine
 			}
 
 			// after each iteration, remove the newlyAdded statements from the list
-			Iterator k = newlyAdded.iterator();
+			Iterator<String> k = newlyAdded.iterator();
 			while ( k.hasNext() ) {
-				String s = (String) k.next();
+				String s = k.next();
 				statements.remove( s );
 			}
 
@@ -753,9 +751,9 @@ class SQLProcessorEngine
 			if ( attempt++ > maxTries ) {
 				if ( isLoggingError() ) {
 					logError("Still trying to resolve: " );
-					Iterator left = statements.iterator();
+					Iterator<String> left = statements.iterator();
 					while ( left.hasNext() ) {
-						String table = (String) left.next();
+						String table =  left.next();
 						logError( table );
 					}
 				}
@@ -780,11 +778,11 @@ class SQLProcessorEngine
    * @return Vector containing names of referenced tables
    * @exception SQLProcessorException if the table has a reference to itself
    */
-	private Vector getTableReferences( String pStr, String tableName )
+	private List<String> getTableReferences( String pStr, String tableName )
 		throws SQLProcessorException
 	{
 		String REFERENCES = " references ";
-		Vector refs = new Vector();
+		List<String> refs = new ArrayList<String>();
 
 		int start = pStr.toLowerCase().indexOf( REFERENCES );
 		while ( start != -1 ) {
@@ -811,7 +809,7 @@ class SQLProcessorEngine
 		}
 
 		if ( isLoggingDebug() ) {
-			Iterator i = refs.iterator();
+			Iterator<String> i = refs.iterator();
 			while ( i.hasNext() ) {
 				String s = (String) i.next();
 				logDebug( "Found reference: " + s );
@@ -893,31 +891,31 @@ class SQLProcessorEngine
    * table
    * @return InsertSQL
    **/
-  private String getInsertSQL()
-  {
-    // build SQL string if needed
-    if (mInsertSQL == null)
-      {
-        StringBuffer buf = new StringBuffer(300);
-        buf.append("INSERT INTO ");
-       /*
-		buf.append(getTableName());
-        buf.append('(');
-        buf.append(getNameColumn()).append(',');
-        buf.append(getSeedColumn()).append(',');
-        buf.append(getBatchSizeColumn()).append(',');
-        buf.append(getPrefixColumn()).append(',');
-        buf.append(getSuffixColumn());
-		*/
-
-        buf.append(')').append('\n');
-        buf.append("VALUES (?, ?, ?, ?, ?)\n");
-
-        mInsertSQL = buf.toString();
-      }
-
-    return mInsertSQL;
-  }
+//  private String getInsertSQL()
+//  {
+//    // build SQL string if needed
+//    if (mInsertSQL == null)
+//      {
+//        StringBuffer buf = new StringBuffer(300);
+//        buf.append("INSERT INTO ");
+//       /*
+//		buf.append(getTableName());
+//        buf.append('(');
+//        buf.append(getNameColumn()).append(',');
+//        buf.append(getSeedColumn()).append(',');
+//        buf.append(getBatchSizeColumn()).append(',');
+//        buf.append(getPrefixColumn()).append(',');
+//        buf.append(getSuffixColumn());
+//		*/
+//
+//        buf.append(')').append('\n');
+//        buf.append("VALUES (?, ?, ?, ?, ?)\n");
+//
+//        mInsertSQL = buf.toString();
+//      }
+//
+//    return mInsertSQL;
+//  }
 
   //---------- Property: (read-only) UpdateSQL ----------
   /** SQL to execute to update a specific id space in the DB */
@@ -930,28 +928,28 @@ class SQLProcessorEngine
    * space int the D0B
    * @return UpdateSQL
    **/
-  private String getUpdateSQL()
-  {
-    // generate SQL if needed
-    if (mUpdateSQL == null)
-      {
-        StringBuffer buf = new StringBuffer(300);
-        buf.append("UPDATE ");
-		/*
-        buf.append(getTableName());
-        buf.append(" SET ");
-        buf.append(getSeedColumn()).append('=');
-        buf.append(getSeedColumn()).append('+');
-        buf.append(getBatchSizeColumn());
-        buf.append(" WHERE ");
-        buf.append(getNameColumn()).append(" = ?");
-
-		*/
-        mUpdateSQL = buf.toString();
-      }
-
-    return mUpdateSQL;
-  }
+//  private String getUpdateSQL()
+//  {
+//    // generate SQL if needed
+//    if (mUpdateSQL == null)
+//      {
+//        StringBuffer buf = new StringBuffer(300);
+//        buf.append("UPDATE ");
+//		/*
+//        buf.append(getTableName());
+//        buf.append(" SET ");
+//        buf.append(getSeedColumn()).append('=');
+//        buf.append(getSeedColumn()).append('+');
+//        buf.append(getBatchSizeColumn());
+//        buf.append(" WHERE ");
+//        buf.append(getNameColumn()).append(" = ?");
+//
+//		*/
+//        mUpdateSQL = buf.toString();
+//      }
+//
+//    return mUpdateSQL;
+//  }
 
   //---------- Property: (read-only) SelectSQL ----------
   /** SQL to execute to load a specific id space from the DB */
@@ -964,28 +962,28 @@ class SQLProcessorEngine
    * space from the DB
    * @return SelectSQL
    **/
-  private String getSelectSQL()
-  {
-    // generate SQL if needed
-    if (mSelectSQL == null)
-      {
-        StringBuffer buf = new StringBuffer(300);
-        buf.append("SELECT ");
-        /*
-		buf.append(getSeedColumn()).append(',');
-        buf.append(getBatchSizeColumn()).append(',');
-        buf.append(getPrefixColumn()).append(',');
-        buf.append(getSuffixColumn());
-        buf.append("  FROM ");
-        buf.append(getTableName());
-        buf.append(" WHERE ");
-        buf.append(getNameColumn()).append(" = ?");
-		*/
-
-        mSelectSQL = buf.toString();
-      }
-
-    return mSelectSQL;
-  }
+//  private String getSelectSQL()
+//  {
+//    // generate SQL if needed
+//    if (mSelectSQL == null)
+//      {
+//        StringBuffer buf = new StringBuffer(300);
+//        buf.append("SELECT ");
+//        /*
+//		buf.append(getSeedColumn()).append(',');
+//        buf.append(getBatchSizeColumn()).append(',');
+//        buf.append(getPrefixColumn()).append(',');
+//        buf.append(getSuffixColumn());
+//        buf.append("  FROM ");
+//        buf.append(getTableName());
+//        buf.append(" WHERE ");
+//        buf.append(getNameColumn()).append(" = ?");
+//		*/
+//
+//        mSelectSQL = buf.toString();
+//      }
+//
+//    return mSelectSQL;
+//  }
 
 }
