@@ -29,7 +29,7 @@ import atg.nucleus.GenericService;
 import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusTestUtils;
 import atg.nucleus.ServiceException;
-import atg.nucleus.logging.ConsoleLogListener;
+import atg.nucleus.logging.PrintStreamLogger;
 import atg.test.util.DBUtils;
 import atg.test.util.FileUtils;
 
@@ -174,7 +174,7 @@ public class AtgDustTestCase extends TestCase {
    */
   protected final Object getService(final String serviceName) {
     startNucleus();
-    return prepareLogService(nucleus.resolveName(serviceName));
+    return nucleus.resolveName(serviceName);
   }
 
   /**
@@ -338,8 +338,10 @@ public class AtgDustTestCase extends TestCase {
     }
 
     // Setup our test configpath
+    // disabled logging (last argument to false) to get rid of the double
+    // logging statements
     GSATestUtils.getGSATestUtils().initializeMinimalConfigpath(configDir,
-        repoPath, definitionFiles, props, null, null, null, true);
+        repoPath, definitionFiles, props, null, null, null, false);
 
     forceGlobalScopeOnAllConfigs(configDir.getPath());
 
@@ -500,13 +502,13 @@ public class AtgDustTestCase extends TestCase {
    * @return the object that was passed in with all log levels enabled, if it's
    *         a {@link GenericService}
    */
-  private Object prepareLogService(final Object service) {
+  protected Object prepareLogService(final Object service) {
     if (service instanceof GenericService) {
       ((GenericService) service).setLoggingDebug(true);
       ((GenericService) service).setLoggingInfo(true);
       ((GenericService) service).setLoggingWarning(true);
       ((GenericService) service).setLoggingError(true);
-      ((GenericService) service).addLogListener(new ConsoleLogListener());
+      ((GenericService) service).addLogListener(new PrintStreamLogger());
     }
     return service;
   }
