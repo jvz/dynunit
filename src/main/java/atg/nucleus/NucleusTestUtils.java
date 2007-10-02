@@ -168,7 +168,7 @@ public class NucleusTestUtils {
       if (pClass != null)
         fw.write(classLine);
       if (pProps != null) {
-        Iterator iter = pProps.keySet().iterator();
+        Iterator<?> iter = pProps.keySet().iterator();
         while (iter.hasNext()) {
           String key = (String) iter.next();
           String thisLine = key + "="
@@ -206,7 +206,7 @@ public class NucleusTestUtils {
    * 
    * @return
    */
-  public static File getConfigpath(Class pClass, String pConfigDirectory) {
+  public static File getConfigpath(Class<?> pClass, String pConfigDirectory) {
     if (sConfigDir.get(pConfigDirectory) == null) {
       String configdirname = "config";
       String packageName = StringUtils.replace(pClass.getPackage().getName(),

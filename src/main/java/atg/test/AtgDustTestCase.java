@@ -118,8 +118,8 @@ public class AtgDustTestCase extends TestCase {
     }
 
     NucleusTestUtils.emptyConfigDirMap();
-//    log.info("Deleting: " + configDir.getAbsolutePath());
-//    FileUtils.deleteDir(configDir);
+    log.info("Deleting: " + configDir.getAbsolutePath());
+    FileUtils.deleteDir(configDir);
   }
 
   /**

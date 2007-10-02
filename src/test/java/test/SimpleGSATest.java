@@ -1,6 +1,7 @@
 package test;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -15,24 +16,32 @@ import atg.repository.MutableRepository;
 import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryItem;
 import atg.test.util.DBUtils;
+import atg.test.util.FileUtils;
 
 /**
  * This test starts a repository, adds an item to that repository, then shuts
  * down. The repository is started up against an in-memory Hypersonic Database.
  */
 public class SimpleGSATest extends GSATest {
-  
+
   private static final Log log = LogFactory.getLog(SimpleGSATest.class);
 
   public void testSimple() throws Exception {
 
     // setup the repository
-    File configpath = new File("target/test-classes/config".replace("/", File.separator));
+    File configpath = new File("target/test-classes/config".replace("/",
+        File.separator));
 
     // Define the path to our repository definition file called
     // "simpleRepository.xml"
-    String[] definitionFiles = { "/test/simpleRepository.xml" };
+    final String[] definitionFiles = { "/test/simpleRepository.xml" };
     log.info(" definitionFile[0]=" + definitionFiles[0]);
+
+    // Copy all related properties and definition files to the previously
+    // configured configpath
+    FileUtils.copyDir("src/test/resources/config", configpath.getPath(),
+        Arrays.asList(new String[] { ".svn" }));
+
     // Use the DBUtils utility class to get JDBC properties for an in memory
     // HSQL DB called "testdb".
     Properties props = DBUtils.getHSQLDBInMemoryDBConnection("testdb");
@@ -63,12 +72,13 @@ public class SimpleGSATest extends GSATest {
       r.addItem(item);
       // Try to get it back from the repository
       String id = item.getRepositoryId();
-      RepositoryItem item2 = r.getItem(id,"simpleItem");
+      RepositoryItem item2 = r.getItem(id, "simpleItem");
       assertNotNull(
           " We did not get back the item just created from the repository.",
           item2);
       rollback = false;
-    } finally {
+    }
+    finally {
       // End the transaction, rollback on error
       if (td != null)
         td.end(rollback);

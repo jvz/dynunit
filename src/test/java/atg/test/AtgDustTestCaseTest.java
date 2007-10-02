@@ -76,7 +76,7 @@ public class AtgDustTestCaseTest extends TestCase {
 
   public void testNonGlobalComponent() throws IOException {
 
-    atgDustTestCase.useExistingPropertyFiles("target/test-classes/config/",
+    atgDustTestCase.useExistingPropertyFiles("src/test/resources/config",
         new String[] { "/test/TestComponent" });
 
     assertNotNull(atgDustTestCase.getService("/test/TestComponent"));

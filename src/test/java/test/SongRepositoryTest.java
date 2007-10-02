@@ -4,6 +4,7 @@ import static atg.test.AtgDustTestCase.DbVendor.MySQLDBConnection;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Arrays;
 import java.util.Properties;
 
 import atg.adapter.gsa.GSARepository;
@@ -13,6 +14,7 @@ import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryException;
 import atg.repository.RepositoryItem;
 import atg.test.AtgDustTestCase;
+import atg.test.util.FileUtils;
 
 /**
  * 
@@ -51,6 +53,11 @@ public class SongRepositoryTest extends AtgDustTestCase {
    * @throws Exception
    */
   public void testWithInMemoryDb() throws Exception {
+    // Copy all related properties and definition files to the previously
+    // configured configpath
+    FileUtils.copyDir("src/test/resources/config",
+        "target/test-classes/config", Arrays.asList(new String[] { ".svn" }));
+    
     prepareRepositoryTest(new File("target/test-classes/config/"),
         new String[] { "GettingStarted/songs.xml" },
         "/GettingStarted/SongsRepository");
@@ -86,6 +93,11 @@ public class SongRepositoryTest extends AtgDustTestCase {
     if (enabled == null || enabled.equalsIgnoreCase("false")) {
       return;
     }
+
+    // Copy all related properties and definition files to the previously
+    // configured configpath
+    FileUtils.copyDir("src/test/resources/config",
+        "target/test-classes/config", Arrays.asList(new String[] { ".svn" }));
 
     prepareRepositoryTest(new File("target/test-classes/config/"),
         new String[] { "GettingStarted/songs.xml" },
