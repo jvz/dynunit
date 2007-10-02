@@ -29,7 +29,7 @@ import atg.nucleus.GenericService;
 import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusTestUtils;
 import atg.nucleus.ServiceException;
-import atg.nucleus.logging.PrintStreamLogger;
+import atg.nucleus.logging.ConsoleLogListener;
 import atg.test.util.DBUtils;
 import atg.test.util.FileUtils;
 
@@ -110,15 +110,7 @@ public class AtgDustTestCase extends TestCase {
     if (dbUtils != null) {
       dbUtils.shutdown();
     }
-    if (nucleus != null) {
-      log.info("Nucleus service stopping");
-      nucleus.stopService();
-      nucleus.doStopService();
-      nucleus.destroy();
-    }
-
-    NucleusTestUtils.emptyConfigDirMap();
-    log.info("Deleting: " + configDir.getAbsolutePath());
+    stopNucleus();
     FileUtils.deleteDir(configDir);
   }
 
@@ -174,7 +166,7 @@ public class AtgDustTestCase extends TestCase {
    */
   protected final Object getService(final String serviceName) {
     startNucleus();
-    return nucleus.resolveName(serviceName);
+    return prepareLogService(nucleus.resolveName(serviceName));
   }
 
   /**
@@ -355,6 +347,7 @@ public class AtgDustTestCase extends TestCase {
 
   protected void stopNucleus() {
     if (nucleus != null) {
+      log.info("Nucleus service stopping");
       try {
         nucleus.stopService();
         nucleus.doStopService();
@@ -508,7 +501,7 @@ public class AtgDustTestCase extends TestCase {
       ((GenericService) service).setLoggingInfo(true);
       ((GenericService) service).setLoggingWarning(true);
       ((GenericService) service).setLoggingError(true);
-      ((GenericService) service).addLogListener(new PrintStreamLogger());
+      ((GenericService) service).addLogListener(new ConsoleLogListener());
     }
     return service;
   }
