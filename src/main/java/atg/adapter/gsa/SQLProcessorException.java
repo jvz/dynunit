@@ -26,6 +26,10 @@ import atg.core.exception.ContainerException;
 public class SQLProcessorException
 extends ContainerException
 {
+  /**
+   * Eclipse generated
+   */
+  private static final long serialVersionUID = 2541234526510136456L;
   //-------------------------------------
   /** Class version string */
   public static final String CLASS_VERSION =
