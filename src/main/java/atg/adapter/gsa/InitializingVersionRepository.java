@@ -30,7 +30,6 @@ import atg.adapter.gsa.xml.TemplateParser;
 import atg.adapter.gsa.xml.VersioningContextUtil;
 import atg.adapter.version.VersionRepository;
 import atg.junit.nucleus.TestUtils;
-import atg.naming.NameContext;
 import atg.naming.NameContextBindingEvent;
 import atg.nucleus.Configuration;
 import atg.nucleus.GenericService;
@@ -557,9 +556,8 @@ public class InitializingVersionRepository extends VersionRepository {
     // bound to the same name context as the original repository
     // This changes will make sure that getAbsoluteName() returns
     // a correct value.
-    NameContext nc = ((GenericService) this).getNameContext();
-    NameContextBindingEvent bindingEvent = new NameContextBindingEvent(this
-        .getName()+"_ver", getWrappedRepository(), this.getNameContext());
+    ((GenericService) this).getNameContext();
+    new NameContextBindingEvent(this.getName()+"_ver", getWrappedRepository(), this.getNameContext());
 //    newRepository.nameContextElementBound(bindingEvent);
 //    nc.removeElement(this.getName()+"_ver");
 //    super.setWrappedRepository(null);
