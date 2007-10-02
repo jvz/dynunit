@@ -38,7 +38,7 @@ public class FirstTest extends TestCase {
     Properties props = new Properties();
     File propFile = NucleusTestUtils.createProperties("test/TestComponent", configpath, "com.mycompany.ToBeTested", props);
     propFile.deleteOnExit();
-    List initial = new ArrayList();
+    List<String> initial = new ArrayList<String>();
     initial.add("/test/TestComponent");
     NucleusTestUtils.createInitial(configpath, initial);
     Nucleus n = NucleusTestUtils.startNucleus(configpath);
