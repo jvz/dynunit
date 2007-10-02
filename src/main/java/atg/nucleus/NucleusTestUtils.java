@@ -50,6 +50,8 @@ import atg.vfs.VirtualPath;
 public class NucleusTestUtils {
   
   private static final Log log = LogFactory.getLog(NucleusTestUtils.class);
+  
+  private static final Map<String, File> sConfigDir = new HashMap<String, File>();
 
   /**
    * Searches for a given file in Nucleus' configpath.
@@ -197,7 +199,6 @@ public class NucleusTestUtils {
     return n;
   }
 
-  static Map sConfigDir = new HashMap();
 
   /**
    * A convenience method for returning the configpath for a test.
@@ -238,5 +239,10 @@ public class NucleusTestUtils {
     System.setProperty("atg.configpath", ((File) sConfigDir
         .get(pConfigDirectory)).getAbsolutePath());
     return (File) sConfigDir.get(pConfigDirectory);
+  }
+  
+ 
+  public static void emptyConfigDirMap(){
+    sConfigDir.clear();
   }
 }

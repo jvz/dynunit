@@ -116,8 +116,10 @@ public class AtgDustTestCase extends TestCase {
       nucleus.doStopService();
       nucleus.destroy();
     }
-    // log.info("Deleting: " + configDir.getAbsolutePath());
-    // deleteDir(configDir);
+
+    NucleusTestUtils.emptyConfigDirMap();
+//    log.info("Deleting: " + configDir.getAbsolutePath());
+//    FileUtils.deleteDir(configDir);
   }
 
   /**
@@ -153,7 +155,7 @@ public class AtgDustTestCase extends TestCase {
       final Entry<String, Class<?>> entry = it.next();
       final File property = NucleusTestUtils.createProperties(entry.getKey(),
           configDir, entry.getValue().getName(), new Properties());
-      //log.info("created properties file: " + property.getAbsolutePath());
+      // log.info("created properties file: " + property.getAbsolutePath());
       property.deleteOnExit();
     }
   }
@@ -389,10 +391,10 @@ public class AtgDustTestCase extends TestCase {
     this.configPath = confPath.replace("/", File.separator);
     configDir = NucleusTestUtils.getConfigpath(this.getClass(), configPath);
 
-    //log.info("configPath: " + configPath);
+    // log.info("configPath: " + configPath);
 
     for (final String service : propertyFiles) {
-      //log.info("Service: " + service);
+      // log.info("Service: " + service);
 
       final String serviceDir = service.substring(0, service.lastIndexOf('/'));
       final File path = new File(configDir + File.separator + serviceDir);
@@ -489,15 +491,16 @@ public class AtgDustTestCase extends TestCase {
 
   /**
    * Will enable logging on the object that was passed in (as a method argument)
-   * if it's an instance of {@link GenericService}
+   * if it's an instance of {@link GenericService}. Automatically called by
+   * {@link AtgDustTestCase#getService(String)}
    * 
    * @param service
    *          an instance of GenericService
    * 
-   * @return the object that as passed in with all log levels enabled, if it's a
-   *         {@link GenericService}
+   * @return the object that was passed in with all log levels enabled, if it's
+   *         a {@link GenericService}
    */
-  protected Object prepareLogService(final Object service) {
+  private Object prepareLogService(final Object service) {
     if (service instanceof GenericService) {
       ((GenericService) service).setLoggingDebug(true);
       ((GenericService) service).setLoggingInfo(true);
