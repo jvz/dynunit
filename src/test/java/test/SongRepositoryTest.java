@@ -40,6 +40,11 @@ public class SongRepositoryTest extends AtgDustTestCase {
   public void setUp() throws Exception {
     super.setUp();
 
+    // Copy all related properties and definition files to the previously
+    // configured configpath
+    FileUtils.copyDir("src/test/resources/config",
+        "target/test-classes/config", Arrays.asList(new String[] { ".svn" }));
+
   }
 
   @Override
@@ -53,11 +58,7 @@ public class SongRepositoryTest extends AtgDustTestCase {
    * @throws Exception
    */
   public void testWithInMemoryDb() throws Exception {
-    // Copy all related properties and definition files to the previously
-    // configured configpath
-    FileUtils.copyDir("src/test/resources/config",
-        "target/test-classes/config", Arrays.asList(new String[] { ".svn" }));
-    
+
     prepareRepositoryTest(new File("target/test-classes/config/"),
         new String[] { "GettingStarted/songs.xml" },
         "/GettingStarted/SongsRepository");
@@ -94,11 +95,6 @@ public class SongRepositoryTest extends AtgDustTestCase {
       return;
     }
 
-    // Copy all related properties and definition files to the previously
-    // configured configpath
-    FileUtils.copyDir("src/test/resources/config",
-        "target/test-classes/config", Arrays.asList(new String[] { ".svn" }));
-
     prepareRepositoryTest(new File("target/test-classes/config/"),
         new String[] { "GettingStarted/songs.xml" },
         "/GettingStarted/SongsRepository", userName, password, host, port,
@@ -106,6 +102,7 @@ public class SongRepositoryTest extends AtgDustTestCase {
 
     // this was a small test to fix some configuration related bug I was having
     assertNotNull(getService("/test/TestComponent"));
+
 
     // The actual test is quite generic. The only difference is the way the
     // repository is prepared by the prepareRepositoryTest method
