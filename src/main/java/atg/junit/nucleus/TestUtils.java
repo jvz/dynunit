@@ -26,14 +26,12 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.jar.Manifest;
 
 import javax.activation.DataHandler;
@@ -522,7 +520,7 @@ public class TestUtils
    */
   public static boolean isGenericAppServer() {
     try {
-      ServletUtil s = (ServletUtil) ServletUtil.class.newInstance();
+      ServletUtil.class.newInstance();
       return ((Boolean) invokeMethod(dynamoEnv(), "isGenericJ2EEServer", null, null, null)).booleanValue();
     } catch (Throwable t) {}
     return false;
@@ -549,11 +547,11 @@ public class TestUtils
 	f = new File( getWasHomeDir(),"properties/version/WAS.product" );
 
       String[] children1 = { "version" };
-      List nodes1 = XmlUtils.getNodes(f, false, children1);
+      List<Node> nodes1 = XmlUtils.getNodes(f, false, children1);
       if (nodes1 != null ) {
-	Iterator iter1 = nodes1.iterator();
+	Iterator<Node> iter1 = nodes1.iterator();
 	while (iter1.hasNext()) {
-	  Node n1 = (Node) iter1.next();
+	  Node n1 = iter1.next();
 	  version = XmlUtils.getNodeTextValue(n1);
 	}
       }
@@ -701,13 +699,13 @@ public class TestUtils
     try {
       File f = new File( new File( getBeaHomeDir() ), "registry.xml" );
       String[] children = { "host", "product", "release" };
-      List nodes = XmlUtils.getNodes(f, false, children);
+      List<Node> nodes = XmlUtils.getNodes(f, false, children);
       if ( nodes != null ) {
-	Iterator iter = nodes.iterator();
+	Iterator<Node> iter = nodes.iterator();
 	// I expect there to only be one <host><product><release> node
 	// so this iteration should really just loop over one node.
 	while ( iter.hasNext() ) {
-	  Node n = (Node) iter.next();
+	  Node n =  iter.next();
 	  version = XmlUtils.getAttribute(n,"level","0") + "." +
 	    XmlUtils.getAttribute(n,"ServicePackLevel","0") + "." +
 	    XmlUtils.getAttribute(n,"PatchLevel","0");
@@ -772,10 +770,10 @@ public class TestUtils
 	return UNKNOWN_INFO;
       }
       String[] children = { "jar" };
-      Iterator nodes = XmlUtils.getNodes(versionFile,false,children).iterator();
+      Iterator<Node> nodes = XmlUtils.getNodes(versionFile,false,children).iterator();
       while ( nodes.hasNext() ) {
 	try {
-	  Node node = (Node) nodes.next();
+	  Node node =  nodes.next();
 	  String name = node.getAttributes().getNamedItem("name").getNodeValue();
 	  log("Checking node: " + name);
 	  if ( name.equals("jboss.jar") ) {
@@ -880,7 +878,7 @@ public class TestUtils
   /** This method is used to send the same email message to a vector
    * of recipients
    */
-  public static void sendEmails(Vector pAddresses, String pMsg,
+  public static void sendEmails(List<String> pAddresses, String pMsg,
 				String pSubject, String pBodyEncoding )
   {
     // make sure addresses are valid
@@ -889,11 +887,11 @@ public class TestUtils
       return;
 
     // send emails
-    Enumeration addresses = pAddresses.elements();
+    Iterator<String> addresses = pAddresses.iterator();
     String address = null;
-    while ( addresses.hasMoreElements() ) {
+    while ( addresses.hasNext() ) {
       try {
-	address = (String) addresses.nextElement();
+	address =  addresses.next();
 	if ( address != null && address.trim().length() > 0 )
 	  sendEmail(address.trim(),pMsg,pSubject,null,null,null,pBodyEncoding);
       } catch (Exception e) {}
@@ -903,7 +901,7 @@ public class TestUtils
   /** This method is used to send the same email message to a vector
    *  of recipients.  It encodes the message body as "text/plain".
    */
-  public static void sendEmails(Vector pAddresses, String pMsg,
+  public static void sendEmails(List<String> pAddresses, String pMsg,
 				String pSubject )
   {
     sendEmails( pAddresses, pMsg, pSubject, "text/plain" );
@@ -918,7 +916,7 @@ public class TestUtils
    *  representing the contents of the attachment.
    */
   public static void sendEmail(String pAddress, String pMsg, String pSubject,
-			       Map pTextAttachments, Map pHTMLAttachments,
+			       Map<String, Object> pTextAttachments, Map<String, Object> pHTMLAttachments,
 			       File[] pFiles, String pBodyEncoding )
   {
     try {
@@ -945,9 +943,9 @@ public class TestUtils
 
       // add the text attachments
       if ( pTextAttachments != null ) {
-	Iterator textkeys = pTextAttachments.keySet().iterator();
+	Iterator<String> textkeys = pTextAttachments.keySet().iterator();
 	while ( textkeys.hasNext() ) {
-	  String key = (String) textkeys.next();
+	  String key = textkeys.next();
 	  Object val = pTextAttachments.get( key );
 	  if ( val != null ) {
 	    MimeBodyPart part = new MimeBodyPart();
@@ -962,9 +960,9 @@ public class TestUtils
 
       // add the html attachments
       if ( pHTMLAttachments != null ) {
-	Iterator htmlkeys = pHTMLAttachments.keySet().iterator();
+	Iterator<String> htmlkeys = pHTMLAttachments.keySet().iterator();
 	while ( htmlkeys.hasNext() ) {
-	  String key = (String) htmlkeys.next();
+	  String key =  htmlkeys.next();
 	  Object val = pHTMLAttachments.get( key );
 	  if ( val != null ) {
 	    MimeBodyPart part = new MimeBodyPart();
@@ -1013,7 +1011,7 @@ public class TestUtils
    *  atg.service.email.MimeMessageUtils.
    */
   public static void sendEmail(String pAddress, String pMsg, String pSubject,
-			       Map pTextAttachments, Map pHTMLAttachments,
+			       Map<String, Object> pTextAttachments, Map<String, Object> pHTMLAttachments,
 			       String pBodyEncoding )
   {
     sendEmail( pAddress, pMsg, pSubject, pTextAttachments, pHTMLAttachments, null, pBodyEncoding );
@@ -1030,7 +1028,7 @@ public class TestUtils
    *  atg.service.email.MimeMessageUtils.
    */
   public static void sendEmail( String pAddress, String pMsg, String pSubject,
-				Map pTextAttachments, Map pHTMLAttachments )
+				Map<String, Object> pTextAttachments, Map<String, Object> pHTMLAttachments )
   {
     sendEmail( pAddress,pMsg,pSubject,pTextAttachments,pHTMLAttachments,"text/plain");
   }
@@ -1044,9 +1042,9 @@ public class TestUtils
    *  attached file.  The value in the Map should be a String
    *  representing the contents of the attachment.
    */
-  public static void sendEmails(Vector pAddresses, String pMsg,
-				String pSubject, Map pTextAttachments,
-				Map pHTMLAttachments, File[] pFiles,
+  public static void sendEmails(List<String> pAddresses, String pMsg,
+				String pSubject, Map<String, Object> pTextAttachments,
+				Map<String, Object> pHTMLAttachments, File[] pFiles,
 				String pBodyEncoding )
   {
     // make sure addresses are valid
@@ -1055,11 +1053,11 @@ public class TestUtils
       return;
 
     // send emails
-    Enumeration addresses = pAddresses.elements();
+    Iterator<String> addresses = pAddresses.iterator();
     String address = null;
-    while ( addresses.hasMoreElements() ) {
+    while ( addresses.hasNext() ) {
       try {
-	address = (String) addresses.nextElement();
+	address =  addresses.next();
 	if ( address != null && address.trim().length() > 0 )
 	  sendEmail(address.trim(), pMsg, pSubject, pTextAttachments,
 		    pHTMLAttachments, pFiles, pBodyEncoding );
@@ -1075,9 +1073,9 @@ public class TestUtils
    *  show for the attached file.  The value in the Map should be a
    *  String representing the contents of the attachment.
    */
-  public static void sendEmails(Vector pAddresses, String pMsg,
-				String pSubject, Map pTextAttachments,
-				Map pHTMLAttachments, String pBodyEncoding )
+  public static void sendEmails(List<String> pAddresses, String pMsg,
+				String pSubject, Map<String, Object> pTextAttachments,
+				Map<String, Object> pHTMLAttachments, String pBodyEncoding )
   {
     sendEmails( pAddresses, pMsg, pSubject, pTextAttachments, pHTMLAttachments, null, pBodyEncoding );
   }
@@ -1093,9 +1091,9 @@ public class TestUtils
    *  attachment.  If you wish to attach java.io.Files, use the static
    *  methods found in atg.service.email.MimeMessageUtils.
    */
-  public static void sendEmails(Vector pAddresses, String pMsg,
-				String pSubject, Map pTextAttachments,
-				Map pHTMLAttachments )
+  public static void sendEmails(List<String> pAddresses, String pMsg,
+				String pSubject, Map<String, Object> pTextAttachments,
+				Map<String, Object> pHTMLAttachments )
   {
     sendEmails(pAddresses,pMsg,pSubject,pTextAttachments,pHTMLAttachments,"text/plain");
   }
@@ -1246,7 +1244,7 @@ public class TestUtils
   {
     if ( pDelimiter == null ) pDelimiter = "";
     StringTokenizer st = new StringTokenizer( pFiles, pDelimiter );
-    List files = new LinkedList();
+    List<String> files = new LinkedList<String>();
     while ( st.hasMoreTokens() ) {
       files.add( expand(st.nextToken(), pPrimaryMapping) );
     }
@@ -1340,7 +1338,7 @@ public class TestUtils
   public static AppModule getAtgDynamoModule() 
   {        
     // get all modules that were started with dynamo
-    Iterator modules = getAppLauncher().getModules().iterator();
+    Iterator<?> modules = getAppLauncher().getModules().iterator();
 		
     while ( modules.hasNext() ) {
       AppModule module = (AppModule)modules.next();
@@ -1374,7 +1372,7 @@ public class TestUtils
   public static AppModule getAtgJ2eeServerModule() 
   {        
     // get all modules that were started with dynamo
-    Iterator modules = getAppLauncher().getModules().iterator();
+    Iterator<?> modules = getAppLauncher().getModules().iterator();
 		
     while ( modules.hasNext() ) {
       AppModule module = (AppModule)modules.next();
@@ -1412,10 +1410,10 @@ public class TestUtils
    */
   public static AppModule[] getApplicationModules() 
   {
-    List apps = new LinkedList();
+    List<AppModule> apps = new LinkedList<AppModule>();
 		
     // get all modules that were started with dynamo
-    Iterator modules = getAppLauncher().getModules().iterator();
+    Iterator<?> modules = getAppLauncher().getModules().iterator();
 		
     while ( modules.hasNext() ) {
       AppModule module = (AppModule)modules.next();
@@ -1648,10 +1646,9 @@ public class TestUtils
     if ( isliveconfig == null ) {
       // that method didn't work, so try this method - which should
       // work in ATG 7
-      Class[] sig = { String.class };
       String[] args = { "atg.dynamo.liveconfig" };
       String propval = (String) invokeMethod(dynamoEnv(),
-					     "getProperty", sig, args, null);
+					     "getProperty", new Class[]{ String.class }, args, null);
       if ( propval != null ) {
 	isliveconfig = Boolean.valueOf("on".equalsIgnoreCase(propval));
       } else {
@@ -1663,7 +1660,7 @@ public class TestUtils
   }
 	
   public static Object invokeMethod(Object pObj, String pMethodName,
-				    Class[] pSignature, Object[] pParams,
+				    Class<?>[] pSignature, Object[] pParams,
 				    Object pDefault )
   {
     Object returnval = null;
