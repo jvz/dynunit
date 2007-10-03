@@ -111,7 +111,10 @@ public class AtgDustTestCase extends TestCase {
       dbUtils.shutdown();
     }
     stopNucleus();
+    
+    log.info("ConfigDir: "+configDir);
     FileUtils.deleteDir(configDir);
+    NucleusTestUtils.emptyConfigDirMap();
   }
 
   /**
