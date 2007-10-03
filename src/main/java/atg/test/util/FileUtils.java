@@ -63,8 +63,8 @@ public class FileUtils {
 
   public static void copyFile(final String src, final String dst) {
     try {
-      //log.debug("Source: " + src);
-      //log.debug("Dest: " + dst);
+      // log.debug("Source: " + src);
+      // log.debug("Dest: " + dst);
       final FileChannel srcChannel = new FileInputStream(src).getChannel();
       final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
       dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
@@ -82,6 +82,11 @@ public class FileUtils {
   // If a deletion fails, the method stops attempting to delete and returns
   // false.
   public static boolean deleteDir(final File dir) {
+
+    if (dir == null) {
+      return false;
+    }
+
     if (dir.isDirectory()) {
       final String[] children = dir.list();
       for (int i = 0; i < children.length; i++) {
@@ -99,8 +104,8 @@ public class FileUtils {
   public static void searchAndReplace(final String searchString,
       final String value, final File file) throws IOException {
     // create tmp-file
-    final File tmp = new File(System.getProperty("java.io.tmpdir") + File.separator
-        + "atg-dust.tmp");
+    final File tmp = new File(System.getProperty("java.io.tmpdir")
+        + File.separator + "atg-dust.tmp");
     tmp.deleteOnExit();
     final BufferedWriter out = new BufferedWriter(new FileWriter(tmp));
 
