@@ -23,7 +23,7 @@ Using AtgDustTestCase
   
   [[1]] testing Nucleus based components
   
-  [[2]] preparing a FormHandler for testing
+  [[2]] preparing a FormHandler test
   
   [[3]] a Gsa repository based test
  
@@ -208,14 +208,6 @@ import atg.test.util.FileUtils;
  */
 public class SongRepositoryTest extends AtgDustTestCase {
 
-  private String userName;
-  private String password;
-  private String host;
-  private String port;
-  private String dbName;
-  private String enabled;
-  private final Properties properties = new Properties();
-
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -267,7 +259,7 @@ public class SongRepositoryTest extends AtgDustTestCase {
 
   private void songsRepositoryTest() throws TransactionDemarcationException,
       RepositoryException {
-    GSARepository songsRepository = (GSARepository) getService("/GettingStarted/SongsRepository");
+    final GSARepository songsRepository = (GSARepository) getService("/GettingStarted/SongsRepository");
     assertNotNull(songsRepository);
 
     final TransactionDemarcation td = new TransactionDemarcation();
@@ -277,7 +269,7 @@ public class SongRepositoryTest extends AtgDustTestCase {
       // Start a new transaction
       td.begin(songsRepository.getTransactionManager());
       // Create a new artist
-      MutableRepositoryItem artist = songsRepository.createItem("artist");
+      final MutableRepositoryItem artist = songsRepository.createItem("artist");
       artist.setPropertyValue("name", "joe");
       
       // Persist to the repository
@@ -318,3 +310,12 @@ Troubleshooting
   createPropertyFiles(map);
 +------------------------------------------+
 
+ Restoring the state of the database when connecting to an existing one. Wrap your test
+ code in an transaction (see: SongRepositoryTest:songsRepositoryTest) and then do:
+
++------------------------------------------+
+   // End the transaction, roll-back to restore original database state
+   td.end(true);
++------------------------------------------+
+
+ {{{http://bsdroot.com}Bsdroot.com}}
