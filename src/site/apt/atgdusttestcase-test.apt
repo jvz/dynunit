@@ -18,6 +18,8 @@ Using AtgDustTestCase
   
  
 (Almost) Copy and Pasteable test examples
+
+  The following examples will hopefully illustrate the usage of AtgDustTestCase:
   
   [[1]] Testing Nucleus based components
   
@@ -72,6 +74,7 @@ public class ScmInfoTest extends AtgDustTestCase {
 
     // this method prepares the component(s) that have to be tested by pointing it to the directory, 
     // which contains the property files and by specifying one ore more valid component name. 
+    // Basically it initializes components that are under your control.
     useExistingPropertyFiles("config",
         new String[] { "/wsp/foundation/internal/ScmInfo" });
 
@@ -101,6 +104,8 @@ public class ScmInfoTest extends AtgDustTestCase {
 
 * Testing FormHandlers
 
+  Example code to illustrate how to set up an FormHandler so that it can be tested.
+
 +------------------------------------------+
 package forms.review;
 
@@ -128,14 +133,7 @@ public class ReviewFormHandlerTest extends AtgDustTestCase {
     // components that the class to be tested depends on
     final String[] propertyFiles = new String[] {
         "/validators/review/ReviewFormInputValidator",
-        "/ReviewFormHandler",
-        "/validators/review/ReviewValidationService",
-        "/review/CustomerReviewRepository",
-        "/validators/review/ReviewValidationDataSet",
-        "/validators/review/fieldRules/RatingRule",
-        "/validators/review/fieldRules/HeaderRule",
-        "/validators/review/fieldRules/textRule" };
-
+        "/validators/review/ReviewValidationService"};
 
     // prepares the dependencies
     useExistingPropertyFiles("config", propertyFiles);
@@ -167,6 +165,10 @@ public class ReviewFormHandlerTest extends AtgDustTestCase {
 +------------------------------------------+
 
 * A Gsa repository based test
+
+  This test will run against an in-memory HSQL database and against an existing mysql database.
+  We'll assume that all needed resource like config files and repository 
+  definition files are located in src/test/resources/config.
 
 +------------------------------------------+
 package test;
@@ -289,16 +291,17 @@ public class SongRepositoryTest extends AtgDustTestCase {
 
 Troubleshooting
 
-  To get rid of error during startup of repository because of missing transaction manager:
+  To get rid of an error, during startup of repository, because of missing transaction manager:
 
 +------------------------------------------+
  createPropertyFile("/atg/dynamo/transaction/TransactionManager",
-  TransactionManagerImpl.class);
+  atg.dtm.TransactionManagerImpl.class);
 +------------------------------------------+
 
-  Inject ApplicationLoggingImpl to prevent NPE's:
+  Inject ApplicationLoggingImpl to prevent NPE's for components using ApplicationLogging:
 
 +------------------------------------------+
+  final Map<String, Class<?>> map = new HashMap<String, Class<?>>();
   map.put("/atg/dynamo/service/logging/ClassLoggingFactory",
         ClassLoggingFactoryImpl.class);
   map.put(
