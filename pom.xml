@@ -5,7 +5,7 @@
   <groupId>atg</groupId>
   <artifactId>atgdust</artifactId>
   <name>ATG DUST</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1201-03-10-2007-SNAPSHOT</version>
   <description>ATG DUST is a framework for building JUnit tests for applications built on the ATG Dynamo platform.
   This framework allows one to quickly write test code that depends up Nucleus or ATG Repositories. By using this framework 
   one can drastically cut down on development time. It takes only a few seconds to start up a test with a repository,
@@ -118,34 +118,35 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>3.8.2</version>
     </dependency>
     <!-- NOTE: You must import DAS/classes.jar from 
          an ATG installation into your maven repository
          to satify this dependency.
          For example:
-         mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS -Dversion=2006.3 -Dpackaging=jar 
--Dfile=c:\ATG\ATG2006.3\DAS\lib\classes.jar -DgeneratePom=true -Durl=file://c:\maven\repository -DlocalRepository=local
+         mvn deploy:deploy-file -DgroupId=atg -DartifactId=das -Dversion=2007.1 -Dpackaging=jar 
+-Dfile=c:\ATG\ATG2007.1\DAS\lib\classes.jar -DgeneratePom=true -Durl=file://c:\maven\repository -DlocalRepository=local
      -->
     <dependency>
       <groupId>atg</groupId>
-      <artifactId>DAS</artifactId>
-      <version>2006.3</version>
+      <artifactId>das</artifactId>
+      <version>2007.1</version>
+      <scope>provided</scope>
     </dependency>
     
-    <!-- NOTE: You must import DAS/classes.jar from 
+    <!-- NOTE: You must import DAS/resources.jar from 
          an ATG installation into your maven repository
-         to satify this dependency.
+         to satisfy this dependency.
          For example:
-         mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS-resources -Dversion=2006.3 -Dpackaging=jar 
--Dfile=c:\ATG\ATG2006.3\DAS\lib\resources.jar -DgeneratePom=true -Durl=file://c:\maven\repository -DlocalRepository=local
+         mvn deploy:deploy-file -DgroupId=atg -DartifactId=das-resources -Dversion=2007.1 -Dpackaging=jar 
+-Dfile=c:\ATG\ATG2007.1\DAS\lib\resources.jar -DgeneratePom=true -Durl=file://c:\maven\repository -DlocalRepository=local
      -->
     <dependency>
       <groupId>atg</groupId>
-      <artifactId>DAS-resources</artifactId>
-      <version>2006.3</version>
+      <artifactId>das-resources</artifactId>
+      <version>2007.1</version>
+      <scope>provided</scope>
     </dependency>
-    
     
     <dependency>
       <groupId>hsqldb</groupId>
@@ -164,7 +165,14 @@
       <version>2.0</version>
     </dependency>
     
-    <!--
+    <!-- NOTE: You must import mysql jdbc drive from 
+         into your maven repository to satisfy this dependency.
+         For example:
+         mvn deploy:deploy-file -DgroupId=mysql-connector -DartifactId=mysql-connector-java -Dversion=5.0.7 -Dpackaging=jar 
+          -Dfile=c:\tmp\mysql-5.0.7-java-connector.jar -DgeneratePom=true
+     -->   
+    
+    <!-- 
     <dependency>
       <groupId>mysql-connector</groupId>
       <artifactId>mysql-connector-java</artifactId>

@@ -15,6 +15,7 @@
     </menu>
     <menu name="Getting Started">
       <item name="Your First DUST Test." href="first-test.html"/>
+      <item name="Using AtgDustTestCase." href="atgdusttestcase-test.html"/>
       <item name="ATG Repository Testing." href="repository-test.html"/>
     </menu>
 

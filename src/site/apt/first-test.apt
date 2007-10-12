@@ -1,11 +1,10 @@
-
 Your First Test
 
   NOTE: This is a first draft and it's still incomplete.
   Please send feedback to atgdust-general@lists.sourceforge.net.
 
   This tutorial walks you through the steps of writing a test which does not need to run
-  in an application server. This is one of the main benefis of writing unit tests. Because 
+  in an application server. This is one of the main benefit of writing unit tests. Because 
   the test does not depend upon starting up an application server, turnaround time is very quick.
   Tests can be started and finished in just a matter of seconds (or less).
 
