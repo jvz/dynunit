@@ -19,15 +19,17 @@ Using AtgDustTestCase
  
 (Almost) Copy and Pasteable test examples
 
-  The following examples will hopefully illustrate the usage of AtgDustTestCase:
+  The following examples will hopefully illustrate the usage of AtgDustTestCase by:
   
-  [[1]] Testing Nucleus based components
+  [[1]] testing Nucleus based components
   
-  [[2]] Testing FormHandlers
+  [[2]] preparing a FormHandler for testing
   
-  [[3]] A Gsa repository based test
+  [[3]] a Gsa repository based test
  
 * Testing Nucleus based components
+
+  In this example we'll prepare and test a basic nucleus component. 
 
 +------------------------------------------+
 package com.some.company;
@@ -48,6 +50,7 @@ import atg.test.AtgDustTestCase;
 public class ScmInfoTest extends AtgDustTestCase {
                                /*---------------*/
 
+  // the comopment to be tested. Replace it with your class
   private ScmParser scmInfo;
 
   protected final Log log = LogFactory.getLog(ScmInfoTest.class);
@@ -85,7 +88,8 @@ public class ScmInfoTest extends AtgDustTestCase {
   }
 
   protected void tearDown() throws Exception {
-    // Make sure you use this one it will do a lot of important 'house cleaning'.
+    // Make sure you use this one. It will do a lot of important 'house cleaning'
+    // which is absolutely needed for the next test case to execute correctly.  
     super.tearDown();
   }
 
@@ -102,9 +106,9 @@ public class ScmInfoTest extends AtgDustTestCase {
 }
 +------------------------------------------+
 
-* Testing FormHandlers
+* Preparing a FormHandler for testing
 
-  Example code to illustrate how to set up an FormHandler so that it can be tested.
+  Example code to illustrate how to set up a FormHandler test.
 
 +------------------------------------------+
 package forms.review;
@@ -157,7 +161,9 @@ public class ReviewFormHandlerTest extends AtgDustTestCase {
       fail();
     }
     
-    // do other test's
+    // do other test's:
+    //
+    // assert....
 
   }
 
@@ -168,7 +174,8 @@ public class ReviewFormHandlerTest extends AtgDustTestCase {
 
   This test will run against an in-memory HSQL database and against an existing mysql database.
   We'll assume that all needed resource like config files and repository 
-  definition files are located in src/test/resources/config.
+  definition files are located in src/test/resources/config. This example is 
+  located in <<src/test/java/test/SongRepositoryTest.java>>.
 
 +------------------------------------------+
 package test;
@@ -215,7 +222,7 @@ public class SongRepositoryTest extends AtgDustTestCase {
     
     // Copy all related properties and definition files to the
     // configpath which is also used in the prepareRepositoryTest 
-    // method but exlude all .svn folders
+    // method but exclude all .svn folders
     FileUtils.copyDir("src/test/resources/config",
         "target/test-classes/config", Arrays.asList(new String[] { ".svn" }));
   }
@@ -247,6 +254,7 @@ public class SongRepositoryTest extends AtgDustTestCase {
    */
   public void testWithExistingMysqlDb() throws Exception {
 
+    // have a look at the API documentation to actually see what al these arguments mean
     prepareRepositoryTest(new File("target/test-classes/config/"),
         new String[] { "GettingStarted/songs.xml" },
         "/GettingStarted/SongsRepository", "userName", "password", "host", "port",
@@ -309,3 +317,4 @@ Troubleshooting
     ApplicationLoggingImpl.class);
   createPropertyFiles(map);
 +------------------------------------------+
+
