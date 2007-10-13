@@ -25,7 +25,7 @@ Using AtgDustTestCase
   
   [[2]] preparing a FormHandler test
   
-  [[3]] a Gsa repository based test
+  [[3]] explaining a Gsa repository based test
  
 * Testing Nucleus based components
 
@@ -72,7 +72,7 @@ public class ScmInfoTest extends AtgDustTestCase {
             ApplicationLoggingImpl.class);
     
     // will generate all needed classes and configuration files for dependencies that are needed 
-    // for this test.
+    // for this test and are not under your control.
     createPropertyFiles(map);
 
     // this method prepares the component(s) that have to be tested by pointing it to the directory, 
@@ -106,7 +106,7 @@ public class ScmInfoTest extends AtgDustTestCase {
 }
 +------------------------------------------+
 
-* Preparing a FormHandler for testing
+* Preparing a FormHandler test
 
   Example code to illustrate how to set up a FormHandler test.
 
@@ -134,8 +134,9 @@ public class ReviewFormHandlerTest extends AtgDustTestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    // components that the class to be tested depends on
+    // all needed components (which are under your control) that are needed to run this test. 
     final String[] propertyFiles = new String[] {
+        "/forms/ReviewFormHandler",
         "/validators/review/ReviewFormInputValidator",
         "/validators/review/ReviewValidationService"};
 
@@ -246,7 +247,7 @@ public class SongRepositoryTest extends AtgDustTestCase {
    */
   public void testWithExistingMysqlDb() throws Exception {
 
-    // have a look at the API documentation to actually see what al these arguments mean
+    // have a look at the API documentation to actually see what all these arguments mean
     prepareRepositoryTest(new File("target/test-classes/config/"),
         new String[] { "GettingStarted/songs.xml" },
         "/GettingStarted/SongsRepository", "userName", "password", "host", "port",
@@ -289,16 +290,16 @@ public class SongRepositoryTest extends AtgDustTestCase {
 }
 +------------------------------------------+
 
-Troubleshooting
+Tips and Troubleshooting
 
-  To get rid of an error, during startup of repository, because of missing transaction manager:
+* Error during startup of repository test, because of missing transaction manager
 
 +------------------------------------------+
  createPropertyFile("/atg/dynamo/transaction/TransactionManager",
   atg.dtm.TransactionManagerImpl.class);
 +------------------------------------------+
 
-  Inject ApplicationLoggingImpl to prevent NPE's for components using ApplicationLogging:
+* Inject ApplicationLoggingImpl to prevent NPE's for components using ApplicationLogging
 
 +------------------------------------------+
   final Map<String, Class<?>> map = new HashMap<String, Class<?>>();
@@ -310,8 +311,10 @@ Troubleshooting
   createPropertyFiles(map);
 +------------------------------------------+
 
- Restoring the state of the database when connecting to an existing one. Wrap your test
- code in an transaction (see: SongRepositoryTest:songsRepositoryTest) and then do:
+* Restoring the state of the database when connecting to an existing one
+
+  Wrap your test code in an transaction (see: SongRepositoryTest:songsRepositoryTest) 
+  and then do:
 
 +------------------------------------------+
    // End the transaction, roll-back to restore original database state
