@@ -43,6 +43,7 @@ import atg.nucleus.GenericService;
 import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusTestUtils;
 import atg.nucleus.ServiceException;
+import atg.nucleus.logging.ClassLoggingFactoryImpl;
 import atg.nucleus.logging.ConsoleLogListener;
 import atg.test.util.DBUtils;
 import atg.test.util.FileUtils;
@@ -125,8 +126,8 @@ public class AtgDustTestCase extends TestCase {
       dbUtils.shutdown();
     }
     stopNucleus();
-    
-    log.info("ConfigDir: "+configDir);
+
+    log.info("ConfigDir: " + configDir);
     FileUtils.deleteDir(configDir);
     NucleusTestUtils.emptyConfigDirMap();
   }
@@ -521,6 +522,25 @@ public class AtgDustTestCase extends TestCase {
       ((GenericService) service).addLogListener(new ConsoleLogListener());
     }
     return service;
+  }
+
+  /**
+   * To prevent {@link java.lang.ExceptionInInitializerError} during
+   * initialisation of classes that use an
+   * {@link atg.nucleus.logging.ApplicationLogging} logger retrievd using the
+   * {@link atg.nucleus.logging.ClassLoggingFactory} (as described in ATG's 2007
+   * Programming Guide, Logging with Non-Nucleus-instantiated Classes). Enabling
+   * this only means that the exception will be prevented.
+   * 
+   * @throws IOException
+   * 
+   */
+  protected final void enableClassLoggingFactory() throws IOException {
+    final Map<String, Class<?>> map = new HashMap<String, Class<?>>();
+    map.put("/atg/dynamo/service/logging/ClassLoggingFactory",
+        ClassLoggingFactoryImpl.class);
+    createPropertyFiles(map);
+
   }
 
 }
