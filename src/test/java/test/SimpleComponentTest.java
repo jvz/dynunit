@@ -24,8 +24,8 @@ public class SimpleComponentTest extends AtgDustCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    copyConfigurationFiles("src/test/resources/config".replace("/",
-        File.separator), "target/test-classes/config".replace("/",
+    copyConfigurationFiles(new String[] { "src/test/resources/config".replace(
+        "/", File.separator) }, "target/test-classes/config".replace("/",
         File.separator), new String[] { ".svn" });
 
     simpleComponent = (SimpleComponent) resolveNucleusComponent("/test/SimpleComponent");

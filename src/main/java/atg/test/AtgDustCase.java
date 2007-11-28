@@ -23,22 +23,22 @@ import atg.test.util.DBUtils;
 import atg.test.util.FileUtils;
 
 /**
- * Replacement base class for {@link AtgDustTestCase} comparable to Junit's
- * TestCase. Extend this class and use the following 'pattern' whenever you want
- * to junit test some atg components:
+ * Replacement base class for {@link AtgDustTestCase}. Extend this class and
+ * use the following 'pattern' whenever you want to junit test some atg
+ * components:
  * <ol>
- * <li>Copy all config and repository mapping files to a location that will be
- * promoted to the configuration location using<b>
+ * <li><b>Always</b> copy all config and repository mapping files to a
+ * location that will be promoted to the configuration location using<b>
  * {@link AtgDustCase#copyConfigurationFiles(String, String, String[])}</b>.
  * The destination directory will automatically be used as the configuration
- * directory.</li>
+ * directory. <b>Always</b> point it to some temp location, because this
+ * framework will gerenated needed property files and if you point it to some
+ * location in your existing source tree, you will polute it with these
+ * gerenerate files</li>
  * <li><b><i>Optional: </i></b>Tell {@link AtgDustCase} class where the
  * configuration location is by using <b>{@link AtgDustCase#setConfigurationLocation(String)}</b>.
  * This is most of the time not needed because the location has already been set
- * at step 1. BTW if you use this method always point it to some temp location,
- * because this framework will gerenated needed property files and if you point
- * it to some location in your existing source tree, you will polute it with
- * these gerenerate files.</li>
+ * at step 1. </li>
  * <li><b><i>Optional: </i></b> if you want to create repository based tests
  * use <b>{@link AtgDustCase#prepareRepositoryTest(String[], String)}</b> or
  * <b>{@link AtgDustCase#prepareRepositoryTest(String[], String, Properties, boolean)}</b>.</li>
@@ -51,27 +51,39 @@ public class AtgDustCase extends TestCase {
 
   private static File configurationLocation;
 
+  // Start: needed for optimalizations
   private static boolean COPIED_CONFIGS = false;
 
-  private static String lastConfigSrcDir, lastConfigDstDir;
+  private static String lastConfigDstDir;
+
+  private static List<String> lastConfigSrcDirs = new ArrayList<String>();
 
   private static final Log log = LogFactory.getLog(AtgDustCase.class);
 
-  private DBUtils dbUtils;
+  // Stop: needed for optimalizations
+
+  private transient DBUtils dbUtils;
 
   private transient Nucleus nucleus;
 
   /**
    * 
-   * @param srcDir
+   * @param srcDirs
+   *          One or more directories containing needed configuration files.
    * @param dstDir
+   *          where to copy the above files to. This will also be the
+   *          configuration location.
    * @param excludes
+   *          Which files not to include during the copy process.
    * @throws IOException
+   *           Whenever some file related error's occure.
    */
-  protected void copyConfigurationFiles(final String srcDir,
+  protected void copyConfigurationFiles(final String[] srcDirs,
       final String dstDir, final String[] excludes) throws IOException {
+
+    final List<String> srcsAsList = Arrays.asList(srcDirs);
     if (COPIED_CONFIGS && lastConfigDstDir.equalsIgnoreCase(dstDir)
-        && lastConfigSrcDir.equalsIgnoreCase(srcDir)) {
+        && lastConfigSrcDirs.equals(srcsAsList)) {
       log.info("No need to copy configuration files or "
           + "force global scope on all configs, "
           + "because they are still the same.");
@@ -80,27 +92,36 @@ public class AtgDustCase extends TestCase {
     log.info("Coping configuration files and "
         + "forcing global scope on all configs");
     FileUtils.deleteDir(configurationLocation);
-    setConfigurationLocation(dstDir);
-    FileUtils.copyDir(srcDir, dstDir, Arrays.asList(excludes));
+
+    for (final String srcs : srcDirs) {
+      setConfigurationLocation(dstDir);
+      FileUtils.copyDir(srcs, dstDir, Arrays.asList(excludes));
+    }
     forceGlobalScopeOnAllConfigs(configurationLocation);
     COPIED_CONFIGS = true;
     lastConfigDstDir = dstDir;
-    lastConfigSrcDir = srcDir;
-
+    lastConfigSrcDirs = srcsAsList;
   }
 
   /**
+   * @param configurationLocation
+   *          The location where the property file will be created. This will
+   *          also set the config location directory.
+   * 
    * @param nucleusComponentPath
-   *          where to store the created property file for the given service,
-   *          relative to the {@link AtgDustTestCase#configDir} directory, set
-   *          by {@link #AtgDuster()#setConfigPath(String)}
+   *          the nucleus component path (e.g /Some/Service/Impl).
+   * 
    * @param nucleusComponentClass
-   *          a class that will be resolved by
-   *          {@link AtgDustTestCase#getService(String)} in a later step
+   *          the class implementation of the nucleus component specified in
+   *          previous argument.
+   * 
    * @throws IOException
+   *           if we have some File related errors
    */
-  protected final void createPropertyFile(final String nucleusComponentPath,
-      final Class<?> nucleusComponentClass) throws IOException {
+  protected final void createPropertyFile(final String configurationLocation,
+      final String nucleusComponentPath, final Class<?> nucleusComponentClass)
+      throws IOException {
+    AtgDustCase.configurationLocation = new File(configurationLocation);
     NucleusTestUtils.createProperties(nucleusComponentPath,
         getConfigurationLocation(), nucleusComponentClass.getName(),
         new Properties()).deleteOnExit();
@@ -111,14 +132,13 @@ public class AtgDustCase extends TestCase {
    * @param configurationDirectory
    * @throws IOException
    */
-  protected void forceGlobalScopeOnAllConfigs(final File configurationDirectory)
+  private void forceGlobalScopeOnAllConfigs(final File configurationDirectory)
       throws IOException {
-
     // find all .properties in config path
-    for (final File f : getFileListing(configurationDirectory)) {
-      if (f.getPath().contains(".properties")) {
+    for (final File file : getFileListing(configurationDirectory)) {
+      if (file.getPath().contains(".properties")) {
         // find scope other than global and replace with global
-        FileUtils.searchAndReplace("$scope=", "$scope=global\n", f);
+        FileUtils.searchAndReplace("$scope=", "$scope=global\n", file);
       }
     }
   }
@@ -126,11 +146,12 @@ public class AtgDustCase extends TestCase {
   /**
    * 
    * @return the current configured configuration location path
-   * @throws FileNotFoundException
+   * @throws IOException
    */
-  private File getConfigurationLocation() throws FileNotFoundException {
+  private File getConfigurationLocation() throws IOException {
     if (configurationLocation == null || !configurationLocation.exists()) {
-      throw new FileNotFoundException("");
+      throw new FileNotFoundException(
+          "No or empty configuration location is specified. Unable to continue.");
     }
     return configurationLocation;
   }
@@ -200,7 +221,7 @@ public class AtgDustCase extends TestCase {
    * <pre>
    * final Properties properties = new Properties();
    * properties.put(&quot;driver&quot;, &quot;com.mysql.jdbc.Driver&quot;);
-   * properties.put(&quot;URL&quot;, &quot;jdbc:mysql://localhost:3306/someDb&quot;);
+   * properties.put(&quot;&lt;b&gt;URL&lt;/b&gt;&quot;, &quot;jdbc:mysql://localhost:3306/someDb&quot;);
    * properties.put(&quot;user&quot;, &quot;someUserName&quot;);
    * properties.put(&quot;password&quot;, &quot;somePassword&quot;);
    * </pre>
@@ -232,8 +253,11 @@ public class AtgDustCase extends TestCase {
   /**
    * 
    * @param nucleusComponentPath
-   * @return
+   *          Path to a nucleus component (e.g. /Some/Service/Impl).
+   * @return Fully injected instance of the component registered under previous
+   *         argument or <code>null</code> if there is an error.
    * @throws IOException
+   *           if some config file related errors occure.
    */
   protected Object resolveNucleusComponent(final String nucleusComponentPath)
       throws IOException {
@@ -243,7 +267,9 @@ public class AtgDustCase extends TestCase {
 
   /**
    * @param configurationLocation
-   *          the configurationLocation to set
+   *          the configurationLocation to set. Most of the time this location
+   *          is a directory containg all repository definition files and
+   *          component property files which are needed for the test.
    */
   protected final void setConfigurationLocation(
       final String configurationLocation) {
@@ -256,15 +282,12 @@ public class AtgDustCase extends TestCase {
    * 
    * @throws IOException
    */
-  protected void startNucleus() throws IOException {
+  private void startNucleus() throws IOException {
     if (nucleus == null || !nucleus.isRunning()) {
       nucleus = NucleusTestUtils.startNucleus(getConfigurationLocation());
     }
   }
 
-  /**
-   * 
-   */
   @Override
   protected void tearDown() throws Exception {
     super.tearDown();
@@ -276,8 +299,6 @@ public class AtgDustCase extends TestCase {
       nucleus.stopService();
       nucleus.destroy();
     }
-
-    // FileUtils.deleteDir(getConfigurationLocation());
     NucleusTestUtils.emptyConfigDirMap();
   }
 }

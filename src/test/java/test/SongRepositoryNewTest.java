@@ -1,5 +1,6 @@
 package test;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -33,9 +34,12 @@ public class SongRepositoryNewTest extends AtgDustCase {
   public void setUp() throws Exception {
     super.setUp();
 
-    // make sure all needed files are at the config location
-    copyConfigurationFiles("src/test/resources/config",
-        "target/test-classes/config", new String[] { ".svn" });
+    // make sure all needed files are at the config location.
+    // "target/test-classes/config" is then prompoted to the configuration
+    // directory.
+    copyConfigurationFiles(new String[] { "src/test/resources/config".replace(
+        "/", File.separator) }, "target/test-classes/config".replace("/",
+        File.separator), new String[] { ".svn" });
 
   }
 
