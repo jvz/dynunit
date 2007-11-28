@@ -31,6 +31,9 @@ public class FileUtils {
 
   public static void copyDir(String srcDir, String dstDir,
       final List<String> excludes) throws IOException {
+    
+    log.info(srcDir);
+    log.info(dstDir);
 
     new File(dstDir).mkdirs();
     final String[] fileList = new File(srcDir).list();

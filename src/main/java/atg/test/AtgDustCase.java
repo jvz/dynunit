@@ -99,8 +99,6 @@ public class AtgDustCase extends TestCase {
     else {
       log.info("Copying configuration files and "
           + "forcing global scope on all configs");
-      FileUtils.deleteDir(configurationLocation);
-
       // copy all files to it's destination
       for (final String srcs : srcDirs) {
         setConfigurationLocation(dstDir);
