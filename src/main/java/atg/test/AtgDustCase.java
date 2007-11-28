@@ -27,8 +27,9 @@ import atg.test.util.FileUtils;
  * components:
  * <ul>
  * <li><b>Copy</b> all config and repository mapping files to a location that
- * will be promoted to the configuration location using<b>
- * {@link AtgDustCase#copyConfigurationFiles(String, String, String[])}</b>.
+ * will be promoted to the configuration location ({@link AtgDustCase#configurationLocation})
+ * using<b>
+ * {@link AtgDustCase#copyConfigurationFiles(String[], String, String[])}</b>.
  * The destination directory will automatically be used as the configuration
  * directory.</li>
  * <li><b><i>Or: </i></b>tell {@link AtgDustCase} class where the
@@ -70,6 +71,8 @@ public class AtgDustCase extends TestCase {
   private Nucleus nucleus;
 
   /**
+   * Every .propertie file copied using this method will have it's scope (if one
+   * is avaiable) set to global.
    * 
    * @param srcDirs
    *          One or more directories containing needed configuration files.
@@ -106,7 +109,7 @@ public class AtgDustCase extends TestCase {
       // forcing global scope on all configs
       for (final File file : FileUtils
           .getFileListing(getConfigurationLocation())) {
-        if (file.getPath().contains(".properties")) {
+        if (file.getPath().endsWith(".properties")) {
           // find scope other than global and replace with global
           FileUtils.searchAndReplace("$scope=", "$scope=global\n", file);
         }
@@ -119,8 +122,8 @@ public class AtgDustCase extends TestCase {
 
   /**
    * @param configurationLocation
-   *          The location where the property file will be created. This will
-   *          also set the config location directory.
+   *          The location where the property file should be created. This will
+   *          also set the {@link AtgDustCase#configurationLocation}.
    * 
    * @param nucleusComponentPath
    *          the nucleus component path (e.g /Some/Service/Impl).
@@ -193,7 +196,7 @@ public class AtgDustCase extends TestCase {
    * <pre>
    * final Properties properties = new Properties();
    * properties.put(&quot;driver&quot;, &quot;com.mysql.jdbc.Driver&quot;);
-   * properties.put(&quot;&lt;b&gt;URL&lt;/b&gt;&quot;, &quot;jdbc:mysql://localhost:3306/someDb&quot;);
+   * properties.put(&quot;URL&quot;, &quot;jdbc:mysql://localhost:3306/someDb&quot;);
    * properties.put(&quot;user&quot;, &quot;someUserName&quot;);
    * properties.put(&quot;password&quot;, &quot;somePassword&quot;);
    * </pre>
@@ -238,6 +241,8 @@ public class AtgDustCase extends TestCase {
   }
 
   /**
+   * Call this method to set the config location.
+   * 
    * @param configurationLocation
    *          the configurationLocation to set. Most of the time this location
    *          is a directory containg all repository definition files and
@@ -260,6 +265,10 @@ public class AtgDustCase extends TestCase {
     }
   }
 
+  /**
+   * Always make sure to call this because it will clean up and shutdown the db
+   * and the nucleus.
+   */
   @Override
   protected void tearDown() throws Exception {
     super.tearDown();

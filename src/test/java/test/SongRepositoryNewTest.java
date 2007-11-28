@@ -28,6 +28,7 @@ import atg.test.AtgDustCase;
  */
 public class SongRepositoryNewTest extends AtgDustCase {
 
+  @SuppressWarnings("unused")
   private static final Log log = LogFactory.getLog(SongRepositoryNewTest.class);
 
   @Override
