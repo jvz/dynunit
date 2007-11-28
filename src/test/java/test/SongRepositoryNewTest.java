@@ -1,9 +1,7 @@
 package test;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -16,7 +14,6 @@ import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryException;
 import atg.repository.RepositoryItem;
 import atg.test.AtgDustCase;
-import atg.test.util.FileUtils;
 
 /**
  * 
@@ -36,12 +33,9 @@ public class SongRepositoryNewTest extends AtgDustCase {
   public void setUp() throws Exception {
     super.setUp();
 
-    setConfigurationLocation("target/test-classes/config".replace("/",
-        File.separator));
-
     // make sure all needed files are at the config location
-    FileUtils.copyDir("src/test/resources/config",
-        "target/test-classes/config", Arrays.asList(new String[] { ".svn" }));
+    copyConfigurationFiles("src/test/resources/config",
+        "target/test-classes/config", new String[] { ".svn" });
 
   }
 
@@ -79,14 +73,15 @@ public class SongRepositoryNewTest extends AtgDustCase {
    * 
    * @throws Exception
    */
-  public void testWithExistingMysqlDb() throws Exception {
+  public void testWithExistingDb() throws Exception {
 
     Properties properties = new Properties();
     properties.load(new FileInputStream("src/test/resources/env.properties"));
 
-    final String enabled = properties.getProperty("enabled");
-
-    if (enabled == null || enabled.equalsIgnoreCase("false")) {
+    // a mechanism to disbale/enable the repository test against an existing
+    // database
+    if (properties.getProperty("enabled") == null
+        || properties.getProperty("enabled").equalsIgnoreCase("false")) {
       return;
     }
 
