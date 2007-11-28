@@ -1,11 +1,13 @@
 package test;
 
-import static atg.test.AtgDustTestCase.DbVendor.MySQLDBConnection;
-
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Properties;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import atg.adapter.gsa.GSARepository;
 import atg.dtm.TransactionDemarcation;
@@ -13,7 +15,7 @@ import atg.dtm.TransactionDemarcationException;
 import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryException;
 import atg.repository.RepositoryItem;
-import atg.test.AtgDustTestCase;
+import atg.test.AtgDustCase;
 import atg.test.util.FileUtils;
 
 /**
@@ -26,24 +28,20 @@ import atg.test.util.FileUtils;
  * @author robert
  * 
  */
-public class SongRepositoryTest extends AtgDustTestCase {
+public class SongRepositoryNewTest extends AtgDustCase {
 
-  private String userName;
-  private String password;
-  private String host;
-  private String port;
-  private String dbName;
-  private String enabled;
-  private final Properties properties = new Properties();
+  private static final Log log = LogFactory.getLog(SongRepositoryNewTest.class);
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
 
-    // Copy all related properties and definition files to the previously
-    // configured configpath
+    // make sure all needed files are at the config location
     FileUtils.copyDir("src/test/resources/config",
         "target/test-classes/config", Arrays.asList(new String[] { ".svn" }));
+
+    setConfigurationLocation("target/test-classes/config".replace("/",
+        File.separator));
 
   }
 
@@ -59,12 +57,12 @@ public class SongRepositoryTest extends AtgDustTestCase {
    */
   public void testWithInMemoryDb() throws Exception {
 
-    prepareRepositoryTest(new File("target/test-classes/config/"),
-        new String[] { "GettingStarted/songs.xml" },
-        "/GettingStarted/SongsRepository");
-
     // The actual test is quite generic. The only difference is the way the
     // repository is prepared by the prepareRepositoryTest method
+
+    prepareRepositoryTest(new String[] { "/GettingStarted/songs.xml" },
+        "/GettingStarted/SongsRepository");
+
     songsRepositoryTest();
   }
 
@@ -83,35 +81,27 @@ public class SongRepositoryTest extends AtgDustTestCase {
    */
   public void testWithExistingMysqlDb() throws Exception {
 
+    Properties properties = new Properties();
     properties.load(new FileInputStream("src/test/resources/env.properties"));
-    userName = properties.getProperty("userName");
-    password = properties.getProperty("password");
-    host = properties.getProperty("host");
-    port = properties.getProperty("port");
-    dbName = properties.getProperty("dbName");
-    enabled = properties.getProperty("enabled");
+
+    final String enabled = properties.getProperty("enabled");
 
     if (enabled == null || enabled.equalsIgnoreCase("false")) {
       return;
     }
 
-    prepareRepositoryTest(new File("target/test-classes/config/"),
-        new String[] { "GettingStarted/songs.xml" },
-        "/GettingStarted/SongsRepository", userName, password, host, port,
-        dbName, MySQLDBConnection, false);
-
-    // this was a small test to fix some configuration related bug I was having
-    assertNotNull(getService("/test/TestComponent"));
-
-
     // The actual test is quite generic. The only difference is the way the
     // repository is prepared by the prepareRepositoryTest method
+
+    prepareRepositoryTest(new String[] { "/GettingStarted/songs.xml" },
+        "/GettingStarted/SongsRepository", properties, false);
+
     songsRepositoryTest();
   }
 
   private void songsRepositoryTest() throws TransactionDemarcationException,
-      RepositoryException {
-    GSARepository songsRepository = (GSARepository) getService("/GettingStarted/SongsRepository");
+      RepositoryException, IOException {
+    GSARepository songsRepository = (GSARepository) resolveNucleusComponent("/GettingStarted/SongsRepository");
     assertNotNull(songsRepository);
 
     final TransactionDemarcation td = new TransactionDemarcation();
@@ -136,4 +126,5 @@ public class SongRepositoryTest extends AtgDustTestCase {
       td.end(true);
     }
   }
+
 }

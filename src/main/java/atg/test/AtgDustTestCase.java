@@ -62,9 +62,11 @@ import atg.test.util.FileUtils;
  * <li>when test has finished call: {@link AtgDustTestCase#tearDown()} for
  * cleaning up and stopping nucleus, db</li>
  * </ul>
- * Example usage can be found in test.SongRepositoryTest.
+ * Example usage can be found in test.SongRepositoryOldTest.
  * 
  * @author robert
+ * 
+ * @deprecated replaced by {@link AtgDustCase}
  */
 public class AtgDustTestCase extends TestCase {
 
@@ -207,7 +209,7 @@ public class AtgDustTestCase extends TestCase {
 
   /**
    * Will prepare a repository test against an existing or an on-the-fly created
-   * database. See SongRepositoryTest for example usage.
+   * database. See SongRepositoryOldTest for example usage.
    * 
    * 
    * If {@link AtgDustTestCase.DbVendor} is {@link DbVendor#HSQLDBInMemoryDB}
