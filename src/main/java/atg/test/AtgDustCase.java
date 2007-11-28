@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -35,13 +34,18 @@ import atg.test.util.FileUtils;
  * framework will gerenated needed property files and if you point it to some
  * location in your existing source tree, you will polute it with these
  * gerenerate files</li>
- * <li><b><i>Optional: </i></b>Tell {@link AtgDustCase} class where the
+ * <li><b><i>Optional: </i></b>tell {@link AtgDustCase} class where the
  * configuration location is by using <b>{@link AtgDustCase#setConfigurationLocation(String)}</b>.
  * This is most of the time not needed because the location has already been set
  * at step 1. </li>
  * <li><b><i>Optional: </i></b> if you want to create repository based tests
  * use <b>{@link AtgDustCase#prepareRepositoryTest(String[], String)}</b> or
  * <b>{@link AtgDustCase#prepareRepositoryTest(String[], String, Properties, boolean)}</b>.</li>
+ * 
+ * <li><b><i>Optional: </i></b> if you need to generate some components on
+ * the fly<b> use <b>{@link AtgDustCase#createPropertyFile(String, String, Class)}</b></li>
+ * 
+ * 
  * </ol>
  * Example usage can be found in test.SongRepositoryNewTest.
  * 
@@ -52,19 +56,18 @@ public class AtgDustCase extends TestCase {
   private static File configurationLocation;
 
   // Start: needed for optimalizations
-  private static boolean COPIED_CONFIGS = false;
 
-  private static String lastConfigDstDir;
+  private static String lastConfigDstDir = "";
 
   private static List<String> lastConfigSrcDirs = new ArrayList<String>();
 
-  private static final Log log = LogFactory.getLog(AtgDustCase.class);
-
   // Stop: needed for optimalizations
 
-  private transient DBUtils dbUtils;
+  private static final Log log = LogFactory.getLog(AtgDustCase.class);
 
-  private transient Nucleus nucleus;
+  private DBUtils dbUtils;
+
+  private Nucleus nucleus;
 
   /**
    * 
@@ -82,25 +85,36 @@ public class AtgDustCase extends TestCase {
       final String dstDir, final String[] excludes) throws IOException {
 
     final List<String> srcsAsList = Arrays.asList(srcDirs);
-    if (COPIED_CONFIGS && lastConfigDstDir.equalsIgnoreCase(dstDir)
+    if (lastConfigDstDir.equalsIgnoreCase(dstDir)
         && lastConfigSrcDirs.equals(srcsAsList)) {
       log.info("No need to copy configuration files or "
           + "force global scope on all configs, "
           + "because they are still the same.");
-      return;
-    }
-    log.info("Coping configuration files and "
-        + "forcing global scope on all configs");
-    FileUtils.deleteDir(configurationLocation);
 
-    for (final String srcs : srcDirs) {
-      setConfigurationLocation(dstDir);
-      FileUtils.copyDir(srcs, dstDir, Arrays.asList(excludes));
     }
-    forceGlobalScopeOnAllConfigs(configurationLocation);
-    COPIED_CONFIGS = true;
-    lastConfigDstDir = dstDir;
-    lastConfigSrcDirs = srcsAsList;
+    else {
+      log.info("Coping configuration files and "
+          + "forcing global scope on all configs");
+      FileUtils.deleteDir(configurationLocation);
+
+      // copy all files to it's destination
+      for (final String srcs : srcDirs) {
+        setConfigurationLocation(dstDir);
+        FileUtils.copyDir(srcs, dstDir, Arrays.asList(excludes));
+      }
+
+      // forcing global scope on all configs
+      for (final File file : FileUtils
+          .getFileListing(getConfigurationLocation())) {
+        if (file.getPath().contains(".properties")) {
+          // find scope other than global and replace with global
+          FileUtils.searchAndReplace("$scope=", "$scope=global\n", file);
+        }
+      }
+
+      lastConfigDstDir = dstDir;
+      lastConfigSrcDirs = srcsAsList;
+    }
   }
 
   /**
@@ -129,22 +143,6 @@ public class AtgDustCase extends TestCase {
 
   /**
    * 
-   * @param configurationDirectory
-   * @throws IOException
-   */
-  private void forceGlobalScopeOnAllConfigs(final File configurationDirectory)
-      throws IOException {
-    // find all .properties in config path
-    for (final File file : getFileListing(configurationDirectory)) {
-      if (file.getPath().contains(".properties")) {
-        // find scope other than global and replace with global
-        FileUtils.searchAndReplace("$scope=", "$scope=global\n", file);
-      }
-    }
-  }
-
-  /**
-   * 
    * @return the current configured configuration location path
    * @throws IOException
    */
@@ -154,32 +152,6 @@ public class AtgDustCase extends TestCase {
           "No or empty configuration location is specified. Unable to continue.");
     }
     return configurationLocation;
-  }
-
-  /**
-   * 
-   * @param aStartingDir
-   * @return
-   * @throws FileNotFoundException
-   */
-  private List<File> getFileListing(File aStartingDir)
-      throws FileNotFoundException {
-    final List<File> result = new ArrayList<File>();
-
-    final File[] filesAndDirs = aStartingDir.listFiles();
-    final List<File> filesDirs = Arrays.asList(filesAndDirs);
-    for (File file : filesDirs) {
-      result.add(file); // always add, even if directory
-      if (!file.isFile()) {
-        // must be a directory
-        // recursive call!
-        List<File> deeperList = getFileListing(file);
-        result.addAll(deeperList);
-      }
-
-    }
-    Collections.sort(result);
-    return result;
   }
 
   /**

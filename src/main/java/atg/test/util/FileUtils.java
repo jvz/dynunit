@@ -7,11 +7,15 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -63,8 +67,6 @@ public class FileUtils {
 
   public static void copyFile(final String src, final String dst) {
     try {
-      // log.debug("Source: " + src);
-      // log.debug("Dest: " + dst);
       final FileChannel srcChannel = new FileInputStream(src).getChannel();
       final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
       dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
@@ -123,6 +125,32 @@ public class FileUtils {
     out.close();
     in.close();
     copyFile(tmp.getAbsolutePath(), file.getAbsolutePath());
+  }
+
+  /**
+   * 
+   * @param aStartingDir
+   * @return
+   * @throws FileNotFoundException
+   */
+  public static List<File> getFileListing(File aStartingDir)
+      throws FileNotFoundException {
+    final List<File> result = new ArrayList<File>();
+
+    final File[] filesAndDirs = aStartingDir.listFiles();
+    final List<File> filesDirs = Arrays.asList(filesAndDirs);
+    for (File file : filesDirs) {
+      result.add(file); // always add, even if directory
+      if (!file.isFile()) {
+        // must be a directory
+        // recursive call!
+        List<File> deeperList = getFileListing(file);
+        result.addAll(deeperList);
+      }
+
+    }
+    Collections.sort(result);
+    return result;
   }
 
 }

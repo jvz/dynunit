@@ -1,10 +1,8 @@
-Using AtgDustTestCase
+Using AtgDustCase
   
-  WARNING: The class currently described in this chapter is deprecated in favor for AtgDustCase.
-  
-  This part of the tutorial explains the usage of AtgDustTestCase, a base class 
-  comparable to Junit's TestCase. Extending this class will provide you with the
-  following functionality:
+  This part of the tutorial explains the usage of AtgDustCase, a base class 
+  comparable to Junit's TestCase. and the succesor of AtgDustTestCase. Extending AtgDustCase
+  will provide you with the following functionality:
   
   * Support for Gsa repository based tests
  
@@ -12,13 +10,13 @@ Using AtgDustTestCase
   
   * Basic support for testing FormHandlers and Droplets
   
-  * Write tests that make use of existing component property 
+  * Write tests that make use of existing component property/repository definition
   files (which can be located anywhere on the file system)
   
  
 (Almost) Copy and Pasteable test examples
 
-  The following examples will hopefully illustrate the usage of AtgDustTestCase by:
+  The following examples will hopefully illustrate the usage of AtgDustCase by:
   
   [[1]] testing Nucleus based components
   
@@ -33,23 +31,16 @@ Using AtgDustTestCase
 +------------------------------------------+
 package com.some.company;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import wsp.foundation.version.ScmParser;
-import wsp.foundation.version.ScmParser.ScmType;
-
-import atg.nucleus.logging.ApplicationLoggingImpl;
 import atg.nucleus.logging.ClassLoggingFactoryImpl;
-import atg.test.AtgDustTestCase;
+import atg.test.AtgDustCase;
 
-public class ScmInfoTest extends AtgDustTestCase {
-                               /*---------------*/
+import com.bol.wsp.internal.version.ScmParser.ScmType;
 
-  // the comopment to be tested. Replace it with your class
+public class ScmInfoTest extends AtgDustCase {
+
   private ScmParser scmInfo;
 
   protected final Log log = LogFactory.getLog(ScmInfoTest.class);
@@ -57,52 +48,34 @@ public class ScmInfoTest extends AtgDustTestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    final Map<String, Class<?>> map = new HashMap<String, Class<?>>();
-    
-    // The class to be tested (ScmParser), uses 
-    // atg.nucleus.logging.ApplicationLogging, which is retrieved using 
-    // atg.nucleus.logging.ClassLoggingFactory. Before we can test the ScmParser we 
-    // have to inject those dependencies. 
-    map.put("/atg/dynamo/service/logging/ClassLoggingFactory",
+    copyConfigurationFiles(new String[]{"config"}, "target/test-classes/config",
+        new String[] { ".svn" });
+
+    createPropertyFile("target/test-classes/config",
+        "/atg/dynamo/service/logging/ClassLoggingFactory",
         ClassLoggingFactoryImpl.class);
-    map
-        .put(
-            "/atg/dynamo/service/logging/ClassLoggingFactory/wsp.foundation.version.SvnParser",
-            ApplicationLoggingImpl.class);
-    
-    // will generate all needed classes and configuration files for dependencies that are needed 
-    // for this test and are not under your control.
-    createPropertyFiles(map);
 
-    // this method prepares the component(s) that have to be tested by pointing it to the directory, 
-    // which contains the property files and by specifying one ore more valid component name. 
-    // Basically it initializes components that are under your control.
-    useExistingPropertyFiles("config",
-        new String[] { "/wsp/foundation/internal/ScmInfo" });
-
-    // Starts the Nucleus (if it's not already running) and returns a fully 
-    // injected component, ready to be tested
-    scmInfo = (ScmParser) getService("/wsp/foundation/internal/ScmInfo");
+    scmInfo = (ScmParser) resolveNucleusComponent("/com/bol/wsp/internal/ScmInfo");
 
   }
 
   protected void tearDown() throws Exception {
-    // Make sure you use this one. It will do a lot of important 'house cleaning'
-    // which is absolutely needed for the next test case to execute correctly.  
     super.tearDown();
   }
 
   public void testVersionOutput() {
 
-    // The component can now be tested using Junit's asserts.
+    assertEquals("http://localhost/svn/repository/webshop/trunk/application",
+        scmInfo.getUrl());
     assertEquals("2007-10-08 11:19:32 +0200 (Mon, 08 Oct 2007)", scmInfo
         .getLastChangedDate());
     assertEquals("1909", scmInfo.getRevision());
-    
+
     assertEquals(ScmType.SUBVERSION.toString(), scmInfo.getType());
   }
 
 }
+
 +------------------------------------------+
 
 * Preparing a FormHandler test
@@ -119,9 +92,9 @@ import org.apache.commons.logging.LogFactory;
 
 import atg.adapter.gsa.GSARepository;
 import atg.nucleus.ServiceException;
-import atg.test.AtgDustTestCase;
+import atg.test.AtgDustCase;
 
-public class ReviewFormHandlerTest extends AtgDustTestCase {
+public class ReviewFormHandlerTest extends AtgDustCase {
 
   private final Log log = LogFactory.getLog(getClass());
 
@@ -133,19 +106,19 @@ public class ReviewFormHandlerTest extends AtgDustTestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    // all needed components (which are under your control) that are needed to run this test. 
-    final String[] propertyFiles = new String[] {
-        "/forms/ReviewFormHandler",
-        "/validators/review/ReviewFormInputValidator",
-        "/validators/review/ReviewValidationService"};
+    copyConfigurationFiles(new String[] { "config" }, "target/config".replace(
+        "/", File.separator), new String[] { ".svn" });
 
-    // prepares the dependencies
-    useExistingPropertyFiles("config", propertyFiles);
+    prepareRepositoryTest(
+			new String[] { "com/bol/review/CustomerReviewRepository.xml" },
+      "/com/bol/review/CustomerReviewRepository");
 
-    reviewFormHandler = (ReviewFormHandler) 
-      getService("/forms/ReviewFormHandler");
+    reviewFormHandler = (ReviewFormHandler) resolveNucleusComponent("/com/bol/forms/ReviewFormHandler");
 
     reviewFormHandler.setFormName("ReviewFormHandler");
+
+    GSARepository customerReviewRepository = (GSARepository) resolveNucleusComponent("/com/bol/review/CustomerReviewRepository");
+    reviewFormHandler.setRepository(customerReviewRepository);
 
   }
 
@@ -161,13 +134,12 @@ public class ReviewFormHandlerTest extends AtgDustTestCase {
       fail();
     }
     
-    // do other test's:
-    //
-    // assert....
+    // more asserts here to follow
 
   }
 
 }
+
 +------------------------------------------+
 
 * A Gsa repository based test
@@ -180,12 +152,13 @@ public class ReviewFormHandlerTest extends AtgDustTestCase {
 +------------------------------------------+
 package test;
 
-import static atg.test.AtgDustTestCase.DbVendor.MySQLDBConnection;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.Properties;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import atg.adapter.gsa.GSARepository;
 import atg.dtm.TransactionDemarcation;
@@ -193,8 +166,7 @@ import atg.dtm.TransactionDemarcationException;
 import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryException;
 import atg.repository.RepositoryItem;
-import atg.test.AtgDustTestCase;
-import atg.test.util.FileUtils;
+import atg.test.AtgDustCase;
 
 /**
  * 
@@ -206,17 +178,21 @@ import atg.test.util.FileUtils;
  * @author robert
  * 
  */
-public class SongRepositoryTest extends AtgDustTestCase {
+public class SongRepositoryNewTest extends AtgDustCase {
+
+  private static final Log log = LogFactory.getLog(SongRepositoryNewTest.class);
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    
-    // Copy all related properties and definition files to the
-    // configpath which is also used in the prepareRepositoryTest 
-    // method but exclude all .svn folders
-    FileUtils.copyDir("src/test/resources/config",
-        "target/test-classes/config", Arrays.asList(new String[] { ".svn" }));
+
+    // make sure all needed files are at the config location.
+    // "target/test-classes/config" is then prompoted to the configuration
+    // directory.
+    copyConfigurationFiles(new String[] { "src/test/resources/config".replace(
+        "/", File.separator) }, "target/test-classes/config".replace("/",
+        File.separator), new String[] { ".svn" });
+
   }
 
   @Override
@@ -231,35 +207,53 @@ public class SongRepositoryTest extends AtgDustTestCase {
    */
   public void testWithInMemoryDb() throws Exception {
 
-    prepareRepositoryTest(new File("target/test-classes/config/"),
-        new String[] { "GettingStarted/songs.xml" },
-        "/GettingStarted/SongsRepository");
-
     // The actual test is quite generic. The only difference is the way the
     // repository is prepared by the prepareRepositoryTest method
+
+    prepareRepositoryTest(new String[] { "/GettingStarted/songs.xml" },
+        "/GettingStarted/SongsRepository");
+
     songsRepositoryTest();
   }
 
   /**
-   * Example test with MySQL Database.  
+   * Example test with existing Database. This test is disabled by default (set
+   * to false/or not set in the env.properties) because the MySQL JDBC drivers
+   * (and the env.properties is configured to use mysql) are not included in the
+   * atg dust package.
+   * 
+   * To make use of this test, install a mysql-connector-java (mysql jdbc
+   * driver) into your .m2/repository, un-comment the mysql dependency in the
+   * pom.xml. Test data can be found in
+   * src/test/resources/config/GettingStarted/songs-data.xml.
+   * 
+   * 
    * @throws Exception
    */
-  public void testWithExistingMysqlDb() throws Exception {
+  public void testWithExistingDb() throws Exception {
 
-    // have a look at the API documentation to actually see what all these arguments mean
-    prepareRepositoryTest(new File("target/test-classes/config/"),
-        new String[] { "GettingStarted/songs.xml" },
-        "/GettingStarted/SongsRepository", "userName", "password", "host", "port",
-        "dbName", MySQLDBConnection, false);
+    Properties properties = new Properties();
+    properties.load(new FileInputStream("src/test/resources/env.properties"));
+
+    // a mechanism to disbale/enable the repository test against an existing
+    // database
+    if (properties.getProperty("enabled") == null
+        || properties.getProperty("enabled").equalsIgnoreCase("false")) {
+      return;
+    }
 
     // The actual test is quite generic. The only difference is the way the
     // repository is prepared by the prepareRepositoryTest method
+
+    prepareRepositoryTest(new String[] { "/GettingStarted/songs.xml" },
+        "/GettingStarted/SongsRepository", properties, false);
+
     songsRepositoryTest();
   }
 
   private void songsRepositoryTest() throws TransactionDemarcationException,
-      RepositoryException {
-    final GSARepository songsRepository = (GSARepository) getService("/GettingStarted/SongsRepository");
+      RepositoryException, IOException {
+    GSARepository songsRepository = (GSARepository) resolveNucleusComponent("/GettingStarted/SongsRepository");
     assertNotNull(songsRepository);
 
     final TransactionDemarcation td = new TransactionDemarcation();
@@ -269,12 +263,10 @@ public class SongRepositoryTest extends AtgDustTestCase {
       // Start a new transaction
       td.begin(songsRepository.getTransactionManager());
       // Create a new artist
-      final MutableRepositoryItem artist = songsRepository.createItem("artist");
+      MutableRepositoryItem artist = songsRepository.createItem("artist");
       artist.setPropertyValue("name", "joe");
-      
       // Persist to the repository
       songsRepository.addItem(artist);
-      
       // Try to get it back from the repository
       String id = artist.getRepositoryId();
       RepositoryItem retrievedArtist = songsRepository.getItem(id, "artist");
@@ -286,7 +278,26 @@ public class SongRepositoryTest extends AtgDustTestCase {
       td.end(true);
     }
   }
+
 }
+
+
+The env.properties used in the testWithExistingDb() method above looks like this:
+
+# Configure for your mysql database. These properties are read by
+# the test currently disabled in the SongsRepositoryTest.
+URL=jdbc:mysql://localhost:3306/bwsp
+driver=com.mysql.jdbc.Driver
+user=bol-wsp
+password=
+
+
+# If you set this to true then also make sure that you have a 
+# mysql jdbc driver. See comments in pom.xml (search for mysql)
+
+enabled=true
+
+
 +------------------------------------------+
 
 Tips and Troubleshooting
@@ -301,13 +312,7 @@ Tips and Troubleshooting
 * Inject ApplicationLoggingImpl to prevent NPE's for components using ApplicationLogging
 
 +------------------------------------------+
-  final Map<String, Class<?>> map = new HashMap<String, Class<?>>();
-  map.put("/atg/dynamo/service/logging/ClassLoggingFactory",
-        ClassLoggingFactoryImpl.class);
-  map.put(
-    "/atg/dynamo/service/logging/ClassLoggingFactory/class.using.the.ApplicationLoggingImpl",
-    ApplicationLoggingImpl.class);
-  createPropertyFiles(map);
+  createPropertyFile("/atg/dynamo/service/logging/ClassLoggingFactory", ClassLoggingFactoryImpl.class);
 +------------------------------------------+
 
 * Restoring the state of the database when connecting to an existing one
