@@ -32,33 +32,19 @@ public class FileUtils {
   public static void copyDir(String srcDir, String dstDir,
       final List<String> excludes) throws IOException {
 
-    // log.debug("src Dir = " + srcDir);
-    // log.debug("dst Dir = " + dstDir);
-
-    File fdstDir = new File(dstDir);
-
-    if (!fdstDir.exists()) {
-      fdstDir.mkdirs();
-      // log.info("creating " + dstDir);
-    }
-
-    String[] fileList = new File(srcDir).list();
-
+    new File(dstDir).mkdirs();
+    final String[] fileList = new File(srcDir).list();
     boolean dir;
-
     for (final String file : fileList) {
-
-      // log.debug("File: " + file);
-
-      dir = new File(srcDir + File.separator + file).isDirectory();
+      final String source = srcDir + File.separator + file, destination = dstDir
+          + File.separator + file;
+      dir = new File(source).isDirectory();
       if (dir && !excludes.contains(file)) {
-        copyDir(srcDir + File.separator + file, dstDir + File.separator + file,
-            excludes);
+        copyDir(source, destination, excludes);
       }
       else {
         if (!excludes.contains(file)) {
-          copyFile(srcDir + File.separator + file, dstDir + File.separator
-              + file);
+          copyFile(source, destination);
         }
       }
     }

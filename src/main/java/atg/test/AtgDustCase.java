@@ -80,7 +80,8 @@ public class AtgDustCase extends TestCase {
    *          where to copy the above files to. This will also be the
    *          configuration location.
    * @param excludes
-   *          Which files not to include during the copy process.
+   *          Directories not to include during the copy process. Use this one
+   *          to speed up the test cycle considerably.
    * @throws IOException
    *           Whenever some file related error's occure.
    */
@@ -96,7 +97,7 @@ public class AtgDustCase extends TestCase {
 
     }
     else {
-      log.info("Coping configuration files and "
+      log.info("Copying configuration files and "
           + "forcing global scope on all configs");
       FileUtils.deleteDir(configurationLocation);
 
