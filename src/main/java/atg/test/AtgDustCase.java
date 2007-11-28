@@ -25,28 +25,28 @@ import atg.test.util.FileUtils;
  * Replacement base class for {@link AtgDustTestCase}. Extend this class and
  * use the following 'pattern' whenever you want to junit test some atg
  * components:
- * <ol>
- * <li><b>Always</b> copy all config and repository mapping files to a
- * location that will be promoted to the configuration location using<b>
+ * <ul>
+ * <li><b>Copy</b> all config and repository mapping files to a location that
+ * will be promoted to the configuration location using<b>
  * {@link AtgDustCase#copyConfigurationFiles(String, String, String[])}</b>.
  * The destination directory will automatically be used as the configuration
- * directory. <b>Always</b> point it to some temp location, because this
- * framework will gerenated needed property files and if you point it to some
- * location in your existing source tree, you will polute it with these
- * gerenerate files</li>
- * <li><b><i>Optional: </i></b>tell {@link AtgDustCase} class where the
+ * directory.</li>
+ * <li><b><i>Or: </i></b>tell {@link AtgDustCase} class where the
  * configuration location is by using <b>{@link AtgDustCase#setConfigurationLocation(String)}</b>.
- * This is most of the time not needed because the location has already been set
- * at step 1. </li>
- * <li><b><i>Optional: </i></b> if you want to create repository based tests
- * use <b>{@link AtgDustCase#prepareRepositoryTest(String[], String)}</b> or
+ * </li>
+ * </ul>
+ * Repository based tests need one of the two steps descriped above plus:
+ * <ul>
+ * <li> <b>{@link AtgDustCase#prepareRepositoryTest(String[], String)}</b> or
  * <b>{@link AtgDustCase#prepareRepositoryTest(String[], String, Properties, boolean)}</b>.</li>
+ * </ul>
  * 
- * <li><b><i>Optional: </i></b> if you need to generate some components on
- * the fly<b> use <b>{@link AtgDustCase#createPropertyFile(String, String, Class)}</b></li>
+ * If you need to generate some components "on the fly":
+ * <ul>
+ * <li><b>{@link AtgDustCase#createPropertyFile(String, String, Class)}</b></li>
+ * </ul>
  * 
  * 
- * </ol>
  * Example usage can be found in test.SongRepositoryNewTest.
  * 
  * @author robert
