@@ -36,12 +36,12 @@ public class SongRepositoryNewTest extends AtgDustCase {
   public void setUp() throws Exception {
     super.setUp();
 
+    setConfigurationLocation("target/test-classes/config".replace("/",
+        File.separator));
+
     // make sure all needed files are at the config location
     FileUtils.copyDir("src/test/resources/config",
         "target/test-classes/config", Arrays.asList(new String[] { ".svn" }));
-
-    setConfigurationLocation("target/test-classes/config".replace("/",
-        File.separator));
 
   }
 

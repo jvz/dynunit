@@ -5,6 +5,10 @@ import static atg.test.AtgDustTestCase.AtgDustSystemProperties.ATG_DUST_DROP_TAB
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import junit.framework.TestCase;
@@ -19,20 +23,23 @@ import atg.test.util.DBUtils;
 import atg.test.util.FileUtils;
 
 /**
- * Base class comparable to Junit's TestCase. Extend this class and use the
- * following 'pattern' when using it:
- * <ul>
+ * Replacement base class for {@link AtgDustTestCase} comparable to Junit's
+ * TestCase. Extend this class and use the following 'pattern' whenever you want
+ * to junit test some atg components:
+ * <ol>
  * <li>Copy all config and repository mapping files to a location that will be
  * promoted to the configuration location using<b>
- * {@link FileUtils#copyDir(String, String, java.util.List)}</b>.</li>
- * <li>Tell this class where the configuration location is by using <b>{@link AtgDustCase#setConfigurationLocation(String)}</b>.
- * BTW you always want to point it to some temp location, because this framework
- * will gerenated needed property files and if you point it to some location in
- * your existing source tree, you will polute it with these gerenerate files</li>
- * <li>Optional if you want to create repository based tests use <b>{@link AtgDustCase#prepareRepositoryTest(String[], String)}</b>
- * or <b>{@link AtgDustCase#prepareRepositoryTest(String[], String, Properties, boolean)}.</li>
- * </ul>
- * Example usage can be found in test.SongRepositoryOldTest.
+ * {@link AtgDustCase#copyDir(String, String, String[])}</b>.</li>
+ * <li>Tell {@link AtgDustCase} class where the configuration location is by
+ * using <b>{@link AtgDustCase#setConfigurationLocation(String)}</b>. BTW you
+ * always want to point it to some temp location, because this framework will
+ * gerenated needed property files and if you point it to some location in your
+ * existing source tree, you will polute it with these gerenerate files.</li>
+ * <li><b><i>Optional</i></b> if you want to create repository based tests
+ * use <b>{@link AtgDustCase#prepareRepositoryTest(String[], String)}</b> or
+ * <b>{@link AtgDustCase#prepareRepositoryTest(String[], String, Properties, boolean)}</b>.</li>
+ * </ol>
+ * Example usage can be found in test.SongRepositoryNewTest.
  * 
  * @author robert
  */
@@ -45,6 +52,10 @@ public class AtgDustCase extends TestCase {
   private DBUtils dbUtils;
 
   private transient Nucleus nucleus;
+
+  private static boolean COPIED_CONFIGS = false;
+
+  private static String lastConfigSrcDir, lastConfigDstDir;
 
   /**
    * @param nucleusComponentPath
@@ -124,6 +135,7 @@ public class AtgDustCase extends TestCase {
 
   protected void startNucleus() throws IOException {
     if (nucleus == null || !nucleus.isRunning()) {
+      // force the scope to global
       nucleus = NucleusTestUtils.startNucleus(getConfigurationLocation());
     }
   }
@@ -138,7 +150,57 @@ public class AtgDustCase extends TestCase {
     nucleus.stopService();
     nucleus.destroy();
 
-    FileUtils.deleteDir(getConfigurationLocation());
+    // FileUtils.deleteDir(getConfigurationLocation());
     NucleusTestUtils.emptyConfigDirMap();
+  }
+
+  protected void forceGlobalScopeOnAllConfigs(final File configurationDirectory)
+      throws IOException {
+
+    // find all .properties in config path
+    for (final File f : getFileListing(configurationDirectory)) {
+      if (f.getPath().contains(".properties")) {
+        // find scope other than global and replace with global
+        FileUtils.searchAndReplace("$scope=", "$scope=global\n", f);
+      }
+    }
+  }
+
+  private List<File> getFileListing(File aStartingDir)
+      throws FileNotFoundException {
+    final List<File> result = new ArrayList<File>();
+
+    final File[] filesAndDirs = aStartingDir.listFiles();
+    final List<File> filesDirs = Arrays.asList(filesAndDirs);
+    for (File file : filesDirs) {
+      result.add(file); // always add, even if directory
+      if (!file.isFile()) {
+        // must be a directory
+        // recursive call!
+        List<File> deeperList = getFileListing(file);
+        result.addAll(deeperList);
+      }
+
+    }
+    Collections.sort(result);
+    return result;
+  }
+
+  protected void copyDir(final String srcDir, final String dstDir,
+      final String[] excludes) throws IOException {
+    if (COPIED_CONFIGS && lastConfigDstDir.equalsIgnoreCase(dstDir)
+        && lastConfigSrcDir.equalsIgnoreCase(srcDir)) {
+      log.info("No config copy, because they are still the same");
+      return;
+    }
+    log.info("Config copy and forcing global scope");
+    FileUtils.deleteDir(configurationLocation);
+    configurationLocation = new File(dstDir);
+    FileUtils.copyDir(srcDir, dstDir, Arrays.asList(excludes));
+    forceGlobalScopeOnAllConfigs(configurationLocation);
+    COPIED_CONFIGS = true;
+    lastConfigDstDir = dstDir;
+    lastConfigSrcDir = srcDir;
+
   }
 }
