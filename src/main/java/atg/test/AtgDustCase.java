@@ -1,7 +1,5 @@
 package atg.test;
 
-import static atg.test.AtgDustTestCase.AtgDustSystemProperties.ATG_DUST_DROP_TABLES;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,17 +14,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import atg.nucleus.Nucleus;
-import atg.nucleus.NucleusTestUtils;
-import atg.test.util.FileUtils;
-import atg.test.util.GsaUtil;
+import atg.test.util.AtgUtil;
+import atg.test.util.ConfigurationManager;
+import atg.test.util.FileUtil;
 
 /**
  * Replacement base class for {@link AtgDustTestCase}. Extend this class and
  * use the following 'pattern' whenever you want to junit test some atg
  * components:
  * <ul>
- * <li><b>Copy</b> all config and repository mapping files to a location that
- * will be promoted to the configuration location ({@link AtgDustCase#configurationLocation})
+ * <li><b>Copy</b> all configuration and repository mapping files to a
+ * location that will be promoted to the configuration location ({@link AtgDustCase#configurationLocation})
  * using<b>
  * {@link AtgDustCase#copyConfigurationFiles(String[], String, String[])}</b>.
  * The destination directory will automatically be used as the configuration
@@ -35,10 +33,12 @@ import atg.test.util.GsaUtil;
  * configuration location is by using <b>{@link AtgDustCase#setConfigurationLocation(String)}</b>.
  * </li>
  * </ul>
- * Repository based tests need one of the two steps descriped above plus:
+ * Repository based tests are depended on one of the two steps previously
+ * described plus:
  * <ul>
- * <li> <b>{@link AtgDustCase#prepareRepositoryTest(String[], String)}</b> or
- * <b>{@link AtgDustCase#prepareRepositoryTest(String[], String, Properties, boolean)}</b>.</li>
+ * <li> <b>{@link AtgDustCase#prepareRepositoryTest(String[], String)}</b> for
+ * testing against an default in-memory hsql database or <b>{@link AtgDustCase#prepareRepositoryTest(String[], String, Properties, boolean)}
+ * </b> for testing against an existing database.</li>
  * </ul>
  * 
  * If you need to generate some components "on the fly":
@@ -46,8 +46,9 @@ import atg.test.util.GsaUtil;
  * <li><b>{@link AtgDustCase#createPropertyFile(String, String, Class)}</b></li>
  * </ul>
  * 
- * 
+ * <p>
  * Example usage can be found in test.SongRepositoryNewTest.
+ * </p>
  * 
  * @author robert
  */
@@ -55,24 +56,26 @@ public class AtgDustCase extends TestCase {
 
   private static File configurationLocation;
 
-  // Start: needed for optimalizations
+  // Start: needed for optimizing
 
   private static String lastConfigDstDir = "";
 
   private static List<String> lastConfigSrcDirs = new ArrayList<String>(),
       lastConfigExcludes = new ArrayList<String>();
 
-  // Stop: needed for optimalizations
+  // Stop: needed for optimizing
 
   private static final Log log = LogFactory.getLog(AtgDustCase.class);
 
-  private GsaUtil gsaUtil;
+  private AtgUtil atgUtil;
 
   private Nucleus nucleus;
 
+  private boolean isDebug;
+
   /**
-   * Every .propertie file copied using this method will have it's scope (if one
-   * is avaiable) set to global.
+   * Every .properties file copied using this method will have it's scope (if
+   * one is available) set to global.
    * 
    * @param srcDirs
    *          One or more directories containing needed configuration files.
@@ -104,15 +107,15 @@ public class AtgDustCase extends TestCase {
       // copy all files to it's destination
       for (final String srcs : srcDirs) {
         setConfigurationLocation(dstDir);
-        FileUtils.copyDir(srcs, dstDir, Arrays.asList(excludes));
+        FileUtil.copyDir(srcs, dstDir, Arrays.asList(excludes));
       }
 
-      // forcing global scope on all configs
-      for (final File file : FileUtils
+      // forcing global scope on all configurations
+      for (final File file : FileUtil
           .getFileListing(getConfigurationLocation())) {
         if (file.getPath().endsWith(".properties")) {
           // find scope other than global and replace with global
-          FileUtils.searchAndReplace("$scope=", "$scope=global\n", file);
+          FileUtil.searchAndReplace("$scope=", "$scope=global\n", file);
         }
       }
       lastConfigDstDir = dstDir;
@@ -127,27 +130,27 @@ public class AtgDustCase extends TestCase {
    *          also set the {@link AtgDustCase#configurationLocation}.
    * 
    * @param nucleusComponentPath
-   *          the nucleus component path (e.g /Some/Service/Impl).
+   *          Nucleus component path (e.g /Some/Service/Impl).
    * 
    * @param nucleusComponentClass
-   *          the class implementation of the nucleus component specified in
-   *          previous argument.
+   *          The implementation of the nucleus component specified in previous
+   *          argument.
    * 
    * @throws IOException
-   *           if we have some File related errors
+   *           If we have some File related errors
    */
   protected final void createPropertyFile(final String configurationLocation,
       final String nucleusComponentPath, final Class<?> nucleusComponentClass)
       throws IOException {
     AtgDustCase.configurationLocation = new File(configurationLocation);
-    NucleusTestUtils.createProperties(nucleusComponentPath,
+    ConfigurationManager.createProperties(nucleusComponentPath,
         getConfigurationLocation(), nucleusComponentClass.getName(),
-        new Properties()).deleteOnExit();
+        new Properties());
   }
 
   /**
    * 
-   * @return the current configured configuration location path
+   * @return the current configured 'configuration location path'
    * @throws IOException
    */
   private File getConfigurationLocation() throws IOException {
@@ -159,7 +162,7 @@ public class AtgDustCase extends TestCase {
   }
 
   /**
-   * Prepares a test against an default in-memory hsql db.
+   * Prepares a test against an default in-memory hsql database.
    * 
    * @param definitionFiles
    *          an {@link String[]} array with all needed repository definition
@@ -178,32 +181,33 @@ public class AtgDustCase extends TestCase {
     properties.put("user", "sa");
     properties.put("password", "");
 
-    prepareRepositoryTest(definitionFiles, repoPath, properties, false);
+    prepareRepositoryTest(definitionFiles, repoPath, properties, true);
 
   }
 
   /**
-   * Prepares a test against an existing db.
+   * Prepares a test against an existing database.
    * 
    * @param definitionFiles
-   *          an {@link String[]} array with all needed repository definition
+   *          An {@link String[]} array with all needed repository definition
    *          files.
    * @param repositoryPath
-   *          the nucleus component path of the repository to be tested.
+   *          The the repository to be tested specified as nucleus component
+   *          path.
    * @param connectionProperties
-   *          an {@link Properties} instance with the following values (in this
-   *          example the properties are geared towards an mysql db):
+   *          A {@link Properties} instance with the following values (in this
+   *          example the properties are geared towards an mysql database):
    * 
    * <pre>
    * final Properties properties = new Properties();
    * properties.put(&quot;driver&quot;, &quot;com.mysql.jdbc.Driver&quot;);
-   * properties.put(&quot;URL&quot;, &quot;jdbc:mysql://localhost:3306/someDb&quot;);
+   * properties.put(&quot;url&quot;, &quot;jdbc:mysql://localhost:3306/someDb&quot;);
    * properties.put(&quot;user&quot;, &quot;someUserName&quot;);
    * properties.put(&quot;password&quot;, &quot;somePassword&quot;);
    * </pre>
    * 
    * @param dropTable
-   *          if <code>true</code> then existing tabled will be dropped and
+   *          If <code>true</code> then existing tables will be dropped and
    *          re-created, if set to <code>false</code> the existing tables
    *          will be used.
    * 
@@ -213,11 +217,11 @@ public class AtgDustCase extends TestCase {
   protected void prepareRepositoryTest(final String[] definitionFiles,
       final String repositoryPath, final Properties connectionProperties,
       final boolean dropTable) throws Exception {
-    
-    gsaUtil = new GsaUtil(connectionProperties);
-    gsaUtil.initializeMinimalConfigpath(getConfigurationLocation(),
-        repositoryPath, definitionFiles, connectionProperties, null, null,
-        null, null, null, dropTable);
+
+    atgUtil = new AtgUtil(connectionProperties, isDebug);
+    atgUtil.initializeMinimalRepositoryConfiguration(
+        getConfigurationLocation(), repositoryPath, definitionFiles,
+        connectionProperties, null, null, null, null, null, dropTable);
   }
 
   /**
@@ -227,7 +231,7 @@ public class AtgDustCase extends TestCase {
    * @return Fully injected instance of the component registered under previous
    *         argument or <code>null</code> if there is an error.
    * @throws IOException
-   *           if some config file related errors occure.
+   *           If some configuration file related errors occur.
    */
   protected Object resolveNucleusComponent(final String nucleusComponentPath)
       throws IOException {
@@ -236,11 +240,11 @@ public class AtgDustCase extends TestCase {
   }
 
   /**
-   * Call this method to set the config location.
+   * Call this method to set the configuration location.
    * 
    * @param configurationLocation
-   *          the configurationLocation to set. Most of the time this location
-   *          is a directory containg all repository definition files and
+   *          The configuration location to set. Most of the time this location
+   *          is a directory containing all repository definition files and
    *          component property files which are needed for the test.
    */
   protected final void setConfigurationLocation(
@@ -256,25 +260,32 @@ public class AtgDustCase extends TestCase {
    */
   private void startNucleus() throws IOException {
     if (nucleus == null || !nucleus.isRunning()) {
-      nucleus = NucleusTestUtils.startNucleus(getConfigurationLocation());
+      nucleus = AtgUtil.startNucleus(getConfigurationLocation());
     }
   }
 
   /**
-   * Always make sure to call this because it will clean up and shutdown the db
-   * and the nucleus.
+   * Always make sure to call this because it will do necessary clean up
+   * actions.
    */
   @Override
   protected void tearDown() throws Exception {
     super.tearDown();
-    if (gsaUtil != null) {
-      gsaUtil.shutdown();
+    if (atgUtil != null) {
+      atgUtil.shutdownInMemoryDbAndCloseConnections();
     }
     if (nucleus != null) {
       nucleus.doStopService();
       nucleus.stopService();
       nucleus.destroy();
     }
-    NucleusTestUtils.emptyConfigDirMap();
+  }
+
+  /**
+   * @param isDebug
+   *          the isDebug to set
+   */
+  public void setDebug(boolean isDebug) {
+    this.isDebug = isDebug;
   }
 }

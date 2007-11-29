@@ -34,13 +34,20 @@ public class SongRepositoryNewTest extends AtgDustCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
+    
 
-    // make sure all needed files are at the config location.
-    // "target/test-classes/config" is then prompoted to the configuration
+
+    // make sure all needed files are at the configuration location.
+    // "target/test-classes/config" is then promoted to the configuration
     // directory.
     copyConfigurationFiles(new String[] { "src/test/resources/config".replace(
         "/", File.separator) }, "target/test-classes/config".replace("/",
         File.separator), new String[] { ".svn" });
+    
+
+    // Eventually set this one to true to get more debug logging in your console
+    // from your nucleus based components
+    // setDebug(true);
 
   }
 
@@ -124,7 +131,7 @@ public class SongRepositoryNewTest extends AtgDustCase {
     }
     finally {
       // End the transaction, roll-back to restore original database state
-      td.end(false);
+      td.end(true);
     }
   }
 

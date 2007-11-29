@@ -46,9 +46,16 @@ import atg.nucleus.ServiceException;
 import atg.nucleus.logging.ClassLoggingFactoryImpl;
 import atg.nucleus.logging.ConsoleLogListener;
 import atg.test.util.DBUtils;
-import atg.test.util.FileUtils;
+import atg.test.util.FileUtil;
 
 /**
+ * <p>
+ * <b>WARNING: </b> <i>Running this class against an existing databases might
+ * result in existing tables (like DAS_ID_GENERATOR ) being dropped!
+ * {@link AtgDustCase} addresses a lot of issues/bugs/problems which exist in
+ * this class. This class will be removed in the coming weeks. </i>
+ * </p>
+ * 
  * Base class comparable to Junit's TestCase. Extend this class and use the
  * following 'pattern' when using it:
  * <ul>
@@ -67,6 +74,8 @@ import atg.test.util.FileUtils;
  * @author robert
  * 
  * @deprecated replaced by {@link AtgDustCase}
+ * 
+ * 
  */
 public class AtgDustTestCase extends TestCase {
 
@@ -418,7 +427,7 @@ public class AtgDustTestCase extends TestCase {
         log.error("unable to create: " + path.getPath());
       }
 
-      FileUtils.copyFile(configPath + File.separator
+      FileUtil.copyFile(configPath + File.separator
           + service.replace("/", File.separator) + ".properties", configDir
           .getPath()
           + service + ".properties".replace("/", File.separator));
@@ -450,7 +459,7 @@ public class AtgDustTestCase extends TestCase {
       this.excludes = Arrays.asList(excludes);
     }
 
-    FileUtils.copyDir(srcDir, dstDir, this.excludes);
+    FileUtil.copyDir(srcDir, dstDir, this.excludes);
     forceGlobalScopeOnAllConfigs(dstDir);
 
   }
@@ -460,8 +469,8 @@ public class AtgDustTestCase extends TestCase {
     // find all .properties in config path
     if (f.getPath().contains(".properties")) {
       // find scope other than global and replace with global
-      FileUtils.searchAndReplace("$scope=request", "$scope=global\n", f);
-      FileUtils.searchAndReplace("$scope=session", "$scope=global\n", f);
+      FileUtil.searchAndReplace("$scope=request", "$scope=global\n", f);
+      FileUtil.searchAndReplace("$scope=session", "$scope=global\n", f);
 
     }
 
@@ -474,8 +483,8 @@ public class AtgDustTestCase extends TestCase {
     for (final File f : getFileListing(new File(configurationDirectory))) {
       if (f.getPath().contains(".properties")) {
         // find scope other than global and replace with global
-        FileUtils.searchAndReplace("$scope=request", "$scope=global\n", f);
-        FileUtils.searchAndReplace("$scope=session", "$scope=global\n", f);
+        FileUtil.searchAndReplace("$scope=request", "$scope=global\n", f);
+        FileUtil.searchAndReplace("$scope=session", "$scope=global\n", f);
       }
 
     }

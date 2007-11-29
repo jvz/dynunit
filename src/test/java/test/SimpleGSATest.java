@@ -16,7 +16,7 @@ import atg.repository.MutableRepository;
 import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryItem;
 import atg.test.util.DBUtils;
-import atg.test.util.FileUtils;
+import atg.test.util.FileUtil;
 
 /**
  * This test starts a repository, adds an item to that repository, then shuts
@@ -39,7 +39,7 @@ public class SimpleGSATest extends GSATest {
 
     // Copy all related properties and definition files to the previously
     // configured configpath
-    FileUtils.copyDir("src/test/resources/config", configpath.getPath(), Arrays
+    FileUtil.copyDir("src/test/resources/config", configpath.getPath(), Arrays
         .asList(new String[] { ".svn" }));
 
     // Use the DBUtils utility class to get JDBC properties for an in memory

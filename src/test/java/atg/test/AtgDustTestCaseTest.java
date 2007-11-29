@@ -10,7 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import atg.nucleus.NucleusTestUtils;
-import atg.test.util.FileUtils;
+import atg.test.util.FileUtil;
 
 /**
  * @author robert
@@ -101,7 +101,7 @@ public class AtgDustTestCaseTest extends TestCase {
       assertFalse(Arrays.asList(excludes).contains(f.getName()));
     }
 
-    FileUtils.deleteDir(new File(destination));
+    FileUtil.deleteDir(new File(destination));
 
   }
 

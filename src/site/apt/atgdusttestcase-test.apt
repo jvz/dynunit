@@ -194,7 +194,7 @@ import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryException;
 import atg.repository.RepositoryItem;
 import atg.test.AtgDustTestCase;
-import atg.test.util.FileUtils;
+import atg.test.util.FileUtil;
 
 /**
  * 

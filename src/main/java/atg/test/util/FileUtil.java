@@ -25,9 +25,9 @@ import org.apache.commons.logging.LogFactory;
  * @author robert
  * 
  */
-public class FileUtils {
+public class FileUtil {
 
-  private static final Log log = LogFactory.getLog(FileUtils.class);
+  private static final Log log = LogFactory.getLog(FileUtil.class);
 
   public static void copyDir(String srcDir, String dstDir,
       final List<String> excludes) throws IOException {

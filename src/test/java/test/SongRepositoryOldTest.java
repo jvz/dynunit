@@ -14,7 +14,7 @@ import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryException;
 import atg.repository.RepositoryItem;
 import atg.test.AtgDustTestCase;
-import atg.test.util.FileUtils;
+import atg.test.util.FileUtil;
 
 /**
  * 
@@ -42,7 +42,7 @@ public class SongRepositoryOldTest extends AtgDustTestCase {
 
     // Copy all related properties and definition files to the previously
     // configured configpath
-    FileUtils.copyDir("src/test/resources/config",
+    FileUtil.copyDir("src/test/resources/config",
         "target/test-classes/config", Arrays.asList(new String[] { ".svn" }));
 
   }

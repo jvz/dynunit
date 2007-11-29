@@ -54,22 +54,22 @@ public class NucleusTestUtils {
   private static final Map<String, File> sConfigDir = new HashMap<String, File>();
 
   /**
-   * Searches for a given file in Nucleus' configpath.
+   * Searches for a given file in Nucleus' configuration path.
    * Prints to System.out the file systems involved in the search
    * and the file if found.
-   * @param n
-   * @param pPath
+   * @param nucleus
+   * @param path
    */
-  public static void printConfigurationFileSystems(Nucleus n, String pPath) {
+  public static void printConfigurationFileSystems(Nucleus nucleus, String path) {
     // Get the list of VFS directories
 
-    ConfigurationFileSystems cfs = n.getConfigurationFileSystems();
-    VirtualPath path = new VirtualPath(pPath, "/");
+    ConfigurationFileSystems cfs = nucleus.getConfigurationFileSystems();
+    VirtualPath virtualPath = new VirtualPath(path, "/");
     VirtualFileSystem[] vfss = cfs.getFileSystems();
     for (final VirtualFileSystem vfs : vfss) {
       log.info("file system: " + vfs);
-      VirtualFile vfile = vfs.getFile(path);
-      log.info(" virtual file for " + path + " = " + vfile);
+      VirtualFile vfile = vfs.getFile(virtualPath);
+      log.info(" virtual file for " + virtualPath + " = " + vfile);
     }
   }
 
