@@ -59,7 +59,8 @@ public class AtgDustCase extends TestCase {
 
   private static String lastConfigDstDir = "";
 
-  private static List<String> lastConfigSrcDirs = new ArrayList<String>();
+  private static List<String> lastConfigSrcDirs = new ArrayList<String>(),
+      lastConfigExcludes = new ArrayList<String>();
 
   // Stop: needed for optimalizations
 
@@ -88,8 +89,10 @@ public class AtgDustCase extends TestCase {
       final String dstDir, final String[] excludes) throws IOException {
 
     final List<String> srcsAsList = Arrays.asList(srcDirs);
+    final List<String> exsAsList = Arrays.asList(srcDirs);
     if (lastConfigDstDir.equalsIgnoreCase(dstDir)
-        && lastConfigSrcDirs.equals(srcsAsList)) {
+        && lastConfigSrcDirs.equals(srcsAsList)
+        && lastConfigExcludes.equals(exsAsList)) {
       log.info("No need to copy configuration files or "
           + "force global scope on all configs, "
           + "because they are still the same.");
@@ -115,6 +118,7 @@ public class AtgDustCase extends TestCase {
 
       lastConfigDstDir = dstDir;
       lastConfigSrcDirs = srcsAsList;
+      lastConfigExcludes = exsAsList;
     }
   }
 
