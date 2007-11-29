@@ -15,11 +15,10 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import atg.adapter.gsa.GSATestUtils;
 import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusTestUtils;
-import atg.test.util.DBUtils;
 import atg.test.util.FileUtils;
+import atg.test.util.GsaUtil;
 
 /**
  * Replacement base class for {@link AtgDustTestCase}. Extend this class and
@@ -66,7 +65,7 @@ public class AtgDustCase extends TestCase {
 
   private static final Log log = LogFactory.getLog(AtgDustCase.class);
 
-  private DBUtils dbUtils;
+  private GsaUtil gsaUtil;
 
   private Nucleus nucleus;
 
@@ -172,7 +171,7 @@ public class AtgDustCase extends TestCase {
 
     final Properties properties = new Properties();
     properties.put("driver", "org.hsqldb.jdbcDriver");
-    properties.put("URL", "jdbc:hsqldb:mem:testDb");
+    properties.put("url", "jdbc:hsqldb:mem:testDb");
     properties.put("user", "sa");
     properties.put("password", "");
 
@@ -215,13 +214,10 @@ public class AtgDustCase extends TestCase {
     // TODO: Still have to come up with something better...
     System.setProperty(ATG_DUST_DROP_TABLES.getPropertyName(), Boolean
         .toString(dropTable));
-
-    GSATestUtils.getGSATestUtils().initializeMinimalConfigpath(
-        getConfigurationLocation(), repositoryPath, definitionFiles,
-        connectionProperties, null, null, null, false);
-
-    dbUtils = new DBUtils(connectionProperties);
-
+    gsaUtil = new GsaUtil(connectionProperties);
+    gsaUtil.initializeMinimalConfigpath(getConfigurationLocation(),
+        repositoryPath, definitionFiles, connectionProperties, null, null,
+        null, false, null, null);
   }
 
   /**
@@ -271,8 +267,8 @@ public class AtgDustCase extends TestCase {
   @Override
   protected void tearDown() throws Exception {
     super.tearDown();
-    if (dbUtils != null) {
-      dbUtils.shutdown();
+    if (gsaUtil != null) {
+      gsaUtil.shutdown();
     }
     if (nucleus != null) {
       nucleus.doStopService();
