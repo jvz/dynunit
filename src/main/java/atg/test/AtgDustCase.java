@@ -115,7 +115,6 @@ public class AtgDustCase extends TestCase {
           FileUtils.searchAndReplace("$scope=", "$scope=global\n", file);
         }
       }
-
       lastConfigDstDir = dstDir;
       lastConfigSrcDirs = srcsAsList;
       lastConfigExcludes = exsAsList;
@@ -214,14 +213,11 @@ public class AtgDustCase extends TestCase {
   protected void prepareRepositoryTest(final String[] definitionFiles,
       final String repositoryPath, final Properties connectionProperties,
       final boolean dropTable) throws Exception {
-
-    // TODO: Still have to come up with something better...
-    System.setProperty(ATG_DUST_DROP_TABLES.getPropertyName(), Boolean
-        .toString(dropTable));
+    
     gsaUtil = new GsaUtil(connectionProperties);
     gsaUtil.initializeMinimalConfigpath(getConfigurationLocation(),
         repositoryPath, definitionFiles, connectionProperties, null, null,
-        null, false, null, null);
+        null, null, null, dropTable);
   }
 
   /**

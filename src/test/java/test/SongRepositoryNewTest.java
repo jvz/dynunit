@@ -124,7 +124,7 @@ public class SongRepositoryNewTest extends AtgDustCase {
     }
     finally {
       // End the transaction, roll-back to restore original database state
-      td.end(true);
+      td.end(false);
     }
   }
 

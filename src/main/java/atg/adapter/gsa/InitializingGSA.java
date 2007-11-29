@@ -72,7 +72,10 @@ public class InitializingGSA extends GSARepository {
   }
 
   public boolean isDropTablesIfExist() {
-    // this should be a temporarily solution and should be fixed in future!
+    
+    // return mDropTables;
+
+    // TODO: Will be replaced with the above call once the AtgDustTestCase has been deleted 
 
     final String dropTableProperty = System.getProperty(ATG_DUST_DROP_TABLES
         .getPropertyName());
