@@ -6,16 +6,8 @@ package atg.test.util;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.sql.DataSource;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This class is a merger of atg.test.util.DBUtils and
@@ -33,26 +25,17 @@ public final class ConfigurationManager {
 
   private String isDebug = Boolean.FALSE.toString();
 
-  private static final Log log = LogFactory.getLog(ConfigurationManager.class);
+  // private static final Log log =
+  // LogFactory.getLog(ConfigurationManager.class);
 
   private final Map<String, String> settings = new HashMap<String, String>();
-
-  private DataSource dataSource;
 
   /**
    * 
    * @param isVersioned
-   * @param connection
    * @param isDebug
    */
-  protected ConfigurationManager(final boolean isVersioned,
-      final DataSource dataSource, final boolean isDebug) {
-
-    if (isVersioned) {
-      throw new UnsupportedOperationException(
-          "Versioned Repositories are currently *not* supported");
-    }
-    this.dataSource = dataSource;
+  protected ConfigurationManager(final boolean isDebug) {
     this.isDebug = Boolean.toString(isDebug);
   }
 
@@ -166,32 +149,6 @@ public final class ConfigurationManager {
 
   /**
    * 
-   * @throws SQLException
-   */
-  protected void createIdGeneratorTables() throws SQLException {
-
-    final String dbQuery = "CREATE TABLE DAS_ID_GENERATOR(ID_SPACE_NAME VARCHAR(60) NOT NULL, "
-        + "SEED NUMERIC(19, 0) NOT NULL, BATCH_SIZE INTEGER NOT NULL,   "
-        + "PREFIX VARCHAR(10) DEFAULT NULL, SUFFIX VARCHAR(10) DEFAULT NULL, "
-        + "PRIMARY KEY(ID_SPACE_NAME))";
-
-    try {
-      final Statement st = dataSource.getConnection().createStatement();
-      st.executeUpdate("DROP TABLE DAS_ID_GENERATOR");
-      st.close();
-    }
-    catch (SQLException e) {
-      // just try drop any existing DAS_ID_GENERATOR if desired
-    }
-
-    // create new DAS_ID_GENERATOR
-    final Statement st = dataSource.getConnection().createStatement();
-    st.executeUpdate(dbQuery);
-    st.close();
-  }
-
-  /**
-   * 
    * @param root
    * @throws IOException
    */
@@ -237,9 +194,6 @@ public final class ConfigurationManager {
       String repositoryPath, String[] definitionFiles, final boolean droptables)
       throws IOException {
 
-    // for non-versioned repositories
-    final String clazz = "atg.adapter.gsa.InitializingGSA";
-
     this.settings.clear();
 
     final StringBuilder defFiles = new StringBuilder();
@@ -274,7 +228,8 @@ public final class ConfigurationManager {
         repositoryPath.length());
     File newRoot = new File(root, repositoryDir);
     newRoot.mkdirs();
-    FileUtil.createPropertyFile(repositoryName, newRoot, clazz, settings);
+    FileUtil.createPropertyFile(repositoryName, newRoot,
+        "atg.adapter.gsa.InitializingGSA", settings);
   }
 
   /**

@@ -319,6 +319,7 @@ public class AtgDustCase extends TestCase {
     if (nucleus == null || !nucleus.isRunning()) {
       System.setProperty("atg.dynamo.license.read", "true");
       System.setProperty("atg.license.read", "true");
+      // TODO: Can I safely disable this one?
       NucleusServlet.addNamingFactoriesAndProtocolHandlers();
       nucleus = Nucleus.startNucleus(new String[] { configpath
           .getAbsolutePath() });
