@@ -34,18 +34,16 @@ public class SongRepositoryNewTest extends AtgDustCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    
-
 
     // make sure all needed files are at the configuration location.
     // "target/test-classes/config" is then promoted to the configuration
     // directory.
     copyConfigurationFiles(new String[] { "src/test/resources/config".replace(
         "/", File.separator) }, "target/test-classes/config".replace("/",
-        File.separator), new String[] { ".svn" });
-    
+        File.separator), ".svn");
 
-    // Eventually set this one to true to get more debug logging in your console
+    // Eventually set this one to 'true' to get more debug logging in your
+    // console
     // from your nucleus based components
     // setDebug(true);
 
@@ -66,8 +64,8 @@ public class SongRepositoryNewTest extends AtgDustCase {
     // The actual test is quite generic. The only difference is the way the
     // repository is prepared by the prepareRepositoryTest method
 
-    prepareRepositoryTest(new String[] { "/GettingStarted/songs.xml" },
-        "/GettingStarted/SongsRepository");
+    prepareRepositoryTest("/GettingStarted/SongsRepository",
+        "/GettingStarted/songs.xml");
 
     songsRepositoryTest();
   }
@@ -91,7 +89,7 @@ public class SongRepositoryNewTest extends AtgDustCase {
     Properties properties = new Properties();
     properties.load(new FileInputStream("src/test/resources/env.properties"));
 
-    // a mechanism to disbale/enable the repository test against an existing
+    // a mechanism to disable/enable the repository test against an existing
     // database
     if (properties.getProperty("enabled") == null
         || properties.getProperty("enabled").equalsIgnoreCase("false")) {
@@ -101,8 +99,8 @@ public class SongRepositoryNewTest extends AtgDustCase {
     // The actual test is quite generic. The only difference is the way the
     // repository is prepared by the prepareRepositoryTest method
 
-    prepareRepositoryTest(new String[] { "/GettingStarted/songs.xml" },
-        "/GettingStarted/SongsRepository", properties, false);
+    prepareRepositoryTest("/GettingStarted/SongsRepository", properties, false,
+        "/GettingStarted/songs.xml");
 
     songsRepositoryTest();
   }

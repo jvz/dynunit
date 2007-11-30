@@ -12,6 +12,7 @@ import junit.framework.TestCase;
  * 
  */
 public class AtgDustCaseTest extends TestCase {
+  private AtgDustCase atgCase = new AtgDustCase();
 
   /*
    * (non-Javadoc)
@@ -20,6 +21,8 @@ public class AtgDustCaseTest extends TestCase {
    */
   protected void setUp() throws Exception {
     super.setUp();
+
+    atgCase.setConfigurationLocation("src/test/resources/config");
   }
 
   /*
@@ -37,8 +40,6 @@ public class AtgDustCaseTest extends TestCase {
    */
   public void testCreatePropertyFile() {
     try {
-      AtgDustCase atgCase = new AtgDustCase();
-      atgCase.setConfigurationLocation("src/test/resources/config");
 
       atgCase.createPropertyFile("target/test-classes/config",
           "/some/component/impl", Object.class);
@@ -47,5 +48,26 @@ public class AtgDustCaseTest extends TestCase {
     catch (IOException e) {
       fail(e.getMessage());
     }
+  }
+
+  public void testGetMoreCoverage() {
+    try {
+      atgCase.tearDown();
+    }
+    catch (Exception e) {
+      fail("Previous call should not have triggerd an Exception");
+    }
+
+    try {
+      atgCase.resolveNucleusComponent("bla");
+      atgCase.resolveNucleusComponent("bla");
+
+      // TODO: there must be a way to really test this
+      atgCase.setDebug(true);
+    }
+    catch (Exception e) {
+      fail("Previous call should not have triggerd an Exception");
+    }
+
   }
 }

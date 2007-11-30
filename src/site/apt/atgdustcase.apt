@@ -49,7 +49,7 @@ public class ScmInfoTest extends AtgDustCase {
     super.setUp();
 
     copyConfigurationFiles(new String[]{"config"}, "target/test-classes/config",
-        new String[] { ".svn" });
+        ".svn", "CVS");
 
     createPropertyFile("target/test-classes/config",
         "/atg/dynamo/service/logging/ClassLoggingFactory",
