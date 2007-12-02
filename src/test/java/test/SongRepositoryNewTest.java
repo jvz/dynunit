@@ -43,9 +43,8 @@ public class SongRepositoryNewTest extends AtgDustCase {
         File.separator), ".svn");
 
     // Eventually set this one to 'true' to get more debug logging in your
-    // console
-    // from your nucleus based components
-    // setDebug(true);
+    // console from your nucleus based components
+    setDebug(false);
 
   }
 

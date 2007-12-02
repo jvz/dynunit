@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.logging.Log;
@@ -16,7 +17,9 @@ import org.apache.commons.logging.LogFactory;
  * has the bare minimums needed for testing against an existing and/or in-memory
  * database.
  * 
- * <p>TODO: re-enable versioned repositories</p>
+ * <p>
+ * TODO: re-enable versioned repositories
+ * </p>
  * 
  * @author robert
  * 
@@ -31,17 +34,38 @@ public class RepositoryManager {
 
   /**
    * 
-   * @param connectionSettings
+   * @param configRoot
+   * @param repositoryPath
+   *          The the repository to be tested, specified as nucleus component
+   *          path.
+   * @param settings
+   * 
+   * A {@link Properties} instance with the following values (in this example
+   * the properties are geared towards an mysql database):
+   * 
+   * <pre>
+   * final Properties properties = new Properties();
+   * properties.put(&quot;driver&quot;, &quot;com.mysql.jdbc.Driver&quot;);
+   * properties.put(&quot;url&quot;, &quot;jdbc:mysql://localhost:3306/someDb&quot;);
+   * properties.put(&quot;user&quot;, &quot;someUserName&quot;);
+   * properties.put(&quot;password&quot;, &quot;somePassword&quot;);
+   * </pre>
+   * 
+   * @param dropTables
+   *          If <code>true</code> then existing tables will be dropped and
+   *          re-created, if set to <code>false</code> the existing tables
+   *          will be used.
+   * @param isDebug
+   *          Enables or disables debugging.
+   * @param definitionFiles
+   *          One or more needed repository definition files.
    * @throws SQLException
-   *           If some SQL related error occurs, like wrong password, unable to
-   *           connect to database, unable to find the correct db driver, etc,
-   *           etc.
    * @throws IOException
    */
   public void initializeMinimalRepositoryConfiguration(File configRoot,
-      String repositoryPath, String[] definitionFiles,
-      Map<String, String> settings, final boolean dropTables,
-      final boolean isDebug) throws SQLException, IOException {
+      String repositoryPath, Map<String, String> settings,
+      final boolean dropTables, final boolean isDebug,
+      String... definitionFiles) throws SQLException, IOException {
 
     dataSource.setDriverClassName(settings.get("driver"));
     dataSource.setUsername(settings.get("user"));
@@ -54,16 +78,9 @@ public class RepositoryManager {
     if (dropTables) {
       createIdGeneratorTables();
     }
-
-    // TODO: fix hack no.01
-    hackUrlPropToUpperCase(settings);
-
-    final ConfigurationManager configurationManager = new ConfigurationManager(
-        isDebug);
-    configurationManager.createPropertiesByConfigRoot(configRoot);
-    configurationManager.createFakeXADataSource(configRoot, settings);
-    configurationManager.createRepositoryConfiguration(configRoot,
-        repositoryPath, definitionFiles, dropTables);
+    else {
+      log.info("Existing tables will be used.");
+    }
 
     isDefaultInMemoryDb = settings.get("url")
         .contains("jdbc:hsqldb:mem:testDb");
@@ -105,12 +122,4 @@ public class RepositoryManager {
     statement.close();
   }
 
-  /**
-   * TODO: HACK No 01, so I can use a lower case "url" property name
-   * 
-   * @param settings
-   */
-  private void hackUrlPropToUpperCase(Map<String, String> settings) {
-    settings.put("URL", settings.get("url"));
-  }
 }

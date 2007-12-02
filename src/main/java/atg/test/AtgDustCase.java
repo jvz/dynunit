@@ -3,6 +3,7 @@ package atg.test;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,7 +19,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import atg.nucleus.Nucleus;
-import atg.nucleus.servlet.NucleusServlet;
+import atg.test.configuration.BasicConfiguration;
+import atg.test.configuration.RepositoryConfiguration;
 import atg.test.util.FileUtil;
 import atg.test.util.RepositoryManager;
 
@@ -30,7 +32,7 @@ import atg.test.util.RepositoryManager;
  * <li><b>Copy</b> all configuration and repository mapping files to a
  * location that will be promoted to the configuration location ({@link AtgDustCase#configurationLocation})
  * using<b>
- * {@link AtgDustCase#copyConfigurationFiles(String[], String, String[])}</b>.
+ * {@link AtgDustCase#copyConfigurationFiles(String[], String, String...)}</b>.
  * The destination directory will automatically be used as the configuration
  * directory. Copying all needed priorities to a location outside of the source
  * tree is the preferred method, because this frameworks creates properties on
@@ -52,8 +54,8 @@ import atg.test.util.RepositoryManager;
  * Repository based tests are depended on one of the two steps previously
  * described plus:
  * <ul>
- * <li> <b>{@link AtgDustCase#prepareRepositoryTest(String[], String)}</b> for
- * testing against an default in-memory hsql database or <b>{@link AtgDustCase#prepareRepositoryTest(String[], String, Properties, boolean)}
+ * <li> <b>{@link AtgDustCase#prepareRepositoryTest(String, String...)}</b>
+ * for testing against an default in-memory hsql database or <b>{@link AtgDustCase#prepareRepositoryTest(String, Properties, boolean, String...)}
  * </b> for testing against an existing database.</li>
  * </ul>
  * 
@@ -64,6 +66,12 @@ import atg.test.util.RepositoryManager;
  * 
  * <p>
  * Example usage can be found in test.SongRepositoryNewTest.
+ * </p>
+ * 
+ * <p>
+ * This class overrides Junit 3 and not Junit 4 because currently Junit 4 has
+ * some test runner/eclipse related bugs which makes it impossible for me to
+ * use.
  * </p>
  * 
  * @author robert
@@ -89,9 +97,17 @@ public class AtgDustCase extends TestCase {
 
   private boolean isDebug;
 
+  private final RepositoryConfiguration repositoryConfiguration = new RepositoryConfiguration();
+
+  private final BasicConfiguration basicConfiguration = new BasicConfiguration();
+
   /**
-   * Every .properties file copied using this method will have it's scope (if
-   * one is available) set to global.
+   * Every *.properties file copied using this method will have it's scope (if
+   * one is available) set to global. Most of this method is implemented in a
+   * '@BeforeClass' Junit4 fashion because copying configuration files around
+   * the file system is a rather expensive operation that should only be done
+   * once or the moment the file set to copy has changed (but not just blindly
+   * during every single setup or test call).
    * 
    * @param srcDirs
    *          One or more directories containing needed configuration files.
@@ -106,11 +122,9 @@ public class AtgDustCase extends TestCase {
    * @throws IOException
    *           Whenever some file related error's occur.
    */
-  protected void copyConfigurationFiles(final String[] srcDirs,
+  protected final void copyConfigurationFiles(final String[] srcDirs,
       final String dstDir, final String... excludes) throws IOException {
 
-    // All this is actually needed to mimic the '@beforeClass' behavior of
-    // junit4.
     final List<String> srcsAsList = Arrays.asList(srcDirs);
     final List<String> exsAsList = Arrays.asList(srcDirs);
     if (lastConfigDstDir.equalsIgnoreCase(dstDir)
@@ -190,12 +204,14 @@ public class AtgDustCase extends TestCase {
    * 
    * @param definitionFiles
    *          one or more repository definition files.
+   * @throws IOException
+   *           The moment we have some properties/configuration related error
+   * @throws SQLException
+   *           Whenever there is a database related error
    * 
-   * @throws Exception
-   *           if something goes wrong
    */
-  protected void prepareRepositoryTest(final String repoPath,
-      final String... definitionFiles) throws Exception {
+  protected final void prepareRepositoryTest(final String repoPath,
+      final String... definitionFiles) throws SQLException, IOException {
 
     final Properties properties = new Properties();
     properties.put("driver", "org.hsqldb.jdbcDriver");
@@ -226,20 +242,22 @@ public class AtgDustCase extends TestCase {
    * </pre>
    * 
    * 
-   * @param dropTable
+   * @param dropTables
    *          If <code>true</code> then existing tables will be dropped and
    *          re-created, if set to <code>false</code> the existing tables
    *          will be used.
    * 
    * @param definitionFiles
    *          One or more needed repository definition files.
+   * @throws IOException
+   *           The moment we have some properties/configuration related error
+   * @throws SQLException
+   *           Whenever there is a database related error
    * 
-   * @throws Exception
-   *           If something goes wrong
    */
-  protected void prepareRepositoryTest(final String repositoryPath,
-      final Properties connectionProperties, final boolean dropTable,
-      final String... definitionFiles) throws Exception {
+  protected final void prepareRepositoryTest(final String repositoryPath,
+      final Properties connectionProperties, final boolean dropTables,
+      final String... definitionFiles) throws SQLException, IOException {
 
     final Map<String, String> connectionSettings = new HashMap<String, String>();
 
@@ -250,22 +268,27 @@ public class AtgDustCase extends TestCase {
           .put((String) entry.getKey(), (String) entry.getValue());
 
     }
+
+    repositoryConfiguration.setDebug(isDebug);
+    repositoryConfiguration.createPropertiesByConfigurationLocation(getConfigurationLocation());
+    repositoryConfiguration.createFakeXADataSource(configurationLocation, connectionSettings);
+    repositoryConfiguration.createRepositoryConfiguration(configurationLocation, repositoryPath,
+        dropTables, definitionFiles);
+
     repositoryManager.initializeMinimalRepositoryConfiguration(
-        getConfigurationLocation(), repositoryPath, definitionFiles,
-        connectionSettings, dropTable, isDebug);
+        getConfigurationLocation(), repositoryPath, connectionSettings,
+        dropTables, isDebug, definitionFiles);
   }
 
   /**
+   * Method for retrieving a fully injected atg component
    * 
    * @param nucleusComponentPath
    *          Path to a nucleus component (e.g. /Some/Service/Impl).
    * @return Fully injected instance of the component registered under previous
    *         argument or <code>null</code> if there is an error.
-   * @throws IOException
-   *           If some configuration file related errors occur.
    */
-  protected Object resolveNucleusComponent(final String nucleusComponentPath)
-      throws IOException {
+  protected Object resolveNucleusComponent(final String nucleusComponentPath) {
     startNucleus(configurationLocation);
     return nucleus.resolveName(nucleusComponentPath);
   }
@@ -286,8 +309,9 @@ public class AtgDustCase extends TestCase {
   }
 
   /**
-   * Always make sure to call this because it will do necessary clean up
-   * actions.
+   * Always make sure to call this because it will do necessary clean up actions
+   * (shutting down in-memory database (if it was used) and the nucleus) so he
+   * next test can run safely.
    */
   @Override
   protected void tearDown() throws Exception {
@@ -303,10 +327,14 @@ public class AtgDustCase extends TestCase {
   }
 
   /**
+   * Enables or disables the debug level of nucleus components.
+   * 
    * @param isDebug
-   *          the isDebug to set
+   *          Setting this to <code>true</code> will enable debug on all
+   *          (currently only on repository related) components, setting it to
+   *          <code>false</code> turn's the debug off again.
    */
-  public void setDebug(boolean isDebug) {
+  protected void setDebug(boolean isDebug) {
     this.isDebug = isDebug;
   }
 
@@ -317,13 +345,25 @@ public class AtgDustCase extends TestCase {
    */
   private Nucleus startNucleus(final File configpath) {
     if (nucleus == null || !nucleus.isRunning()) {
+
+      // TODO: Find a better place for the next call
+      try {
+        basicConfiguration.setDebug(isDebug);
+        basicConfiguration.createPropertiesByConfigurationLocation(configpath);
+      }
+      catch (IOException e) {
+        log.error("Error: ", e);
+        return null;
+      }
+
       System.setProperty("atg.dynamo.license.read", "true");
       System.setProperty("atg.license.read", "true");
       // TODO: Can I safely disable this one?
-      NucleusServlet.addNamingFactoriesAndProtocolHandlers();
+      // NucleusServlet.addNamingFactoriesAndProtocolHandlers();
       nucleus = Nucleus.startNucleus(new String[] { configpath
           .getAbsolutePath() });
     }
     return nucleus;
   }
+
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package atg.test.util;
+package atg.test.configuration;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -9,34 +9,41 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import atg.test.util.FileUtil;
+
 /**
- * This class is a merger of atg.test.util.DBUtils and
+ * <i>This class is a merger of atg.test.util.DBUtils and
  * atg.adapter.gsa.GSATestUtils. The result will hopefully be a class that just
  * has the bare minimums needed for testing against an existing and/or in-memory
- * database.
+ * database.</i>
+ * <p>
+ * This class will created all properties files needed for repository based
+ * tests.
+ * </p>
  * 
  * @author robert
  * 
  */
-public final class ConfigurationManager {
+public final class RepositoryConfiguration {
 
   // TODO-1 []: re-add versioned repository support?
   // TODO-2 []: better/more uniform way of handling properties file creation
 
-  private String isDebug = Boolean.FALSE.toString();
+  protected String isDebug = Boolean.FALSE.toString();
 
-  // private static final Log log =
-  // LogFactory.getLog(ConfigurationManager.class);
+  protected final Map<String, String> settings = new HashMap<String, String>();
 
-  private final Map<String, String> settings = new HashMap<String, String>();
+  protected static final Log log = LogFactory.getLog(BasicConfiguration.class);
 
-  /**
-   * 
-   * @param isVersioned
-   * @param isDebug
-   */
-  protected ConfigurationManager(final boolean isDebug) {
+  public void setDebug(final boolean isDebug) {
     this.isDebug = Boolean.toString(isDebug);
+  }
+
+  public RepositoryConfiguration() {
+    super();
   }
 
   /**
@@ -44,19 +51,16 @@ public final class ConfigurationManager {
    * @param root
    * @throws IOException
    */
-  protected void createPropertiesByConfigRoot(final File root)
+  public void createPropertiesByConfigurationLocation(final File root)
       throws IOException {
-    this.createScreenLog(root);
     this.createTransactionManager(root);
     this.createUserTransaction(root);
-    this.createXMLToolsFactory(root);
     this.createIdGenerator(root);
-    this.createClientLockManager(root);
-    this.createGlobal(root);
     this.createIdSpaces(root);
     this.createSQLRepositoryEventServer(root);
-    this.createInitialServices(root);
     this.createJtdDataSource(root);
+
+    log.info("Created basic repository configuration file set");
   }
 
   /**
@@ -65,9 +69,12 @@ public final class ConfigurationManager {
    * @param jdbcSettings
    * @throws IOException
    */
-  protected void createFakeXADataSource(final File root,
+  public void createFakeXADataSource(final File root,
       Map<String, String> jdbcSettings) throws IOException {
 
+    // TODO: Something expects the url property name in upper case... still have
+    // to investigate.
+    jdbcSettings.put("URL", jdbcSettings.get("url"));
     jdbcSettings.put("transactionManager",
         "/atg/dynamo/transaction/TransactionManager");
 
@@ -83,7 +90,7 @@ public final class ConfigurationManager {
    * @param root
    * @throws IOException
    */
-  protected void createJtdDataSource(final File root) throws IOException {
+  private void createJtdDataSource(final File root) throws IOException {
     this.settings.clear();
     settings.put("dataSource", "/atg/dynamo/service/jdbc/FakeXADataSource");
     settings.put("transactionManager",
@@ -98,36 +105,6 @@ public final class ConfigurationManager {
     FileUtil.createPropertyFile("JTDataSource", new File(root.getAbsolutePath()
         + "/atg/dynamo/service/jdbc"), "atg.service.jdbc.MonitoredDataSource",
         settings);
-  }
-
-  /**
-   * 
-   * @param root
-   * @throws IOException
-   */
-  private void createClientLockManager(final File root) throws IOException {
-    this.settings.clear();
-    settings.put("lockServerAddress", "localhost");
-    settings.put("lockServerPort", "9010");
-    settings.put("useLockServer", "false");
-    FileUtil.createPropertyFile("ClientLockManager", new File(root
-        .getAbsolutePath()
-        + "/atg/dynamo/service"), "atg.service.lockmanager.ClientLockManager",
-        settings);
-  }
-
-  /**
-   * 
-   * @param root
-   * @throws IOException
-   */
-  private void createGlobal(final File root) throws IOException {
-    this.settings.clear();
-    settings.put("logListeners", "/atg/dynamo/service/logging/ScreenLog");
-    settings.put("loggingDebug", isDebug);
-    FileUtil.createPropertyFile("GLOBAL",
-        new File(root.getAbsolutePath() + "/"), null, settings);
-
   }
 
   /**
@@ -169,30 +146,15 @@ public final class ConfigurationManager {
 
   /**
    * 
-   * Creates initial services properties like Initial, AppServerConfig, Nucleus,
-   * etc, etc.
-   * 
-   * @param root
-   * @throws IOException
-   */
-  private void createInitialServices(final File root) throws IOException {
-    this.settings.clear();
-    settings.put("initialServiceName", "/Initial");
-    FileUtil.createPropertyFile("Nucleus", root, "atg.nucleus.Nucleus",
-        settings);
-  }
-
-  /**
-   * 
    * @param root
    * @param repositoryPath
-   * @param definitionFiles
    * @param droptables
+   * @param definitionFiles
    * @throws IOException
    */
-  protected void createRepositoryConfiguration(final File root,
-      String repositoryPath, String[] definitionFiles, final boolean droptables)
-      throws IOException {
+  public void createRepositoryConfiguration(final File root,
+      final String repositoryPath, final boolean droptables,
+      final String... definitionFiles) throws IOException {
 
     this.settings.clear();
 
@@ -237,21 +199,6 @@ public final class ConfigurationManager {
    * @param root
    * @throws IOException
    */
-  protected void createScreenLog(final File root) throws IOException {
-
-    this.settings.clear();
-    settings.put("cropStackTrace", "false");
-    settings.put("loggingEnabled", isDebug);
-    FileUtil.createPropertyFile("ScreenLog", new File(root.getAbsolutePath()
-        + "/atg/dynamo/service/logging"),
-        "atg.nucleus.logging.PrintStreamLogger", settings);
-  }
-
-  /**
-   * 
-   * @param root
-   * @throws IOException
-   */
   private void createSQLRepositoryEventServer(final File root)
       throws IOException {
     this.settings.clear();
@@ -289,19 +236,6 @@ public final class ConfigurationManager {
         "/atg/dynamo/transaction/TransactionManager");
     FileUtil.createPropertyFile("UserTransaction", new File(root,
         "/atg/dynamo/transaction"), "atg.dtm.UserTransactionImpl", settings);
-  }
-
-  /**
-   * 
-   * @param root
-   * @throws IOException
-   */
-  private void createXMLToolsFactory(final File root) throws IOException {
-    FileUtil.createPropertyFile("XMLToolsFactory", new File(root
-        .getAbsolutePath()
-        + "/atg/dynamo/service/xml"),
-        "atg.xml.tools.apache.ApacheXMLToolsFactory",
-        new HashMap<String, String>());
   }
 
 }

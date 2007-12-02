@@ -22,7 +22,7 @@ public class AtgDustCaseTest extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    atgCase.setConfigurationLocation("src/test/resources/config");
+    atgCase.setConfigurationLocation("target/test-classes/config");
   }
 
   /*
