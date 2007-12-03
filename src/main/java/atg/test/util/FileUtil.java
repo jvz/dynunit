@@ -7,21 +7,19 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import atg.core.util.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @author robert
@@ -29,14 +27,30 @@ import atg.core.util.StringUtils;
  */
 public class FileUtil {
 
-  // private static final Log log = LogFactory.getLog(FileUtil.class);
+  private static final Log log = LogFactory.getLog(FileUtil.class);
+
+  private static final Map<String, Long> smartCopyMapDst = new HashMap<String, Long>();
 
   private static final File TMP_FILE = new File(System
       .getProperty("java.io.tmpdir")
       + File.separator + "atg-dust-rh.tmp");
 
+  /**
+   * 
+   */
+  public static final long VAGUE_TRESHHOLD_VALUE_FOR_SMART_COPY = 200L;
+
+  /**
+   * 
+   * @param srcDir
+   * @param dstDir
+   * @param excludes
+   * @param isSmartCopyWithGlobalScopeForce
+   * @throws IOException
+   */
   public static void copyDir(String srcDir, String dstDir,
-      final List<String> excludes) throws IOException {
+      final List<String> excludes, final boolean isSmartCopyWithGlobalScopeForce)
+      throws IOException {
     new File(dstDir).mkdirs();
     final String[] fileList = new File(srcDir).list();
     boolean dir;
@@ -45,17 +59,19 @@ public class FileUtil {
           + File.separator + file;
       dir = new File(source).isDirectory();
 
-      // if (checkTs(new File(source), 10000L)) {
-
       if (dir && !excludes.contains(file)) {
-        copyDir(source, destination, excludes);
+        copyDir(source, destination, excludes, isSmartCopyWithGlobalScopeForce);
       }
       else {
         if (!excludes.contains(file)) {
-          copyFile(source, destination);
+          if (isSmartCopyWithGlobalScopeForce) {
+            smartCopyAndForceGlobaScope(source, destination);
+          }
+          else {
+            copyFile(source, destination);
+          }
         }
       }
-      // }
     }
 
   }
@@ -71,22 +87,54 @@ public class FileUtil {
     final FileChannel srcChannel = new FileInputStream(src).getChannel();
     final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
     dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-    srcChannel.close();
     dstChannel.close();
-
+    srcChannel.close();
   }
 
-  // Delete all files and sub directories under directory.
-  public static boolean deleteDir(final File dirctory) {
-    // traverse directory
-    if (dirctory.isDirectory()) {
-      final String[] children = dirctory.list();
-      for (final String child : children) {
-        // recursively traverse directory
-        deleteDir(new File(dirctory, child));
+  /**
+   * 
+   * @param componentName
+   *          The name of the nucleus component
+   * @param configurationLocation
+   *          A valid not <code>null</code> directory.
+   * @param className
+   *          The class implementing the nucleus component
+   * @param settings
+   *          An implementation of {@link Map} containing all needed properties
+   *          the component is depended on (eg key = username, value = test).
+   *          Can be <code>null</code> or empty.
+   * @throws IOException
+   */
+  public static void createPropertyFile(final String componentName,
+      final File configurationLocation, final String className,
+      final Map<String, String> settings) throws IOException {
+
+    configurationLocation.mkdirs();
+    final File propertyFile = new File(configurationLocation, componentName
+        .replace("/", File.separator)
+        + ".properties");
+    new File(propertyFile.getParent()).mkdirs();
+    propertyFile.createNewFile();
+    final BufferedWriter out = new BufferedWriter(new FileWriter(propertyFile));
+
+    try {
+      if (className != null) {
+        out.write("$class=" + className);
+        out.newLine();
+      }
+      if (settings != null) {
+        for (final Iterator<Entry<String, String>> it = settings.entrySet()
+            .iterator(); it.hasNext();) {
+          final Entry<String, String> entry = it.next();
+          out.write(new StringBuilder(entry.getKey()).append("=").append(
+              entry.getValue()).toString());
+          out.newLine();
+        }
       }
     }
-    return dirctory.delete();
+    finally {
+      out.close();
+    }
   }
 
   public static void searchAndReplace(final String searchString,
@@ -99,7 +147,8 @@ public class FileUtil {
         out.write(value);
       }
       else {
-        out.write(str + "\n");
+        out.write(str);
+        out.newLine();
       }
 
     }
@@ -110,78 +159,30 @@ public class FileUtil {
 
   /**
    * 
-   * @param startingDirectory
-   * @return
-   * @throws FileNotFoundException
-   */
-  public static List<File> getFileListing(File startingDirectory)
-      throws FileNotFoundException {
-    final List<File> result = new ArrayList<File>(), filesDirs = Arrays
-        .asList(startingDirectory.listFiles());
-    for (final File file : filesDirs) {
-      result.add(file);
-      if (!file.isFile()) {
-        result.addAll(getFileListing(file));
-      }
-
-    }
-    Collections.sort(result);
-    return result;
-  }
-
-  /**
-   * 
-   * @param componentName
-   *          The name of the nucleus component
-   * @param configurationLocation
-   *          A valid not <code>null</code> directory.
-   * @param className
-   *          The class behind the nucleus component
-   * @param settings
-   *          An implementation of {@link Map} containing all needed properties
-   *          the component is depended on. Can not be <code>null</code>, but
-   *          empty map's are allowed.
+   * @param src
+   * @param dst
    * @throws IOException
    */
-  public static void createPropertyFile(final String componentName,
-      final File configurationLocation, final String className,
-      final Map<String, String> settings) throws IOException {
-    configurationLocation.mkdirs();
-    final File prop = new File(configurationLocation, componentName
-        + ".properties");
-    prop.delete();
-    new File(prop.getParent()).mkdirs();
-    prop.createNewFile();
-    final FileWriter fileWriter = new FileWriter(prop);
-    final String classLine = "$class=" + className + "\n";
-    try {
-      if (className != null) {
-        fileWriter.write(classLine);
-      }
-      for (final Iterator<Entry<String, String>> it = settings.entrySet()
-          .iterator(); it.hasNext();) {
-        final Entry<String, String> entry = it.next();
-        fileWriter.write(new StringBuilder(entry.getKey()).append("=").append(
-            StringUtils.replace(entry.getValue(), '\\', "\\\\")).append("\n")
-            .toString());
-      }
+  public static void smartCopyAndForceGlobaScope(final String src,
+      final String dst) throws IOException {
+
+    log.debug("Map  time dst [1]: " + smartCopyMapDst.get(dst));
+    log.debug("File time dst [2]: " + new File(dst).lastModified());
+
+    if ((smartCopyMapDst.get(dst) != null && (smartCopyMapDst.get(dst) - VAGUE_TRESHHOLD_VALUE_FOR_SMART_COPY) >= new File(
+        dst).lastModified())) {
+      // not copy
+      log.debug("Not overwriting [3a]: " + dst);
     }
-    finally {
-      fileWriter.flush();
-      fileWriter.close();
+    else {
+      // copy
+      log.debug("Overwriting and forcing global scope [3b]: " + dst);
+      copyFile(src, dst);
+      FileUtil.searchAndReplace("$scope=", "$scope=global\n", new File(dst));
+      smartCopyMapDst.put(dst, System.currentTimeMillis());
+      smartCopyMapDst.put(src, System.currentTimeMillis());
     }
   }
-
-  // private static boolean checkTs(final File file, final long allowedDelta) {
-  // if (file.exists()) {
-  // final long current = System.currentTimeMillis();
-  // final long lastModified = file.lastModified();
-  // if (current > lastModified + allowedDelta) {
-  // return true;
-  // }
-  // }
-  // return false;
-  // }
 
   static {
     TMP_FILE.deleteOnExit();

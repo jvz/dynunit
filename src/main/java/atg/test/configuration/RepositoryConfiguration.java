@@ -60,7 +60,7 @@ public final class RepositoryConfiguration {
     this.createSQLRepositoryEventServer(root);
     this.createJtdDataSource(root);
 
-    log.info("Created basic repository configuration file set");
+    log.info("Created repository configuration fileset");
   }
 
   /**
@@ -75,6 +75,11 @@ public final class RepositoryConfiguration {
     // TODO: Something expects the url property name in upper case... still have
     // to investigate.
     jdbcSettings.put("URL", jdbcSettings.get("url"));
+
+    // remove the lower case url key/value pair so the generated
+    // FakeXADataSource.properties only contains the upper case URL key/value.
+    jdbcSettings.remove("url");
+
     jdbcSettings.put("transactionManager",
         "/atg/dynamo/transaction/TransactionManager");
 
@@ -83,6 +88,9 @@ public final class RepositoryConfiguration {
         + "/atg/dynamo/service/jdbc"), "atg.service.jdbc.FakeXADataSource",
         jdbcSettings);
 
+    // restore the settings state (re-add url and remove URL)
+    jdbcSettings.put("url", jdbcSettings.get("URL"));
+    jdbcSettings.remove("URL");
   }
 
   /**
@@ -184,11 +192,11 @@ public final class RepositoryConfiguration {
     settings.put("dropTablesIfExist", Boolean.toString(droptables));
     settings.put("dropTablesAtShutdown", Boolean.toString(droptables));
     settings.put("stripReferences", "true");
-    int endIndex = repositoryPath.lastIndexOf("/");
-    String repositoryDir = repositoryPath.substring(0, endIndex);
-    String repositoryName = repositoryPath.substring(endIndex + 1,
+    final int endIndex = repositoryPath.lastIndexOf("/");
+    final String repositoryDir = repositoryPath.substring(0, endIndex);
+    final String repositoryName = repositoryPath.substring(endIndex + 1,
         repositoryPath.length());
-    File newRoot = new File(root, repositoryDir);
+    final File newRoot = new File(root, repositoryDir);
     newRoot.mkdirs();
     FileUtil.createPropertyFile(repositoryName, newRoot,
         "atg.adapter.gsa.InitializingGSA", settings);
@@ -217,7 +225,7 @@ public final class RepositoryConfiguration {
   private void createTransactionManager(final File root) throws IOException {
     this.settings.clear();
     settings.put("loggingDebug", isDebug);
-    File newRoot = new File(root, "/atg/dynamo/transaction");
+    final File newRoot = new File(root, "/atg/dynamo/transaction");
     newRoot.mkdirs();
     FileUtil.createPropertyFile("TransactionDemarcationLogging", newRoot,
         "atg.dtm.TransactionDemarcationLogging", settings);

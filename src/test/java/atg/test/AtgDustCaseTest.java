@@ -3,6 +3,7 @@
  */
 package atg.test;
 
+import java.io.File;
 import java.io.IOException;
 
 import junit.framework.TestCase;
@@ -21,8 +22,6 @@ public class AtgDustCaseTest extends TestCase {
    */
   protected void setUp() throws Exception {
     super.setUp();
-
-    atgCase.setConfigurationLocation("target/test-classes/config");
   }
 
   /*
@@ -46,6 +45,7 @@ public class AtgDustCaseTest extends TestCase {
 
     }
     catch (IOException e) {
+      e.printStackTrace();
       fail(e.getMessage());
     }
   }
@@ -59,13 +59,23 @@ public class AtgDustCaseTest extends TestCase {
     }
 
     try {
-      atgCase.resolveNucleusComponent("bla");
-      atgCase.resolveNucleusComponent("bla");
+      atgCase.copyConfigurationFiles(new String[] { "src/test/resources/config"
+          .replace("/", File.separator) }, "target/test-classes/config"
+          .replace("/", File.separator), ".svn");
+
+      // starts nucleus and resolves component (which can't be resolved because
+      // it's non existing)
+      assertNull(atgCase.resolveNucleusComponent("bla"));
+
+      // just resolves the component (which can't be resolved because
+      // it's non existing)
+      assertNull(atgCase.resolveNucleusComponent("bla"));
 
       // TODO: there must be a way to really test this
       atgCase.setDebug(true);
     }
     catch (Exception e) {
+      e.printStackTrace();
       fail("Previous call should not have triggerd an Exception");
     }
 

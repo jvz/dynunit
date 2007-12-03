@@ -32,9 +32,9 @@ public class ConsoleLogListener implements LogListener {
         level = "warning";
       }
 
-      out.println("**** " + level + "\t" + logEvent.getDateTimeStamp()
-          + "\t" + logEvent.getTimeStamp() + "   \t" + logEvent.getOriginator()
-          + "." + logEvent.getMessage());
+      out.println(String.format("**** %s\t%s\t%s\t%s\t%s", level, logEvent
+          .getDateTimeStamp(), logEvent.getTimeStamp(), logEvent
+          .getOriginator(), logEvent.getMessage()));
 
       if (logEvent.getThrowable() != null) {
         logEvent.getThrowable().printStackTrace();

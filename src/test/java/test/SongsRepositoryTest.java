@@ -1,11 +1,12 @@
 package test;
 
-import static atg.test.AtgDustTestCase.DbVendor.MySQLDBConnection;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.Properties;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import atg.adapter.gsa.GSARepository;
 import atg.dtm.TransactionDemarcation;
@@ -13,37 +14,39 @@ import atg.dtm.TransactionDemarcationException;
 import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryException;
 import atg.repository.RepositoryItem;
-import atg.test.AtgDustTestCase;
-import atg.test.util.FileUtil;
+import atg.test.AtgDustCase;
 
 /**
  * 
- * Example test case to illustrate the usage of AtgDustTestCase built-in
- * database functionalities. Before running this test from your ide do a mvn
- * resources:testResources to copy all needed file to the expected locations.
+ * Example test case to illustrate the usage of {@link AtgDustCase} built-in
+ * database functionalities using on the fly created db's (bases on hsql
+ * in-memory db) or against external existing databases.
+ * 
+ * <br/><br/>Based on {@link AtgDustCase}
  * 
  * 
  * @author robert
  * 
  */
-public class SongRepositoryOldTest extends AtgDustTestCase {
+public class SongsRepositoryTest extends AtgDustCase {
 
-  private String userName;
-  private String password;
-  private String host;
-  private String port;
-  private String dbName;
-  private String enabled;
-  private final Properties properties = new Properties();
+  @SuppressWarnings("unused")
+  private static final Log log = LogFactory.getLog(SongsRepositoryTest.class);
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
 
-    // Copy all related properties and definition files to the previously
-    // configured configpath
-    FileUtil.copyDir("src/test/resources/config",
-        "target/test-classes/config", Arrays.asList(new String[] { ".svn" }));
+    // make sure all needed files are at the configuration location.
+    // "target/test-classes/config" is then promoted to the configuration
+    // directory.
+    copyConfigurationFiles(new String[] { "src/test/resources/config".replace(
+        "/", File.separator) }, "target/test-classes/config".replace("/",
+        File.separator), ".svn");
+
+    // Eventually set this one to 'true' to get more debug logging in your
+    // console from your nucleus based components.
+    setDebug(false);
 
   }
 
@@ -59,19 +62,20 @@ public class SongRepositoryOldTest extends AtgDustTestCase {
    */
   public void testWithInMemoryDb() throws Exception {
 
-    prepareRepositoryTest(new File("target/test-classes/config/"),
-        new String[] { "GettingStarted/songs.xml" },
-        "/GettingStarted/SongsRepository");
-
     // The actual test is quite generic. The only difference is the way the
     // repository is prepared by the prepareRepositoryTest method
+
+    prepareRepository("/GettingStarted/SongsRepository",
+        "/GettingStarted/songs.xml");
+
     songsRepositoryTest();
   }
 
   /**
-   * Example test with MySQL Database. This test is disabled by default (set to
-   * false/or not set in the env.properties) because the MySQL JDBC drivers are
-   * not included in the atg dust package.
+   * Example test with existing Database. This test is disabled by default (set
+   * to false/or not set in the env.properties) because the MySQL JDBC drivers
+   * (and the env.properties is configured to use mysql) are not included in the
+   * atg dust package.
    * 
    * To make use of this test, install a mysql-connector-java (mysql jdbc
    * driver) into your .m2/repository, un-comment the mysql dependency in the
@@ -81,37 +85,30 @@ public class SongRepositoryOldTest extends AtgDustTestCase {
    * 
    * @throws Exception
    */
-  public void testWithExistingMysqlDb() throws Exception {
+  public void testWithExistingDb() throws Exception {
 
+    Properties properties = new Properties();
     properties.load(new FileInputStream("src/test/resources/env.properties"));
-    userName = properties.getProperty("userName");
-    password = properties.getProperty("password");
-    host = properties.getProperty("host");
-    port = properties.getProperty("port");
-    dbName = properties.getProperty("dbName");
-    enabled = properties.getProperty("enabled");
 
-    if (enabled == null || enabled.equalsIgnoreCase("false")) {
+    // a mechanism to disable/enable the repository test against an existing
+    // database
+    if (properties.getProperty("enabled") == null
+        || properties.getProperty("enabled").equalsIgnoreCase("false")) {
       return;
     }
 
-    prepareRepositoryTest(new File("target/test-classes/config/"),
-        new String[] { "GettingStarted/songs.xml" },
-        "/GettingStarted/SongsRepository", userName, password, host, port,
-        dbName, MySQLDBConnection, false);
-
-    // this was a small test to fix some configuration related bug I was having
-    assertNotNull(getService("/test/TestComponent"));
-
-
     // The actual test is quite generic. The only difference is the way the
     // repository is prepared by the prepareRepositoryTest method
+
+    prepareRepository("/GettingStarted/SongsRepository", properties, false,
+        "/GettingStarted/songs.xml");
+
     songsRepositoryTest();
   }
 
   private void songsRepositoryTest() throws TransactionDemarcationException,
-      RepositoryException {
-    GSARepository songsRepository = (GSARepository) getService("/GettingStarted/SongsRepository");
+      RepositoryException, IOException {
+    GSARepository songsRepository = (GSARepository) resolveNucleusComponent("/GettingStarted/SongsRepository");
     assertNotNull(songsRepository);
 
     final TransactionDemarcation td = new TransactionDemarcation();
@@ -136,4 +133,5 @@ public class SongRepositoryOldTest extends AtgDustTestCase {
       td.end(true);
     }
   }
+
 }

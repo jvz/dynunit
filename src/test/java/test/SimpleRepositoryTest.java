@@ -21,10 +21,11 @@ import atg.test.util.FileUtil;
 /**
  * This test starts a repository, adds an item to that repository, then shuts
  * down. The repository is started up against an in-memory Hypersonic Database.
+ * <br/><br/>Based on {@link GSATest}
  */
-public class SimpleGSATest extends GSATest {
+public class SimpleRepositoryTest extends GSATest {
 
-  private static final Log log = LogFactory.getLog(SimpleGSATest.class);
+  private static final Log log = LogFactory.getLog(SimpleRepositoryTest.class);
 
   public void testSimple() throws Exception {
 
@@ -40,7 +41,7 @@ public class SimpleGSATest extends GSATest {
     // Copy all related properties and definition files to the previously
     // configured configpath
     FileUtil.copyDir("src/test/resources/config", configpath.getPath(), Arrays
-        .asList(new String[] { ".svn" }));
+        .asList(new String[] { ".svn" }), false);
 
     // Use the DBUtils utility class to get JDBC properties for an in memory
     // HSQL DB called "testdb".

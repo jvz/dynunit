@@ -23,38 +23,49 @@ import junit.framework.TestCase;
 import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusTestUtils;
 
-import com.mycompany.ToBeTested;
+import com.mycompany.SimpleComponent;
 
+/**
+ * Based on {@link TestCase}
+ * 
+ */
 public class FirstTest extends TestCase {
-  
+
   /**
-   * Start up a nucleus given a local test "configpath".
-   * In that configpath is a .properties file for our TestComponent
+   * Start up a nucleus given a local test "configpath". In that configpath is a
+   * .properties file for our TestComponent
+   * 
    * @throws Exception
    */
   public void testComponentStartup() throws Exception {
-    File configpath = NucleusTestUtils.getConfigpath(this.getClass(),"config");
+    File configpath = NucleusTestUtils.getConfigpath(this.getClass(), "config");
     // Put test .properties file in configpath path
     Properties props = new Properties();
-    File propFile = NucleusTestUtils.createProperties("test/TestComponent", configpath, "com.mycompany.ToBeTested", props);
+    File propFile = NucleusTestUtils.createProperties(
+        "test/SimpleComponentGlobalScope", configpath,
+        "com.mycompany.SimpleComponent", props);
     propFile.deleteOnExit();
     List<String> initial = new ArrayList<String>();
-    initial.add("/test/TestComponent");
+    initial.add("/test/SimpleComponentGlobalScope");
     NucleusTestUtils.createInitial(configpath, initial);
     Nucleus n = NucleusTestUtils.startNucleus(configpath);
-    ToBeTested testComponent = null;
+    SimpleComponent testComponent = null;
     try {
-      testComponent = (ToBeTested) n.resolveName("/test/TestComponent");
-      assertNotNull("Could not resolve test componet",testComponent);
-      assertTrue("Test component did not start up cleanly.",testComponent.mCleanStart);
-      
-    } finally {
+      testComponent = (SimpleComponent) n
+          .resolveName("/test/SimpleComponentGlobalScope");
+      assertNotNull("Could not resolve test componet", testComponent);
+      assertTrue("Test component did not start up cleanly.",
+          testComponent.isCleanStart);
+
+    }
+    finally {
       n.stopService();
       assertNotNull(testComponent);
-      assertFalse("Test component did not shut down cleanly.",testComponent.mCleanStart);
+      assertFalse("Test component did not shut down cleanly.",
+          testComponent.isCleanStart);
       testComponent = null;
     }
-    
+
   }
 
 }

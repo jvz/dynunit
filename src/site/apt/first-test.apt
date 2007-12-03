@@ -198,7 +198,7 @@ import junit.framework.TestCase;
 import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusTestUtils;
 
-import com.mycompany.ToBeTested;
+import com.mycompany.SimpleComponent;
 
 public class FirstTest extends TestCase {
   
@@ -211,7 +211,7 @@ public class FirstTest extends TestCase {
     File configpath = NucleusTestUtils.getConfigpath(this.getClass(),"config");
     // Put test .properties file in configpath path
     Properties props = new Properties();
-    File propFile = NucleusTestUtils.createProperties("test/TestComponent", configpath, "com.mycompany.ToBeTested", props);
+    File propFile = NucleusTestUtils.createProperties("test/TestComponent", configpath, "com.mycompany.SimpleComponent", props);
     propFile.deleteOnExit();
     List initial = new ArrayList();
     initial.add("/test/TestComponent");

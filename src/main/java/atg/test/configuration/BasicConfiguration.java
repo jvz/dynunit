@@ -60,7 +60,7 @@ public final class BasicConfiguration {
     this.createScreenLog(root);
     this.createXMLToolsFactory(root);
 
-    log.info("Created non repository configuration file set");
+    log.info("Created basic configuration fileset");
 
   }
 

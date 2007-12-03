@@ -13,8 +13,6 @@
  */
 
 package atg.adapter.gsa;
-import static atg.test.AtgDustTestCase.AtgDustSystemProperties.ATG_DUST_DROP_TABLES;
-
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -72,33 +70,7 @@ public class InitializingGSA extends GSARepository {
   }
 
   public boolean isDropTablesIfExist() {
-    
-    // return mDropTables;
-
-    // TODO: Will be replaced with the above call once the AtgDustTestCase has been deleted 
-
-    final String dropTableProperty = System.getProperty(ATG_DUST_DROP_TABLES
-        .getPropertyName());
-
-    if (dropTableProperty == null) {
-      return mDropTables;
-    }
-
-    else if (dropTableProperty.equalsIgnoreCase("false")) {
-      return false;
-    }
-
-    else if (dropTableProperty.equalsIgnoreCase("true") && mDropTables
-        || mDropTables) {
-      return true;
-    }
-
-    else if (!mDropTables) {
-      return false;
-    }
-    else {
-      return false;
-    }
+    return mDropTables;
 
   }
 
