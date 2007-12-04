@@ -17,6 +17,7 @@ package atg.nucleus;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -221,8 +222,14 @@ public class NucleusTestUtils {
         // might be in a jar file in the classpath. We don't want that!
         // See: http://sourceforge.net/tracker/index.php?func=detail&aid=1796753&group_id=196325&atid=957004
         URL root = pClass.getClassLoader().getResource(classAsResourceString);
-        
-        File f = new File(root.getFile()).getParentFile();
+        File f;
+        try {
+          f = new File(root.toURI()).getParentFile();
+        }
+        catch (URISyntaxException ex) {
+          throw new RuntimeException("Problem getting file", ex);
+        }
+
         File f2 = new File(f, "/data/" + configdirname);
         if (!f2.mkdirs())
           throw new RuntimeException("Failed to complete mkdirs on " + f2.getAbsolutePath());
