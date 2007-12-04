@@ -25,8 +25,7 @@ import java.util.Random;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import atg.beans.DynamicPropertyDescriptor;
 import atg.core.util.StringUtils;
@@ -49,7 +48,7 @@ public  class GSATest extends TestCase {
   
   private final transient Random random = new Random();
   
-  private static final Log log = LogFactory.getLog(GSATest.class);
+  private static Logger log = Logger.getLogger(GSATest.class);
 
   private HashMap<String, File> mConfigDir = new HashMap<String, File>();
   /**

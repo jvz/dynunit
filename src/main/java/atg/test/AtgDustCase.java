@@ -13,8 +13,7 @@ import java.util.Map.Entry;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import atg.nucleus.GenericService;
 import atg.nucleus.Nucleus;
@@ -80,7 +79,7 @@ import atg.test.util.RepositoryManager;
  */
 public class AtgDustCase extends TestCase {
 
-  private static final Log log = LogFactory.getLog(AtgDustCase.class);
+  private static Logger log = Logger.getLogger(AtgDustCase.class);
 
   private RepositoryManager repositoryManager = new RepositoryManager();
 
@@ -117,8 +116,8 @@ public class AtgDustCase extends TestCase {
       final String dstDir, final String... excludes) throws IOException {
     setConfigurationLocation(dstDir);
     for (final String srcs : srcDirs) {
-      FileUtil.copyDir(srcs, dstDir, Arrays
-          .asList(excludes == null ? new String[] {} : excludes), true);
+      FileUtil.copyOrRestoreStagingConfigurationLocation(srcs, dstDir, Arrays
+          .asList(excludes == null ? new String[] {} : excludes));
     }
   }
 
@@ -130,20 +129,20 @@ public class AtgDustCase extends TestCase {
    * @param nucleusComponentPath
    *          Nucleus component path (e.g /Some/Service/Impl).
    * 
-   * @param nucleusComponentClass
-   *          The implementation of the nucleus component specified in previous
-   *          argument.
+   * @param clazz
+   *          The {@link Class} implementing the nucleus component specified in
+   *          previous argument.
    * 
    * @throws IOException
    *           If we have some File related errors
    */
   protected final void createPropertyFile(
       final String configurationStagingLocation,
-      final String nucleusComponentPath, final Class<?> nucleusComponentClass)
+      final String nucleusComponentPath, final Class<?> clazz)
       throws IOException {
     this.configurationLocation = new File(configurationStagingLocation);
     FileUtil.createPropertyFile(nucleusComponentPath,
-        getConfigurationLocation(), nucleusComponentClass.getName(),
+        getConfigurationLocation(), clazz.getClass(),
         new HashMap<String, String>());
   }
 

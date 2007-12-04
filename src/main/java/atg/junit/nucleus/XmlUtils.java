@@ -21,8 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -42,7 +41,7 @@ import atg.xml.tools.XMLToolsFactory;
 public class XmlUtils
 {
   
-  private static final Log log = LogFactory.getLog(XmlUtils.class);
+  private static Logger log = Logger.getLogger(XmlUtils.class);
       /** Initializes the XML file to be parsed and gets the Document tree for it.
        *  @param File the XML file to parse
        *  @param boolean true if the file should be validated against its DTD; otherwise false.

@@ -8,10 +8,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
+import atg.nucleus.Nucleus;
+import atg.nucleus.logging.PrintStreamLogger;
+import atg.service.lockmanager.ClientLockManager;
 import atg.test.util.FileUtil;
+import atg.xml.tools.apache.ApacheXMLToolsFactory;
 
 /**
  * <i>This class is a merger of atg.test.util.DBUtils and
@@ -32,7 +35,7 @@ public final class BasicConfiguration {
 
   protected final Map<String, String> settings = new HashMap<String, String>();
 
-  protected static final Log log = LogFactory.getLog(BasicConfiguration.class);
+  private static Logger log = Logger.getLogger(BasicConfiguration.class);
 
   public void setDebug(final boolean isDebug) {
     this.isDebug = Boolean.toString(isDebug);
@@ -76,8 +79,7 @@ public final class BasicConfiguration {
     settings.put("useLockServer", "false");
     FileUtil.createPropertyFile("ClientLockManager", new File(root
         .getAbsolutePath()
-        + "/atg/dynamo/service"), "atg.service.lockmanager.ClientLockManager",
-        settings);
+        + "/atg/dynamo/service"), ClientLockManager.class, settings);
   }
 
   /**
@@ -105,8 +107,7 @@ public final class BasicConfiguration {
   private void createInitialServices(final File root) throws IOException {
     this.settings.clear();
     settings.put("initialServiceName", "/Initial");
-    FileUtil.createPropertyFile("Nucleus", root, "atg.nucleus.Nucleus",
-        settings);
+    FileUtil.createPropertyFile("Nucleus", root, Nucleus.class, settings);
   }
 
   /**
@@ -120,8 +121,7 @@ public final class BasicConfiguration {
     settings.put("cropStackTrace", "false");
     settings.put("loggingEnabled", isDebug);
     FileUtil.createPropertyFile("ScreenLog", new File(root.getAbsolutePath()
-        + "/atg/dynamo/service/logging"),
-        "atg.nucleus.logging.PrintStreamLogger", settings);
+        + "/atg/dynamo/service/logging"), PrintStreamLogger.class, settings);
   }
 
   /**
@@ -132,8 +132,7 @@ public final class BasicConfiguration {
   private void createXMLToolsFactory(final File root) throws IOException {
     FileUtil.createPropertyFile("XMLToolsFactory", new File(root
         .getAbsolutePath()
-        + "/atg/dynamo/service/xml"),
-        "atg.xml.tools.apache.ApacheXMLToolsFactory",
+        + "/atg/dynamo/service/xml"), ApacheXMLToolsFactory.class,
         new HashMap<String, String>());
   }
 

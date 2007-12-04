@@ -8,8 +8,7 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import atg.servlet.MockDynamoHttpServletRequest;
 import atg.servlet.MockDynamoHttpServletResponse;
@@ -30,7 +29,8 @@ public class SimpleDropletTest extends AtgDustCase {
 
   private SimpleDroplet simpleDroplet;
 
-  protected final Log log = LogFactory.getLog(SimpleDropletTest.class);
+  @SuppressWarnings("unused")
+  private static Logger log = Logger.getLogger(SimpleDropletTest.class);
 
   /*
    * (non-Javadoc)

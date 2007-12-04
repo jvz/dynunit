@@ -5,8 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import atg.adapter.gsa.GSARepository;
 import atg.dtm.TransactionDemarcation;
@@ -31,7 +30,7 @@ import atg.test.AtgDustCase;
 public class SongsRepositoryTest extends AtgDustCase {
 
   @SuppressWarnings("unused")
-  private static final Log log = LogFactory.getLog(SongsRepositoryTest.class);
+  private static Logger log = Logger.getLogger(SongsRepositoryTest.class);
 
   @Override
   public void setUp() throws Exception {
@@ -39,7 +38,8 @@ public class SongsRepositoryTest extends AtgDustCase {
 
     // make sure all needed files are at the configuration location.
     // "target/test-classes/config" is then promoted to the configuration
-    // directory.
+    // staging directory (that location is a maven controlled build location and
+    // therefore not part of the checked in source tree).
     copyConfigurationFiles(new String[] { "src/test/resources/config".replace(
         "/", File.separator) }, "target/test-classes/config".replace("/",
         File.separator), ".svn");

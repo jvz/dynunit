@@ -24,8 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import atg.core.util.StringUtils;
 import atg.nucleus.naming.ComponentName;
@@ -49,7 +48,7 @@ import atg.vfs.VirtualPath;
  */
 public class NucleusTestUtils {
   
-  private static final Log log = LogFactory.getLog(NucleusTestUtils.class);
+  private static Logger log = Logger.getLogger(NucleusTestUtils.class);
   
   private static final Map<String, File> sConfigDir = new HashMap<String, File>();
 

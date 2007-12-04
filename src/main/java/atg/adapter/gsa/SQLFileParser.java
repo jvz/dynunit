@@ -24,8 +24,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 /**
 * THIS IS A REALLY SIMPLE APPLICATION THAT
@@ -41,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
 public class SQLFileParser
 {
   
-  private static final Log log = LogFactory.getLog(SQLFileParser.class);
+  private static Logger log = Logger.getLogger(SQLFileParser.class);
 
 // ****************************************
 // THERE IS ONLY ONE CLASS VARIABLE

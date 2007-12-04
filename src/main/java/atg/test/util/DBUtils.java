@@ -26,8 +26,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import atg.adapter.gsa.GSATestUtils;
 import atg.adapter.gsa.SQLFileParser;
@@ -45,7 +44,7 @@ public class DBUtils {
   public Connection conn; //our connnection to the db - presist for life of
   private Properties mJDBCProperties;
   
-  private static final Log log = LogFactory.getLog(DBUtils.class);
+  private static Logger log = Logger.getLogger(DBUtils.class);
   // ---------------------------
   /**
    * Returns a Properties object preconfigured to create

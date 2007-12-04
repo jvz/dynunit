@@ -25,20 +25,23 @@ public class MockDynamoHttpServletRequest extends DynamoHttpServletRequest {
       attributes = new HashMap<String, Object>();
 
   private final List<String> serviceParameters = new ArrayList<String>(),
-      servicedLocalParameter = new ArrayList<String>();;
+      servicedLocalParameter = new ArrayList<String>();
 
   public MockDynamoHttpServletRequest() {
     super();
   }
 
+  @Override
   public String encodeURL(String str) {
     return str + ";sessionId=" + System.currentTimeMillis();
   }
 
+  @Override
   public Object getAttribute(String attribute) {
     return attributes.get(attribute);
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public Enumeration getAttributeNames() {
 
@@ -57,22 +60,27 @@ public class MockDynamoHttpServletRequest extends DynamoHttpServletRequest {
     return cookieParameters.get(parameter);
   }
 
+  @Override
   public String getHeader(String param) {
     return (String) headers.get(param);
   }
 
+  @Override
   public Object getLocalParameter(String name) {
     return parameters.get(name);
   }
 
+  @Override
   public Object getObjectParameter(ParameterName name) {
     return getObjectParameter(name.getName());
   }
 
+  @Override
   public Object getObjectParameter(String name) {
     return parameters.get(name);
   }
 
+  @Override
   public String getParameter(String name) {
     return (String) parameters.get(name);
   }
@@ -81,22 +89,26 @@ public class MockDynamoHttpServletRequest extends DynamoHttpServletRequest {
     return serviceParameters;
   }
 
+  @Override
   public void removeAttribute(String name) {
     attributes.remove(name);
   }
 
+  @Override
   public boolean serviceLocalParameter(String name, ServletRequest request,
       ServletResponse response) throws ServletException, IOException {
     servicedLocalParameter.add(name);
     return true;
   }
 
+  @Override
   public boolean serviceParameter(String name, ServletRequest request,
       ServletResponse response) throws ServletException, IOException {
     serviceParameters.add(name);
     return serviceParameter(name, request, response, null, null);
   }
 
+  @Override
   public void setAttribute(String name, Object value) {
     attributes.put(name, value);
   }

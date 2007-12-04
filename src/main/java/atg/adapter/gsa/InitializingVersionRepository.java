@@ -23,8 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import atg.adapter.gsa.xml.TemplateParser;
 import atg.adapter.gsa.xml.VersioningContextUtil;
@@ -84,7 +83,7 @@ import atg.repository.RepositoryException;
 
 public class InitializingVersionRepository extends VersionRepository {
   
-  private static final Log log = LogFactory.getLog(InitializingVersionRepository.class);
+  private static Logger log = Logger.getLogger(InitializingVersionRepository.class);
   
   // -----------------------------------
   // ---From Properties File------------	

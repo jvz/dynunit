@@ -8,8 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 /**
  * This class is a merger of atg.test.util.DBUtils and
@@ -26,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class RepositoryManager {
 
-  private static final Log log = LogFactory.getLog(RepositoryManager.class);
+  private static Logger log = Logger.getLogger(RepositoryManager.class);
 
   private boolean isDefaultInMemoryDb;
 

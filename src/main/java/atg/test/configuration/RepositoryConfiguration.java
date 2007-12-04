@@ -9,9 +9,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
+import atg.adapter.gsa.InitializingGSA;
+import atg.adapter.gsa.event.GSAEventServer;
+import atg.dtm.TransactionDemarcationLogging;
+import atg.dtm.TransactionManagerImpl;
+import atg.dtm.UserTransactionImpl;
+import atg.service.idgen.SQLIdGenerator;
+import atg.service.jdbc.FakeXADataSource;
+import atg.service.jdbc.MonitoredDataSource;
 import atg.test.util.FileUtil;
 
 /**
@@ -36,7 +43,7 @@ public final class RepositoryConfiguration {
 
   protected final Map<String, String> settings = new HashMap<String, String>();
 
-  protected static final Log log = LogFactory.getLog(BasicConfiguration.class);
+  private static Logger log = Logger.getLogger(RepositoryConfiguration.class);
 
   public void setDebug(final boolean isDebug) {
     this.isDebug = Boolean.toString(isDebug);
@@ -85,8 +92,7 @@ public final class RepositoryConfiguration {
 
     FileUtil.createPropertyFile("FakeXADataSource", new File(root
         .getAbsolutePath()
-        + "/atg/dynamo/service/jdbc"), "atg.service.jdbc.FakeXADataSource",
-        jdbcSettings);
+        + "/atg/dynamo/service/jdbc"), FakeXADataSource.class, jdbcSettings);
 
     // restore the settings state (re-add url and remove URL)
     jdbcSettings.put("url", jdbcSettings.get("URL"));
@@ -111,8 +117,7 @@ public final class RepositoryConfiguration {
     settings.put("loggingSQLDebug", isDebug);
 
     FileUtil.createPropertyFile("JTDataSource", new File(root.getAbsolutePath()
-        + "/atg/dynamo/service/jdbc"), "atg.service.jdbc.MonitoredDataSource",
-        settings);
+        + "/atg/dynamo/service/jdbc"), MonitoredDataSource.class, settings);
   }
 
   /**
@@ -126,10 +131,8 @@ public final class RepositoryConfiguration {
     settings.put("transactionManager",
         "/atg/dynamo/transaction/TransactionManager");
     settings.put("XMLToolsFactory", "/atg/dynamo/service/xml/XMLToolsFactory");
-    FileUtil
-        .createPropertyFile("IdGenerator", new File(root.getAbsolutePath()
-            + "/atg/dynamo/service/"), "atg.service.idgen.SQLIdGenerator",
-            settings);
+    FileUtil.createPropertyFile("IdGenerator", new File(root.getAbsolutePath()
+        + "/atg/dynamo/service/"), SQLIdGenerator.class, settings);
   }
 
   /**
@@ -198,8 +201,8 @@ public final class RepositoryConfiguration {
         repositoryPath.length());
     final File newRoot = new File(root, repositoryDir);
     newRoot.mkdirs();
-    FileUtil.createPropertyFile(repositoryName, newRoot,
-        "atg.adapter.gsa.InitializingGSA", settings);
+    FileUtil.createPropertyFile(repositoryName, newRoot, InitializingGSA.class,
+        settings);
   }
 
   /**
@@ -213,8 +216,7 @@ public final class RepositoryConfiguration {
     settings.put("handlerCount", "0");
     FileUtil.createPropertyFile("SQLRepositoryEventServer", new File(root
         .getAbsolutePath()
-        + "/atg/dynamo/server"), "atg.adapter.gsa.event.GSAEventServer",
-        settings);
+        + "/atg/dynamo/server"), GSAEventServer.class, settings);
   }
 
   /**
@@ -228,9 +230,10 @@ public final class RepositoryConfiguration {
     final File newRoot = new File(root, "/atg/dynamo/transaction");
     newRoot.mkdirs();
     FileUtil.createPropertyFile("TransactionDemarcationLogging", newRoot,
-        "atg.dtm.TransactionDemarcationLogging", settings);
+        TransactionDemarcationLogging.class, settings);
+
     FileUtil.createPropertyFile("TransactionManager", newRoot,
-        "atg.dtm.TransactionManagerImpl", settings);
+        TransactionManagerImpl.class, settings);
   }
 
   /**
@@ -243,7 +246,7 @@ public final class RepositoryConfiguration {
     settings.put("transactionManager",
         "/atg/dynamo/transaction/TransactionManager");
     FileUtil.createPropertyFile("UserTransaction", new File(root,
-        "/atg/dynamo/transaction"), "atg.dtm.UserTransactionImpl", settings);
+        "/atg/dynamo/transaction"), UserTransactionImpl.class, settings);
   }
 
 }

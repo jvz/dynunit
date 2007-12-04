@@ -27,8 +27,7 @@ import java.util.List;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import atg.dtm.TransactionDemarcation;
 import atg.dtm.TransactionDemarcationException;
@@ -47,7 +46,7 @@ class SQLProcessor
 {
   // =============== MEMBER VARIABLES =================
   
-  private static final Log log = LogFactory.getLog(SQLProcessor.class);
+  private static Logger log = Logger.getLogger(SQLProcessor.class);
 
   DataSource mDataSource;
   /** sets the DataSource from which to get DB connections

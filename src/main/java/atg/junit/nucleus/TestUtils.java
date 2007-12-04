@@ -42,8 +42,7 @@ import javax.mail.Multipart;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Node;
 
 import atg.applauncher.AppLauncher;
@@ -65,7 +64,7 @@ public class TestUtils
   extends atg.nucleus.GenericService
 {
   
-  private static final Log log = LogFactory.getLog(TestUtils.class);
+  private static Logger log = Logger.getLogger(TestUtils.class);
   // names of app servers types that may be specified by the
   // 'atg.dynamo.appserver' system property
   // Dynamo currently does not distinguish between generic

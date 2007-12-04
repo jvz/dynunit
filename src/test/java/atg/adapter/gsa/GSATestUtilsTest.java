@@ -19,8 +19,7 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 /**
  * Unit Test for the GSATestUtils class.
@@ -30,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class GSATestUtilsTest extends TestCase {
 
-  private static final Log log = LogFactory.getLog(GSATestUtilsTest.class);
+  private static Logger log = Logger.getLogger(GSATestUtilsTest.class);
 
   public static void main(String[] args) {
     junit.textui.TestRunner.run(GSATestUtilsTest.class);

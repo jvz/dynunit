@@ -39,8 +39,7 @@ import javax.sql.DataSource;
 
 import junit.framework.Assert;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import atg.adapter.gsa.xml.TemplateParser;
 import atg.adapter.gsa.xml.VersioningContextUtil;
@@ -75,7 +74,7 @@ public class GSATestUtils {
   private static GSATestUtils SINGLETON_DEFAULT = null;
   private static GSATestUtils SINGLETON_VERSIONED = null;
   
-  private static final Log log = LogFactory.getLog(GSATestUtils.class);
+  private static Logger log = Logger.getLogger(GSATestUtils.class);
 
   /**
    * @param pB
