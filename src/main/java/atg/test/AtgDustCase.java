@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -94,6 +95,15 @@ public class AtgDustCase extends TestCase {
 
   private boolean isDebug;
 
+  // Start: needed for optimizing
+
+  private static String lastConfigDstDir = "";
+
+  private static List<String> lastConfigSrcDirs = new ArrayList<String>(),
+      lastConfigExcludes = new ArrayList<String>();
+
+  // Stop: needed for optimizing
+
   /**
    * Every *.properties file copied using this method will have it's scope (if
    * one is available) set to global. Most of this method is implemented in a
@@ -117,10 +127,38 @@ public class AtgDustCase extends TestCase {
    */
   protected final void copyConfigurationFiles(final String[] srcDirs,
       final String dstDir, final String... excludes) throws IOException {
+
     setConfigurationLocation(dstDir);
-    for (final String src : srcDirs) {
-      copyDir(src, dstDir, Arrays.asList(excludes == null ? new String[] {}
-          : excludes));
+
+    final List<String> srcsAsList = Arrays.asList(srcDirs);
+    final List<String> exsAsList = Arrays.asList(excludes);
+    if (lastConfigDstDir.equalsIgnoreCase(dstDir)
+        && lastConfigSrcDirs.equals(srcsAsList)
+        && lastConfigExcludes.equals(exsAsList)) {
+      log.info("No need to copy configuration files or "
+          + "force global scope on all configs, "
+          + "because they are still the same.");
+
+    }
+    else {
+      log.info("Copying configuration files and "
+          + "forcing global scope on all configs");
+      // copy all files to it's destination
+      for (final String srcs : srcDirs) {
+        FileUtil.copyDirectory(srcs, dstDir, Arrays
+            .asList(excludes == null ? new String[] {} : excludes));
+      }
+
+      // forcing global scope on all configurations
+      for (final File file : FileUtil
+          .getFileListing(getConfigurationLocation())) {
+        if (file.getPath().endsWith(".properties")) {
+          FileUtil.searchAndReplace("$scope=", "$scope=global\n", file);
+        }
+      }
+      lastConfigDstDir = dstDir;
+      lastConfigSrcDirs = srcsAsList;
+      lastConfigExcludes = exsAsList;
     }
   }
 
@@ -361,6 +399,17 @@ public class AtgDustCase extends TestCase {
     return service;
   }
 
+  // //// START: REMOVE
+
+  protected final void _copyConfigurationFiles(final String[] srcDirs,
+      final String dstDir, final String... excludes) throws IOException {
+    setConfigurationLocation(dstDir);
+    for (final String src : srcDirs) {
+      copyDir(src, dstDir, Arrays.asList(excludes == null ? new String[] {}
+          : excludes));
+    }
+  }
+
   /**
    * TODO: Remove me
    * 
@@ -413,4 +462,5 @@ public class AtgDustCase extends TestCase {
       smartCopyMapDst.put(dst, FileUtil.getAdler32Checksum(destination));
     }
   }
+  // //// STOP: REMOVE
 }

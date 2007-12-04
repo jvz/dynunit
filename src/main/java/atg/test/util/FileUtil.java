@@ -7,11 +7,15 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -158,6 +162,26 @@ public class FileUtil {
     }
     return checksum;
 
+  }
+
+  public static List<File> getFileListing(File startDirectory)
+      throws FileNotFoundException {
+    final List<File> result = new ArrayList<File>();
+
+    final File[] filesAndDirs = startDirectory.listFiles();
+    final List<File> filesDirs = Arrays.asList(filesAndDirs);
+    for (File file : filesDirs) {
+      result.add(file); // always add, even if directory
+      if (!file.isFile()) {
+        // must be a directory
+        // recursive call!
+        List<File> deeperList = getFileListing(file);
+        result.addAll(deeperList);
+      }
+
+    }
+    Collections.sort(result);
+    return result;
   }
 
   static {
