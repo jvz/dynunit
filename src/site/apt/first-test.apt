@@ -26,6 +26,11 @@ Your First Test
   dust test classes. Source code is stored in a subversion repository, and the project is built with
   Maven 2. You'll need to download and install subversion and maven 2 before continuing.
 
+  Should you decide that you don't want to build DUST from source, you can instead
+  download a prebuilt binary from here:
+
+  http://sourceforge.net/projects/atgdust/
+
 
 +------------------------------------------+
 svn checkout https://atgdust.svn.sourceforge.net/svnroot/atgdust/trunk atgdust
@@ -41,22 +46,23 @@ svn checkout https://atgdust.svn.sourceforge.net/svnroot/atgdust/trunk atgdust
   Because these libraries are not available on a public maven repository, you'll need to import
   them into your maven repository. Fortunatly, Maven has a command to do just this.
 
-  Here's an example assuming you are on Windows and your ATG installation is C:\ATG\ATG2006.3.
+  Here's an example assuming you are on Windows and your ATG installation is C:\ATG\ATG2007.1.
   The forward slashes below are on purpose.
+  If you are using 2006.3, just replace 2007.1 in the commands below with 2006.3.
 
   First the DAS/lib/classes.jar
 
 +------------------------------------------+
-mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS -Dversion=2006.3 -Dpackaging=jar 
--Dfile=c:/ATG/ATG2006.3/DAS/lib/classes.jar -DgeneratePom=true -Durl=file://c:/maven/repository -DlocalRepository=local
+mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS -Dversion=2007.1 -Dpackaging=jar 
+-Dfile=c:/ATG/ATG2007.1/DAS/lib/classes.jar -DgeneratePom=true -Durl=file://c:/maven/repository -DlocalRepository=local
 +------------------------------------------+
 
 
   Then DAS/lib/resources.jar
 
 +------------------------------------------+
-mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS-resources -Dversion=2006.3 -Dpackaging=jar
--Dfile=c:/ATG/ATG2006.3/DAS/lib/resources.jar -DgeneratePom=true -Durl=file://c:/maven/repository -DlocalRepository=local
+mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS-resources -Dversion=2007.1 -Dpackaging=jar
+-Dfile=c:/ATG/ATG2007.1/DAS/lib/resources.jar -DgeneratePom=true -Durl=file://c:/maven/repository -DlocalRepository=local
 +------------------------------------------+
 
 
