@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
@@ -85,6 +86,8 @@ public class AtgDustCase extends TestCase {
 
   private final BasicConfiguration basicConfiguration = new BasicConfiguration();
 
+  private static final Map<String, Long> smartCopyMapDst = new HashMap<String, Long>();
+
   private File configurationLocation;
 
   private Nucleus nucleus;
@@ -115,9 +118,9 @@ public class AtgDustCase extends TestCase {
   protected final void copyConfigurationFiles(final String[] srcDirs,
       final String dstDir, final String... excludes) throws IOException {
     setConfigurationLocation(dstDir);
-    for (final String srcs : srcDirs) {
-      FileUtil.copyOrRestoreDirectory(srcs, dstDir, Arrays
-          .asList(excludes == null ? new String[] {} : excludes));
+    for (final String src : srcDirs) {
+      copyDir(src, dstDir, Arrays.asList(excludes == null ? new String[] {}
+          : excludes));
     }
   }
 
@@ -358,4 +361,56 @@ public class AtgDustCase extends TestCase {
     return service;
   }
 
+  /**
+   * TODO: Remove me
+   * 
+   * @param srcDir
+   * @param dstDir
+   * @param excludes
+   * @throws IOException
+   */
+  private void copyDir(String srcDir, String dstDir, final List<String> excludes)
+      throws IOException {
+    new File(dstDir).mkdirs();
+    for (final String file : new File(srcDir).list()) {
+      final String source = srcDir + File.separator + file, destination = dstDir
+          + File.separator + file;
+      boolean dir = new File(source).isDirectory();
+
+      if (dir && !excludes.contains(file)) {
+        copyDir(source, destination, excludes);
+      }
+      else {
+        if (!excludes.contains(file)) {
+          smartCopyAndForceGlobaScope(source, destination);
+        }
+      }
+    }
+  }
+
+  /**
+   * TODO: Remove me
+   * 
+   * @param target
+   * @param dst
+   * @throws IOException
+   */
+  private void smartCopyAndForceGlobaScope(final String target, final String dst)
+      throws IOException {
+    final File destination = new File(dst);
+    final long currentChecksum = FileUtil.getAdler32Checksum(destination), lastChecksum = smartCopyMapDst
+        .get(dst) == null ? -1L : smartCopyMapDst.get(dst);
+    log.debug("Last checksum [1]: " + lastChecksum);
+    log.debug("Current checksum [2]: " + currentChecksum);
+
+    if (lastChecksum == currentChecksum) {
+      log.debug("Not overwriting [3a]: " + dst);
+    }
+    else {
+      log.debug("Overwriting and forcing global scope [3b]: " + dst);
+      FileUtil.copyFile(target, dst);
+      FileUtil.searchAndReplace("$scope=", "$scope=global\n", destination);
+      smartCopyMapDst.put(dst, FileUtil.getAdler32Checksum(destination));
+    }
+  }
 }

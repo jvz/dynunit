@@ -39,7 +39,7 @@ public class SimpleRepositoryTest extends GSATest {
 
     // Copy all related properties and definition files to the previously
     // configured configpath
-    FileUtil.copyDir("src/test/resources/config", configpath.getPath(), Arrays
+    FileUtil.copyDirectory("src/test/resources/config", configpath.getPath(), Arrays
         .asList(new String[] { ".svn" }));
 
     // Use the DBUtils utility class to get JDBC properties for an in memory

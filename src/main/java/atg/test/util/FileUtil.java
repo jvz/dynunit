@@ -12,7 +12,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,26 +29,9 @@ public class FileUtil {
 
   private static Logger log = Logger.getLogger(FileUtil.class);
 
-  private static final Map<String, Long> smartCopyMapDst = new HashMap<String, Long>();
-
   private static final File TMP_FILE = new File(System
       .getProperty("java.io.tmpdir")
       + File.separator + "atg-dust-rh.tmp");
-
-  public static enum SmartCopyDirection {
-    SOURCE, DESTINATION;
-  }
-
-  public static void copyDir(String srcDir, String dstDir,
-      final List<String> excludes) throws IOException {
-    copyDir(srcDir, dstDir, excludes, false);
-
-  }
-
-  public static void copyOrRestoreDirectory(String srcDir, String dstDir,
-      final List<String> excludes) throws IOException {
-    copyDir(srcDir, dstDir, excludes, true);
-  }
 
   /**
    * 
@@ -59,28 +41,19 @@ public class FileUtil {
    * @param isSmartCopyWithGlobalScopeForce
    * @throws IOException
    */
-  private static void copyDir(String srcDir, String dstDir,
-      final List<String> excludes, final boolean isSmartCopyWithGlobalScopeForce)
-      throws IOException {
+  public static void copyDirectory(String srcDir, String dstDir,
+      final List<String> excludes) throws IOException {
     new File(dstDir).mkdirs();
-    final String[] fileList = new File(srcDir).list();
-    boolean dir;
-    for (final String file : fileList) {
+    for (final String file : new File(srcDir).list()) {
       final String source = srcDir + File.separator + file, destination = dstDir
           + File.separator + file;
-      dir = new File(source).isDirectory();
-
+      boolean dir = new File(source).isDirectory();
       if (dir && !excludes.contains(file)) {
-        copyDir(source, destination, excludes, isSmartCopyWithGlobalScopeForce);
+        copyDirectory(source, destination, excludes);
       }
       else {
         if (!excludes.contains(file)) {
-          if (isSmartCopyWithGlobalScopeForce) {
-            smartCopyAndForceGlobaScope(source, destination);
-          }
-          else {
-            copyFile(source, destination);
-          }
+          copyFile(source, destination);
         }
       }
     }
@@ -92,7 +65,7 @@ public class FileUtil {
    * @param dst
    * @throws IOException
    */
-  private static void copyFile(final String src, final String dst)
+  public static void copyFile(final String src, final String dst)
       throws IOException {
     final FileChannel srcChannel = new FileInputStream(src).getChannel();
     final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
@@ -167,43 +140,7 @@ public class FileUtil {
     copyFile(TMP_FILE.getAbsolutePath(), file.getAbsolutePath());
   }
 
-  /**
-   * This method only copies the target to the destination if the following is
-   * true:
-   * <ul>
-   * <li> Destination file does not exist</li>
-   * <li> Checksum of the newly created destination is not the same as the
-   * previous destination checksum</li>
-   * </ul>
-   * 
-   * @param target
-   * @param dst
-   * @throws IOException
-   */
-  private static void smartCopyAndForceGlobaScope(final String target,
-      final String dst) throws IOException {
-    final File destination = new File(dst);
-
-    if (!destination.exists()) {
-      destination.createNewFile();
-    }
-    final long currentChecksum = getChecksum(destination), lastChecksum = smartCopyMapDst
-        .get(dst) == null ? -1L : smartCopyMapDst.get(dst);
-    log.debug("Last checksum [1]: " + lastChecksum);
-    log.debug("Current checksum [2]: " + currentChecksum);
-
-    if (lastChecksum == currentChecksum) {
-      log.debug("Not overwriting [3a]: " + dst);
-    }
-    else {
-      log.debug("Overwriting and forcing global scope [3b]: " + dst);
-      copyFile(target, dst);
-      FileUtil.searchAndReplace("$scope=", "$scope=global\n", destination);
-      smartCopyMapDst.put(dst, getChecksum(destination));
-    }
-  }
-
-  private static long getChecksum(final File file) {
+  public static long getAdler32Checksum(final File file) {
     long checksum = -1;
     try {
       final CheckedInputStream cis = new CheckedInputStream(
