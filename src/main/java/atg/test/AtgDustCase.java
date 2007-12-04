@@ -116,7 +116,7 @@ public class AtgDustCase extends TestCase {
       final String dstDir, final String... excludes) throws IOException {
     setConfigurationLocation(dstDir);
     for (final String srcs : srcDirs) {
-      FileUtil.copyOrRestoreStagingConfigurationLocation(srcs, dstDir, Arrays
+      FileUtil.copyOrRestoreDirectory(srcs, dstDir, Arrays
           .asList(excludes == null ? new String[] {} : excludes));
     }
   }

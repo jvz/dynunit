@@ -46,8 +46,8 @@ public class FileUtil {
 
   }
 
-  public static void copyOrRestoreStagingConfigurationLocation(String srcDir,
-      String dstDir, final List<String> excludes) throws IOException {
+  public static void copyOrRestoreDirectory(String srcDir, String dstDir,
+      final List<String> excludes) throws IOException {
     copyDir(srcDir, dstDir, excludes, true);
   }
 
@@ -143,7 +143,6 @@ public class FileUtil {
       }
     }
     finally {
-      out.flush();
       out.close();
     }
   }
@@ -163,7 +162,6 @@ public class FileUtil {
       }
 
     }
-    out.flush();
     out.close();
     in.close();
     copyFile(TMP_FILE.getAbsolutePath(), file.getAbsolutePath());
@@ -185,6 +183,10 @@ public class FileUtil {
   private static void smartCopyAndForceGlobaScope(final String target,
       final String dst) throws IOException {
     final File destination = new File(dst);
+
+    if (!destination.exists()) {
+      destination.createNewFile();
+    }
     final long currentChecksum = getChecksum(destination), lastChecksum = smartCopyMapDst
         .get(dst) == null ? -1L : smartCopyMapDst.get(dst);
     log.debug("Last checksum [1]: " + lastChecksum);
@@ -206,7 +208,8 @@ public class FileUtil {
     try {
       final CheckedInputStream cis = new CheckedInputStream(
           new FileInputStream(file), new Adler32());
-      final byte[] buf = new byte[256];
+
+      final byte[] buf = new byte[4096];
       while (cis.read(buf) >= 0) {
 
       }
