@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 
 import atg.nucleus.GenericService;
 import atg.nucleus.Nucleus;
+import atg.nucleus.logging.ClassLoggingFactory;
 import atg.nucleus.logging.ConsoleLogListener;
 import atg.test.configuration.BasicConfiguration;
 import atg.test.configuration.RepositoryConfiguration;
@@ -360,6 +361,10 @@ public class AtgDustCase extends TestCase {
     if (nucleus == null || !nucleus.isRunning()) {
 
       // TODO: Find a better place for the next call
+      
+      // TODO test this against one of the bol version parser.
+      ClassLoggingFactory.getFactory();
+      
       basicConfiguration.setDebug(isDebug);
       basicConfiguration.createPropertiesByConfigurationLocation(configpath);
 
