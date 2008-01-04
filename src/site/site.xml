@@ -17,6 +17,7 @@
       <item name="Your First DUST Test" href="first-test.html"/>
       <item name="Using AtgDustCase" href="atgdustcase.html"/>
       <item name="ATG Repository Testing" href="repository-test.html"/>
+      <item name="Dynamo Servlet Testing" href="servlet-test.html"/>
     </menu>
 
   </body>
