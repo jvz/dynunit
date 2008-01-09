@@ -315,7 +315,7 @@ public class AtgDustCase extends TestCase {
    *          is a directory containing all repository definition files and
    *          component property files which are needed for the test.
    */
-  private final void setConfigurationLocation(final String configurationLocation) {
+  protected final void setConfigurationLocation(final String configurationLocation) {
     this.configurationLocation = new File(configurationLocation);
     log.info("Using configuration location: "
         + this.configurationLocation.getPath());
