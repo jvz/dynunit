@@ -12,6 +12,14 @@
   This framework allows one to quickly write test code that depends up Nucleus or ATG Repositories. By using this framework 
   one can drastically cut down on development time. It takes only a few seconds to start up a test with a repository,
   but it may take multiple minutes to start up an application server.
+  
+  To get started with DUST, take a look at http://atgdust.sourceforge.net/first-test.html.
+  This page will walk you through the process of running a basic test which starts Nucleus.
+  
+ 
+  After that, read the other getting started guides to decribe how to create standalone Junit tests which can startup repositories and use the DynamoHttpServletResponse classes.
+  
+  
   </description>
   <url>http://atgdust.sourceforge.net/</url>
   <issueManagement>

@@ -95,9 +95,11 @@ public class SimpleDropletTest extends AtgDustCase {
       simpleDroplet.service(request,response);
       // check that the "output" oparam was rendered
       Object outputOparam = request.getLocalParameter("output");
+      System.out.println("outputOParam="+outputOparam);
       //assertNotNull(outputOparam);
       // check that the username property on the droplet was set to the incoming http param "username"
       assertEquals("noonan", simpleDroplet.getUsername());
+      System.out.println("outputStreamContents="+response.getOutputStream());
     } catch (ServletException e) {
       fail("droplets service method threw unexpected ServletException");
     } catch (IOException e) {

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: *
 
-Sitemap: http://atgdust.sourceforget.net/sitemap.xml
+Sitemap: http://atgdust.sourceforge.net/sitemap.xml

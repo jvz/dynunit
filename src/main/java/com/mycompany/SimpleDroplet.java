@@ -6,6 +6,7 @@ import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 
+import atg.nucleus.naming.ParameterName;
 import atg.servlet.DynamoHttpServletRequest;
 import atg.servlet.DynamoHttpServletResponse;
 import atg.servlet.DynamoServlet;
@@ -26,7 +27,9 @@ public class SimpleDroplet extends DynamoServlet {
       final DynamoHttpServletResponse response) throws ServletException,
       IOException {
     logInfo("Starting: " + this.getClass().getName());
-    request.serviceLocalParameter("output", request, response);
+    request.serviceLocalParameter(ParameterName.getParameterName("output"), request, response);
+    request.setParameter("entry", "The Value");
+    response.getOutputStream().write("Some content from the simple droplet".getBytes());
     mUsername = request.getParameter(USERNAME);
     // try to read data from the client if it is available
     if ("POST".equals(request.getMethod())) {

@@ -2,31 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.google.com/schemas/sitemap/0.84 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <url>
   <loc>http://atgdust.sourceforge.net/</loc>
-  <lastmod>2007-07-02T15:33:51+00:00</lastmod>
   <changefreq>daily</changefreq>
   <priority>0.50</priority>
  </url>
  <url>
   <loc>http://atgdust.sourceforge.net/repository-test.html</loc>
-  <lastmod>2007-07-02T15:33:51+00:00</lastmod>
   <changefreq>daily</changefreq>
-  <priority>0.50</priority>
+  <priority>0.80</priority>
  </url>
  <url>
   <loc>http://atgdust.sourceforge.net/download.html</loc>
-  <lastmod>2007-07-02T15:33:51+00:00</lastmod>
   <changefreq>daily</changefreq>
   <priority>0.50</priority>
  </url>
  <url>  
   <loc>http://atgdust.sourceforge.net/first-test.html</loc>
-  <lastmod>2007-07-02T15:33:51+00:00</lastmod>
+  <lastmod>2008-1-29</lastmod>
   <changefreq>daily</changefreq>
   <priority>0.50</priority>
  </url>
  <url>  
   <loc>http://atgdust.sourceforge.net/atgdustcase.html</loc>
-  <lastmod>2007-12-03T12:10:51+00:00</lastmod>
   <changefreq>daily</changefreq>
   <priority>0.50</priority>
  </url>
