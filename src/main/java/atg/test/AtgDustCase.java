@@ -462,7 +462,7 @@ public class AtgDustCase extends TestCase {
     }
     else {
       log.debug("Overwriting and forcing global scope [3b]: " + dst);
-      FileUtil.copyFile(target, dst);
+      FileUtil.copyFile(target, dst, true);
       FileUtil.searchAndReplace("$scope=", "$scope=global\n", destination);
       smartCopyMapDst.put(dst, FileUtil.getAdler32Checksum(destination));
     }

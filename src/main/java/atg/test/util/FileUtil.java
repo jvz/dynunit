@@ -56,7 +56,7 @@ public class FileUtil {
       }
       else {
         if (!excludes.contains(file)) {
-          copyFile(source, destination);
+          copyFile(source, destination, true);
         }
       }
     }
@@ -68,24 +68,31 @@ public class FileUtil {
    * @param dst
    * @throws IOException
    */
-  public static void copyFile(final String src, final String dst)
-      throws IOException {
+  public static void copyFile(final String src, final String dst,
+      final boolean smartCopy) throws IOException {
     final File srcFile = new File(src);
     final File dstFile = new File(dst);
 
-    if (log.isDebugEnabled()) {
-      log.debug(String.format("Src file %s ts %s : ", src, srcFile
-          .lastModified()));
-      log.debug(String.format("Dst file %s ts %s : ", dst, dstFile
-          .lastModified()));
+    if ((dstFile.lastModified() - 2500 <= srcFile.lastModified()) && smartCopy) {
+      if (log.isDebugEnabled()) {
+        log.debug("Same files no copy (2500m/s threshold)");
+      }
     }
-    final FileChannel srcChannel = new FileInputStream(src).getChannel();
-    final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
-    dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-    dstChannel.close();
-    srcChannel.close();
-    if (log.isDebugEnabled()) {
-      log.debug(String.format("Copied %s to %s", src, dst));
+    else {
+      if (log.isDebugEnabled()) {
+        log.debug(String.format("Src file %s ts %s : ", src, srcFile
+            .lastModified()));
+        log.debug(String.format("Dst file %s ts %s : ", dst, dstFile
+            .lastModified()));
+      }
+      final FileChannel srcChannel = new FileInputStream(src).getChannel();
+      final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
+      dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
+      dstChannel.close();
+      srcChannel.close();
+      if (log.isDebugEnabled()) {
+        log.debug(String.format("Copied %s to %s", src, dst));
+      }
     }
   }
 
@@ -139,19 +146,24 @@ public class FileUtil {
     final BufferedWriter out = new BufferedWriter(new FileWriter(TMP_FILE));
     final BufferedReader in = new BufferedReader(new FileReader(file));
     String str;
+    boolean nonSmartCopy = true;
     while ((str = in.readLine()) != null) {
       if (str.contains(originalValue)) {
         out.write(newValue);
+        nonSmartCopy = false;
       }
       else {
         out.write(str);
         out.newLine();
       }
-
     }
     out.close();
     in.close();
-    copyFile(TMP_FILE.getAbsolutePath(), file.getAbsolutePath());
+    // TODO: Fix this nonSmartCopy and setLastModified situation
+    if (!nonSmartCopy) {
+      file.setLastModified(System.currentTimeMillis());
+    }
+    copyFile(TMP_FILE.getAbsolutePath(), file.getAbsolutePath(), nonSmartCopy);
   }
 
   public static long getAdler32Checksum(final File file) {
