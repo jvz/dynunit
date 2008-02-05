@@ -14,7 +14,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -74,26 +73,19 @@ public class FileUtil {
     final File srcFile = new File(src);
     final File dstFile = new File(dst);
 
-    if (srcFile.lastModified() >= dstFile.lastModified() - 2500) {
-      if (log.isDebugEnabled()) {
-        log.debug("Same files no copy (2500m/s threshold)");
-      }
+    if (log.isDebugEnabled()) {
+      log.debug(String.format("Src file %s ts %s : ", src, srcFile
+          .lastModified()));
+      log.debug(String.format("Dst file %s ts %s : ", dst, dstFile
+          .lastModified()));
     }
-    else {
-      if (log.isDebugEnabled()) {
-        log.debug(String.format("Src file %s ts %s : ", src, srcFile
-            .lastModified()));
-        log.debug(String.format("Dst file %s ts %s : ", dst, dstFile
-            .lastModified()));
-      }
-      final FileChannel srcChannel = new FileInputStream(src).getChannel();
-      final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
-      dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-      dstChannel.close();
-      srcChannel.close();
-      if (log.isDebugEnabled()) {
-        log.debug(String.format("Copied %s to %s", src, dst));
-      }
+    final FileChannel srcChannel = new FileInputStream(src).getChannel();
+    final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
+    dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
+    dstChannel.close();
+    srcChannel.close();
+    if (log.isDebugEnabled()) {
+      log.debug(String.format("Copied %s to %s", src, dst));
     }
   }
 
@@ -185,10 +177,7 @@ public class FileUtil {
   public static List<File> getFileListing(File startDirectory)
       throws FileNotFoundException {
     final List<File> result = new ArrayList<File>();
-
-    final File[] filesAndDirs = startDirectory.listFiles();
-    final List<File> filesDirs = Arrays.asList(filesAndDirs);
-    for (File file : filesDirs) {
+    for (final File file : startDirectory.listFiles()) {
       result.add(file); // always add, even if directory
       if (!file.isFile()) {
         // must be a directory
