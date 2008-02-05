@@ -71,12 +71,30 @@ public class FileUtil {
    */
   public static void copyFile(final String src, final String dst)
       throws IOException {
-    final FileChannel srcChannel = new FileInputStream(src).getChannel();
-    final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
-    dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-    dstChannel.close();
-    srcChannel.close();
-    log.debug(String.format("Copied %s to %s", src, dst));
+    final File srcFile = new File(src);
+    final File dstFile = new File(dst);
+
+    if (srcFile.lastModified() >= dstFile.lastModified() - 2500) {
+      if (log.isDebugEnabled()) {
+        log.debug("Same files no copy (2500m/s threshold)");
+      }
+    }
+    else {
+      if (log.isDebugEnabled()) {
+        log.debug(String.format("Src file %s ts %s : ", src, srcFile
+            .lastModified()));
+        log.debug(String.format("Dst file %s ts %s : ", dst, dstFile
+            .lastModified()));
+      }
+      final FileChannel srcChannel = new FileInputStream(src).getChannel();
+      final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
+      dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
+      dstChannel.close();
+      srcChannel.close();
+      if (log.isDebugEnabled()) {
+        log.debug(String.format("Copied %s to %s", src, dst));
+      }
+    }
   }
 
   /**
