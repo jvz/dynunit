@@ -73,27 +73,28 @@ public class FileUtil {
     final File srcFile = new File(src);
     final File dstFile = new File(dst);
 
-    if ((dstFile.lastModified() - 2500 <= srcFile.lastModified()) && smartCopy) {
-      if (log.isDebugEnabled()) {
-        log.debug("Same files no copy (2500m/s threshold)");
-      }
+    // if ((dstFile.lastModified() - 2500 <= srcFile.lastModified()) &&
+    // smartCopy) {
+    // if (log.isDebugEnabled()) {
+    // log.debug("Same files no copy (2500m/s threshold)");
+    // }
+    // }
+    // else {
+    if (log.isDebugEnabled()) {
+      log.debug(String.format("Src file %s ts %s : ", src, srcFile
+          .lastModified()));
+      log.debug(String.format("Dst file %s ts %s : ", dst, dstFile
+          .lastModified()));
     }
-    else {
-      if (log.isDebugEnabled()) {
-        log.debug(String.format("Src file %s ts %s : ", src, srcFile
-            .lastModified()));
-        log.debug(String.format("Dst file %s ts %s : ", dst, dstFile
-            .lastModified()));
-      }
-      final FileChannel srcChannel = new FileInputStream(src).getChannel();
-      final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
-      dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-      dstChannel.close();
-      srcChannel.close();
-      if (log.isDebugEnabled()) {
-        log.debug(String.format("Copied %s to %s", src, dst));
-      }
+    final FileChannel srcChannel = new FileInputStream(src).getChannel();
+    final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
+    dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
+    dstChannel.close();
+    srcChannel.close();
+    if (log.isDebugEnabled()) {
+      log.debug(String.format("Copied %s to %s", src, dst));
     }
+    // }
   }
 
   /**
@@ -160,10 +161,10 @@ public class FileUtil {
     out.close();
     in.close();
     // TODO: Fix this nonSmartCopy and setLastModified situation
-    if (!nonSmartCopy) {
-      file.setLastModified(System.currentTimeMillis());
-    }
-    copyFile(TMP_FILE.getAbsolutePath(), file.getAbsolutePath(), nonSmartCopy);
+    // if (!nonSmartCopy) {
+    // file.setLastModified(System.currentTimeMillis());
+    // }
+    copyFile(TMP_FILE.getAbsolutePath(), file.getAbsolutePath(), true);
   }
 
   public static long getAdler32Checksum(final File file) {
