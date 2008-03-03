@@ -86,7 +86,7 @@ import atg.test.util.RepositoryManager;
 @SuppressWarnings("unchecked")
 public class AtgDustCase extends TestCase {
 
-  private static Logger log = Logger.getLogger(AtgDustCase.class);
+  private static final Logger log = Logger.getLogger(AtgDustCase.class);
   private RepositoryManager repositoryManager = new RepositoryManager();
   private final BasicConfiguration basicConfiguration = new BasicConfiguration();
   private File configurationLocation;
@@ -97,15 +97,11 @@ public class AtgDustCase extends TestCase {
   public static final File TIMESTAMP_SER = new File(System
       .getProperty("java.io.tmpdir")
       + File.separator + "atg-dust-rh.ser");
-  private static final long CONFIG_FILES_TIMESTAMPS_TTL = 1800000L;
+  private static long CONFIG_FILES_TIMESTAMPS_MAP_TTL = 43200000L;
 
   /**
    * Every *.properties file copied using this method will have it's scope (if
-   * one is available) set to global. Most of this method is implemented in a
-   * '@BeforeSuite' TestNG comparable fashion, because copying configuration
-   * files around the file system is a rather expensive operation that should
-   * only be done once or the moment the file-set to copy has changed (but not
-   * just blindly during every single setup or test call).
+   * one is available) set to global.
    * 
    * @param srcDirs
    *          One or more directories containing needed configuration files.
@@ -414,16 +410,24 @@ public class AtgDustCase extends TestCase {
   }
 
   static {
+    final String s = System.getProperty("CONFIG_FILES_TIMESTAMPS_MAP_TTL");
+    log.debug("CONFIG_FILES_TIMESTAMPS_MAP_TTL is set to" + s);
+    try {
+      CONFIG_FILES_TIMESTAMPS_MAP_TTL = s != null ? Long.parseLong(s) * 1000
+          : CONFIG_FILES_TIMESTAMPS_MAP_TTL;
+    }
+    catch (NumberFormatException e) {
+      log.error("Error using the -DCONFIG_FILES_TIMESTAMPS_MAP_TTL value: ", e);
+    }
 
     if (TIMESTAMP_SER.exists()
         && TIMESTAMP_SER.lastModified() < System.currentTimeMillis()
-            - CONFIG_FILES_TIMESTAMPS_TTL) {
+            - CONFIG_FILES_TIMESTAMPS_MAP_TTL) {
       if (log.isDebugEnabled()) {
-        log
-            .debug(String.format(
-                "Deleting previous config files timestamps map "
-                    + "because it's older then %s m/s",
-                CONFIG_FILES_TIMESTAMPS_TTL));
+        log.debug(String.format(
+            "Deleting previous config files timestamps map "
+                + "because it's older then %s m/s",
+            CONFIG_FILES_TIMESTAMPS_MAP_TTL));
       }
       TIMESTAMP_SER.delete();
     }
@@ -441,12 +445,12 @@ public class AtgDustCase extends TestCase {
           }
         }
       }
-      if (CONFIG_FILES_TIMESTAMPS == null) {
-        CONFIG_FILES_TIMESTAMPS = new HashMap<String, Long>();
-      }
     }
     catch (Exception e) {
       log.error("Error: ", e);
+    }
+    if (CONFIG_FILES_TIMESTAMPS == null) {
+      CONFIG_FILES_TIMESTAMPS = new HashMap<String, Long>();
     }
   }
 }
