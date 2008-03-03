@@ -3,6 +3,8 @@
  */
 package atg.test.util;
 
+import static atg.test.AtgDustCase.TIMESTAMP_SER;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,8 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.zip.Adler32;
-import java.util.zip.CheckedInputStream;
 
 import org.apache.log4j.Logger;
 
@@ -28,6 +29,7 @@ import org.apache.log4j.Logger;
  * @author robert
  * 
  */
+@SuppressWarnings("unchecked")
 public class FileUtil {
 
   private static Logger log = Logger.getLogger(FileUtil.class);
@@ -36,27 +38,30 @@ public class FileUtil {
       .getProperty("java.io.tmpdir")
       + File.separator + "atg-dust-rh.tmp");
 
+  private static Map<String, Long> CONFIG_FILES_TIMESTAMPS;
+
   /**
    * 
    * @param srcDir
    * @param dstDir
    * @param excludes
-   * @param isSmartCopyWithGlobalScopeForce
    * @throws IOException
    */
   public static void copyDirectory(String srcDir, String dstDir,
       final List<String> excludes) throws IOException {
-    new File(dstDir).mkdirs();
-    for (final String file : new File(srcDir).list()) {
-      final String source = srcDir + File.separator + file, destination = dstDir
-          + File.separator + file;
-      boolean dir = new File(source).isDirectory();
-      if (dir && !excludes.contains(file)) {
-        copyDirectory(source, destination, excludes);
-      }
-      else {
-        if (!excludes.contains(file)) {
-          copyFile(source, destination, true);
+    if (new File(srcDir).exists()) {
+      new File(dstDir).mkdirs();
+      for (final String file : new File(srcDir).list()) {
+        final String source = srcDir + File.separator + file, destination = dstDir
+            + File.separator + file;
+        boolean dir = new File(source).isDirectory();
+        if (dir && !excludes.contains(file)) {
+          copyDirectory(source, destination, excludes);
+        }
+        else {
+          if (!excludes.contains(file)) {
+            copyFile(source, destination);
+          }
         }
       }
     }
@@ -68,33 +73,35 @@ public class FileUtil {
    * @param dst
    * @throws IOException
    */
-  public static void copyFile(final String src, final String dst,
-      final boolean smartCopy) throws IOException {
+  public static void copyFile(final String src, final String dst)
+      throws IOException {
     final File srcFile = new File(src);
     final File dstFile = new File(dst);
 
-    // if ((dstFile.lastModified() - 2500 <= srcFile.lastModified()) &&
-    // smartCopy) {
-    // if (log.isDebugEnabled()) {
-    // log.debug("Same files no copy (2500m/s threshold)");
-    // }
-    // }
-    // else {
-    if (log.isDebugEnabled()) {
-      log.debug(String.format("Src file %s ts %s : ", src, srcFile
-          .lastModified()));
-      log.debug(String.format("Dst file %s ts %s : ", dst, dstFile
-          .lastModified()));
+    if (CONFIG_FILES_TIMESTAMPS != null
+        && CONFIG_FILES_TIMESTAMPS.get(src) != null
+        && CONFIG_FILES_TIMESTAMPS.get(src) == srcFile.lastModified()) {
+      if (log.isDebugEnabled()) {
+        log.debug(String.format("%s last modified hasn't changed", src));
+      }
     }
-    final FileChannel srcChannel = new FileInputStream(src).getChannel();
-    final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
-    dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-    dstChannel.close();
-    srcChannel.close();
-    if (log.isDebugEnabled()) {
-      log.debug(String.format("Copied %s to %s", src, dst));
+    else {
+      if (!src.contains(TMP_FILE.getPath())) {
+        if (log.isDebugEnabled()) {
+          log.debug(String.format("Src file %s ts %s : ", src, srcFile
+              .lastModified()));
+          log.debug(String.format("Dst file %s ts %s : ", dst, dstFile
+              .lastModified()));
+        }
+      }
+
+      final FileChannel srcChannel = new FileInputStream(src).getChannel();
+      final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
+      dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
+      dstChannel.close();
+      srcChannel.close();
     }
-    // }
+
   }
 
   /**
@@ -147,11 +154,9 @@ public class FileUtil {
     final BufferedWriter out = new BufferedWriter(new FileWriter(TMP_FILE));
     final BufferedReader in = new BufferedReader(new FileReader(file));
     String str;
-    boolean nonSmartCopy = true;
     while ((str = in.readLine()) != null) {
       if (str.contains(originalValue)) {
         out.write(newValue);
-        nonSmartCopy = false;
       }
       else {
         out.write(str);
@@ -160,35 +165,15 @@ public class FileUtil {
     }
     out.close();
     in.close();
-    // TODO: Fix this nonSmartCopy and setLastModified situation
-    // if (!nonSmartCopy) {
-    // file.setLastModified(System.currentTimeMillis());
-    // }
-    copyFile(TMP_FILE.getAbsolutePath(), file.getAbsolutePath(), true);
-  }
-
-  public static long getAdler32Checksum(final File file) {
-    long checksum = -1;
-    try {
-      final CheckedInputStream cis = new CheckedInputStream(
-          new FileInputStream(file), new Adler32());
-
-      final byte[] buf = new byte[4096];
-      while (cis.read(buf) >= 0) {
-
-      }
-      checksum = cis.getChecksum().getValue();
-      cis.close();
-    }
-    catch (IOException e) {
-      log.error("Error: ", e);
-    }
-    return checksum;
-
+    copyFile(TMP_FILE.getAbsolutePath(), file.getAbsolutePath());
   }
 
   public static List<File> getFileListing(File startDirectory)
       throws FileNotFoundException {
+
+    if (!startDirectory.exists()) {
+      return new ArrayList<File>();
+    }
     final List<File> result = new ArrayList<File>();
     for (final File file : startDirectory.listFiles()) {
       result.add(file); // always add, even if directory
@@ -206,5 +191,12 @@ public class FileUtil {
 
   static {
     TMP_FILE.deleteOnExit();
+    try {
+      ObjectInputStream in = new ObjectInputStream(new FileInputStream(
+          TIMESTAMP_SER));
+      CONFIG_FILES_TIMESTAMPS = (Map<String, Long>) in.readObject();
+    }
+    catch (Exception e) {
+    }
   }
 }

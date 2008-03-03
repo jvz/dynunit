@@ -1,14 +1,17 @@
 package atg.test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
@@ -80,30 +83,20 @@ import atg.test.util.RepositoryManager;
  * 
  * @author robert
  */
+@SuppressWarnings("unchecked")
 public class AtgDustCase extends TestCase {
 
   private static Logger log = Logger.getLogger(AtgDustCase.class);
-
   private RepositoryManager repositoryManager = new RepositoryManager();
-
   private final BasicConfiguration basicConfiguration = new BasicConfiguration();
-
-  private static final Map<String, Long> smartCopyMapDst = new HashMap<String, Long>();
-
   private File configurationLocation;
-
   private Nucleus nucleus;
-
   private boolean isDebug;
+  private static Map<String, Long> CONFIG_FILES_TIMESTAMPS;
 
-  // Start: needed for optimizing
-
-  private static String lastConfigDstDir = "";
-
-  private static List<String> lastConfigSrcDirs = new ArrayList<String>(),
-      lastConfigExcludes = new ArrayList<String>();
-
-  // Stop: needed for optimizing
+  public static final File TIMESTAMP_SER = new File(System
+      .getProperty("java.io.tmpdir")
+      + File.separator + "atg-dust-rh.ser");
 
   /**
    * Every *.properties file copied using this method will have it's scope (if
@@ -131,35 +124,54 @@ public class AtgDustCase extends TestCase {
 
     setConfigurationLocation(dstDir);
 
-    final List<String> srcsAsList = Arrays.asList(srcDirs);
-    final List<String> exsAsList = Arrays.asList(excludes);
-    if (lastConfigDstDir.equalsIgnoreCase(dstDir)
-        && lastConfigSrcDirs.equals(srcsAsList)
-        && lastConfigExcludes.equals(exsAsList)) {
-      log.info("No need to copy configuration files or "
-          + "force global scope on all configs, "
-          + "because they are still the same.");
-
-    }
-    else {
-      log.info("Copying configuration files and "
+    if (log.isDebugEnabled()) {
+      log.debug("Copying configuration files and "
           + "forcing global scope on all configs");
-      // copy all files to it's destination
-      for (final String srcs : srcDirs) {
-        FileUtil.copyDirectory(srcs, dstDir, Arrays
-            .asList(excludes == null ? new String[] {} : excludes));
-      }
-
-      // forcing global scope on all configurations
-      for (final File file : FileUtil
-          .getFileListing(getConfigurationLocation())) {
-        if (file.getPath().endsWith(".properties")) {
-          FileUtil.searchAndReplace("$scope=", "$scope=global\n", file);
+    }
+    boolean isDirty = false;
+    for (final String srcs : srcDirs) {
+      // log.info("config dir: " + srcs);
+      for (final File file : FileUtil.getFileListing(new File(srcs))) {
+        // log.info("config file: " + file);
+        if (CONFIG_FILES_TIMESTAMPS.get(file.getPath()) != null
+            && file.lastModified() == CONFIG_FILES_TIMESTAMPS.get(file
+                .getPath())) {
+        }
+        else {
+          CONFIG_FILES_TIMESTAMPS.put(file.getPath(), file.lastModified());
+          isDirty = true;
         }
       }
-      lastConfigDstDir = dstDir;
-      lastConfigSrcDirs = srcsAsList;
-      lastConfigExcludes = exsAsList;
+    }
+
+    if (isDirty) {
+      if (log.isDebugEnabled()) {
+        log
+            .debug("Config files timestamps map is dirty an will be re serialized");
+      }
+      ObjectOutput out = null;
+      try {
+        out = new ObjectOutputStream(new FileOutputStream(TIMESTAMP_SER));
+        out.writeObject(CONFIG_FILES_TIMESTAMPS);
+      }
+      finally {
+        if (out != null) {
+          out.close();
+        }
+      }
+    }
+
+    for (final String srcs : srcDirs) {
+      FileUtil.copyDirectory(srcs, dstDir, Arrays
+          .asList(excludes == null ? new String[] {} : excludes));
+    }
+
+    // forcing global scope on all configurations
+    for (final File file : FileUtil.getFileListing(getConfigurationLocation())) {
+      if (CONFIG_FILES_TIMESTAMPS.get(file.getPath()) == null
+          && file.getPath().endsWith(".properties")) {
+        FileUtil.searchAndReplace("$scope=", "$scope=global\n", file);
+      }
     }
   }
 
@@ -315,10 +327,13 @@ public class AtgDustCase extends TestCase {
    *          is a directory containing all repository definition files and
    *          component property files which are needed for the test.
    */
-  protected final void setConfigurationLocation(final String configurationLocation) {
+  protected final void setConfigurationLocation(
+      final String configurationLocation) {
     this.configurationLocation = new File(configurationLocation);
-    log.info("Using configuration location: "
-        + this.configurationLocation.getPath());
+    if (log.isDebugEnabled()) {
+      log.debug("Using configuration location: "
+          + this.configurationLocation.getPath());
+    }
   }
 
   /**
@@ -359,12 +374,7 @@ public class AtgDustCase extends TestCase {
    */
   private Nucleus startNucleus(final File configpath) throws IOException {
     if (nucleus == null || !nucleus.isRunning()) {
-
-      // TODO: Find a better place for the next call
-      
-      // TODO test this against one of the bol version parser.
       ClassLoggingFactory.getFactory();
-      
       basicConfiguration.setDebug(isDebug);
       basicConfiguration.createPropertiesByConfigurationLocation(configpath);
 
@@ -404,68 +414,30 @@ public class AtgDustCase extends TestCase {
     return service;
   }
 
-  // //// START: REMOVE
-
-  protected final void _copyConfigurationFiles(final String[] srcDirs,
-      final String dstDir, final String... excludes) throws IOException {
-    setConfigurationLocation(dstDir);
-    for (final String src : srcDirs) {
-      copyDir(src, dstDir, Arrays.asList(excludes == null ? new String[] {}
-          : excludes));
-    }
-  }
-
-  /**
-   * TODO: Remove me
-   * 
-   * @param srcDir
-   * @param dstDir
-   * @param excludes
-   * @throws IOException
-   */
-  private void copyDir(String srcDir, String dstDir, final List<String> excludes)
-      throws IOException {
-    new File(dstDir).mkdirs();
-    for (final String file : new File(srcDir).list()) {
-      final String source = srcDir + File.separator + file, destination = dstDir
-          + File.separator + file;
-      boolean dir = new File(source).isDirectory();
-
-      if (dir && !excludes.contains(file)) {
-        copyDir(source, destination, excludes);
-      }
-      else {
-        if (!excludes.contains(file)) {
-          smartCopyAndForceGlobaScope(source, destination);
+  static {
+    try {
+      if (TIMESTAMP_SER.exists()) {
+        final ObjectInputStream in = new ObjectInputStream(new FileInputStream(
+            TIMESTAMP_SER));
+        try {
+          CONFIG_FILES_TIMESTAMPS = (Map<String, Long>) in.readObject();
+        }
+        catch (ClassNotFoundException e) {
+          log.error("Error: ", e);
+          CONFIG_FILES_TIMESTAMPS = new HashMap<String, Long>();
+        }
+        finally {
+          if (in != null) {
+            in.close();
+          }
         }
       }
+      else {
+        CONFIG_FILES_TIMESTAMPS = new HashMap<String, Long>();
+      }
+    }
+    catch (Exception e) {
+      log.error("Error: ", e);
     }
   }
-
-  /**
-   * TODO: Remove me
-   * 
-   * @param target
-   * @param dst
-   * @throws IOException
-   */
-  private void smartCopyAndForceGlobaScope(final String target, final String dst)
-      throws IOException {
-    final File destination = new File(dst);
-    final long currentChecksum = FileUtil.getAdler32Checksum(destination), lastChecksum = smartCopyMapDst
-        .get(dst) == null ? -1L : smartCopyMapDst.get(dst);
-    log.debug("Last checksum [1]: " + lastChecksum);
-    log.debug("Current checksum [2]: " + currentChecksum);
-
-    if (lastChecksum == currentChecksum) {
-      log.debug("Not overwriting [3a]: " + dst);
-    }
-    else {
-      log.debug("Overwriting and forcing global scope [3b]: " + dst);
-      FileUtil.copyFile(target, dst, true);
-      FileUtil.searchAndReplace("$scope=", "$scope=global\n", destination);
-      smartCopyMapDst.put(dst, FileUtil.getAdler32Checksum(destination));
-    }
-  }
-  // //// STOP: REMOVE
 }
