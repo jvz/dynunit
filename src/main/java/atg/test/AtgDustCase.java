@@ -2,7 +2,6 @@ package atg.test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -78,7 +77,7 @@ import atg.test.util.RepositoryManager;
  * <p>
  * This class overrides Junit 3 and not Junit 4 because currently Junit 4 has
  * some test runner/eclipse related bugs which makes it impossible for me to
- * use.
+ * use it.
  * </p>
  * 
  * @author robert
@@ -130,13 +129,16 @@ public class AtgDustCase extends TestCase {
       // log.info("config dir: " + srcs);
       for (final File file : FileUtil.getFileListing(new File(srcs))) {
         // log.info("config file: " + file);
-        if (CONFIG_FILES_TIMESTAMPS.get(file.getPath()) != null
-            && file.lastModified() == CONFIG_FILES_TIMESTAMPS.get(file
-                .getPath())) {
-        }
-        else {
-          CONFIG_FILES_TIMESTAMPS.put(file.getPath(), file.lastModified());
-          isDirty = true;
+
+        if (!file.getPath().contains(".svn") && file.isFile()) {
+          if (CONFIG_FILES_TIMESTAMPS.get(file.getPath()) != null
+              && file.lastModified() == CONFIG_FILES_TIMESTAMPS.get(file
+                  .getPath())) {
+          }
+          else {
+            CONFIG_FILES_TIMESTAMPS.put(file.getPath(), file.lastModified());
+            isDirty = true;
+          }
         }
       }
     }
@@ -164,7 +166,7 @@ public class AtgDustCase extends TestCase {
     }
 
     // forcing global scope on all configurations
-    for (final File file : FileUtil.getFileListing(getConfigurationLocation())) {
+    for (final File file : FileUtil.getFileListing(configurationLocation)) {
       if (CONFIG_FILES_TIMESTAMPS.get(file.getPath()) == null
           && file.getPath().endsWith(".properties")) {
         FileUtil.searchAndReplace("$scope=", "$scope=global\n", file);
@@ -192,23 +194,8 @@ public class AtgDustCase extends TestCase {
       final String nucleusComponentPath, final Class<?> clazz)
       throws IOException {
     this.configurationLocation = new File(configurationStagingLocation);
-    FileUtil.createPropertyFile(nucleusComponentPath,
-        getConfigurationLocation(), clazz.getClass(),
-        new HashMap<String, String>());
-  }
-
-  /**
-   * 
-   * @return the current configured 'configuration location path'
-   * @throws IOException
-   *           If configuration location is <code>null</code> or non existing.
-   */
-  private File getConfigurationLocation() throws IOException {
-    if (configurationLocation == null || !configurationLocation.exists()) {
-      throw new FileNotFoundException(
-          "No or empty configuration location is specified. Unable to continue.");
-    }
-    return configurationLocation;
+    FileUtil.createPropertyFile(nucleusComponentPath, configurationLocation,
+        clazz.getClass(), new HashMap<String, String>());
   }
 
   /**
@@ -286,18 +273,16 @@ public class AtgDustCase extends TestCase {
     final RepositoryConfiguration repositoryConfiguration = new RepositoryConfiguration();
 
     repositoryConfiguration.setDebug(isDebug);
-    // get configurationLocation once by getConfigurationLocation(), after that
-    // it's safe to use the variable directly.
     repositoryConfiguration
-        .createPropertiesByConfigurationLocation(getConfigurationLocation());
+        .createPropertiesByConfigurationLocation(configurationLocation);
     repositoryConfiguration.createFakeXADataSource(configurationLocation,
         connectionSettings);
     repositoryConfiguration.createRepositoryConfiguration(
         configurationLocation, repositoryPath, dropTables, definitionFiles);
 
     repositoryManager.initializeMinimalRepositoryConfiguration(
-        getConfigurationLocation(), repositoryPath, connectionSettings,
-        dropTables, isDebug, definitionFiles);
+        configurationLocation, repositoryPath, connectionSettings, dropTables,
+        isDebug, definitionFiles);
   }
 
   /**
@@ -311,7 +296,7 @@ public class AtgDustCase extends TestCase {
    */
   protected Object resolveNucleusComponent(final String nucleusComponentPath)
       throws IOException {
-    startNucleus(getConfigurationLocation());
+    startNucleus(configurationLocation);
     return enableLoggingOnGenericService(nucleus
         .resolveName(nucleusComponentPath));
   }
@@ -411,7 +396,14 @@ public class AtgDustCase extends TestCase {
 
   static {
     final String s = System.getProperty("CONFIG_FILES_TIMESTAMPS_MAP_TTL");
-    log.debug("CONFIG_FILES_TIMESTAMPS_MAP_TTL is set to" + s);
+    if (log.isDebugEnabled()) {
+      log
+          .debug(s == null ? "CONFIG_FILES_TIMESTAMPS_MAP_TTL has not been set "
+              + "using default value of: "
+              + CONFIG_FILES_TIMESTAMPS_MAP_TTL
+              + " m/s or start VM with -DCONFIG_FILES_TIMESTAMPS_MAP_TTL=some_number_value"
+              : "CONFIG_FILES_TIMESTAMPS_MAP_TTL is set to:" + s);
+    }
     try {
       CONFIG_FILES_TIMESTAMPS_MAP_TTL = s != null ? Long.parseLong(s) * 1000
           : CONFIG_FILES_TIMESTAMPS_MAP_TTL;
