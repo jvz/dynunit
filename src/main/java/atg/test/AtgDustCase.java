@@ -92,11 +92,12 @@ public class AtgDustCase extends TestCase {
   private File configurationLocation;
   private Nucleus nucleus;
   private boolean isDebug;
-  private static Map<String, Long> CONFIG_FILES_TIMESTAMPS;
+  private static Map<String, Long> CONFIG_FILES_TIMESTAMPS = null;
 
   public static final File TIMESTAMP_SER = new File(System
       .getProperty("java.io.tmpdir")
       + File.separator + "atg-dust-rh.ser");
+  private static final long CONFIG_FILES_TIMESTAMPS_TTL = 1800000L;
 
   /**
    * Every *.properties file copied using this method will have it's scope (if
@@ -380,8 +381,10 @@ public class AtgDustCase extends TestCase {
 
       System.setProperty("atg.dynamo.license.read", "true");
       System.setProperty("atg.license.read", "true");
-      // TODO: Can I safely disable this one?
+      
+      // TODO: Can I safely keep this one disabled?
       // NucleusServlet.addNamingFactoriesAndProtocolHandlers();
+      
       nucleus = Nucleus.startNucleus(new String[] { configpath
           .getAbsolutePath() });
     }
@@ -417,22 +420,30 @@ public class AtgDustCase extends TestCase {
   static {
     try {
       if (TIMESTAMP_SER.exists()) {
-        final ObjectInputStream in = new ObjectInputStream(new FileInputStream(
-            TIMESTAMP_SER));
-        try {
-          CONFIG_FILES_TIMESTAMPS = (Map<String, Long>) in.readObject();
+        if (TIMESTAMP_SER.lastModified() < System.currentTimeMillis() - CONFIG_FILES_TIMESTAMPS_TTL) {
+          if (log.isDebugEnabled()) {
+            log.debug(String.format("Deleting previous config files timestamps map "
+                + "because it's older then %s m/s", CONFIG_FILES_TIMESTAMPS_TTL));
+          }
+          TIMESTAMP_SER.delete();
         }
-        catch (ClassNotFoundException e) {
-          log.error("Error: ", e);
-          CONFIG_FILES_TIMESTAMPS = new HashMap<String, Long>();
-        }
-        finally {
-          if (in != null) {
-            in.close();
+        else {
+          final ObjectInputStream in = new ObjectInputStream(
+              new FileInputStream(TIMESTAMP_SER));
+          try {
+            CONFIG_FILES_TIMESTAMPS = (Map<String, Long>) in.readObject();
+          }
+          catch (ClassNotFoundException e) {
+            log.error("Error: ", e);
+          }
+          finally {
+            if (in != null) {
+              in.close();
+            }
           }
         }
       }
-      else {
+      if (CONFIG_FILES_TIMESTAMPS == null) {
         CONFIG_FILES_TIMESTAMPS = new HashMap<String, Long>();
       }
     }
