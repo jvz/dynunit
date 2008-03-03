@@ -80,17 +80,17 @@ public class FileUtil {
 
     if (CONFIG_FILES_TIMESTAMPS != null
         && CONFIG_FILES_TIMESTAMPS.get(src) != null
-        && CONFIG_FILES_TIMESTAMPS.get(src) == srcFile.lastModified()) {
+        && CONFIG_FILES_TIMESTAMPS.get(src) == srcFile.lastModified() && dstFile.exists()) {
       if (log.isDebugEnabled()) {
-        log.debug(String.format("%s last modified hasn't changed", src));
+        log.debug(String.format("%s last modified hasn't changed and destination still exists", src));
       }
     }
     else {
       if (!src.contains(TMP_FILE.getPath())) {
         if (log.isDebugEnabled()) {
-          log.debug(String.format("Src file %s ts %s : ", src, srcFile
+          log.debug(String.format("Copy: src file %s ts %s : ", src, srcFile
               .lastModified()));
-          log.debug(String.format("Dst file %s ts %s : ", dst, dstFile
+          log.debug(String.format("Copy: dest file %s ts %s : ", dst, dstFile
               .lastModified()));
         }
       }

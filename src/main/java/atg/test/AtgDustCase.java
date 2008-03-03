@@ -373,22 +373,18 @@ public class AtgDustCase extends TestCase {
    * @return
    * @throws IOException
    */
-  private Nucleus startNucleus(final File configpath) throws IOException {
+  private void startNucleus(final File configpath) throws IOException {
     if (nucleus == null || !nucleus.isRunning()) {
       ClassLoggingFactory.getFactory();
       basicConfiguration.setDebug(isDebug);
       basicConfiguration.createPropertiesByConfigurationLocation(configpath);
-
       System.setProperty("atg.dynamo.license.read", "true");
       System.setProperty("atg.license.read", "true");
-      
       // TODO: Can I safely keep this one disabled?
       // NucleusServlet.addNamingFactoriesAndProtocolHandlers();
-      
       nucleus = Nucleus.startNucleus(new String[] { configpath
           .getAbsolutePath() });
     }
-    return nucleus;
   }
 
   /**
@@ -418,28 +414,30 @@ public class AtgDustCase extends TestCase {
   }
 
   static {
+
+    if (TIMESTAMP_SER.exists()
+        && TIMESTAMP_SER.lastModified() < System.currentTimeMillis()
+            - CONFIG_FILES_TIMESTAMPS_TTL) {
+      if (log.isDebugEnabled()) {
+        log
+            .debug(String.format(
+                "Deleting previous config files timestamps map "
+                    + "because it's older then %s m/s",
+                CONFIG_FILES_TIMESTAMPS_TTL));
+      }
+      TIMESTAMP_SER.delete();
+    }
+
     try {
       if (TIMESTAMP_SER.exists()) {
-        if (TIMESTAMP_SER.lastModified() < System.currentTimeMillis() - CONFIG_FILES_TIMESTAMPS_TTL) {
-          if (log.isDebugEnabled()) {
-            log.debug(String.format("Deleting previous config files timestamps map "
-                + "because it's older then %s m/s", CONFIG_FILES_TIMESTAMPS_TTL));
-          }
-          TIMESTAMP_SER.delete();
+        final ObjectInputStream in = new ObjectInputStream(new FileInputStream(
+            TIMESTAMP_SER));
+        try {
+          CONFIG_FILES_TIMESTAMPS = (Map<String, Long>) in.readObject();
         }
-        else {
-          final ObjectInputStream in = new ObjectInputStream(
-              new FileInputStream(TIMESTAMP_SER));
-          try {
-            CONFIG_FILES_TIMESTAMPS = (Map<String, Long>) in.readObject();
-          }
-          catch (ClassNotFoundException e) {
-            log.error("Error: ", e);
-          }
-          finally {
-            if (in != null) {
-              in.close();
-            }
+        finally {
+          if (in != null) {
+            in.close();
           }
         }
       }
