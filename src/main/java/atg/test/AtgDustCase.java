@@ -1,22 +1,19 @@
 package atg.test;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import atg.nucleus.GenericService;
@@ -76,8 +73,8 @@ import atg.test.util.RepositoryManager;
  * 
  * <p>
  * This class overrides Junit 3 and not Junit 4 because currently Junit 4 has
- * some test runner/eclipse related bugs which makes it impossible for me to
- * use it.
+ * some test runner/eclipse related bugs which makes it impossible for me to use
+ * it.
  * </p>
  * 
  * @author robert
@@ -91,12 +88,15 @@ public class AtgDustCase extends TestCase {
   private File configurationLocation;
   private Nucleus nucleus;
   private boolean isDebug;
-  private static Map<String, Long> CONFIG_FILES_TIMESTAMPS = null;
+  private static Map<String, Long> CONFIG_FILES_TIMESTAMPS,
+      CONFIG_FILES_GLOBAL_FORCE = null;
 
   public static final File TIMESTAMP_SER = new File(System
       .getProperty("java.io.tmpdir")
-      + File.separator + "atg-dust-rh.ser");
-  private static long CONFIG_FILES_TIMESTAMPS_MAP_TTL = 43200000L;
+      + File.separator + "atg-dust-tstamp-rh.ser"),
+      GLOBAL_FORCE_SER = new File(System.getProperty("java.io.tmpdir")
+          + File.separator + "atg-dust-gforce-rh.ser");
+  private static long SERIAL_TTL = 43200000L;
 
   /**
    * Every *.properties file copied using this method will have it's scope (if
@@ -125,12 +125,12 @@ public class AtgDustCase extends TestCase {
           + "forcing global scope on all configs");
     }
     boolean isDirty = false;
-    for (final String srcs : srcDirs) {
-      // log.info("config dir: " + srcs);
-      for (final File file : FileUtil.getFileListing(new File(srcs))) {
-        // log.info("config file: " + file);
-
-        if (!file.getPath().contains(".svn") && file.isFile()) {
+    for (final String src : srcDirs) {
+      for (final File file : (List<File>) FileUtils.listFiles(new File(src),
+          null, true)) {
+        if (!Arrays.asList(excludes == null ? new String[] {} : excludes)
+            .contains(file.getName())
+            && !file.getPath().contains(".svn") && file.isFile()) {
           if (CONFIG_FILES_TIMESTAMPS.get(file.getPath()) != null
               && file.lastModified() == CONFIG_FILES_TIMESTAMPS.get(file
                   .getPath())) {
@@ -142,36 +142,34 @@ public class AtgDustCase extends TestCase {
         }
       }
     }
-
     if (isDirty) {
       if (log.isDebugEnabled()) {
         log
             .debug("Config files timestamps map is dirty an will be re serialized");
       }
-      ObjectOutput out = null;
-      try {
-        out = new ObjectOutputStream(new FileOutputStream(TIMESTAMP_SER));
-        out.writeObject(CONFIG_FILES_TIMESTAMPS);
-      }
-      finally {
-        if (out != null) {
-          out.close();
-        }
-      }
+
+      FileUtil.serialize(TIMESTAMP_SER, CONFIG_FILES_TIMESTAMPS);
+
     }
+
+    FileUtil.setConfigFilesTimestamps(CONFIG_FILES_TIMESTAMPS);
+    FileUtil.setConfigFilesGlobalForce(CONFIG_FILES_GLOBAL_FORCE);
 
     for (final String srcs : srcDirs) {
       FileUtil.copyDirectory(srcs, dstDir, Arrays
           .asList(excludes == null ? new String[] {} : excludes));
     }
-
-    // forcing global scope on all configurations
-    for (final File file : FileUtil.getFileListing(configurationLocation)) {
-      if (CONFIG_FILES_TIMESTAMPS.get(file.getPath()) == null
-          && file.getPath().endsWith(".properties")) {
-        FileUtil.searchAndReplace("$scope=", "$scope=global\n", file);
-      }
+    
+    // forcing global scope on all property files
+    for (final File file :  (List<File>) FileUtils.listFiles(new File(dstDir),
+        new String[] { "properties" }, true)) {
+      FileUtil.searchAndReplace("$scope=", "$scope=global\n", file);
     }
+
+    if (FileUtil.isDirty()) {
+      FileUtil.serialize(GLOBAL_FORCE_SER, FileUtil.getConfigFilesTimestamps());
+    }
+
   }
 
   /**
@@ -395,54 +393,22 @@ public class AtgDustCase extends TestCase {
   }
 
   static {
-    final String s = System.getProperty("CONFIG_FILES_TIMESTAMPS_MAP_TTL");
+    final String s = System.getProperty("SERIAL_TTL");
     if (log.isDebugEnabled()) {
-      log
-          .debug(s == null ? "CONFIG_FILES_TIMESTAMPS_MAP_TTL has not been set "
-              + "using default value of: "
-              + CONFIG_FILES_TIMESTAMPS_MAP_TTL
-              + " m/s or start VM with -DCONFIG_FILES_TIMESTAMPS_MAP_TTL=some_number_value"
-              : "CONFIG_FILES_TIMESTAMPS_MAP_TTL is set to:" + s);
+      log.debug(s == null ? "SERIAL_TTL has not been set "
+          + "using default value of: " + SERIAL_TTL
+          + " m/s or start VM with -DSERIAL_TTL=some_number_value"
+          : "SERIAL_TTL is set to:" + s);
     }
     try {
-      CONFIG_FILES_TIMESTAMPS_MAP_TTL = s != null ? Long.parseLong(s) * 1000
-          : CONFIG_FILES_TIMESTAMPS_MAP_TTL;
+      SERIAL_TTL = s != null ? Long.parseLong(s) * 1000 : SERIAL_TTL;
     }
     catch (NumberFormatException e) {
-      log.error("Error using the -DCONFIG_FILES_TIMESTAMPS_MAP_TTL value: ", e);
+      log.error("Error using the -DSERIAL_TTL value: ", e);
     }
+    CONFIG_FILES_TIMESTAMPS = FileUtil.deserialize(TIMESTAMP_SER, SERIAL_TTL);
+    CONFIG_FILES_GLOBAL_FORCE = FileUtil.deserialize(GLOBAL_FORCE_SER,
+        SERIAL_TTL);
 
-    if (TIMESTAMP_SER.exists()
-        && TIMESTAMP_SER.lastModified() < System.currentTimeMillis()
-            - CONFIG_FILES_TIMESTAMPS_MAP_TTL) {
-      if (log.isDebugEnabled()) {
-        log.debug(String.format(
-            "Deleting previous config files timestamps map "
-                + "because it's older then %s m/s",
-            CONFIG_FILES_TIMESTAMPS_MAP_TTL));
-      }
-      TIMESTAMP_SER.delete();
-    }
-
-    try {
-      if (TIMESTAMP_SER.exists()) {
-        final ObjectInputStream in = new ObjectInputStream(new FileInputStream(
-            TIMESTAMP_SER));
-        try {
-          CONFIG_FILES_TIMESTAMPS = (Map<String, Long>) in.readObject();
-        }
-        finally {
-          if (in != null) {
-            in.close();
-          }
-        }
-      }
-    }
-    catch (Exception e) {
-      log.error("Error: ", e);
-    }
-    if (CONFIG_FILES_TIMESTAMPS == null) {
-      CONFIG_FILES_TIMESTAMPS = new HashMap<String, Long>();
-    }
   }
 }

@@ -3,26 +3,25 @@
  */
 package atg.test.util;
 
-import static atg.test.AtgDustCase.TIMESTAMP_SER;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -34,11 +33,14 @@ public class FileUtil {
 
   private static Logger log = Logger.getLogger(FileUtil.class);
 
+  private static boolean isDirty = false;;
+
   private static final File TMP_FILE = new File(System
       .getProperty("java.io.tmpdir")
       + File.separator + "atg-dust-rh.tmp");
 
-  private static Map<String, Long> CONFIG_FILES_TIMESTAMPS;
+  private static Map<String, Long> CONFIG_FILES_TIMESTAMPS,
+      CONFIG_FILES_GLOBAL_FORCE;
 
   /**
    * 
@@ -80,9 +82,13 @@ public class FileUtil {
 
     if (CONFIG_FILES_TIMESTAMPS != null
         && CONFIG_FILES_TIMESTAMPS.get(src) != null
-        && CONFIG_FILES_TIMESTAMPS.get(src) == srcFile.lastModified() && dstFile.exists()) {
+        && CONFIG_FILES_TIMESTAMPS.get(src) == srcFile.lastModified()
+        && dstFile.exists()) {
       if (log.isDebugEnabled()) {
-        log.debug(String.format("%s last modified hasn't changed and destination still exists", src));
+        log.debug(String
+            .format(
+                "%s last modified hasn't changed and destination still exists",
+                src));
       }
     }
     else {
@@ -151,52 +157,107 @@ public class FileUtil {
 
   public static void searchAndReplace(final String originalValue,
       final String newValue, final File file) throws IOException {
-    final BufferedWriter out = new BufferedWriter(new FileWriter(TMP_FILE));
-    final BufferedReader in = new BufferedReader(new FileReader(file));
-    String str;
-    while ((str = in.readLine()) != null) {
-      if (str.contains(originalValue)) {
-        out.write(newValue);
-      }
-      else {
-        out.write(str);
-        out.newLine();
+
+    if (CONFIG_FILES_GLOBAL_FORCE != null
+        && CONFIG_FILES_GLOBAL_FORCE.get(file.getPath()) != null
+        && CONFIG_FILES_GLOBAL_FORCE.get(file.getPath()) == file.lastModified()
+        && file.exists()) {
+      isDirty = false;
+      if (log.isDebugEnabled()) {
+        log.debug(String.format(
+            "%s last modified hasn't changed, no need for global scope force",
+            file.getPath()));
       }
     }
-    out.close();
-    in.close();
-    copyFile(TMP_FILE.getAbsolutePath(), file.getAbsolutePath());
+    else {
+      final BufferedWriter out = new BufferedWriter(new FileWriter(TMP_FILE));
+      final BufferedReader in = new BufferedReader(new FileReader(file));
+      String str;
+      while ((str = in.readLine()) != null) {
+        if (str.contains(originalValue)) {
+          out.write(newValue);
+        }
+        else {
+          out.write(str);
+          out.newLine();
+        }
+      }
+      out.close();
+      in.close();
+      FileUtils.copyFile(TMP_FILE, file);
+      CONFIG_FILES_GLOBAL_FORCE.put(file.getPath(), file.lastModified());
+      isDirty = true;
+    }
+
   }
 
-  public static List<File> getFileListing(File startDirectory)
-      throws FileNotFoundException {
+  public static void serialize(final File file, final Object o)
+      throws IOException {
 
-    if (!startDirectory.exists()) {
-      return new ArrayList<File>();
-    }
-    final List<File> result = new ArrayList<File>();
-    for (final File file : startDirectory.listFiles()) {
-      result.add(file); // always add, even if directory
-      if (!file.isFile()) {
-        // must be a directory
-        // recursive call!
-        List<File> deeperList = getFileListing(file);
-        result.addAll(deeperList);
-      }
-
-    }
-    Collections.sort(result);
-    return result;
-  }
-
-  static {
-    TMP_FILE.deleteOnExit();
+    ObjectOutput out = null;
     try {
-      ObjectInputStream in = new ObjectInputStream(new FileInputStream(
-          TIMESTAMP_SER));
-      CONFIG_FILES_TIMESTAMPS = (Map<String, Long>) in.readObject();
+      out = new ObjectOutputStream(new FileOutputStream(file));
+      out.writeObject(o);
+    }
+    finally {
+      if (out != null) {
+        out.close();
+      }
+    }
+  }
+
+  public static Map<String, Long> deserialize(final File file,
+      final long serialTtl) {
+
+    if (file.exists()
+        && file.lastModified() < System.currentTimeMillis() - serialTtl) {
+      if (log.isDebugEnabled()) {
+        log.debug(String.format("Deleting previous serial %s "
+            + "because it's older then %s m/s", file.getPath(), serialTtl));
+      }
+      file.delete();
+    }
+
+    Map<String, Long> o = null;
+    try {
+      if (file.exists()) {
+        final ObjectInputStream in = new ObjectInputStream(new FileInputStream(
+            file));
+        try {
+          o = (Map<String, Long>) in.readObject();
+        }
+        finally {
+          if (in != null) {
+            in.close();
+          }
+        }
+      }
     }
     catch (Exception e) {
+      log.error("Error: ", e);
     }
+    if (o == null) {
+      o = new HashMap<String, Long>();
+    }
+    return o;
   }
+
+  public static void setConfigFilesTimestamps(
+      Map<String, Long> config_files_timestamps) {
+    CONFIG_FILES_TIMESTAMPS = config_files_timestamps;
+  }
+
+  public static void setConfigFilesGlobalForce(
+      Map<String, Long> config_files_global_force) {
+    CONFIG_FILES_GLOBAL_FORCE = config_files_global_force;
+  }
+
+  public static boolean isDirty() {
+    return isDirty;
+  }
+
+  public static Map<String, Long> getConfigFilesTimestamps() {
+    return CONFIG_FILES_GLOBAL_FORCE;
+  }
+
 }
