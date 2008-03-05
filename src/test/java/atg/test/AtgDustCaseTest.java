@@ -83,11 +83,8 @@ public class AtgDustCaseTest extends TestCase {
 
   public void _testCopyConfigurationFiles() throws Exception {
     atgCase.copyConfigurationFiles(
-        new String[] { "/Users/robert/tmp/back_ex/atgdust-lots-of-props",  "/Users/robert/tmp/back_ex/atgdust-lots-of-props/tmp2" },
-        "/tmp/atgdust", "excludes");
-    atgCase.copyConfigurationFiles(
-        new String[] { "/Users/robert/tmp/back_ex/atgdust-lots-of-props/tmp1",  "/Users/robert/tmp/back_ex/atgdust-lots-of-props/tmp2" },
-        "/tmp/atgdust", "excludes");
+        new String[] { "/Users/robert/tmp/back_ex/atgdust-lots-of-props" },
+        "/tmp/atgdust", ".svn");
     atgCase.copyConfigurationFiles(
         new String[] { "/Users/robert/tmp/back_ex/atgdust-lots-of-props/tmp2",  "/Users/robert/tmp/back_ex/atgdust-lots-of-props/tmp2" },
         "/tmp/atgdust", "excludes");

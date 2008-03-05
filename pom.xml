@@ -17,7 +17,7 @@
   This page will walk you through the process of running a basic test which starts Nucleus.
   
  
-  After that, read the other getting started guides to decribe how to create standalone Junit tests which can startup repositories and use the DynamoHttpServletResponse classes.
+  After that, read the other getting started guides to describe how to create standalone Junit tests which can startup repositories and use the DynamoHttpServletResponse classes.
   
   
   </description>

@@ -2,6 +2,7 @@ package atg.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -129,47 +130,14 @@ public class AtgDustCase extends TestCase {
       log.debug("Copying configuration files and "
           + "forcing global scope on all configs");
     }
-    boolean isDirty = false;
-    for (final String src : srcDirs) {
-      for (final File file : (List<File>) FileUtils.listFiles(new File(src),
-          null, true)) {
-        if (!Arrays.asList(excludes == null ? new String[] {} : excludes)
-            .contains(file.getName())
-            && !file.getPath().contains(".svn") && file.isFile()) {
-          if (CONFIG_FILES_TIMESTAMPS.get(file.getPath()) != null
-              && file.lastModified() == CONFIG_FILES_TIMESTAMPS.get(file
-                  .getPath())) {
-          }
-          else {
-            CONFIG_FILES_TIMESTAMPS.put(file.getPath(), file.lastModified());
-            isDirty = true;
-          }
-        }
-      }
-    }
-    if (isDirty) {
-      if (log.isDebugEnabled()) {
-        log
-            .debug("Config files timestamps map is dirty an will be re serialized");
-      }
-
-      FileUtil.serialize(TIMESTAMP_SER, CONFIG_FILES_TIMESTAMPS);
-
-    }
-
-    FileUtil.setConfigFilesTimestamps(CONFIG_FILES_TIMESTAMPS);
-    FileUtil.setConfigFilesGlobalForce(CONFIG_FILES_GLOBAL_FORCE);
+    preCopyingOfConfigurationFiles(srcDirs, excludes);
 
     for (final String srcs : srcDirs) {
       FileUtil.copyDirectory(srcs, dstDir, Arrays
           .asList(excludes == null ? new String[] {} : excludes));
     }
 
-    // forcing global scope on all property files
-    for (final File file : (List<File>) FileUtils.listFiles(new File(dstDir),
-        new String[] { "properties" }, true)) {
-      new FileUtil().searchAndReplace("$scope=", "$scope=global\n", file);
-    }
+    forceGlobalScopeOnAllConfigs(dstDir);
 
     if (FileUtil.isDirty()) {
       FileUtil.serialize(GLOBAL_FORCE_SER, FileUtil.getConfigFilesTimestamps());
@@ -186,15 +154,14 @@ public class AtgDustCase extends TestCase {
   protected final void manageConfigurationFiles(Properties properties)
       throws IOException {
 
-    String atgConfigPath = properties.getProperty("atgConfigsJars").replace("/",
-        File.separator);
+    String atgConfigPath = properties.getProperty("atgConfigsJars").replace(
+        "/", File.separator);
     String[] configs = properties.getProperty("configs").split(",");
     String environment = properties.getProperty("environment");
     String localConfig = properties.getProperty("localConfig");
     String[] excludes = properties.getProperty("excludes").split(",");
     String rootConfigDir = properties.getProperty("rootConfigDir").replace("/",
         File.separator);
-    ;
     int i = 0;
     for (String conf : configs) {
       String src = conf.split(" to ")[0];
@@ -219,43 +186,14 @@ public class AtgDustCase extends TestCase {
     this.atgConfigPath = atgConfigPath;
     this.environment = environment;
     this.localConfig = localConfig;
-    //The Last dstdir is used for Configuration location
+    // The Last dstdir is used for Configuration location
     setConfigurationLocation(distsAsList.get(distsAsList.size() - 1));
 
     if (log.isDebugEnabled()) {
       log.debug("Copying configuration files and "
           + "forcing global scope on all configs");
     }
-    boolean isDirty = false;
-    for (final String src : srcsAsList) {
-      for (final File file : (List<File>) FileUtils.listFiles(new File(src),
-          null, true)) {
-        if (!Arrays.asList(excludes == null ? new String[] {} : excludes)
-            .contains(file.getName())
-            && !file.getPath().contains(".svn") && file.isFile()) {
-          if (CONFIG_FILES_TIMESTAMPS.get(file.getPath()) != null
-              && file.lastModified() == CONFIG_FILES_TIMESTAMPS.get(file
-                  .getPath())) {
-          }
-          else {
-            CONFIG_FILES_TIMESTAMPS.put(file.getPath(), file.lastModified());
-            isDirty = true;
-          }
-        }
-      }
-    }
-    if (isDirty) {
-      if (log.isDebugEnabled()) {
-        log
-            .debug("Config files timestamps map is dirty an will be re serialized");
-      }
-
-      FileUtil.serialize(TIMESTAMP_SER, CONFIG_FILES_TIMESTAMPS);
-
-    }
-
-    FileUtil.setConfigFilesTimestamps(CONFIG_FILES_TIMESTAMPS);
-    FileUtil.setConfigFilesGlobalForce(CONFIG_FILES_GLOBAL_FORCE);
+    preCopyingOfConfigurationFiles(srcsAsList.toArray(new String[]{}), excludes);
 
     log.info("Copying configuration files and "
         + "forcing global scope on all configs");
@@ -270,15 +208,9 @@ public class AtgDustCase extends TestCase {
 
     // forcing global scope on all configurations
     for (String config : configs) {
-
       String dstDir = config.split(" to ")[1];
-
       // forcing global scope on all property files
-      for (final File file : (List<File>) FileUtils.listFiles(new File(dstDir),
-          new String[] { "properties" }, true)) {
-        log.debug(file.getAbsolutePath());
-        new FileUtil().searchAndReplace("$scope=", "$scope=global\n", file);
-      }
+      forceGlobalScopeOnAllConfigs(dstDir);
     }
     this.configDstsDir = distsAsList;
 
@@ -497,7 +429,7 @@ public class AtgDustCase extends TestCase {
         fullConfigPath = fullConfigPath
             + localConfig.replace("/", File.separator);
 
-      log.info("The full config path used to start nucleus: "+fullConfigPath);
+      log.info("The full config path used to start nucleus: " + fullConfigPath);
 
       nucleus = Nucleus.startNucleus(new String[] { fullConfigPath });
 
@@ -528,6 +460,75 @@ public class AtgDustCase extends TestCase {
       ((GenericService) service).addLogListener(new ConsoleLogListener());
     }
     return service;
+  }
+
+  private void preCopyingOfConfigurationFiles(final String[] srcDirs, final String excludes[]) throws IOException {
+    boolean isDirty = false;
+    for (final String src : srcDirs) {
+      for (final File file : (List<File>) FileUtils.listFiles(new File(src),
+          null, true)) {
+        if (!Arrays.asList(excludes == null ? new String[] {} : excludes)
+            .contains(file.getName())
+            && !file.getPath().contains(".svn") && file.isFile()) {
+          if (CONFIG_FILES_TIMESTAMPS.get(file.getPath()) != null
+              && file.lastModified() == CONFIG_FILES_TIMESTAMPS.get(file
+                  .getPath())) {
+          }
+          else {
+            CONFIG_FILES_TIMESTAMPS.put(file.getPath(), file.lastModified());
+            isDirty = true;
+          }
+        }
+      }
+    }
+    if (isDirty) {
+      if (log.isDebugEnabled()) {
+        log
+            .debug("Config files timestamps map is dirty an will be re serialized");
+      }
+
+      FileUtil.serialize(TIMESTAMP_SER, CONFIG_FILES_TIMESTAMPS);
+    }
+
+    FileUtil.setConfigFilesTimestamps(CONFIG_FILES_TIMESTAMPS);
+    FileUtil.setConfigFilesGlobalForce(CONFIG_FILES_GLOBAL_FORCE);
+  }
+
+  private void forceGlobalScopeOnAllConfigs(final String dstDir)
+      throws IOException {
+    try {
+      Class<?> cls = Class
+          .forName("com.bsdroot.util.concurrent.SchedulerService");
+
+      List<File> payload = (List<File>) FileUtils.listFiles(new File(dstDir),
+          new String[] { "properties" }, true);
+
+      Method schedule = cls.getMethod("schedule",
+          new Class[] { int.class, List.class, Class.class, String.class,
+              Class[].class, ArrayList.class });
+
+      ArrayList<Object> list = new ArrayList<Object>();
+      list.add("$scope=");
+      list.add("$scope=global\n");
+      schedule.invoke(cls.newInstance(), 4, payload, FileUtil.class,
+          "searchAndReplace", new Class[] { String.class, String.class,
+              File.class }, list);
+    }
+    catch (Exception e) {
+      if (e instanceof ClassNotFoundException) {
+        log
+            .debug("com.bsdroot.util.concurrent experimantal performance library not found, continuing with std impl");
+      }
+      else {
+        log.error("Error: ", e);
+      }
+      // forcing global scope on all property files
+      for (final File file : (List<File>) FileUtils.listFiles(new File(dstDir),
+          new String[] { "properties" }, true)) {
+        new FileUtil().searchAndReplace("$scope=", "$scope=global\n", file);
+      }
+    }
+
   }
 
   static {
