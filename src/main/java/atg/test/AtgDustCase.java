@@ -3,6 +3,7 @@ package atg.test;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -88,6 +89,10 @@ public class AtgDustCase extends TestCase {
   private File configurationLocation;
   private Nucleus nucleus;
   private boolean isDebug;
+  private String atgConfigPath;
+  private String environment;
+  private String localConfig;
+  private List<String> configDstsDir;
   private static Map<String, Long> CONFIG_FILES_TIMESTAMPS,
       CONFIG_FILES_GLOBAL_FORCE = null;
 
@@ -159,16 +164,123 @@ public class AtgDustCase extends TestCase {
       FileUtil.copyDirectory(srcs, dstDir, Arrays
           .asList(excludes == null ? new String[] {} : excludes));
     }
-    
+
     // forcing global scope on all property files
-    for (final File file :  (List<File>) FileUtils.listFiles(new File(dstDir),
+    for (final File file : (List<File>) FileUtils.listFiles(new File(dstDir),
         new String[] { "properties" }, true)) {
-      FileUtil.searchAndReplace("$scope=", "$scope=global\n", file);
+      new FileUtil().searchAndReplace("$scope=", "$scope=global\n", file);
     }
 
     if (FileUtil.isDirty()) {
       FileUtil.serialize(GLOBAL_FORCE_SER, FileUtil.getConfigFilesTimestamps());
     }
+
+  }
+
+  /**
+   * Donated by Remi Dupuis
+   * 
+   * @param properties
+   * @throws IOException
+   */
+  protected final void manageConfigurationFiles(Properties properties)
+      throws IOException {
+
+    String atgConfigPath = properties.getProperty("atgConfigsJars").replace("/",
+        File.separator);
+    String[] configs = properties.getProperty("configs").split(",");
+    String environment = properties.getProperty("environment");
+    String localConfig = properties.getProperty("localConfig");
+    String[] excludes = properties.getProperty("excludes").split(",");
+    String rootConfigDir = properties.getProperty("rootConfigDir").replace("/",
+        File.separator);
+    ;
+    int i = 0;
+    for (String conf : configs) {
+      String src = conf.split(" to ")[0];
+      String dst = conf.split(" to ")[1];
+      configs[i] = (rootConfigDir + "/" + src.trim() + " to " + rootConfigDir
+          + "/" + dst.trim()).replace("/", File.separator);
+      i++;
+    }
+    i = 0;
+    for (String dir : excludes) {
+      excludes[i] = dir.trim();
+      i++;
+    }
+    final List<String> srcsAsList = new ArrayList<String>();
+    final List<String> distsAsList = new ArrayList<String>();
+
+    for (String config : configs) {
+      srcsAsList.add(config.split(" to ")[0]);
+      distsAsList.add(config.split(" to ")[1]);
+    }
+
+    this.atgConfigPath = atgConfigPath;
+    this.environment = environment;
+    this.localConfig = localConfig;
+    //The Last dstdir is used for Configuration location
+    setConfigurationLocation(distsAsList.get(distsAsList.size() - 1));
+
+    if (log.isDebugEnabled()) {
+      log.debug("Copying configuration files and "
+          + "forcing global scope on all configs");
+    }
+    boolean isDirty = false;
+    for (final String src : srcsAsList) {
+      for (final File file : (List<File>) FileUtils.listFiles(new File(src),
+          null, true)) {
+        if (!Arrays.asList(excludes == null ? new String[] {} : excludes)
+            .contains(file.getName())
+            && !file.getPath().contains(".svn") && file.isFile()) {
+          if (CONFIG_FILES_TIMESTAMPS.get(file.getPath()) != null
+              && file.lastModified() == CONFIG_FILES_TIMESTAMPS.get(file
+                  .getPath())) {
+          }
+          else {
+            CONFIG_FILES_TIMESTAMPS.put(file.getPath(), file.lastModified());
+            isDirty = true;
+          }
+        }
+      }
+    }
+    if (isDirty) {
+      if (log.isDebugEnabled()) {
+        log
+            .debug("Config files timestamps map is dirty an will be re serialized");
+      }
+
+      FileUtil.serialize(TIMESTAMP_SER, CONFIG_FILES_TIMESTAMPS);
+
+    }
+
+    FileUtil.setConfigFilesTimestamps(CONFIG_FILES_TIMESTAMPS);
+    FileUtil.setConfigFilesGlobalForce(CONFIG_FILES_GLOBAL_FORCE);
+
+    log.info("Copying configuration files and "
+        + "forcing global scope on all configs");
+    // copy all files to it's destination
+    for (String config : configs) {
+      FileUtil.copyDirectory(config.split(" to ")[0], config.split(" to ")[1],
+          Arrays.asList(excludes == null ? new String[] {} : excludes));
+      log.debug(config);
+      log.debug(config.split(" to ")[0]);
+      log.debug(config.split(" to ")[1]);
+    }
+
+    // forcing global scope on all configurations
+    for (String config : configs) {
+
+      String dstDir = config.split(" to ")[1];
+
+      // forcing global scope on all property files
+      for (final File file : (List<File>) FileUtils.listFiles(new File(dstDir),
+          new String[] { "properties" }, true)) {
+        log.debug(file.getAbsolutePath());
+        new FileUtil().searchAndReplace("$scope=", "$scope=global\n", file);
+      }
+    }
+    this.configDstsDir = distsAsList;
 
   }
 
@@ -361,8 +473,34 @@ public class AtgDustCase extends TestCase {
       System.setProperty("atg.license.read", "true");
       // TODO: Can I safely keep this one disabled?
       // NucleusServlet.addNamingFactoriesAndProtocolHandlers();
-      nucleus = Nucleus.startNucleus(new String[] { configpath
-          .getAbsolutePath() });
+
+      if (environment != null && !environment.equals("")) {
+        for (String property : environment.split(";")) {
+          String[] keyvalue = property.split("=");
+          System.setProperty(keyvalue[0], keyvalue[1]);
+          log.info(keyvalue[0] + "=" + keyvalue[1]);
+        }
+      }
+
+      String fullConfigPath = "";
+      if (atgConfigPath != null && !atgConfigPath.equals("")) {
+        fullConfigPath = atgConfigPath + ";" + fullConfigPath;
+      }
+      if (configDstsDir != null && configDstsDir.size() > 0) {
+        for (String dst : configDstsDir) {
+          fullConfigPath = fullConfigPath + dst + ";";
+        }
+      }
+      else
+        fullConfigPath = configpath.getAbsolutePath();
+      if (atgConfigPath != null && !atgConfigPath.equals(""))
+        fullConfigPath = fullConfigPath
+            + localConfig.replace("/", File.separator);
+
+      log.info("The full config path used to start nucleus: "+fullConfigPath);
+
+      nucleus = Nucleus.startNucleus(new String[] { fullConfigPath });
+
     }
   }
 

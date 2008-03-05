@@ -35,10 +35,6 @@ public class FileUtil {
 
   private static boolean isDirty = false;;
 
-  private static final File TMP_FILE = new File(System
-      .getProperty("java.io.tmpdir")
-      + File.separator + "atg-dust-rh.tmp");
-
   private static Map<String, Long> CONFIG_FILES_TIMESTAMPS,
       CONFIG_FILES_GLOBAL_FORCE;
 
@@ -92,13 +88,11 @@ public class FileUtil {
       }
     }
     else {
-      if (!src.contains(TMP_FILE.getPath())) {
-        if (log.isDebugEnabled()) {
-          log.debug(String.format("Copy: src file %s ts %s : ", src, srcFile
-              .lastModified()));
-          log.debug(String.format("Copy: dest file %s ts %s : ", dst, dstFile
-              .lastModified()));
-        }
+      if (log.isDebugEnabled()) {
+        log.debug(String.format("Copy: src file %s ts %s : ", src, srcFile
+            .lastModified()));
+        log.debug(String.format("Copy: dest file %s ts %s : ", dst, dstFile
+            .lastModified()));
       }
 
       final FileChannel srcChannel = new FileInputStream(src).getChannel();
@@ -155,8 +149,13 @@ public class FileUtil {
     }
   }
 
-  public static void searchAndReplace(final String originalValue,
+  public void searchAndReplace(final String originalValue,
       final String newValue, final File file) throws IOException {
+    
+    final File TMP_FILE = new File(System
+        .getProperty("java.io.tmpdir")
+        + File.separator + System.currentTimeMillis()+this+"-atg-dust-rh.tmp");
+    TMP_FILE.deleteOnExit();
 
     if (CONFIG_FILES_GLOBAL_FORCE != null
         && CONFIG_FILES_GLOBAL_FORCE.get(file.getPath()) != null
@@ -165,7 +164,7 @@ public class FileUtil {
       isDirty = false;
       if (log.isDebugEnabled()) {
         log.debug(String.format(
-            "%s last modified hasn't changed, no need for global scope force",
+            "%s last modified hasn't changed and file still exists, no need for global scope force",
             file.getPath()));
       }
     }
