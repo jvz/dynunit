@@ -96,6 +96,7 @@ public class AtgDustCase extends TestCase {
   private List<String> configDstsDir;
   private static Map<String, Long> CONFIG_FILES_TIMESTAMPS,
       CONFIG_FILES_GLOBAL_FORCE = null;
+  private static Class<?> perflib;
 
   public static final File TIMESTAMP_SER = new File(System
       .getProperty("java.io.tmpdir")
@@ -193,7 +194,8 @@ public class AtgDustCase extends TestCase {
       log.debug("Copying configuration files and "
           + "forcing global scope on all configs");
     }
-    preCopyingOfConfigurationFiles(srcsAsList.toArray(new String[]{}), excludes);
+    preCopyingOfConfigurationFiles(srcsAsList.toArray(new String[] {}),
+        excludes);
 
     log.info("Copying configuration files and "
         + "forcing global scope on all configs");
@@ -430,7 +432,8 @@ public class AtgDustCase extends TestCase {
             + localConfig.replace("/", File.separator);
 
       log.info("The full config path used to start nucleus: " + fullConfigPath);
-
+      System.setProperty("atg.configpath", new File(fullConfigPath)
+          .getAbsolutePath());
       nucleus = Nucleus.startNucleus(new String[] { fullConfigPath });
 
     }
@@ -462,7 +465,8 @@ public class AtgDustCase extends TestCase {
     return service;
   }
 
-  private void preCopyingOfConfigurationFiles(final String[] srcDirs, final String excludes[]) throws IOException {
+  private void preCopyingOfConfigurationFiles(final String[] srcDirs,
+      final String excludes[]) throws IOException {
     boolean isDirty = false;
     for (final String src : srcDirs) {
       for (final File file : (List<File>) FileUtils.listFiles(new File(src),
@@ -496,36 +500,31 @@ public class AtgDustCase extends TestCase {
 
   private void forceGlobalScopeOnAllConfigs(final String dstDir)
       throws IOException {
-    try {
-      Class<?> cls = Class
-          .forName("com.bsdroot.util.concurrent.SchedulerService");
-
-      List<File> payload = (List<File>) FileUtils.listFiles(new File(dstDir),
-          new String[] { "properties" }, true);
-
-      Method schedule = cls.getMethod("schedule",
-          new Class[] { int.class, List.class, Class.class, String.class,
-              Class[].class, ArrayList.class });
-
-      ArrayList<Object> list = new ArrayList<Object>();
-      list.add("$scope=");
-      list.add("$scope=global\n");
-      schedule.invoke(cls.newInstance(), 4, payload, FileUtil.class,
-          "searchAndReplace", new Class[] { String.class, String.class,
-              File.class }, list);
-    }
-    catch (Exception e) {
-      if (e instanceof ClassNotFoundException) {
-        log
-            .debug("com.bsdroot.util.concurrent experimantal performance library not found, continuing with std impl");
-      }
-      else {
-        log.error("Error: ", e);
-      }
-      // forcing global scope on all property files
+    if (perflib == null) {
       for (final File file : (List<File>) FileUtils.listFiles(new File(dstDir),
           new String[] { "properties" }, true)) {
         new FileUtil().searchAndReplace("$scope=", "$scope=global\n", file);
+      }
+    }
+    else {
+      try {
+        List<File> payload = (List<File>) FileUtils.listFiles(new File(dstDir),
+            new String[] { "properties" }, true);
+
+        Method schedule = perflib.getMethod("schedule", new Class[] {
+            int.class, List.class, Class.class, String.class, Class[].class,
+            ArrayList.class });
+
+        ArrayList<Object> list = new ArrayList<Object>();
+        list.add("$scope=");
+        list.add("$scope=global\n");
+        schedule.invoke(perflib.newInstance(), 4, payload, FileUtil.class,
+            "searchAndReplace", new Class[] { String.class, String.class,
+                File.class }, list);
+      }
+      catch (Exception e) {
+        log.error("Error: ", e);
+
       }
     }
 
@@ -549,5 +548,13 @@ public class AtgDustCase extends TestCase {
     CONFIG_FILES_GLOBAL_FORCE = FileUtil.deserialize(GLOBAL_FORCE_SER,
         SERIAL_TTL);
 
+    try {
+      perflib = Class.forName("com.bsdroot.util.concurrent.SchedulerService");
+    }
+    catch (ClassNotFoundException e) {
+      log
+          .debug("com.bsdroot.util.concurrent experimantal performance library not found, continuing normally");
+    }
   }
+
 }
