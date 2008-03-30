@@ -27,6 +27,7 @@ import atg.test.configuration.RepositoryConfiguration;
 import atg.test.util.FileUtil;
 import atg.test.util.RepositoryManager;
 
+
 /**
  * Replacement base class for {@link AtgDustTestCase}. Extend this class and
  * use the following 'pattern' whenever you want to junit test some atg
