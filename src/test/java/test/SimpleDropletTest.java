@@ -48,7 +48,7 @@ public class SimpleDropletTest extends AtgDustCase {
   private SimpleDroplet simpleDroplet;
   @SuppressWarnings("unused")
   private static Logger log = Logger.getLogger(SimpleDropletTest.class);
-  ServletTestUtils mServletTestUtils = null;
+  private ServletTestUtils mServletTestUtils = null;
 
   /*
    * (non-Javadoc)

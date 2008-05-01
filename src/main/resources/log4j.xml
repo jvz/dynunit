@@ -7,42 +7,46 @@
 <!--                                                                       -->
 <!-- ===================================================================== -->
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
-	debug="false">
+  debug="false">
 
-	<!-- ============================== -->
-	<!-- Append messages to the console -->
-	<!-- ============================== -->
-	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern"
-				value="%d %p [%c] [%M] [Thread:%t] - [%m]%n" />
-		</layout>
-	</appender>
+  <!-- ============================== -->
+  <!-- Append messages to the console -->
+  <!-- ============================== -->
+  <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern"
+        value="%d %p [%c] [%M] [Thread:%t] - [%m]%n" />
+    </layout>
+  </appender>
 
-	<appender name="FILE"
-		class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="Threshold" value="INFO" />
-		<param name="File" value="atgdust.log" />
-		<param name="DatePattern" value="'.'yyyy-MM-dd" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern"
-				value="%d %p [%c] [%M] [Thread:%t] - [%m]%n" />
-		</layout>
-	</appender>
+  <appender name="FILE"
+    class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="Threshold" value="INFO" />
+    <param name="File" value="atgdust.log" />
+    <param name="DatePattern" value="'.'yyyy-MM-dd" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern"
+        value="%d %p [%c] [%M] [Thread:%t] - [%m]%n" />
+    </layout>
+  </appender>
 
-	<!-- ================ -->
-	<!-- Limit categories -->
-	<!-- ================ -->
-	<category name="atg.test">
-		<priority value="INFO" />
-	</category>
+  <!-- ================ -->
+  <!-- Limit categories -->
+  <!-- ================ -->
+  <category name="atg.test">
+    <priority value="INFO" />
+  </category>
+  
+  <category name="atg.test.AtgDustCase">
+    <priority value="DEBUG" />
+  </category>
 
-	<!-- ======================= -->
-	<!-- Setup the Root category -->
-	<!-- ======================= -->
-	<root>
-		<priority value="DEBUG" />
-		<!--appender-ref ref="FILE" /-->
-		<appender-ref ref="CONSOLE" />
-	</root>
+  <!-- ======================= -->
+  <!-- Setup the Root category -->
+  <!-- ======================= -->
+  <root>
+    <priority value="DEBUG" />
+    <!--appender-ref ref="FILE" /-->
+    <appender-ref ref="CONSOLE" />
+  </root>
 </log4j:configuration>

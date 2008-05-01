@@ -27,7 +27,6 @@ import atg.test.configuration.RepositoryConfiguration;
 import atg.test.util.FileUtil;
 import atg.test.util.RepositoryManager;
 
-
 /**
  * Replacement base class for {@link AtgDustTestCase}. Extend this class and
  * use the following 'pattern' whenever you want to junit test some atg
@@ -514,9 +513,9 @@ public class AtgDustCase extends TestCase {
 
         Method schedule = perflib.getMethod("schedule", new Class[] {
             int.class, List.class, Class.class, String.class, Class[].class,
-            ArrayList.class });
+            List.class });
 
-        ArrayList<Object> list = new ArrayList<Object>();
+        List<Object> list = new ArrayList<Object>();
         list.add("$scope=");
         list.add("$scope=global\n");
         schedule.invoke(perflib.newInstance(), 4, payload, FileUtil.class,
@@ -525,7 +524,6 @@ public class AtgDustCase extends TestCase {
       }
       catch (Exception e) {
         log.error("Error: ", e);
-
       }
     }
 
