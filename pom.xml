@@ -1,29 +1,22 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>atg</groupId>
   <artifactId>atgdust</artifactId>
   <name>ATG DUST</name>
-
-
-  <!-- HHMM-D-M-Y -->
-  <version>1252-01-05-2008-SNAPSHOT</version>
-  <description>
-    ATG DUST is a framework for building JUnit tests for applications built on the ATG Dynamo
-    platform. This framework allows one to quickly write test code that depends up Nucleus or ATG
-    Repositories. By using this framework one can drastically cut down on development time. It takes
-    only a few seconds to start up a test with a repository, but it may take multiple minutes to
-    start up an application server.
-
-    To get started with DUST, take a look at http://atgdust.sourceforge.net/first-test.html. This
-    page will walk you through the process of running a basic test which starts Nucleus.
-
-
-    After that, read the other getting started guides to describe how to create standalone Junit
-    tests which can startup repositories and use the DynamoHttpServletResponse classes.
-
-
+  <version>0.6-SNAPSHOT</version>
+  <description> ATG DUST is a framework for building JUnit tests for
+    applications built on the ATG Dynamo platform. This framework allows
+    one to quickly write test code that depends up Nucleus or ATG
+    Repositories. By using this framework one can drastically cut down
+    on development time. It takes only a few seconds to start up a test
+    with a repository, but it may take multiple minutes to start up an
+    application server. To get started with DUST, take a look at
+    http://atgdust.sourceforge.net/first-test.html. This page will walk
+    you through the process of running a basic test which starts
+    Nucleus. After that, read the other getting started guides to
+    describe how to create standalone Junit tests which can startup
+    repositories and use the DynamoHttpServletResponse classes. 
   </description>
   <url>http://atgdust.sourceforge.net/</url>
   <issueManagement>
@@ -76,13 +69,12 @@
   <scm>
     <connection>scm:svn:https://atgdust.svn.sourceforge.net/svnroot/atgdust</connection>
     <developerConnection>
-      scm:svn:https://atgdust.svn.sourceforge.net/svnroot/atgdust
+      scm:svn:https://atgdust.svn.sourceforge.net/svnroot/atgdust 
     </developerConnection>
     <url>http://atgdust.svn.sourceforge.net/viewvc/atgdust/</url>
   </scm>
   <build>
     <plugins>
-
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
@@ -97,8 +89,6 @@
           </filesets>
         </configuration>
       </plugin>
-
-
       <plugin>
         <artifactId>maven-scm-plugin</artifactId>
         <configuration>
@@ -113,24 +103,46 @@
         </configuration>
       </plugin>
       <!--
-        <plugin>
-        <artifactId>maven-clover-plugin</artifactId>
-        <executions>
-        <execution>
-        <phase>pre-site</phase>
-        <goals>
-        <goal>instrument</goal>
-        </goals>
-        </execution>
-        </executions>
-        <configuration>
-        <jdk>1.5</jdk>
-        </configuration>
-        </plugin>
+        <plugin> <artifactId>maven-clover-plugin</artifactId>
+        <executions> <execution> <phase>pre-site</phase> <goals>
+        <goal>instrument</goal> </goals> </execution> </executions>
+        <configuration> <jdk>1.5</jdk> </configuration> </plugin>
       -->
     </plugins>
   </build>
   <dependencies>
+  <!--  -->
+  <!-- START: ATG Jars -->
+  <!--  -->
+    <!--
+      NOTE: You must import DAS/classes.jar from an ATG installation
+      into your maven repository to satify this dependency. For example:
+      mvn install:install-file -DgroupId=atg -DartifactId=das
+      -Dversion=2007.1p1 -Dpackaging=jar
+      -Dfile=c:\ATG\ATG2007.1\DAS\lib\classes.jar -DgeneratePom=true
+    -->
+    <dependency>
+      <groupId>atg</groupId>
+      <artifactId>das</artifactId>
+      <version>2007.1p1</version>
+      <scope>provided</scope>
+    </dependency>
+    <!--
+      NOTE: You must import DAS/resources.jar from an ATG installation
+      into your maven repository to satisfy this dependency. For
+      example: mvn install:install-file -DgroupId=atg
+      -DartifactId=das-resources -Dversion=2007.1p1 -Dpackaging=jar
+      -Dfile=c:\ATG\ATG2007.1\DAS\lib\resources.jar -DgeneratePom=true
+    -->
+    <dependency>
+      <groupId>atg</groupId>
+      <artifactId>das-resources</artifactId>
+      <version>2007.1p1</version>
+      <scope>provided</scope>
+    </dependency>
+    <!--  -->
+    <!-- STOP: ATG Jars -->
+    <!--  -->
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
@@ -146,34 +158,6 @@
       <artifactId>junit</artifactId>
       <version>3.8.2</version>
     </dependency>
-    <!-- NOTE: You must import DAS/classes.jar from 
-      an ATG installation into your maven repository
-      to satify this dependency.
-      For example:
-      mvn deploy:deploy-file -DgroupId=atg -DartifactId=das -Dversion=2007.1 -Dpackaging=jar 
-      -Dfile=c:\ATG\ATG2007.1\DAS\lib\classes.jar -DgeneratePom=true -Durl=file://c:\maven\repository -DlocalRepository=local
-    -->
-    <dependency>
-      <groupId>atg</groupId>
-      <artifactId>das</artifactId>
-      <version>2007.1</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- NOTE: You must import DAS/resources.jar from 
-      an ATG installation into your maven repository
-      to satisfy this dependency.
-      For example:
-      mvn deploy:deploy-file -DgroupId=atg -DartifactId=das-resources -Dversion=2007.1 -Dpackaging=jar 
-      -Dfile=c:\ATG\ATG2007.1\DAS\lib\resources.jar -DgeneratePom=true -Durl=file://c:\maven\repository -DlocalRepository=local
-    -->
-    <dependency>
-      <groupId>atg</groupId>
-      <artifactId>das-resources</artifactId>
-      <version>2007.1</version>
-      <scope>provided</scope>
-    </dependency>
-
     <dependency>
       <groupId>hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
@@ -184,53 +168,41 @@
       <artifactId>servlet-api</artifactId>
       <version>2.4</version>
     </dependency>
-
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jsp-api</artifactId>
       <version>2.0</version>
     </dependency>
-
-    <!-- NOTE: You must import mysql jdbc drive from 
-      into your maven repository to satisfy this dependency.
-      For example:
-      mvn deploy:deploy-file -DgroupId=mysql-connector -DartifactId=mysql-connector-java -Dversion=5.0.7 -Dpackaging=jar 
+    <!--
+      NOTE: You must import mysql jdbc drive from into your maven
+      repository to satisfy this dependency. For example: mvn
+      deploy:deploy-file -DgroupId=mysql-connector
+      -DartifactId=mysql-connector-java -Dversion=5.0.7 -Dpackaging=jar
       -Dfile=c:\tmp\mysql-5.0.7-java-connector.jar -DgeneratePom=true
     -->
-
-    <!--dependency>
+    <dependency>
       <groupId>mysql-connector</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>5.0.7</version>
       <scope>provided</scope>
-      </dependency-->
-
+    </dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>1.4</version>
     </dependency>
-
-  <!--
-    <dependency>
-      <groupId>com.bsdroot.util.parallelization</groupId>
+    <!--
+      <dependency> <groupId>com.bsdroot.util.parallelization</groupId>
       <artifactId>parallelization-util</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-   -->
-
+      <version>1.0-SNAPSHOT</version> </dependency>
+    -->
   </dependencies>
   <reporting>
     <plugins>
       <!--
-        <plugin>
-        <artifactId>maven-clover-plugin</artifactId>
-        <configuration>
-        <jdk>1.5</jdk>
-        </configuration>
-        </plugin>
+        <plugin> <artifactId>maven-clover-plugin</artifactId>
+        <configuration> <jdk>1.5</jdk> </configuration> </plugin>
       -->
-
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
