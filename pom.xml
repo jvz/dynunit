@@ -120,6 +120,7 @@
       mvn install:install-file -DgroupId=atg -DartifactId=das
       -Dversion=2007.1p1 -Dpackaging=jar
       -Dfile=c:\ATG\ATG2007.1\DAS\lib\classes.jar -DgeneratePom=true
+      See: src/main/bin/mavenInstall.bat for a windows batch script to do this for you
     -->
     <dependency>
       <groupId>atg</groupId>
@@ -179,13 +180,13 @@
       deploy:deploy-file -DgroupId=mysql-connector
       -DartifactId=mysql-connector-java -Dversion=5.0.7 -Dpackaging=jar
       -Dfile=c:\tmp\mysql-5.0.7-java-connector.jar -DgeneratePom=true
-    -->
     <dependency>
       <groupId>mysql-connector</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>5.0.7</version>
       <scope>provided</scope>
     </dependency>
+    -->
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>

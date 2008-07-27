@@ -1,0 +1,100 @@
+Testing with DynamoHttpServletRequest and DynamoHttpServletResponse
+
+  Many ATG implementations require writing your own Dynamo Servlets. These may consist
+  of "pipeline servlets" or "droplets". Also most ATG applications use "formhandlers" to gather information from a form on a web page. All of this code is likely to require use of the DynamoHttpServletRequest/Response pair. Since these are such common classes, DUST has included some utility code to make it simpler to write tests for code that depends upon these classes.
+
+* Creating the request / response pair
+
+  Here's a simple example showing creation of the request and response pair.
+
++------------------------------------------+
+  Map<String, String> params = new HashMap<String, String>();
+  // Add some request parameters, though they don't get used in this test.
+  params.put("color", "red");    
+  // let's try 128k, should be more than enough
+  int bufferSize = 128 * 1024;
+  // Setup request/response pair
+  TestingDynamoHttpServletRequest request = mServletTestUtils.createDynamoHttpServletRequest(params, bufferSize, "GET");
+  DynamoHttpServletResponse response = mServletTestUtils.createDynamoHttpServletResponse();
++------------------------------------------+    
+
+ The interesting things to note here are:
+
+ * The returned request response are actually a subclass of DynamoHttpServletRequest and DynamoHttpServletResponse.
+
+ * The "bufferSize" parameter in createDynamoHttpServletRequest is the size of a backing java.nio.ByteBuffer used to hold content written to and from the request. Choose a size based upon how much you plan to write to output streams in your test.
+
+ * Finally, the third parameter is the HTTP method. Usually this will be GET, but you can enter any valid http method (GET,HEAD,POST,PUT etc... http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html)
+
+* Setting Parameters
+
+  This is simple. Just write your parameters into a Map<String,String>.
+  When you call ServletTestUtil.createDynamoRequest(params,buffer,method) your map
+  will be set into the returned request object as if they were parameters passed in a URL.
+
+* Using stream I/O
+
+  Let's say you are testing a POST method and you want to similate some content written by your browser.
+  Create your request object:
+
++------------------------------------------+    
+TestingDynamoHttpServletRequest request = mServletTestUtils.createDynamoHttpServletRequest(params, bufferSize, "GET");
++------------------------------------------+    
+
+  Now get an output stream to which you can write some content:
+
++------------------------------------------+
+OutputStream out = request.getClientOutputStream(false);
+out.write(SimpleDroplet.USERNAME.getBytes());
+out.write("=noonan".getBytes());
++------------------------------------------+    
+
+ Finally, be sure to prepare the test request for reading. This method is specific to TestingDynamoHttpServletRequest,
+ it is *not* a method on DynamoHttpServletRequest. It's simply there to setup the backing ByteBuffer so it's ready to be read from.
+
++------------------------------------------+    
+request.prepareForRead();    
++------------------------------------------+    
+
+ After that, your code being tested can happily call getOutputStream() on the response object and write some data to it.
+
++------------------------------------------+
+response.getOutputStream();
+// Write some XML output
+out.print("<message>Hello World!</message>");
++------------------------------------------+
+
+ Back in your JUnit test you can read the content of that output stream simply by
+ calling to toString() method on the response's output stream. That's because the
+ test implementation of the output stream is actually an <<<atg.servlet.ByteArrayServletOutputStream>>>.
+
+ For example:
+
++------------------------------------------+
+String myCodeWroteThis = response.getOutputStream().toString();
+String expectedResponse = "<message>Hello World!</message>"
+assertEquals(expectedResponse,myCodeWroteThis);
++------------------------------------------+
+
+
+
+
+* Using the resolveName() method
+
+  The DynamoHttpServletRequest.resolveName() method currently doesn't work. We'll get some solution to this soon. 
+
+* Limitations
+
+  The DynamoHttpServletRequest.resolveName() method currently does not work. We might modify it to just look up global components. Still need to figure out the right thing to do here. There isn't a "session" or "request" in a JUnit test so there's no context for looking up session and request scoped objects.
+
+  ServletTestUtils creates the DynamoHttpServletRequest and Response objects and minimally initializs these objects. I say minimally because normally in an ATG application the request and response travel down the request pipeline where many operations happen. There isn't a request pipeline when running in a unit test so only the following initialization is done to the request response pair.
+
+ * Creation request and response (ok, that's obvious)
+
+ * Setup input streams for the request object and output streams for the response object
+
+ * Set parameters from a map 
+
+ That's all. You can still get a lot done, but don't expect the exact same parameters you would see in your fully running application. After all these are unit tests and you are trying to test out some specific functionality, not recreate the entire application in JUnit so I hope it's still helpful.
+
+ Feedback and improvement requests are welcome {mail:atgdust-general@lists.sourceforge.net}

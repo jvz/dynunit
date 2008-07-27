@@ -90,7 +90,7 @@ public class SimpleDropletTest extends AtgDustCase {
     int bufferSize = 128 * 1024;
     // Setup request/response pair
     DynamoHttpServletRequest request = mServletTestUtils.createDynamoHttpServletRequest(params, bufferSize, "GET");
-    DynamoHttpServletResponse response = mServletTestUtils.createDynamoHttpServletResponse();
+    DynamoHttpServletResponse response = mServletTestUtils.createDynamoHttpServletResponse((TestingDynamoHttpServletRequest) request);
     try {
       simpleDroplet.service(request,response);
       // check that the "output" oparam was rendered
@@ -122,7 +122,7 @@ public class SimpleDropletTest extends AtgDustCase {
     int bufferSize = 128 * 1024;
     // Setup request/response pair
     TestingDynamoHttpServletRequest request = mServletTestUtils.createDynamoHttpServletRequest(params, bufferSize, "POST");
-    DynamoHttpServletResponse response = mServletTestUtils.createDynamoHttpServletResponse();
+    DynamoHttpServletResponse response = mServletTestUtils.createDynamoHttpServletResponse(request);
     // This time we write the username in the POST data instead
     // We're pretending to be a client such as a browser here.
     OutputStream out = request.getClientOutputStream(false);

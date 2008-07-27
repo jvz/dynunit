@@ -68,6 +68,15 @@ public class ServletTestUtils {
       pRequest.setParameter(s, pParameters.get(s));
     }
   }
+  // -----------------------------
+  /**
+   * Creates a new DynamoHtttpServletResponse object that can be used in a unit
+   * test.
+   *  @deprecated Use the version that takes a TestingDynamoHttpServletRequest parameter
+   */
+  public DynamoHttpServletResponse createDynamoHttpServletResponse() {
+    return createDynamoHttpServletResponse(null);
+  }
 
   // -----------------------------
   /**
@@ -75,10 +84,14 @@ public class ServletTestUtils {
    * test.
    *  
    */
-  public DynamoHttpServletResponse createDynamoHttpServletResponse() {
+  public TestingDynamoHttpServletResponse createDynamoHttpServletResponse(TestingDynamoHttpServletRequest pRequest) {
     DynamoHttpServletResponse response = new DynamoHttpServletResponse();
+    GenericHttpServletResponse gresponse = new GenericHttpServletResponse();
     ByteArrayServletOutputStream out = new ByteArrayServletOutputStream();
+    response.setRequest(pRequest);
+    response.setResponse(gresponse);   
     response.setOutputStream(out);
+    gresponse.setOutputStream(out);
     return new TestingDynamoHttpServletResponse(response);
   }
 }

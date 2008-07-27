@@ -18,6 +18,7 @@
       <item name="Using AtgDustCase" href="atgdustcase.html"/>
       <item name="ATG Repository Testing" href="repository-test.html"/>
       <item name="Dynamo Servlet Testing" href="servlet-test.html"/>
+      <item name="Formhandler Testing" href="formhandler-test.html"/>
     </menu>
 <head>
 <script type="text/javascript">

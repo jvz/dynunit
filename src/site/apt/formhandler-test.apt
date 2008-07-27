@@ -1,0 +1,98 @@
+Unit Testing Dynamo FormhHandlers
+
+* Introduction 
+
+  FormHandlers are an often used pattern in ATG. Basically a FormHandler allows one to map an HTML form
+  field to a Nucleus component property. Ideally formhandlers really shouldn't have any "business logic" in them and therefore
+  the type of testing required on the formhandler should be more about checking if it handles errors, null inputs etc...
+  Often though there is much more business logic than that in a formhandler. Beware, existing formahandlers with lots of business logic are going to be tough to unit test and may require some refactoring to be made more easily testable.
+
+* Capabilities
+
+  The formhandler testing features in DUST are basic. Here's what you get:
+
+  *  (ServletTestUtils) A utility class for creating a dummy Dynamo Request/Response pair. Take a look at this article for more info: {{http://atgdust.sourceforge.net/servlet-test.html}}
+  * You may write to an input stream, thus simulating a browser request (add headers, etc...)
+  * Add request parameters by populating a map
+  * Read from the output stream to which your formhandler will be writing.
+  * The output stream may also be converted to a String (it's just a ByteBuffer)
+ 
+  After that you are pretty much on your own calling your formhandler methods from JUnit. This article walks you through the process so you aren't totally on your own! 
+
+* Setting up a FormHandler Test
+
+  We are going to use the ServletTestUtils class to create a Dynamo Request/Response pair. These object may then be passed to the formhandlers
+  "handle" methods.
+
+  First things first, like other DUST tests you should start by creating a new class that extends AtgDustCase.
+  In your setup method, prepare any .properties files that you'll need copied into your test's "configpath".
+  Remember, a DUST test will start Nucleus inside of junit and resolve the components you put in your configpath.
+  
+  Here's a typical setUp() method.
+
++------------------------------------------+
+    @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    // We can reuse this instance for all tests
+    if (mServletTestUtils == null) mServletTestUtils = new ServletTestUtils();
+    copyConfigurationFiles(new String[] {
+      "src/test/resources/" + this.getClass().getSimpleName() + "/config".replace("/", File.separator)
+    }, "target/test-classes/" + this.getClass().getSimpleName() + "/config".replace("/", File.separator),
+        ".svn");
+  }
++------------------------------------------+
+
+  This method copies configuration files from src/test/resources/<YourTestClassName> to the classpath used for running the test.
+  In this case we're using apache maven directory conventions. You'll probably have a different directory convention if you
+  are running your test from within Eclipse.
+
+  Note we also create a ServletTestUtils class. That'll be used later on in the test.
+
+* FormHandler Test Method
+
+  Now that the setUp() method is done we can get into the test logic. Here's a very basic example for a formhandler 
+  that does nothing but call "sendLocalRedirect()" to a url passed in as a request parameter:
+
++------------------------------------------+
+  public void testSimpleFormHandler() throws Exception {
+    SimpleFormHandler simpleFormHandler = (SimpleFormHandler) resolveNucleusComponent("/atg/test/SimpleFormHandler");
+    assertNotNull(simpleFormHandler);
+    Map<String, String> params = new HashMap<String, String>();
+    // Add a request parameter
+    String redirectPage = "/success.jsp";
+    params.put(SimpleFormHandler.REDIRECT_URL_PARAM_NAME,redirectPage);
+    // let's try 128k, should be more than enough
+    int bufferSize = 128 * 1024;
+    // Setup request/response pair
+    TestingDynamoHttpServletRequest request = mServletTestUtils.createDynamoHttpServletRequest(params, bufferSize, "GET");
+    TestingDynamoHttpServletResponse response = mServletTestUtils.createDynamoHttpServletResponse(request);
+    request.prepareForRead();
+    // invoke handleRedirect
+    assertFalse(simpleFormHandler.handleRedirect(request,response));    
+  }
++------------------------------------------+
+  
+  Here's what that method is doing. 
+
+  In this test we set the redirect url as a request parameter and invoke the handlerRedirect() method on our test formhandler.
+
+  Note that the redirect url is set by adding a key/value pair to a Map. This map is then passed into the
+  createDynamoHttpServletRequest method. Inside that method the map is used to populate request parameters on the DynamoRequest
+  object.
+
+  The prepareForRead() method is important. It sets up the streams used in the DynamoResponse object. Just be sure to call it 
+  if you are interested in reading from the response output stream.
+
+  Finally, the handleRedirect() method is invoked on the formhandler.
+
+* Summmary
+  That was a short and sweet introduction to invoking your formhandler via DUST. Hopefully it'll be enough information to get you started.
+  The challenges remaining after this part will most likely be refactoring of existing formhandlers to break unneeded dependencies during testing.
+
+* Feedback
+
+  If you have problems or you create your own generic utilities to make these tests easier to write we'd love to hear about them here atgdust-general@lists.sourceforge.net.
+
+
+
