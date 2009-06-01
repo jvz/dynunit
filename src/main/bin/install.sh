@@ -2,6 +2,7 @@
 
 ###################
 # Make sure Apache Maven2 is installed
+# $Id: $
 ###################
 
 checkMavenHome()
@@ -55,8 +56,8 @@ checkDynamoHome()
 doInstall()
 {
   pushd ${DUST_HOME}
-  ${MAVEN_HOME}/bin/mvn install:install-file -DgroupId=atg -DartifactId=das-resources -Dversion=2007.1p1 -Dpackaging=jar -Dfile=${DYNAMO_HOME}/../DAS/lib/resources.jar
-  ${MAVEN_HOME}/bin/mvn install:install-file -DgroupId=atg -DartifactId=das -Dversion=2007.1p1 -Dpackaging=jar -Dfile=${DYNAMO_HOME}/../DAS/lib/classes.jar
+  ${MAVEN_HOME}/bin/mvn install:install-file -DgroupId=atg -DartifactId=das-resources -Dversion=9.0 -Dpackaging=jar -Dfile=${DYNAMO_HOME}/../DAS/lib/resources.jar
+  ${MAVEN_HOME}/bin/mvn install:install-file -DgroupId=atg -DartifactId=das -Dversion=9.0 -Dpackaging=jar -Dfile=${DYNAMO_HOME}/../DAS/lib/classes.jar
   popd
 }
 
@@ -66,7 +67,7 @@ doInstall()
 
 success() 
 {
- echo "ATG libraries installed. You may not build ATG DUST by typing 'mvn install'."
+ echo "ATG libraries installed. You may now build ATG DUST by typing 'mvn install'."
 }
 
 ###################

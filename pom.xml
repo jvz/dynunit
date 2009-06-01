@@ -4,7 +4,7 @@
   <groupId>atg</groupId>
   <artifactId>atgdust</artifactId>
   <name>ATG DUST</name>
-  <version>0.6-SNAPSHOT</version>
+  <version>0.7-SNAPSHOT</version>
   <description> ATG DUST is a framework for building JUnit tests for
     applications built on the ATG Dynamo platform. This framework allows
     one to quickly write test code that depends up Nucleus or ATG
@@ -23,6 +23,7 @@
     <system>Issue Tracker</system>
     <url>http://sourceforge.net/tracker/?group_id=196325</url>
   </issueManagement>
+ <!-- Commenting this out for now. Too much spam is coming into these lists
   <mailingLists>
     <mailingList>
       <name>ATG DUST general mailing list</name>
@@ -39,6 +40,7 @@
       <archive>http://sourceforge.net/mailarchive/forum.php?forum=atgdust-developer</archive>
     </mailingList>
   </mailingLists>
+  -->
   <developers>
     <developer>
       <id>adamb06</id>
@@ -102,6 +104,32 @@
           <target>1.5</target>
         </configuration>
       </plugin>
+      <!-- Causes "already instrumented error?"
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>emma-maven-plugin</artifactId>
+        <inherited>true</inherited>          
+          <executions>
+          <execution>
+            <phase>process-classes</phase>               
+            <goals>
+              <goal>instrument</goal>
+            </goals>
+          </execution> 
+        </executions> 
+      </plugin>       
+      -->
+      <!--
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <inherited>true</inherited>
+        <configuration>
+          <forkMode>once</forkMode>
+          <reportFormat>xml</reportFormat>
+          <classesDirectory>${project.build.directory}/generated-classes/emma/classes</classesDirectory>    
+        </configuration>  
+      </plugin> 
+ -->
       <!--
         <plugin> <artifactId>maven-clover-plugin</artifactId>
         <executions> <execution> <phase>pre-site</phase> <goals>
@@ -118,27 +146,27 @@
       NOTE: You must import DAS/classes.jar from an ATG installation
       into your maven repository to satify this dependency. For example:
       mvn install:install-file -DgroupId=atg -DartifactId=das
-      -Dversion=2007.1p1 -Dpackaging=jar
-      -Dfile=c:\ATG\ATG2007.1\DAS\lib\classes.jar -DgeneratePom=true
+      -Dversion=9.0 -Dpackaging=jar
+      -Dfile=c:\ATG\ATG9.0\DAS\lib\classes.jar -DgeneratePom=true
       See: src/main/bin/mavenInstall.bat for a windows batch script to do this for you
     -->
     <dependency>
       <groupId>atg</groupId>
       <artifactId>das</artifactId>
-      <version>2007.1p1</version>
+      <version>9.0</version>
       <scope>provided</scope>
     </dependency>
     <!--
       NOTE: You must import DAS/resources.jar from an ATG installation
       into your maven repository to satisfy this dependency. For
       example: mvn install:install-file -DgroupId=atg
-      -DartifactId=das-resources -Dversion=2007.1p1 -Dpackaging=jar
-      -Dfile=c:\ATG\ATG2007.1\DAS\lib\resources.jar -DgeneratePom=true
+      -DartifactId=das-resources -Dversion=9.0 -Dpackaging=jar
+      -Dfile=c:\ATG\ATG9.0\DAS\lib\resources.jar -DgeneratePom=true
     -->
     <dependency>
       <groupId>atg</groupId>
       <artifactId>das-resources</artifactId>
-      <version>2007.1p1</version>
+      <version>9.0</version>
       <scope>provided</scope>
     </dependency>
     <!--  -->
@@ -204,9 +232,17 @@
         <plugin> <artifactId>maven-clover-plugin</artifactId>
         <configuration> <jdk>1.5</jdk> </configuration> </plugin>
       -->
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
+      
+      <plugin>      
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+      <!--   <inherited>true</inherited>          -->
       </plugin>
+      <plugin> 
+        <groupId>org.codehaus.mojo</groupId> 
+        <artifactId>surefire-report-maven-plugin</artifactId> 
+        <inherited>true</inherited>
+      </plugin>         
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
       </plugin>
