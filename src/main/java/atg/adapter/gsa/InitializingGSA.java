@@ -24,6 +24,7 @@ import java.util.Properties;
 import javax.transaction.TransactionManager;
 
 import atg.adapter.gsa.xml.TemplateParser;
+import atg.core.util.StringUtils;
 import atg.dtm.TransactionDemarcation;
 import atg.dtm.TransactionDemarcationException;
 import atg.junit.nucleus.TestUtils;
@@ -105,7 +106,7 @@ public class InitializingGSA extends GSARepository {
 
   // do we want to strip the 'references(..)' statements from SQL
   // created by the GSA
-  private boolean mStripReferences = false;
+  private boolean mStripReferences = true;
 
   public void setStripReferences(boolean pStrip) {
     mStripReferences = pStrip;
