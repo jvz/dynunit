@@ -14,7 +14,7 @@ svn checkout https://atgdust.svn.sourceforge.net/svnroot/atgdust/trunk atgdust
 
 * Download
 
- ATG Dust is also available as a precompiled jar file.
+ ATG Dust is also available precompiled including source. The current version is 1.0.
  You can download it from {{{http://sourceforge.net/projects/atgdust/}HERE}}.
  
  

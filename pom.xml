@@ -4,7 +4,7 @@
   <groupId>atg</groupId>
   <artifactId>atgdust</artifactId>
   <name>ATG DUST</name>
-  <version>0.9</version>
+  <version>1.0</version>
   <description> ATG DUST is a framework for building JUnit tests for
     applications built on the ATG Dynamo platform. This framework allows
     one to quickly write test code that depends up Nucleus or ATG
@@ -297,7 +297,8 @@
   <distributionManagement>
     <site>
       <id>atgdust.sourceforge.net</id>
-      <url>scp://shell.sourceforge.net/home/groups/a/at/atgdust/htdocs</url>
+      <url>scp://shell.sourceforge.net/home/groups/a/at/atgdust/htdocs</url> 
+      <!-- <url>scp://web.sourceforge.net/</url> -->
     </site>
   </distributionManagement>
 </project>
