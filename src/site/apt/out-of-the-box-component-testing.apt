@@ -5,7 +5,7 @@ Testing with Out of the Box Components
  For example, lets say you have some code that modifies users in the ProfileAdapterRepository. It would
  certainly be convenient to just have that repository be available without you having to manually set it up in your test.
 
- Out of the box component testing is now available in ATG DUST. Your tests can now start with a CONFIGPATH generated from a set of modules.
+ Out of the box component testing is now available in ATG DUST 0.9. Your tests can now start with a CONFIGPATH generated from a set of modules.
  This CONFIGPATH will be the same one used to start the server. At the same time the set of Initial components has been reduced to
  zero to prevent many unwanted components from starting during your test. This article describes how to use this new feature in ATG DUST.
  
