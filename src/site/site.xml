@@ -19,6 +19,7 @@
       <item name="ATG Repository Testing" href="repository-test.html"/>
       <item name="Dynamo Servlet Testing" href="servlet-test.html"/>
       <item name="Formhandler Testing" href="formhandler-test.html"/>
+      <item name="Testing Existing Components" href="out-of-the-box-component-testing.html"/>
     </menu>
 <head>
 <script type="text/javascript">

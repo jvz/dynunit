@@ -1,0 +1,27 @@
+<assembly>
+  <id>bin</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+ <!-- Include source -->
+  <fileSets>
+    <fileSet>
+      <directory>src/main/java</directory>
+      <outputDirectory>src/java</outputDirectory>
+      <useDefaultExcludes>true</useDefaultExcludes>
+    </fileSet>
+    <fileSet>
+      <includes>
+        <include>README*</include>
+        <include>LICENSE*</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+  <!-- Dependencies and out jar file should go into lib -->
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>lib</outputDirectory>
+    </dependencySet>
+  </dependencySets>
+  <baseDirectory>${project.artifactId}</baseDirectory>
+</assembly>

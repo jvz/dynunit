@@ -21,10 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
+
+
 /**
+ * A collection of utility methods for dealing with the filesystem.
  * @author robert
  * 
  */
@@ -149,6 +151,8 @@ public class FileUtil {
     }
   }
 
+  public static final String COULD_NOT_DELETE_TEMP_DIRECTORY = "Couldn't delete temp directory. ";
+
   public void searchAndReplace(final String originalValue,
       final String newValue, final File file) throws IOException {
     
@@ -183,11 +187,28 @@ public class FileUtil {
       }
       out.close();
       in.close();
-      FileUtils.copyFile(TMP_FILE, file);
+      org.apache.commons.io.FileUtils.copyFile(TMP_FILE, file);
       CONFIG_FILES_GLOBAL_FORCE.put(file.getPath(), file.lastModified());
       isDirty = true;
     }
 
+  }
+
+  /**
+   * Deletes the given directory when the JVM exits.
+   * This method does so by implementing a shutdown hook.
+   * @param tmpDir
+   */
+  public static void deleteDirectoryOnShutdown(final File tmpDir) {
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      public void run() {
+        try {
+          atg.core.io.FileUtils.deleteDir(tmpDir.getAbsolutePath());
+        } catch (IOException e) {
+          log.error(FileUtil.COULD_NOT_DELETE_TEMP_DIRECTORY, e);
+        }
+      }
+    });
   }
 
   public static void serialize(final File file, final Object o)

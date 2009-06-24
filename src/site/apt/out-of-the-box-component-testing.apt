@@ -1,0 +1,214 @@
+
+Testing with Out of the Box Components
+
+ Often you will need to write a test which has a dependency on some component that ships with ATG.
+ For example, lets say you have some code that modifies users in the ProfileAdapterRepository. It would
+ certainly be convenient to just have that repository be available without you having to manually set it up in your test.
+
+ Out of the box component testing is now available in ATG DUST. Your tests can now start with a CONFIGPATH generated from a set of modules.
+ This CONFIGPATH will be the same one used to start the server. At the same time the set of Initial components has been reduced to
+ zero to prevent many unwanted components from starting during your test. This article describes how to use this new feature in ATG DUST.
+ 
+ This feature isn't limited to components and modules shipped by ATG. You may also specify your own custom modules and components as well.
+ 
+* ATG Version Support
+
+ This feature should work on most ATG versions back to 7.2. But it was developed using 9.0. Your mileage may vary.
+
+* Locating DYNAMO_HOME
+
+ Since DUST will now try to setup a CONFIGPATH which refers back to an ATG installing we'll need to know which installation to use.
+ If you want to know the painstaking details about how DYNAMO_HOME is located, look at the source of NucleusTestUtils.startNucleusWithModules.
+ To get started you really just need to know this info. 
+ 
+ There are two main methods to specify DYNAMO_HOME for your tests:
+ 
+  * Set the <<DYNAMO_HOME>> environment variable. Ex: DYNAMO_HOME=/home/you/ATG/ATG9.0/home
+  
+  * Set the <<atg.dynamo.home>> system property on the JVM in which your tests run. -Datg.dynamo.home=/home/you/ATG/ATG9.0/home
+ 
+ For those of you who generally work on a single ATG installation at a time, it's probably best to just set DYNAMO_HOME in your environment.
+ If you are running DUST in a continuous integration system or build server, you'll probably want to set the system property so you can deal with multiple ATG
+ installations.
+ 
+* CLASSPATH Setup
+
+** Eclipse IDE
+
+ When running tests you'll still need ATG classes available. In Eclipse you'll probably want to make an ATG "Library" and have your
+ test project depend on it. 
+ 
+** Apache Ant
+
+ When executing tests in ANT, use the "dynamoclasspathtask". The class for this task is included in $DYNAMO_HOME/lib/launcher.jar
+ I'll save you some RTFM and put an example build.xml snippet below.
+  
++-------------------
+ 
+<!-- ================================================================== -->
+<!-- Include DynamoClasspathTask                                        -->
+<!-- ================================================================== -->
+ 
+ <taskdef name="dynamoclasspath" 
+         classname="atg.applauncher.taskdef.DynamoClasspathTask" 
+         classpath="${atg.dynamo.home}/lib//launcher.jar"
+         onerror="report"/>
+         
+<!-- ================================================================== -->
+<!-- Target to run unit tests                                           -->
+<!-- ================================================================== -->
+         
+ <target name="test">
+  <property name="data.dir" value="data"/>
+  <dynamoclasspath classpathproperty="dynamo.classpath" dynamoroot="${dynamo.root}" modules="${compile.modules}"/>
+  <junit printsummary="yes" fork="yes" haltonfailure="yes"
+  maxmemory="768m" showoutput="true">
+      <sysproperty key="atg.dynamo.root" value="${dynamo.root}"/>
+      <sysproperty key="atg.test.data.directory" value="${data.dir}"/>
+      <classpath>
+        <pathelement path="${local.classpath}"/>
+        <pathelement path="${dynamo.classpath}"/>
+      </classpath>
+      <formatter type="plain" usefile="false"/>
+      <test name="${test.name}" fork="yes"/>
+  </junit>
+</target>
+ 
++-------------------         
+
+** Maven
+
+ Since ATG DUST uses maven you can check out the pom.xml for the ATG DUST project. You'll need to "install" ATG libraries
+ in your maven repository so they can be used as dependencies for your test project.
+ 
+ Check out the "Pointing Maven at ATG Classes" section of {{{http://atgdust.sourceforge.net/first-test.html}this guide}}.
+ 
+* First Example Test
+ 
+ Let's jump right into an example. Take a look at the {{{http://atgdust.sourceforge.net/xref-test/test/StartWithModulesTest.html}test/StartWithModulesTest.java}} class included in ATG DUST. 
+  
+ First let's look at the class definition.
+  
++-------------------
+ public class StartWithModulesTest extends TestCase
++------------------- 
+  
+  Notice it just extends the default JUnit TestCase class.
+  
+  Here's the setUp method. The setUp method is used to start Nucleus for each test. We'll shut down Nucleus later in the tearDown() method.
+  The important call here is NucleusTestUtils.startNucleusWithModules.
+  
+  Here's a breakdown of the arguments:
+  
+  * The first argument is a String array representing the module set to be used for calculating the CONFIGPATH of the test. You may include your own modules here as well.
+  
+  * The next two arguments declare where the "local" configpath entry for your test is located. This local entry allows you to have component or configuration that is specific to your test.
+  
+  * Finally the last argument is the path to the Nucleus component to be started Initially. Any dependencies of this component will also be resolved so be careful not to depend on more than you actually need to run your test.
+  
++-------------------
+  @Override
+   public void setUp() {
+     mLogger.log(Level.INFO, "Start Nucleus.");
+     try {
+       mNucleus = NucleusTestUtils.startNucleusWithModules(new String[] { "DAF.Deployment" },
+           this.getClass(),
+           this.getClass().getName(),
+           "/atg/deployment/DeploymentRepository");
+     } catch (ServletException e) {
+       fail(e.getMessage());
+     }
+   }
++-------------------
+ 
+ When Nucleus starts for your test it will now print the configpath used.
+ For example:
+
++-------------------
+ 2009-06-23 11:27:15,681 INFO [atg.nucleus.NucleusTestUtils] [startNucleusWithModules] 
+  [Thread:main] - [Starting nucleus with arguments: [/home/adamb/ATG/ATG9.0/DAS/config/config.jar:
+    /home/adamb/ATG/ATG9.0/DAS/config/oca-ldap.jar:vfs[localconfig-1]=/atg/dynamo/service/groupconfig/ClientNodeTypeVirtualFileSystem:
+    vfs[localconfig-1]=/atg/dynamo/service/groupconfig/ClientInstanceVirtualFileSystem:
+    /home/adamb/ATG/ATG9.0/DAF/Deployment/config/config.jar:/tmp/atg-dust-config-1245770835551/atg/nucleus/data/config,
+    -initialService, /atg/deployment/DeploymentRepository]]
++-------------------
+
+* Test Code
+ 
+  Now that Nucleus has been started you are free to write your actual test code. This test just resolves the component "/atg/deployment/DeploymentRepository".
+  Since we specified the DeploymentRepository as the initial service in the setUp() method above, it's already been started. Though it would have 
+  been started by the call to resolveName anyway.
+  
++-------------------  
+  public void testResolveComponentWithNucleus() {
+    assertNotNull(mNucleus);
+    MutableRepository catalog = (MutableRepository) mNucleus.resolveName("/atg/deployment/DeploymentRepository");
+    assertNotNull("DeploymentRepository should not be null.",catalog);
+  }
++-------------------
+
+* Shutdown
+
+  Finally in the tearDown() method we cleanup after ourselves and shutdown Nucleus by calling the shutdownNucleus method
+  and passing in the Nucleus that was returned to us when it was started in the setUp() method.
+  
++-------------------
+  @Override
+  public void tearDown() {
+    if (mNucleus != null) {
+      try {
+        NucleusTestUtils.shutdownNucleus(mNucleus);
+      } catch (ServiceException e) {
+        fail(e.getMessage());
+      } catch (IOException e) {
+        fail(e.getMessage());
+      }
+    }
+   }
++-------------------
+
+
+* Test Specific Changes
+
+ If you have used DUST in the past you might be wondering what happened to the setup code that started HSQLDB, created InitializingGSA, etc...
+ It's still available, but it has been moved into Nucleus components so that it doesn't pollute your test code.
+ There are three important changes that allowed this test to start up with so few lines of setup code.
+ 
+ * Nucleus.properties file maps certain critical components to their test equivalents 
+
+ * The new HSQLDBDatasource component handles starting up HSQLDB database
+
+ * InitializingSQLIdGenerator handles creating the tables needed for the IdGenerator component at startup time
+ 
+** Nucleus.properties
+
+  The Nucleus.properties file used to configure Nucleus for running in this test mode is actually located in the atgdust.jar file.
+  It's extracted to a temp dir while the test is running and the temp dir is deleted at the end of the test. Here's the contents of that file that
+  handle the mapping.
+  
++-------------------
+ # Enable Class Replacement
+ enableClassReplacement=true
+ # Specify classes to be replaced when running in test mode
+ classReplacementMap=\
+ atg.adapter.gsa.GSARepository=atg.adapter.gsa.InitializingGSA,\
+ atg.service.jdbc.FakeXADataSource=atg.service.jdbc.HSQLDBDataSource,\
+ atg.service.idgen.SQLIdGenerator=atg.service.idgen.InitializingSQLIdGenerator,\
+ atg.service.idgen.ObfuscatedSQLIdGenerator=atg.service.idgen.InitializingObfuscatedSQLIdGenerator
++-------------------
+
+ This "classReplacementMap" property on Nucleus is a way of telling Nucleus; "When you see $class=Foo replace it with $class=Bar".
+ That saves us from having to create actual .properties files. The replacement is just done at runtime.
+ Also note that this feature has to be enabled by setting <<enableClassReplacement=true>>. You don't want to accidently leave this
+ turned on for a non-test system!
+ 
+** HSQLDBDataSource
+
+  The HSQLDBDataSource class is a replacement for using DBUtils to start up HSQLDB. Instead it's doStartService() method handles
+  starting up an in-memory instance of HSQLDB.
+  
+* Summary
+
+ That is hopefully enough information to get you started writing tests using this new feature. It should help make your tests more maintainable
+ since you can avoid having to copy .properties files or .xml over from your ATG installation. If you have questions post them to the
+ technical community at {{{http://community.atg.com/}community.atg.com}}.
