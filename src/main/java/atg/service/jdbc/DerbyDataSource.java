@@ -33,6 +33,8 @@ import atg.nucleus.ServiceException;
 
 public class DerbyDataSource extends InitializingDataSourceBase {
 
+  static Logger sLog = Logger.getLogger(DerbyDataSource.class);
+  
   private String  framework          = "embedded";
   private String  driver             = "org.apache.derby.jdbc.EmbeddedDriver";
   private String  protocol           = "jdbc:derby:";
@@ -98,9 +100,8 @@ public class DerbyDataSource extends InitializingDataSourceBase {
     } catch (SQLException se) {
 
       if (((se.getErrorCode() == 50000) && ("XJ015".equals(se.getSQLState())))) {
-        // we got the expected exception
-        Logger.getLogger(DerbyDataSource.class)
-            .info("Derby shut down normally");
+        // we got the expected exception        
+        sLog.info("Derby shut down normally");
         // Note that for single database shutdown, the expected
         // SQL state is "08006", and the error code is 45000.
       } else if ((se.getErrorCode() == 45000)
@@ -109,8 +110,7 @@ public class DerbyDataSource extends InitializingDataSourceBase {
       } else {
         // if the error code or SQLState is different, we have
         // an unexpected exception (shutdown failed)
-        Logger.getLogger(DerbyDataSource.class).error(
-            "Derby did not shut down normally", se);
+        sLog.error("Derby did not shut down normally", se);
         printSQLException(se);
       }
     }
@@ -159,16 +159,15 @@ public class DerbyDataSource extends InitializingDataSourceBase {
      */
     try {
       Class.forName(driver).newInstance();
-      System.out.println("Loaded the appropriate driver");
     } catch (ClassNotFoundException cnfe) {
-      System.err.println("\nUnable to load the JDBC driver " + driver);
-      System.err.println("Please check your CLASSPATH.");
+      sLog.error("\nUnable to load the JDBC driver " + driver);
+      sLog.error("Please check your CLASSPATH.");
       cnfe.printStackTrace(System.err);
     } catch (InstantiationException ie) {
-      System.err.println("\nUnable to instantiate the JDBC driver " + driver);
+      sLog.error("\nUnable to instantiate the JDBC driver " + driver);
       ie.printStackTrace(System.err);
     } catch (IllegalAccessException iae) {
-      System.err.println("\nNot allowed to access the JDBC driver " + driver);
+      sLog.error("\nNot allowed to access the JDBC driver " + driver);
       iae.printStackTrace(System.err);
     }
   }
