@@ -75,7 +75,7 @@ import atg.repository.RepositoryException;
  * @author adwivedi
  * @author qma
  * 
- *  Note: this class is modified from InitializingGSA.java. It keeped most properties in InitializingGSA.
+ *  Note: this class is modified from InitializingGSA.java. It has most properties of InitializingGSA.
  *  You can see the detail info from the following link: 
  *  http://atlas.atg.com/mfrenzel/apiauto/APIAutoTest.html#initializinggsa
  *  

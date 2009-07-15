@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>atg</groupId>
+  <groupId>net.sf.atgdust</groupId>
   <artifactId>atgdust</artifactId>
   <name>ATG DUST</name>
   <version>1.0</version>
@@ -61,6 +61,21 @@
       <timezone>+1</timezone>
     </developer>
   </developers>
+
+  <repositories>
+    <repository>
+      <id>atgdust.sourceforge.net</id>
+      <url>http://atgdust.sourceforge.net/repo/m2-repository</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      </repository>
+  </repositories>
+
+
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -220,6 +235,12 @@
       <artifactId>commons-io</artifactId>
       <version>1.4</version>
     </dependency>
+    <dependency>
+    	<groupId>org.apache.derby</groupId>
+    	<artifactId>derby</artifactId>
+    	<version>10.4.2.0</version>
+    	<scope>test</scope>
+    </dependency>
     <!--
       <dependency> <groupId>com.bsdroot.util.parallelization</groupId>
       <artifactId>parallelization-util</artifactId>
@@ -295,6 +316,11 @@
     </plugins>
   </reporting>
   <distributionManagement>
+    <repository>
+      <id>atgdust.sourceforge.net</id>
+      <name>ATG DUST SourceForge Maven Repository</name>
+      <url>scp://shell.sourceforge.net/home/groups/a/at/atgdust/htdocs/repo/m2-repository</url>
+    </repository>
     <site>
       <id>atgdust.sourceforge.net</id>
       <url>scp://shell.sourceforge.net/home/groups/a/at/atgdust/htdocs</url> 

@@ -23,13 +23,13 @@ import org.apache.log4j.Logger;
  */
 public class IdGeneratorInitializer {
 
-  private static final String     SELECT_COUNT_FROM_DAS_ID_GENERATOR = "select count(*) from das_id_generator";
+  private static final String     SELECT_COUNT_FROM_TEMPLATE = "select count(*) from das_id_generator";
 
-  private static final String     DROP_TABLE_DAS_ID_GENERATOR        = "DROP TABLE das_id_generator";
+  private static final String     DROP_TABLE_TEMPLATE        = "DROP TABLE";
 
   private InitializingIdGenerator mGenerator;
-  Logger                          log                                = Logger
-                                                                         .getLogger(IdGeneratorInitializer.class);
+  Logger                          log                        = Logger
+                                                                 .getLogger(IdGeneratorInitializer.class);
 
   /**
    * Creates a new IdGeneratorInitializer used for the given generator,
@@ -41,23 +41,26 @@ public class IdGeneratorInitializer {
     mGenerator = pGenerator;
   }
 
-  
   /**
-   * Creates a new schema for the current generator.
-   * If the schema exists, it's dropped and a new one is created.
+   * Creates a new schema for the current generator. If the schema exists, it's
+   * dropped and a new one is created.
+   * @throws SQLException 
    */
-  public void initialize() {
+  public void initialize() throws SQLException {
     if (tablesExist()) {
       dropTables();
     }
     initializeTables();
   }
+
 // --------------------------
   /**
    * Drops the tables required for this component
+   * @throws SQLException 
    */
-  void dropTables() {
-    executeUpdateStatement(DROP_TABLE_DAS_ID_GENERATOR);
+  void dropTables() throws SQLException {
+    executeUpdateStatement(DROP_TABLE_TEMPLATE + " "
+        + mGenerator.getTableName());
   }
 
   // --------------------------
@@ -72,7 +75,8 @@ public class IdGeneratorInitializer {
     try {
       ResultSet rs = null;
       st = mGenerator.getDataSource().getConnection().createStatement();
-      rs = st.executeQuery(SELECT_COUNT_FROM_DAS_ID_GENERATOR);
+      rs = st.executeQuery(SELECT_COUNT_FROM_TEMPLATE + " "
+          + mGenerator.getTableName());
       exists = true;
     } catch (SQLException e) {
       ; // eat it. table isn't there.
@@ -89,8 +93,9 @@ public class IdGeneratorInitializer {
   // --------------------------
   /**
    * Creates the table required for this component
+   * @throws SQLException 
    */
-  void initializeTables() {
+  void initializeTables() throws SQLException {
     String statement = mGenerator.getCreateStatement();
     log.info("Creating IdGenerator tables : " + statement);
     executeUpdateStatement(statement);
@@ -98,8 +103,11 @@ public class IdGeneratorInitializer {
 
   // --------------------------
   /**
+   * @return TODO
+   * @throws SQLException 
    */
-  private void executeUpdateStatement(String pStatement) {
+  private boolean executeUpdateStatement(String pStatement) throws SQLException {
+    boolean success = false;
     Statement st = null;
     try {
       st = mGenerator.getDataSource().getConnection().createStatement(); // statements
@@ -107,8 +115,7 @@ public class IdGeneratorInitializer {
       if (i == -1) {
         log.error("Error creating tables with statement" + pStatement);
       }
-    } catch (SQLException e) {
-      log.error(e);
+      success = true;
     } finally {
       try {
         st.close();
@@ -116,5 +123,6 @@ public class IdGeneratorInitializer {
         ; // eat it
       }
     }
+    return success;
   }
 }

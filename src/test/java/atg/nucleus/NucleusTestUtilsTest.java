@@ -74,4 +74,18 @@ public class NucleusTestUtilsTest extends TestCase {
       n = null;
     }
   }
+ 
+  /**
+   * Tests that NucleusTestUtils is able to find
+   * the global testconfig directory from 
+   * a system property.
+   * 
+   */
+  public void testGetGlobalTestConfig() {
+    NucleusTestUtils ntu = new NucleusTestUtils();
+    String testConfig = "/foo/baz/testconfig/";
+    System.setProperty(NucleusTestUtils.ATG_DUST_TESTCONFIG,testConfig);
+    assertNotNull(testConfig);
+    assertEquals(testConfig, NucleusTestUtils.getGlobalTestConfig());    
+  }
 }

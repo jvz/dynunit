@@ -29,6 +29,11 @@ public interface InitializingIdGenerator {
   public String getCreateStatement();
   
   /**
+   * Returns the drop table statement for this IdGenerator
+   */
+  public String getTableName();
+  
+  /**
    * Returns the data source used by this IdGenerator
    */
   public DataSource getDataSource();

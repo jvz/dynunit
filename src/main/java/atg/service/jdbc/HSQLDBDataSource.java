@@ -27,15 +27,12 @@ import atg.test.util.DBUtils;
  * requires running two databases at the same time.
  * 
  * @author adamb
- * @version $Id:
+ * @version $Id:n HSQLDB
  *          //test/UnitTests/base/main/src/Java/atg/service/jdbc/HSQLDBDataSource
  *          .java#2 $
  */
-public class HSQLDBDataSource extends FakeXADataSource {
+public class HSQLDBDataSource extends InitializingDataSourceBase {
 
-  // The name of the database to use with HSQLDB
-  public String mDatabaseName = "testdb";
-  
   // Don't shutdown HSQLDB by default. It might stop before other components
   // that require it.
   public boolean mShutdownHSQLDB = false;
@@ -56,27 +53,6 @@ public class HSQLDBDataSource extends FakeXADataSource {
    */
   public void setShutdownHSQLDB(boolean shouldShutdownHSQLDB) {
     mShutdownHSQLDB = shouldShutdownHSQLDB;
-  }
-
-  /**
-   * Returns the name of the database to use with HSQLDB. The defaut name is
-   * "testdb"
-   * 
-   * @return
-   */
-  public String getDatabaseName() {
-    return mDatabaseName;
-  }
-
-  /**
-   * Sets the name of the database to be used with HSQLDB
-   * 
-   * @param pName
-   *          The name of the HSQLDB database to be created when this datasource
-   *          starts up.
-   */
-  public void setDatabaseName(String pName) {
-    mDatabaseName = pName;
   }
 
   // --------------------------

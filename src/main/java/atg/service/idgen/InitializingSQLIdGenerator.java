@@ -35,11 +35,11 @@ public class InitializingSQLIdGenerator extends SQLIdGenerator implements
    * The SQL statement required to create the table used by this component.
    */
   public static final String CREATE_STATEMENT = " create table das_id_generator ("
-                                                  + "id_space_name   varchar(60)     not null,"
+                                                  + "id_space_name   varchar(60) not null,"
                                                   + "seed    numeric(19,0)   not null,"
                                                   + " batch_size      integer not null,"
-                                                  + " prefix  varchar(10)     null,"
-                                                  + " suffix  varchar(10)     null,"
+                                                  + " prefix  varchar(10),"
+                                                  + " suffix  varchar(10),"
                                                   + "primary key (id_space_name)) ";
 
   /**
@@ -49,7 +49,11 @@ public class InitializingSQLIdGenerator extends SQLIdGenerator implements
   public void doStartService() throws ServiceException {
     if (mInitializer == null)
       mInitializer = new IdGeneratorInitializer(this);
-    mInitializer.initialize();
+    try {
+      mInitializer.initialize();
+    } catch (SQLException e) {
+      throw new ServiceException(e);
+    }
   }
 
   /**

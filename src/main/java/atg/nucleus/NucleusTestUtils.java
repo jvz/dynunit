@@ -70,6 +70,10 @@ public class NucleusTestUtils {
   public static final Logger log                              = Logger
                                                                    .getLogger(NucleusTestUtils.class);
 
+  public static final String ATG_DUST_TESTCONFIG = "atg.dust.testconfig";
+
+  private static final String ATG_DUST_TESTCONFIG_ENV = "ATG_DUST_TESTCONFIG";
+
   /**
    * A map from Nucleus instance to temporary directory. Used by
    * startNucleusWithModules.
@@ -318,9 +322,9 @@ public class NucleusTestUtils {
    */
   public static File getConfigpath(Class pClassRelativeTo,
       String pBaseConfigDirectory, boolean pCreate) {
-    // System.out.println("getConfigpath(" +
-    // pClassRelativeTo + ", " +
-    // pBaseConfigDirectory + "," + pCreate + ")");
+     System.out.println("getConfigpath(" +
+     pClassRelativeTo + ", " +
+     pBaseConfigDirectory + "," + pCreate + ")");
     Map<String, File> baseConfigToFile = sConfigDir.get(pClassRelativeTo);
     if (baseConfigToFile == null) {
       baseConfigToFile = new HashMap<String, File>();
@@ -340,6 +344,7 @@ public class NucleusTestUtils {
         configdirname = pBaseConfigDirectory;
 
       String configFolder = packageName + "/data/" + configdirname;
+      System.out.println("Looking for test local configpath at: " + configFolder);
       URL dataURL = pClassRelativeTo.getClassLoader().getResource(configFolder);
 
       // Mkdir
@@ -526,6 +531,12 @@ public class NucleusTestUtils {
         configpath = configpath + File.pathSeparator
             + fileTestConfig.getAbsolutePath();
       }
+      
+      // Look up the Global Test Configpath
+      // This will contain .properties files common
+      // to all tests. For example, DPSLicense.properties, etc...
+      String testConfig = getGlobalTestConfig();
+      // TODO: ADD THIS TO CONFIGPATH
 
       // finally, create a server dir.
       fileServerDir = createTempServerDir();
@@ -570,6 +581,21 @@ public class NucleusTestUtils {
         }
       }
     }
+  }
+
+  /**
+   * Look up the global testconfig path.
+   * This path is specified in either an 
+   * @return
+   */
+  public static String getGlobalTestConfig() {    
+    // First Check System Property
+    String config = System.getProperty(ATG_DUST_TESTCONFIG);
+    // If NULL check environment variable
+    if (config == null)
+      config = System.getenv(ATG_DUST_TESTCONFIG_ENV);
+    // If that's null, there is no global test config specified
+    return config;
   }
 
   /**
