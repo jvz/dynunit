@@ -1,8 +1,5 @@
 Your First Test
 
-  NOTE: This is a first draft and it's still incomplete.
-  Please send feedback to atgdust-general@lists.sourceforge.net.
-
   This tutorial walks you through the steps of writing a test which does not need to run
   in an application server. This is one of the main benefit of writing unit tests. Because 
   the test does not depend upon starting up an application server, turnaround time is very quick.
@@ -20,22 +17,35 @@ Your First Test
  * Subversion -- A source control system
   
 
-* Getting the source code
+* Getting DUST
 
-  In this example we will checkout and compile the 
-  dust test classes. Source code is stored in a subversion repository, and the project is built with
+** Download precompiled Jar
+
+  DUST is available for download here
+
+  {{http://sourceforge.net/projects/atgdust/}}
+
+
+** Building from Source using Maven 2
+
+  You can also build DUST from source. Source code is stored in a subversion repository, and the project is built with
   Maven 2. You'll need to download and install subversion and maven 2 before continuing.
-
-  Should you decide that you don't want to build DUST from source, you can instead
-  download a prebuilt binary from here:
-
-  http://sourceforge.net/projects/atgdust/
-
-
+  
+*** Checkout the Source
+  
 +------------------------------------------+
 svn checkout https://atgdust.svn.sourceforge.net/svnroot/atgdust/trunk atgdust
 +------------------------------------------+
 
+*** Building the Source
+
+  Once you have checked out the project and installed maven, build the source code.
+  We'll use the 'mvn install' command to do that.
+
++------------------------------------------+
+% cd atgdust
+% mvn install
++------------------------------------------+
 
 * Pointing Maven at ATG classes
 
@@ -65,18 +75,6 @@ mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS-resources -Dversion=9.0 -D
 -Dfile=c:/ATG/ATG9.0/DAS/lib/resources.jar -DgeneratePom=true -Durl=file://c:/maven/repository -DlocalRepository=local
 +------------------------------------------+
 
-
-* Building the Source
-
-  Once you have checked out the project and installed maven, build the source code.
-  We'll use the 'mvn install' command to do that.
-
-+------------------------------------------+
-% cd atgdust
-% mvn install
-+------------------------------------------+
-
-
   Note that you now have a src/target directory under your 'atgdust' directory.
   In here is a jar file containg all the classes of the dust project. 
 
@@ -96,6 +94,7 @@ mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS-resources -Dversion=9.0 -D
   The goal of this test is to test a class that depends upon a running Nucleus.
   Our class being tested contains code that calls Nucleus.resolveName() so we'll
   need a Nucleus available to allow our class to be tested in JUnit.
+  
 
 ** Class to be Tested
 
@@ -300,3 +299,13 @@ Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
 [INFO] ------------------------------------------------------------------------
 
 +------------------------------------------+
+
+* A More Realistic Use Case
+
+  This example showed you some of the ways in which you can generate .properties files, then start up Nucleus
+  in a test. You'll likely run into cases where you need to depend on components that already exist in your
+  application or in ATG itself.
+  In that case, take a look at {{{out-of-the-box-component-testing.html}Out of the Box Component Testing}}
+  This tutorial will show you what will likely be the most common way you start tests in DUST.
+  
+
