@@ -11,9 +11,14 @@
 
 package atg.service.idgen;
 
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 
@@ -23,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class IdGeneratorInitializer {
 
-  private static final String     SELECT_COUNT_FROM_TEMPLATE = "select count(*) from das_id_generator";
+  private static final String     SELECT_COUNT_FROM_TEMPLATE = "select count(*) from";
 
   private static final String     DROP_TABLE_TEMPLATE        = "DROP TABLE";
 
@@ -63,6 +68,24 @@ public class IdGeneratorInitializer {
         + mGenerator.getTableName());
   }
 
+  public Map<DataSource,DatabaseMetaData> mMetaDataMap = new HashMap<DataSource,DatabaseMetaData>();
+  
+  
+  /**
+   * Returns a cached instance of the DB metadata for the current connection
+   * @return
+   */
+  DatabaseMetaData getDatabaseMetaData() {
+    DataSource ds = mGenerator.getDataSource();
+    if (mMetaDataMap.get(ds) == null)
+      try {
+        mMetaDataMap.put(ds,ds.getConnection().getMetaData());
+      } catch (SQLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    return mMetaDataMap.get(ds);
+  }
   // --------------------------
   /**
    * Returns true if the tables required for this component exist
@@ -70,24 +93,17 @@ public class IdGeneratorInitializer {
    * @return
    */
   boolean tablesExist() {
+    String [] types = {"TABLE"};
     boolean exists = false;
-    Statement st = null;
     try {
-      ResultSet rs = null;
-      st = mGenerator.getDataSource().getConnection().createStatement();
-      rs = st.executeQuery(SELECT_COUNT_FROM_TEMPLATE + " "
-          + mGenerator.getTableName());
-      exists = true;
-    } catch (SQLException e) {
-      ; // eat it. table isn't there.
-    } finally {
-      try {
-        st.close();
-      } catch (SQLException e) {
-        // eat this too
+      ResultSet rs = getDatabaseMetaData().getTables(null, null, mGenerator.getTableName(),types);
+      while (rs.next()) {
+        exists = true;
       }
+    } catch (SQLException e) {
+      ; // eat it
     }
-    return exists;
+    return exists;        
   }
 
   // --------------------------
