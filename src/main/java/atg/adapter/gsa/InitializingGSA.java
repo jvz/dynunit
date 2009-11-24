@@ -1,35 +1,39 @@
-/**
- * Copyright 2007 ATG DUST Project
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * 
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and limitations under the License.
+ /**
+ * Copyright 2009 ATG DUST Project Licensed under the Apache License, Version
+ * 2.0 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
-
 package atg.adapter.gsa;
+
 import java.io.File;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
+import java.util.Vector;
 
 import javax.transaction.TransactionManager;
 
+import org.apache.ddlutils.DatabaseOperationException;
+
 import atg.adapter.gsa.xml.TemplateParser;
-import atg.core.util.StringUtils;
 import atg.dtm.TransactionDemarcation;
 import atg.dtm.TransactionDemarcationException;
 import atg.junit.nucleus.TestUtils;
+import atg.naming.NameContext;
 import atg.naming.NameContextBindingEvent;
 import atg.nucleus.Configuration;
+import atg.nucleus.GenericService;
 import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusNameResolver;
 import atg.nucleus.ServiceEvent;
@@ -38,18 +42,45 @@ import atg.nucleus.logging.LogListener;
 import atg.repository.RepositoryException;
 
 /**
- * This class is an extension of atg.adapter.gsa.GSARepository. It capitalizes
- * on the GSA's ability to generate SQL required for its tables and uses the
- * SQLProcessorEngine to create the tables. Additionally, it uses the GSA's
- * import facility to allow data to be loaded into the tables after creation.
+ * This class is an extension of atg.adapter.gsa.GSARepository. It's purpose is
+ * to create tables and initial data required for starting a given repository.
  * 
- * @author mf
+ * @author mfrenzel
  * @version 1.0
  */
 
 public class InitializingGSA extends GSARepository {
+
+  // -------------------------------------
+  /** Class version string */
+
+  public static String CLASS_VERSION = "$Id: //test/UnitTests/base/main/src/Java/atg/test/apiauto/util/InitializingGSA.java#11 $$Change: 550950 $";
+
   // -----------------------------------
   // ---From Properties File------------
+
+  private boolean mUseDDLUtils = true;
+
+  /**
+   * If true then Apache DDLUtils will be used to generate the schema. Otherwise
+   * the GSA generated SQL will be used.
+   * 
+   * @return the useDDLUtils
+   */
+  public boolean isUseDDLUtils() {
+    return mUseDDLUtils;
+  }
+
+  /**
+   * If true then Apache DDLUtils will be used to generate the schema. Otherwise
+   * the GSA generated SQL will be used.
+   * 
+   * @param pUseDDLUtils
+   *          the useDDLUtils to set
+   */
+  public void setUseDDLUtils(boolean pUseDDLUtils) {
+    mUseDDLUtils = pUseDDLUtils;
+  }
 
   // do we want to create tables if they don't exist
   private boolean mCreateTables = true;
@@ -72,7 +103,6 @@ public class InitializingGSA extends GSARepository {
 
   public boolean isDropTablesIfExist() {
     return mDropTables;
-
   }
 
   // the XML files containing export data from the TemplateParser
@@ -221,8 +251,10 @@ public class InitializingGSA extends GSARepository {
    * runtime, such as
    * 
    * <pre>
-   * {atg.dynamo.root}
-   * </pre>.
+   * { atg.dynamo.root }
+   * </pre>
+   * 
+   * .
    * <p>
    * The following behavior is observed:
    * 
@@ -240,7 +272,6 @@ public class InitializingGSA extends GSARepository {
    *              is thrown at starup.
    *   
    * </pre>
-   * 
    * <p>
    * Also, when a file specified in the property 'sqlCreateFiles' is used (i.e.
    * output from startSQLRepository is not being used) then the initializingGSA
@@ -297,9 +328,11 @@ public class InitializingGSA extends GSARepository {
   }
   
   public boolean mAllowNoDrop = true;
+
   /**
-   * If true, one may specify create scripts, but no drop scripts.
-   * Otherwise it is an error to specify a create script but no drop script
+   * If true, one may specify create scripts, but no drop scripts. Otherwise it
+   * is an error to specify a create script but no drop script
+   * 
    * @return
    */
   public boolean isAllowNoDrop() {
@@ -352,7 +385,7 @@ public class InitializingGSA extends GSARepository {
     mLoadColumnInfosAtInitialStartup = pLoad;
   }
 
-  //-------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
   // Member properties
 
   // this property is a little tricky and a bit of a hack, but it
@@ -371,24 +404,28 @@ public class InitializingGSA extends GSARepository {
   }
   
   public boolean mRestartAfterTableCreation = true;
+
+  private GSARepositorySchemaGenerator mGenerator;
+
   /**
-   * Returns true if this repository will attempt to
-   * "restart" after creating tables.
+   * Returns true if this repository will attempt to "restart" after creating
+   * tables.
+   * 
    * @return
    */
   public boolean isRestartingAfterTableCreation() {
     return mRestartAfterTableCreation;
   }
+
   /**
-   * Sets if this repository will attempt to
-   * "restart" after creating tables.
-   * A value of true means that it should restart.
+   * Sets if this repository will attempt to "restart" after creating tables. A
+   * value of true means that it should restart.
    */
   public void setRestartingAfterTableCreation(boolean pRestart) {
     mRestartAfterTableCreation = pRestart;
   }
 
-  //-------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
   // Methods
 
   /**
@@ -398,9 +435,13 @@ public class InitializingGSA extends GSARepository {
    * 
    * @exception RepositoryException
    *              (?)
-   *  
    */
   public void doStartService() {
+    // Loading Column Infos in a separate thread
+    // can deadlock the Initializing GSA
+    if (isLoggingInfo())
+      logInfo("Setting loadColumnInfosInSeparateThread to false.");
+    setLoadColumnInfosInSeparateThread(false);
     // if this is the temporary instantiation, we just want to
     // call super.doStartService() and return
     if (isTemporaryInstantiation()) {
@@ -446,13 +487,11 @@ public class InitializingGSA extends GSARepository {
         if (isLoadColumnInfosAtInitialStartup()) {
           if (isLoggingInfo())
             logInfo("Enabled loading of column info for initial startup");
-        }
-        else {
+        } else {
           if (isLoggingInfo())
             logInfo("Disabled loading of column info for initial startup");
         }
-      }
-      catch (Throwable t) {
+      } catch (Throwable t) {
         if (isLoggingDebug())
           logDebug("Could not modify loading of column metadata for preliminary startup.");
       }
@@ -463,8 +502,7 @@ public class InitializingGSA extends GSARepository {
       // reset 'LoadColumnInfosAtStartup' to whatever it was originally
       try {
         setLoadColumnInfosAtStartup(loadColumnInfosAtStartup);
-      }
-      catch (Throwable t) {
+      } catch (Throwable t) {
         logError(t);
       }
 
@@ -497,23 +535,20 @@ public class InitializingGSA extends GSARepository {
       if (isLoggingInfo())
         logInfo("Component finished starting up.");
 
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       logError("Caught an unexpected exception trying to start component...", e);
     }
   }
 
-  //-----------------------------------------
+  // -----------------------------------------
   /**
    * Restarts the repository. This involves re-reading nucleus properties,
    * reloading definition files, and invalidating all cache entries. This method
    * is a convenience for development purposes (to avoid restarting dynamo when
-   * a template has changed), and should not be used on a live site.
-   * 
-   * This method is modified slightly from the restart method of GSARepository
-   * because it sets mTemporaryInstantiation to true so that the doStartService
-   * method of the new instance does not reload import files or try to recreate
-   * tables
+   * a template has changed), and should not be used on a live site. This method
+   * is modified slightly from the restart method of GSARepository because it
+   * sets mTemporaryInstantiation to true so that the doStartService method of
+   * the new instance does not reload import files or try to recreate tables
    */
   public boolean restart() throws ServiceException {
     Configuration c = getServiceConfiguration();
@@ -526,7 +561,7 @@ public class InitializingGSA extends GSARepository {
     // bound to the same name context as the original repository
     // This changes will make sure that getAbsoluteName() returns
     // a correct value.
-    //NameContext nc = ((GenericService) this).getNameContext();
+    NameContext nc = ((GenericService) this).getNameContext();
     NameContextBindingEvent bindingEvent = new NameContextBindingEvent(this
         .getName(), newRepository, this.getNameContext());
     newRepository.nameContextElementBound(bindingEvent);
@@ -550,8 +585,7 @@ public class InitializingGSA extends GSARepository {
         copyFromOtherRepository(newRepository);
       }
       return true;
-    }
-    else
+    } else
       return false;
   }
 
@@ -567,17 +601,17 @@ public class InitializingGSA extends GSARepository {
    */
   public void doStopService() {
     try {
+      // clear out state in SchemaTracker
+      SchemaTracker.getSchemaTracker().reset();
       if (isDropTablesAtShutdown()) {
         if (isLoggingInfo())
           logInfo("Dropping tables because 'dropTablesAtShutdown' is true....");
         dropTables();
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       if (isLoggingError())
         logError(e);
-    }
-    finally {
+    } finally {
       super.doStopService();
     }
   }
@@ -603,9 +637,27 @@ public class InitializingGSA extends GSARepository {
     }
 
     // otherwise, just drop tables based on startSQLRepository SQL
-    List<String> statements = getCreateStatements(null, null);
+
+    if (isUseDDLUtils()) {
+      if (!Nucleus.getGlobalNucleus().isStopping()) {
+        // build a new one
+        mGenerator = new GSARepositorySchemaGenerator(this);
+      }
+
+      try {
+        if (mGenerator != null)
+          mGenerator.dropSchema(true);
+      } catch (DatabaseOperationException e) {
+        throw new RepositoryException(e);
+      } catch (SQLException e) {
+        throw new RepositoryException(e);
+      }
+    } else {
+      Vector statements = getCreateStatements(null, null);
     SQLProcessorEngine processor = getSQLProcessor();
     processor.dropTablesFromCreateStatements(statements);
+
+    }
   }
 
   /**
@@ -632,8 +684,7 @@ public class InitializingGSA extends GSARepository {
         return false;
       }
       // before executing the createFiles we always execute the drop files
-      String[] dropFiles = getSpecifiedDropFiles();
-      if (dropFiles != null) executeSqlFiles(dropFiles, false);
+      dropTables();
       executeSqlFiles(createFiles, true);
       return true;
     }
@@ -641,15 +692,27 @@ public class InitializingGSA extends GSARepository {
     // otherwise, just execute sql from startSQLRepository
     boolean createdTables = false;
 
+    if (isUseDDLUtils()) {
     if (isCreateTables()) {
+        mGenerator = new GSARepositorySchemaGenerator(this);
+        try {
+          mGenerator.createSchema(true, isDropTablesIfExist());
+          createdTables = true;
+        } catch (DatabaseOperationException e) {
+          throw new RepositoryException(e);
+        } catch (SQLException e) {
+          throw new RepositoryException(e);
+        }
+      }
+    } else {
+      // Use GSA Generated SQL
       SQLProcessorEngine spe = getSQLProcessor();
-
-      // turn on debug for SQLProcessorEngine if GSA has debug on
-      if (isLoggingDebug())
+      // turn on debug for SQLProcessorEngine if GSA has debug on if
+      // (isLoggingDebug())
         spe.setLoggingDebug(true);
-
-      List<String> createStatements = getCreateStatements(null, null);
+      Vector createStatements = getCreateStatements(null, null);
       createdTables = spe.createTables(createStatements, isDropTablesIfExist());
+
     }
 
     return createdTables;
@@ -686,8 +749,7 @@ public class InitializingGSA extends GSARepository {
       try {
         TemplateParser.importFiles(this, loadFiles, ps,
             isImportWithTransaction());
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         throw new RepositoryException(
             "Exception caught importing files into repository.", e);
       }
@@ -772,10 +834,10 @@ public class InitializingGSA extends GSARepository {
    * @exception RepositoryException
    *              if an error occurs with the Repository
    */
-  private List<String> getCreateStatements(PrintWriter pOut, String pDatabaseName)
+  private Vector getCreateStatements(PrintWriter pOut, String pDatabaseName)
       throws RepositoryException {
-    List<String> tableStatements = new ArrayList<String>();
-    List<String> indexStatements = new ArrayList<String>();
+    Vector tableStatements = new Vector();
+    Vector indexStatements = new Vector();
 
     // use current database if none is supplied
     if (pDatabaseName == null)
@@ -784,7 +846,7 @@ public class InitializingGSA extends GSARepository {
     String[] descriptorNames = getItemDescriptorNames();
     OutputSQLContext sqlContext = new OutputSQLContext(pOut);
     GSAItemDescriptor itemDescriptors[];
-//    DatabaseTableInfo dti = getDatabaseTableInfo(pDatabaseName);
+    DatabaseTableInfo dti = getDatabaseTableInfo(pDatabaseName);
     int i, length = descriptorNames.length;
 
     itemDescriptors = new GSAItemDescriptor[length];
@@ -919,8 +981,7 @@ public class InitializingGSA extends GSARepository {
     // if file list is not null, convert it and return the array
     try {
       return TestUtils.convertFileArray(files, ":");
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new RepositoryException(e);
     }
   }
@@ -945,8 +1006,7 @@ public class InitializingGSA extends GSARepository {
     // if file list is not null, convert it and return the array
     try {
       return TestUtils.convertFileArray(files, ":");
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new RepositoryException(e);
     }
   }
@@ -966,10 +1026,10 @@ public class InitializingGSA extends GSARepository {
     if (getSqlDropFiles() == null)
       setSqlDropFiles(new Properties());
     // make sure all the keys are valid
-    List<Object> keys = new ArrayList<Object>();
+    Set keys = new HashSet();
     keys.addAll(getSqlCreateFiles().keySet());
     keys.addAll(getSqlDropFiles().keySet());
-    List<String> allow_keys = new ArrayList<String>();
+    Set allow_keys = new HashSet();
     for (int i = 0; i < dbTypes.length; i++) {
       keys.remove(dbTypes[i]);
       if (!dbTypes[i].equals(SYBASE2))
@@ -1010,11 +1070,10 @@ public class InitializingGSA extends GSARepository {
   /**
    * executes the specified SQL files against this Repository's DataSource.
    * 
-   * @param String[]
-   *          the files to execute
-   * @param boolean
-   *          true if execution should stop at first error. if false, then a
-   *          warning will be printed for encountered errors.
+   * @param String
+   *          [] the files to execute
+   * @param boolean true if execution should stop at first error. if false, then
+   *        a warning will be printed for encountered errors.
    * @exception RepositoryException
    *              if pStopAtError is true and an error occurs while executing
    *              one of the sql statements.
@@ -1025,12 +1084,13 @@ public class InitializingGSA extends GSARepository {
     boolean success = false;
     TransactionDemarcation td = new TransactionDemarcation();
     try {
-      td.begin((TransactionManager)Nucleus.getGlobalNucleus().resolveName("/atg/dynamo/transaction/TransactionManager"));
+      td.begin((TransactionManager) Nucleus.getGlobalNucleus().resolveName(
+          "/atg/dynamo/transaction/TransactionManager"));
 
       // for sql server auto-commit must be true
       // adamb: Hmm Marty added this, but it
       // breaks against MSSQL 8
-      //if (getDatabaseType().equals(MICROSOFT))
+      // if (getDatabaseType().equals(MICROSOFT))
       //  sp.setAutoCommit(true);
       SQLFileParser parser = new SQLFileParser();
       for (int i = 0; i < pFiles.length; i++) {
@@ -1038,7 +1098,7 @@ public class InitializingGSA extends GSARepository {
         // switch the file path so everything is forward slashes
         file = file.replace('\\', '/');
         String cmd = null;
-        Iterator<String> cmds = null;
+        Iterator cmds = null;
         if (isLoggingInfo())
           logInfo("Executing SQL file: " + file);
         if (!new File(file).exists())
@@ -1046,12 +1106,11 @@ public class InitializingGSA extends GSARepository {
         
         // parse the file to get commands...
         try {
-          Collection<String> c = parser.parseSQLFile(file);
+          Collection c = parser.parseSQLFile(file);
           if (isLoggingDebug())
             logDebug("Parsed " + c.size() + " SQL command(s) from file.");
           cmds = c.iterator();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           // an error parsing the file indicates something very wrong, so bail
           throw new RepositoryException("Error encountered parsing SQL file "
               + file, e);
@@ -1059,19 +1118,19 @@ public class InitializingGSA extends GSARepository {
         
         // then execute the commands...
         while (cmds.hasNext()) {
-          cmd = cmds.next();
-          if (cmd.trim().length() == 0) continue;
+          cmd = (String) cmds.next();
+          if (cmd.trim().length() == 0)
+            continue;
           if (isLoggingDebug() || isLoggingCreateTables())
             logDebug("Executing SQL cmd [" + cmd + "]");
           try {
             sp.executeSQL(cmd);
-          }
-          catch (Exception e) {
+          } catch (Exception e) {
             if (pStopAtError) {
-              throw new RepositoryException("Error received executing command ["
-                  + cmd + "] from SQL file " + file, e);
-            }
-            else {
+              throw new RepositoryException(
+                  "Error received executing command [" + cmd
+                      + "] from SQL file " + file, e);
+            } else {
               if (isLoggingWarning())
                 logWarning("Error received executing command [" + cmd
                     + "] from SQL file " + file + ": " + e.getMessage());
@@ -1079,14 +1138,13 @@ public class InitializingGSA extends GSARepository {
           }
         }
       }
-      success= true;
+      success = true;
     } catch (TransactionDemarcationException e) {
       logError(e);
     } finally {
       try {
         td.end(!success);
-      }
-      catch (TransactionDemarcationException e) {
+      } catch (TransactionDemarcationException e) {
        logError(e);
       }
     }

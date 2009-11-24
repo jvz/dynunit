@@ -40,6 +40,14 @@
   <category name="atg.test.AtgDustCase">
     <priority value="DEBUG" />
   </category>
+  
+  <category name="org.apache.ddlutils">
+    <priority value="ERROR" />
+  </category>
+  
+  <category name="org.apache">
+    <priority value="INFO" />
+  </category>
 
   <!-- ======================= -->
   <!-- Setup the Root category -->
@@ -50,3 +58,4 @@
     <appender-ref ref="CONSOLE" />
   </root>
 </log4j:configuration>
+

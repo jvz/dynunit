@@ -23,24 +23,12 @@
     <system>Issue Tracker</system>
     <url>http://sourceforge.net/tracker/?group_id=196325</url>
   </issueManagement>
- <!-- Commenting this out for now. Too much spam is coming into these lists
   <mailingLists>
     <mailingList>
-      <name>ATG DUST general mailing list</name>
-      <subscribe>https://lists.sourceforge.net/lists/listinfo/atgdust-general</subscribe>
-      <unsubscribe>https://lists.sourceforge.net/lists/listinfo/atgdust-general</unsubscribe>
-      <post>atgdust-general@lists.sourceforge.net</post>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=atgdust-general</archive>
-    </mailingList>
-    <mailingList>
-      <name>ATG DUST developer mailing list</name>
-      <subscribe>https://lists.sourceforge.net/lists/listinfo/atgdust-developer</subscribe>
-      <unsubscribe>https://lists.sourceforge.net/lists/listinfo/atgdust-developer</unsubscribe>
-      <post>atgdust-developer@lists.sourceforge.net</post>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=atgdust-developer</archive>
+      <name>ATG DUST Forums</name>
+      <post>https://sourceforge.net/apps/phpbb/atgdust/</post>
     </mailingList>
   </mailingLists>
-  -->
   <developers>
     <developer>
       <id>adamb06</id>
@@ -248,6 +236,12 @@
     	<artifactId>derby</artifactId>
     	<version>10.4.2.0</version>
     	<scope>test</scope>
+    </dependency>
+    
+    <dependency>
+   	<groupId>org.apache.ddlutils</groupId>
+    	<artifactId>ddlutils</artifactId>
+    	<version>1.0</version>
     </dependency>
     <!--
       <dependency> <groupId>com.bsdroot.util.parallelization</groupId>
