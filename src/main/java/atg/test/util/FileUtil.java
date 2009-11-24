@@ -23,6 +23,8 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
+import atg.applauncher.core.util.JarUtils;
+
 
 
 /**
@@ -187,7 +189,7 @@ public class FileUtil {
       }
       out.close();
       in.close();
-      org.apache.commons.io.FileUtils.copyFile(TMP_FILE, file);
+      JarUtils.copy(TMP_FILE, file, true, false);
       CONFIG_FILES_GLOBAL_FORCE.put(file.getPath(), file.lastModified());
       isDirty = true;
     }
