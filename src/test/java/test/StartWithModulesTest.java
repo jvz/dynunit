@@ -57,7 +57,7 @@ public class StartWithModulesTest extends TestCase {
     mLogger.log(Level.INFO, "Start Nucleus.");
     try {
       System.setProperty("derby.locks.deadlockTrace","true");
-      mNucleus = NucleusTestUtils.startNucleusWithModules(new String[] { "DAF.Deployment" },
+      mNucleus = NucleusTestUtils.startNucleusWithModules(new String[] { "DAF.Deployment","DPS" },
           this.getClass(),
           this.getClass().getName(),
           "/atg/deployment/DeploymentRepository");
@@ -97,6 +97,7 @@ public class StartWithModulesTest extends TestCase {
     assertNotNull(mNucleus);
     MutableRepository catalog = (MutableRepository) mNucleus.resolveName("/atg/deployment/DeploymentRepository");
     assertNotNull("DeploymentRepository should not be null.",catalog);
+    MutableRepository profile = (MutableRepository) mNucleus.resolveName("/atg/userprofiling/ProfileAdapterRepository");
     // Good enough for this test.
     // Don't want to disturb any data that might be in this repository.        
   }
