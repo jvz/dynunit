@@ -1,0 +1,13 @@
+ATG DUST 1.1 Release Notes
+
+This document contains changes since DUST 1.0 included in the 1.1 release.
+
+ * Updated InitializingGSA to use DDLUtils
+ * Added default TransactionManager.properties file
+
+
+* Updated Initializing GSA Details
+
+ATG DUST now uses the Apache DDLUtils project for schema generation.
+This fixes some issues where InitializingGSA generates SQL that was not appropriate for some databases.
+DDLUtils handles many database types so this gives us much better support for database initialization.
