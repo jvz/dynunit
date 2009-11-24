@@ -38,7 +38,7 @@
   </category>
   
   <category name="atg.test.AtgDustCase">
-    <priority value="DEBUG" />
+    <priority value="INFO" />
   </category>
   
   <category name="org.apache.ddlutils">
