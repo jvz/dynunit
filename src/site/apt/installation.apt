@@ -1,0 +1,77 @@
+Installation
+
+  I'm assuming that the reader is familiar with quite a few things here.
+  These things are:
+
+ * ATG  -- Art Technology Group, eCommerce software vendor http://www.atg.com/
+
+ * JUnit -- A Unit testing framework for Java
+
+ * Maven -- An apache project, this is a build system.
+
+ * Subversion -- A source control system
+  
+
+* Getting DUST
+
+** Download precompiled Jar
+
+  DUST is available for download here
+
+  {{http://sourceforge.net/projects/atgdust/}}
+
+
+** Building from Source using Maven 2
+
+  You can also build DUST from source. Source code is stored in a subversion repository, and the project is built with
+  Maven 2. You'll need to download and install subversion and maven 2 before continuing.
+  
+*** Checkout the Source
+  
++------------------------------------------+
+svn checkout https://atgdust.svn.sourceforge.net/svnroot/atgdust/trunk atgdust
++------------------------------------------+
+
+*** Building the Source
+
+  Once you have checked out the project and installed maven, build the source code.
+  We'll use the 'mvn install' command to do that.
+
++------------------------------------------+
+% cd atgdust
+% mvn install
++------------------------------------------+
+
+* Pointing Maven at ATG classes
+
+  The DUST project uses Maven to compile its classes and run tests.
+  Located in the pom.xml file of this project there are two dependencies on
+  ATG classes. One is on ${DYNAMO_ROOT}/DAS/lib/classes.jar the other is on ${DYNAMO_ROOT}/DAS/lib/resources.jar.
+
+  Because these libraries are not available on a public maven repository, you'll need to import
+  them into your maven repository. Fortunatly, Maven has a command to do just this.
+
+  Here's an example assuming you are on Windows and your ATG installation is C:\ATG\ATG9.0.
+  The forward slashes below are on purpose.
+  If you are using a different version, just replace 9.0 in the commands below with your version (2006.3,2007.1,etc...).
+
+  First the DAS/lib/classes.jar
+
++------------------------------------------+
+mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS -Dversion=9.0 -Dpackaging=jar 
+-Dfile=c:/ATG/ATG9.0/DAS/lib/classes.jar -DgeneratePom=true -Durl=file://c:/maven/repository -DlocalRepository=local
++------------------------------------------+
+
+
+  Then DAS/lib/resources.jar
+
++------------------------------------------+
+mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS-resources -Dversion=9.0 -Dpackaging=jar
+-Dfile=c:/ATG/ATG9.0/DAS/lib/resources.jar -DgeneratePom=true -Durl=file://c:/maven/repository -DlocalRepository=local
++------------------------------------------+
+
+  Note that you now have a src/target directory under your 'atgdust' directory.
+  In here is a jar file containg all the classes of the dust project. 
+
+  To make this example simpler we'll instead just write a test in the src/test directory of this project.
+
