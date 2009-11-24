@@ -80,6 +80,7 @@
   </scm>
   <build>
     <plugins>
+
        <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -88,6 +89,7 @@
  <!--         <argLine>${maven.test.jvmargs}</argLine> -->
         </configuration>
       </plugin>
+
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
@@ -102,12 +104,14 @@
           </filesets>
         </configuration>
       </plugin>
+
       <plugin>
         <artifactId>maven-scm-plugin</artifactId>
         <configuration>
           <connectionType>developerConnection</connectionType>
         </configuration>
       </plugin>
+
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
@@ -115,7 +119,7 @@
           <target>1.5</target>
         </configuration>
       </plugin>
-      <!-- Causes "already instrumented error?"
+<!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>emma-maven-plugin</artifactId>
@@ -129,8 +133,7 @@
           </execution> 
         </executions> 
       </plugin>       
-      -->
-      <!--
+
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <inherited>true</inherited>
@@ -140,7 +143,7 @@
           <classesDirectory>${project.build.directory}/generated-classes/emma/classes</classesDirectory>    
         </configuration>  
       </plugin> 
- -->
+-->
       <!--
         <plugin> <artifactId>maven-clover-plugin</artifactId>
         <executions> <execution> <phase>pre-site</phase> <goals>
@@ -255,12 +258,16 @@
         <plugin> <artifactId>maven-clover-plugin</artifactId>
         <configuration> <jdk>1.5</jdk> </configuration> </plugin>
       -->
-      
+      <plugin>      
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>emma-maven-plugin</artifactId>
+      </plugin>
+     <!-- 
       <plugin>      
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
-      <!--   <inherited>true</inherited>          -->
       </plugin>
+      -->
       <plugin> 
         <groupId>org.codehaus.mojo</groupId> 
         <artifactId>surefire-report-maven-plugin</artifactId> 
