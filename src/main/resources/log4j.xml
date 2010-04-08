@@ -53,7 +53,7 @@
   <!-- Setup the Root category -->
   <!-- ======================= -->
   <root>
-    <priority value="DEBUG" />
+    <priority value="ERROR" />
     <!--appender-ref ref="FILE" /-->
     <appender-ref ref="CONSOLE" />
   </root>
