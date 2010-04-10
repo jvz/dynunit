@@ -25,16 +25,17 @@ import org.apache.log4j.Logger;
 /*
  * IdGeneratorInitializer contains logic used to create and drop the schema used
  * for IdGenerators.
+ * $Id: //test/UnitTests/base/main/src/Java/atg/service/idgen/IdGeneratorInitializer.java#4 $
+ * @author Adam Belmont
  */
 public class IdGeneratorInitializer {
 
-  private static final String     SELECT_COUNT_FROM_TEMPLATE = "select count(*) from";
+  private static final String SELECT_COUNT_FROM_TEMPLATE = "select count(*) from";
 
-  private static final String     DROP_TABLE_TEMPLATE        = "DROP TABLE";
+  private static final String DROP_TABLE_TEMPLATE = "DROP TABLE";
 
   private InitializingIdGenerator mGenerator;
-  Logger                          log                        = Logger
-                                                                 .getLogger(IdGeneratorInitializer.class);
+  Logger log = Logger.getLogger(IdGeneratorInitializer.class);
 
   /**
    * Creates a new IdGeneratorInitializer used for the given generator,
@@ -49,7 +50,8 @@ public class IdGeneratorInitializer {
   /**
    * Creates a new schema for the current generator. If the schema exists, it's
    * dropped and a new one is created.
-   * @throws SQLException 
+   * 
+   * @throws SQLException
    */
   public void initialize() throws SQLException {
     if (tablesExist()) {
@@ -61,55 +63,58 @@ public class IdGeneratorInitializer {
 // --------------------------
   /**
    * Drops the tables required for this component
-   * @throws SQLException 
+   * 
+   * @throws SQLException
    */
   void dropTables() throws SQLException {
     executeUpdateStatement(DROP_TABLE_TEMPLATE + " "
         + mGenerator.getTableName());
   }
 
-  public Map<DataSource,DatabaseMetaData> mMetaDataMap = new HashMap<DataSource,DatabaseMetaData>();
-  
-  
+  public Map<DataSource, DatabaseMetaData> mMetaDataMap = new HashMap<DataSource, DatabaseMetaData>();
+
   /**
    * Returns a cached instance of the DB metadata for the current connection
+   * 
    * @return
    */
-  DatabaseMetaData getDatabaseMetaData() {
+  public DatabaseMetaData getDatabaseMetaData() {
     DataSource ds = mGenerator.getDataSource();
     if (mMetaDataMap.get(ds) == null)
       try {
-        mMetaDataMap.put(ds,ds.getConnection().getMetaData());
+        mMetaDataMap.put(ds, ds.getConnection().getMetaData());
       } catch (SQLException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        log.error("Failed to get DatabaseMetaData.", e);
       }
     return mMetaDataMap.get(ds);
   }
+
   // --------------------------
   /**
    * Returns true if the tables required for this component exist
    * 
    * @return
    */
-  boolean tablesExist() {
-    String [] types = {"TABLE"};
+  public boolean tablesExist() {
+    String[] types = { "TABLE" };
     boolean exists = false;
     try {
-      ResultSet rs = getDatabaseMetaData().getTables(null, null, mGenerator.getTableName(),types);
+      ResultSet rs = getDatabaseMetaData().getTables(null, null,
+          mGenerator.getTableName(), types);
       while (rs.next()) {
         exists = true;
       }
     } catch (SQLException e) {
       ; // eat it
     }
-    return exists;        
+    return exists;
   }
 
   // --------------------------
   /**
    * Creates the table required for this component
-   * @throws SQLException 
+   * 
+   * @throws SQLException
    */
   void initializeTables() throws SQLException {
     String statement = mGenerator.getCreateStatement();
@@ -120,7 +125,7 @@ public class IdGeneratorInitializer {
   // --------------------------
   /**
    * @return TODO
-   * @throws SQLException 
+   * @throws SQLException
    */
   private boolean executeUpdateStatement(String pStatement) throws SQLException {
     boolean success = false;

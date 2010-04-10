@@ -28,19 +28,20 @@ public class InitializingObfuscatedSQLIdGenerator extends
     ObfuscatedSQLIdGenerator implements InitializingIdGenerator {
 
   IdGeneratorInitializer     mInitializer;
+  String mCreateStatement = null;
 
   /**
    * The SQL statement required to create the table used by this component.
    */
   public static final String CREATE_STATEMENT = "create table das_secure_id_gen"
-                                                  + " (id_space_name   varchar2(60)    not null,"
-                                                  + "seed    number(19,0)    not null,"
+                                                  + " (id_space_name   varchar(60)    not null,"
+                                                  + "seed    numeric(19,0)    not null,"
                                                   + "batch_size      integer not null,"
                                                   + "ids_per_batch   integer null,"
-                                                  + "prefix  varchar2(10),"
-                                                  + "suffix  varchar2(10),"
+                                                  + "prefix  varchar(10),"
+                                                  + "suffix  varchar(10),"
                                                   + "constraint das_secure_id_ge_p primary key (id_space_name))";
-
+  
   /**
    * Ensures that the required tables for this id generator exist.
    */
@@ -56,9 +57,18 @@ public class InitializingObfuscatedSQLIdGenerator extends
   }
 
   /**
+   * Overrides the default create statement
+   */
+  public void setCreateStatement(String pStatement) {
+    mCreateStatement = pStatement;
+  }
+  /**
    * Returns the create statement appropriate for the current database
    */
   public String getCreateStatement() {
-    return CREATE_STATEMENT;
+    if (mCreateStatement == null)
+      return CREATE_STATEMENT;
+    else
+      return mCreateStatement;
   }
 }
