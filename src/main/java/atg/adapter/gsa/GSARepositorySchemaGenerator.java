@@ -1,15 +1,18 @@
-/**
- * Copyright 2009 ATG DUST Project
+/*
+ * <ATGCOPYRIGHT> Copyright (C) 2009 Art Technology Group, Inc. All Rights
+ * Reserved. No use, copying or distribution of this work may be made except in
+ * accordance with a valid license agreement from Art Technology Group. This
+ * notice must be included on all copies, modifications and derivatives of this
+ * work.
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Art Technology Group (ATG) MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE
+ * SUITABILITY OF THE SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT
+ * LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE, OR NON-INFRINGEMENT. ATG SHALL NOT BE LIABLE FOR ANY
+ * DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
+ * THIS SOFTWARE OR ITS DERIVATIVES.
  * 
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and limitations under the License.
+ * "Dynamo" is a trademark of Art Technology Group, Inc. </ATGCOPYRIGHT>
  */
 package atg.adapter.gsa;
 
@@ -65,6 +68,22 @@ public class GSARepositorySchemaGenerator {
   // Tool for mapping database types
   public DatabaseTypeNameToJDBC mDatabaseTypeNameToJDBC = null;
 
+
+  // -----------------------------
+  /**
+   * Creates a new GSARepositorySchemaGenerator and initializes it with a model
+   * based upon the given repository.
+   * 
+   * @param pRepository
+   * @param pIncludeExistingTables If true, the model will include the existing database tables as well as
+   * tables from the current repository.
+   * @throws RepositoryException
+   */
+  public GSARepositorySchemaGenerator(GSARepository pRepository,boolean pIncludeExistingTables)
+      throws RepositoryException {
+    buildModel(pRepository,pIncludeExistingTables);
+  }
+
   // -----------------------------
   /**
    * Creates a new GSARepositorySchemaGenerator and initializes it with a model
@@ -75,7 +94,7 @@ public class GSARepositorySchemaGenerator {
    */
   public GSARepositorySchemaGenerator(GSARepository pRepository)
       throws RepositoryException {
-    buildModel(pRepository);
+    buildModel(pRepository,false);
   }
 
   // -----------------------------
@@ -87,14 +106,32 @@ public class GSARepositorySchemaGenerator {
    * @throws RepositoryException
    */
   public void buildModel(GSARepository pRepository) throws RepositoryException {
+    buildModel(pRepository,false);
+  }
+
+  // -----------------------------
+  /**
+   * Initialize this class with a model for the given repository. Any previous
+   * model will be discarded.
+   * 
+   * @param pRepository
+   * @param pIncludeExistingTables If true the existing tables in the database will
+   * be added to the model.
+   * @throws RepositoryException
+   */
+  public void buildModel(GSARepository pRepository, boolean pIncludeExistingTables) throws RepositoryException {
     mDatabaseTypeNameToJDBC = new DatabaseTypeNameToJDBC(pRepository
         .getDatabaseTableInfo());
     mRepository = pRepository;
     mPlatform = PlatformFactory.createNewPlatformInstance(pRepository
         .getDataSource());
-    mDatabase = new Database();
-    mDatabase.setName(pRepository.getAbsoluteName());
-    mDatabase.setVersion("1.0");
+    if (pIncludeExistingTables) {
+      mDatabase = mPlatform.readModelFromDatabase(null);
+    } else {
+      mDatabase = new Database();
+      mDatabase.setName(pRepository.getAbsoluteName());
+      mDatabase.setVersion("1.0");
+    }
     String[] names = pRepository.getItemDescriptorNames();
     for (String name : names) {
       GSAItemDescriptor desc = (GSAItemDescriptor) pRepository
@@ -136,8 +173,9 @@ public class GSARepositorySchemaGenerator {
         List<GSARepository> repositoriesUsingTable = SchemaTracker
             .getSchemaTracker().getTableToRepository().get(table.getName());
         if (repositoriesUsingTable != null
+            && pRepository.isLoggingDebug()
             && repositoriesUsingTable.contains(pRepository)) {
-          pRepository.logWarning("Table " + table.getName()
+          pRepository.logDebug("Table " + table.getName()
               + " already defined by repository "
               + repositoriesUsingTable.toString()
               + " skipping schema creation for this table. multi="
@@ -261,9 +299,10 @@ public class GSARepositorySchemaGenerator {
           Column referencedColumn = referencedTable
               .findColumn(referencedColumnName);
           if (referencedTable.getName().equals(t.getName())
+              && pRepository.isLoggingDebug()
               && referencedColumn.getName().equals(c.getName())) {
             pRepository
-                .logWarning("Skipping foreign key constraint, table and column are the same. Table.Column="
+                .logDebug("Skipping foreign key constraint, table and column are the same. Table.Column="
                     + referencedTableName + "." + referencedColumnName);
           } else {
             reference.setForeignColumn(referencedColumn);
