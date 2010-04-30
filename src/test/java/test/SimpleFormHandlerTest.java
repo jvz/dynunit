@@ -1,17 +1,12 @@
 /**
- * Copyright 2008 ATG DUST Project
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.
- * 
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Copyright 2008 ATG DUST Project Licensed under the Apache License, Version
+ * 2.0 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 package test;
 
@@ -23,13 +18,13 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import atg.servlet.ServletTestUtils;
-import atg.servlet.TestingDynamoHttpServletRequest;
-import atg.servlet.TestingDynamoHttpServletResponse;
+import atg.servlet.ServletUtil;
+import atg.servlet.ServletTestUtils.TestingDynamoHttpServletRequest;
+import atg.servlet.ServletTestUtils.TestingDynamoHttpServletResponse;
 import atg.test.AtgDustCase;
 
 /**
  * @author adamb
- * 
  */
 public class SimpleFormHandlerTest extends AtgDustCase {
 
@@ -46,11 +41,13 @@ public class SimpleFormHandlerTest extends AtgDustCase {
   protected void setUp() throws Exception {
     super.setUp();
     // We can reuse this instance for all tests
-    if (mServletTestUtils == null) mServletTestUtils = new ServletTestUtils();
-    copyConfigurationFiles(new String[] {
-      "src/test/resources/" + this.getClass().getSimpleName() + "/config".replace("/", File.separator)
-    }, "target/test-classes/" + this.getClass().getSimpleName() + "/config".replace("/", File.separator),
-        ".svn");
+    if (mServletTestUtils == null)
+      mServletTestUtils = new ServletTestUtils();
+    copyConfigurationFiles(new String[] { "src/test/resources/"
+        + this.getClass().getSimpleName()
+        + "/config".replace("/", File.separator) }, "target/test-classes/"
+        + this.getClass().getSimpleName()
+        + "/config".replace("/", File.separator), ".svn");
   }
 
   /*
@@ -74,15 +71,17 @@ public class SimpleFormHandlerTest extends AtgDustCase {
     Map<String, String> params = new HashMap<String, String>();
     // Add a request parameter
     String redirectPage = "/success.jsp";
-    params.put(SimpleFormHandler.REDIRECT_URL_PARAM_NAME,redirectPage);
+    params.put(SimpleFormHandler.REDIRECT_URL_PARAM_NAME, redirectPage);
     // let's try 128k, should be more than enough
     int bufferSize = 128 * 1024;
     // Setup request/response pair
-    TestingDynamoHttpServletRequest request = mServletTestUtils.createDynamoHttpServletRequest(params, bufferSize, "GET");
-    TestingDynamoHttpServletResponse response = mServletTestUtils.createDynamoHttpServletResponse(request);
+    TestingDynamoHttpServletRequest request = (TestingDynamoHttpServletRequest) mServletTestUtils
+        .createDynamoHttpServletRequest(params, bufferSize, "GET");
+    TestingDynamoHttpServletResponse response = mServletTestUtils
+        .createDynamoHttpServletResponse();
     request.prepareForRead();
     // invoke handleRedirect
-    assertFalse(simpleFormHandler.handleRedirect(request,response));    
+    assertFalse(simpleFormHandler.handleRedirect(request, response));
   }
 
 }
