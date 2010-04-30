@@ -126,7 +126,7 @@ public class GSARepositorySchemaGenerator {
     mPlatform = PlatformFactory.createNewPlatformInstance(pRepository
         .getDataSource());
     if (pIncludeExistingTables) {
-      mDatabase = mPlatform.readModelFromDatabase(null);
+      mDatabase = mPlatform.readModelFromDatabase(pRepository.getAbsoluteName());
     } else {
       mDatabase = new Database();
       mDatabase.setName(pRepository.getAbsoluteName());
