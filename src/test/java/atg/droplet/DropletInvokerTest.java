@@ -75,7 +75,7 @@ class DropletInvokerTest extends TestCase
     super.setUp();
 
     mNucleus = NucleusTestUtils.startNucleusWithModules(
-      new String[] { "DAS" }, this.getClass(),
+      new String[] { "DAS", "DafEar.Tomcat" }, this.getClass(),
       "/atg/dynamo/droplet/Switch");
   }
 
@@ -102,6 +102,8 @@ class DropletInvokerTest extends TestCase
     DropletInvoker invoker = new DropletInvoker(mNucleus);
     DynamoHttpServletRequest request = invoker.getRequest();
 
+    assertNotNull("Request must not be null.",request);
+    assertNotNull("Request's session must not be null.",request.getSession());
     // test unset if value isn't set
     
     DropletResult result = 

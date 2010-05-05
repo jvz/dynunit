@@ -56,8 +56,8 @@ checkDynamoHome()
 doInstall()
 {
   pushd ${DUST_HOME}
-  ${MAVEN_HOME}/bin/mvn install:install-file -DgroupId=atg -DartifactId=das-resources -Dversion=9.0 -Dpackaging=jar -Dfile=${DYNAMO_HOME}/../DAS/lib/resources.jar
-  ${MAVEN_HOME}/bin/mvn install:install-file -DgroupId=atg -DartifactId=das -Dversion=9.0 -Dpackaging=jar -Dfile=${DYNAMO_HOME}/../DAS/lib/classes.jar
+  ${MAVEN_HOME}/bin/mvn install:install-file -DgroupId=atg -DartifactId=das-resources -Dversion=9.1 -Dpackaging=jar -Dfile=${DYNAMO_HOME}/../DAS/lib/resources.jar
+  ${MAVEN_HOME}/bin/mvn install:install-file -DgroupId=atg -DartifactId=das -Dversion=9.1 -Dpackaging=jar -Dfile=${DYNAMO_HOME}/../DAS/lib/classes.jar
   popd
 }
 

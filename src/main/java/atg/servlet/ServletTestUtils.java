@@ -452,6 +452,15 @@ public class ServletTestUtils {
     protected GenericHttpSession createDefaultGenericHttpSession() {
       return new GenericHttpSession(mSessionId);
     }
+    @Override
+    // 9.0 and older won't create a session. 
+    // If none exists, we make it here.
+    public HttpSession getSession (boolean create) {
+      HttpSession s = super.getSession(create);
+      if (s == null)
+        s = mSession = new GenericHttpSession(mSessionId);
+      return s;
+    }
   } // end inner-class SessionIdSettingGenericHttpServletRequest
 
   // -----------------------------

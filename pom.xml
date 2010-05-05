@@ -160,8 +160,8 @@
       NOTE: You must import DAS/classes.jar from an ATG installation
       into your maven repository to satify this dependency. For example:
       mvn install:install-file -DgroupId=atg -DartifactId=das
-      -Dversion=9.0 -Dpackaging=jar
-      -Dfile=c:\ATG\ATG9.0\DAS\lib\classes.jar -DgeneratePom=true
+      -Dversion=9.1 -Dpackaging=jar
+      -Dfile=c:\ATG\ATG9.1\DAS\lib\classes.jar -DgeneratePom=true
       See: src/main/bin/mavenInstall.bat for a windows batch script to do this for you
     -->
     <dependency>
@@ -174,13 +174,13 @@
       NOTE: You must import DAS/resources.jar from an ATG installation
       into your maven repository to satisfy this dependency. For
       example: mvn install:install-file -DgroupId=atg
-      -DartifactId=das-resources -Dversion=9.0 -Dpackaging=jar
-      -Dfile=c:\ATG\ATG9.0\DAS\lib\resources.jar -DgeneratePom=true
+      -DartifactId=das-resources -Dversion=9.1 -Dpackaging=jar
+      -Dfile=c:\ATG\ATG9.1\DAS\lib\resources.jar -DgeneratePom=true
     -->
     <dependency>
       <groupId>atg</groupId>
       <artifactId>das-resources</artifactId>
-      <version>9.0</version>
+      <version>9.1</version>
       <scope>provided</scope>
     </dependency>
     <!--  -->

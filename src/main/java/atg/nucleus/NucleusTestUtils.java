@@ -642,7 +642,10 @@ public class NucleusTestUtils {
         System.err.println("Warning: did not find directory " +
                            fileTestConfig.getAbsolutePath());
       }
-
+      String dustHome = System.getenv("DUST_HOME");
+      if (dustHome != null) {
+        configpath = configpath + File.pathSeparator + dustHome + File.separatorChar + "licenseconfig";
+      }
       // finally, create a server dir.
       fileServerDir = createTempServerDir();
 
