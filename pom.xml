@@ -4,7 +4,7 @@
   <groupId>net.sf.atgdust</groupId>
   <artifactId>atgdust</artifactId>
   <name>ATG DUST</name>
-  <version>1.1</version>
+  <version>1.2-alpha</version>
   <description> ATG DUST is a framework for building JUnit tests for
     applications built on the ATG Dynamo platform. This framework allows
     one to quickly write test code that depends up Nucleus or ATG
@@ -162,7 +162,7 @@
       mvn install:install-file -DgroupId=atg -DartifactId=das
       -Dversion=9.1 -Dpackaging=jar
       -Dfile=c:\ATG\ATG9.1\DAS\lib\classes.jar -DgeneratePom=true
-      See: src/main/bin/mavenInstall.bat for a windows batch script to do this for you
+      See: src/main/bin/install.bats/sh for a script to do this for you
     -->
     <dependency>
       <groupId>atg</groupId>
@@ -183,6 +183,28 @@
       <version>9.1</version>
       <scope>provided</scope>
     </dependency>
+    <!--
+      NOTE: You must import DPS/classes.jar from an ATG installation
+      into your maven repository to satify this dependency. For example:
+      mvn install:install-file -DgroupId=atg -DartifactId=dps
+      -Dversion=9.1 -Dpackaging=jar
+      -Dfile=c:\ATG\ATG9.1\DPS\lib\classes.jar -DgeneratePom=true
+      See: src/main/bin/install.bat for a windows batch script to do this for you
+    -->
+    <dependency>
+      <groupId>atg</groupId>
+      <artifactId>dps</artifactId>
+      <version>9.1</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>atg</groupId>
+      <artifactId>dps-resources</artifactId>
+      <version>9.1</version>
+      <scope>provided</scope>
+    </dependency>
+
     <!--  -->
     <!-- STOP: ATG Jars -->
     <!--  -->
@@ -328,12 +350,11 @@
     <repository>
       <id>atgdust.sourceforge.net</id>
       <name>ATG DUST SourceForge Maven Repository</name>
-      <url>scp://shell.sourceforge.net/home/groups/a/at/atgdust/htdocs/repo/m2-repository</url>
+      <url>sftp://adamb06,atgdust@web.sourceforge.net/home/groups/a/at/atgdust/htdocs/repo/m2-repository</url>
     </repository>
     <site>
       <id>atgdust.sourceforge.net</id>
-      <url>scp://shell.sourceforge.net/home/groups/a/at/atgdust/htdocs</url> 
-      <!-- <url>scp://web.sourceforge.net/</url> -->
+      <url>sftp://adamb06,atgdust@web.sourceforge.net/home/groups/a/at/atgdust/htdocs</url> 
     </site>
   </distributionManagement>
 </project>

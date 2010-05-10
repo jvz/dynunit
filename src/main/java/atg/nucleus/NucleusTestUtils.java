@@ -45,6 +45,7 @@ import atg.core.util.StringUtils;
 import atg.nucleus.naming.ComponentName;
 import atg.nucleus.servlet.NucleusServlet;
 import atg.service.dynamo.ServerConfig;
+import atg.test.util.DustStringUtils;
 import atg.test.util.FileUtil;
 
 /**
@@ -596,7 +597,7 @@ public class NucleusTestUtils {
 
     File dynamoRootFile = new File(dynamoRootStr);
     
-    String strModulesString = StringUtils.joinStringsWithQuoting(
+    String strModulesString = DustStringUtils.joinStringsWithQuoting(
       pOptions.getModules(), File.pathSeparatorChar);
 
     DynamoEnv.setProperty("atg.dynamo.modules", strModulesString);
@@ -639,12 +640,15 @@ public class NucleusTestUtils {
           fileTestConfig.getAbsolutePath();
       }
       else if (fileTestConfig != null) {
-        System.err.println("Warning: did not find directory " +
+        log.error("Warning: did not find directory " +
                            fileTestConfig.getAbsolutePath());
       }
       String dustHome = System.getenv("DUST_HOME");
       if (dustHome != null) {
         configpath = configpath + File.pathSeparator + dustHome + File.separatorChar + "licenseconfig";
+      } else {
+        log.warn("The DUST_HOME environment variable is not set." +
+        		" License files (if needed) should be placed in $DUST_HOME/licenseconfig.");
       }
       // finally, create a server dir.
       fileServerDir = createTempServerDir();
@@ -661,7 +665,7 @@ public class NucleusTestUtils {
       listArgs.add(pOptions.getInitialService());
 
       PropertyEditors.registerEditors();
-      System.out.println("Starting nucleus with arguments: " + listArgs);
+      log.info("Starting nucleus with arguments: " + listArgs);
       Nucleus n = Nucleus.startNucleus(listArgs.toArray(new String[0]));
 
       // remember our temporary server directory for later deletion
@@ -811,7 +815,7 @@ public class NucleusTestUtils {
                                                         strDynamoHomeLocalConfig);
         if (filePotentialHomeLocalconfigDir.exists()) {
           dynamoRootStr = new File(currentDir, "Dynamo").getAbsolutePath();
-          System.out.println("Found dynamo root via parent directory: " + dynamoRootStr);
+          log.debug("Found dynamo root via parent directory: " + dynamoRootStr);
           break;
         }
         currentDir = currentDir.getParentFile();
@@ -844,7 +848,7 @@ public class NucleusTestUtils {
           while ((fileCur != null) && fileCur.exists()) {
             if (new File(fileCur, strSubPath).exists()) {
               dynamoRootStr = fileCur.getAbsolutePath();
-              System.out.println("Found dynamo root by Nucleus.class location: " +
+              log.debug("Found dynamo root by Nucleus.class location: " +
                                  dynamoRootStr);
 
               
