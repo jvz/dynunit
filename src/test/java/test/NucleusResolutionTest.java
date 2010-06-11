@@ -45,7 +45,7 @@ public class NucleusResolutionTest extends TestCase {
     // start up Nucleus with the DAS module, using MyComponent
     // as its initial service.
     mNucleus = NucleusTestUtils.startNucleusWithModules(
-                                                        new String[] { "DAS" }, this.getClass(), "/atg/dynamo/MyComponent");
+                                                        new String[] { "DAS","DafEar.base" }, this.getClass(), "/atg/dynamo/MyComponent");
   }
   
 
