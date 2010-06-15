@@ -21,6 +21,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 
 import org.apache.ddlutils.DatabaseOperationException;
@@ -67,7 +69,8 @@ public class GSARepositorySchemaGenerator {
   public Database mDatabase = null;
   // Tool for mapping database types
   public DatabaseTypeNameToJDBC mDatabaseTypeNameToJDBC = null;
-
+  
+  static Set  mUsedFKNames = new HashSet();
 
   // -----------------------------
   /**
@@ -293,18 +296,22 @@ public class GSARepositorySchemaGenerator {
             columnDefinition.mReferenced.indexOf("(") + 1,
             columnDefinition.mReferenced.indexOf(")"));
         org.apache.ddlutils.model.Table referencedTable = pDb
-            .findTable(referencedTableName);
-        foreignKey.setName(t.getName() + c.getName() + "FK"
-            + referencedTableName + referencedColumnName);
-        if (referencedTable != null) {
+          .findTable(referencedTableName);
+        String fkName = (t.getName() + c.getName() + "FK"
+                         + referencedTableName + referencedColumnName);
+        
+        foreignKey.setName(fkName);
+        // don't add this fk if the name is already used
+        if (referencedTable != null && !mUsedFKNames.contains(fkName)) {
           Column referencedColumn = referencedTable
-              .findColumn(referencedColumnName);
+            .findColumn(referencedColumnName);
           if (referencedTable.getName().equals(t.getName())
               && pRepository.isLoggingDebug()
               && referencedColumn.getName().equals(c.getName())) {
-            pRepository
+            if (pRepository.isLoggingDebug())
+              pRepository
                 .logDebug("Skipping foreign key constraint, table and column are the same. Table.Column="
-                    + referencedTableName + "." + referencedColumnName);
+                          + referencedTableName + "." + referencedColumnName);
           } else {
             reference.setForeignColumn(referencedColumn);
             reference.setLocalColumn(c);
@@ -312,6 +319,8 @@ public class GSARepositorySchemaGenerator {
             foreignKey.setForeignTable(referencedTable);
             t.addForeignKey(foreignKey);
           }
+        } else {
+          pRepository.logDebug("skipping adding fk, it already exists " + fkName);
         }
 
         // --------------------------

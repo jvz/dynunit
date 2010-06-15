@@ -352,9 +352,11 @@
       <name>ATG DUST SourceForge Maven Repository</name>
       <url>sftp://adamb06,atgdust@web.sourceforge.net/home/groups/a/at/atgdust/htdocs/repo/m2-repository</url>
     </repository>
+   <!-- Remember to do:  ssh -t adamb06,atgdust@shell.sourceforge.net
+    	create before a "mvn site-deploy" -->
     <site>
       <id>atgdust.sourceforge.net</id>
-      <url>sftp://adamb06,atgdust@web.sourceforge.net/home/groups/a/at/atgdust/htdocs</url> 
+        <url>scp://shell.sourceforge.net/home/groups/a/at/atgdust/htdocs</url> 
     </site>
   </distributionManagement>
 </project>
