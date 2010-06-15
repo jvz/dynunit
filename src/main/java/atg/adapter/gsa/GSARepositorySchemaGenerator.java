@@ -172,15 +172,16 @@ public class GSARepositorySchemaGenerator {
 
         List<GSARepository> repositoriesUsingTable = SchemaTracker
             .getSchemaTracker().getTableToRepository().get(table.getName());
-        if (repositoriesUsingTable != null
-            && pRepository.isLoggingDebug()
-            && repositoriesUsingTable.contains(pRepository)) {
-          pRepository.logDebug("Table " + table.getName()
-              + " already defined by repository "
-              + repositoriesUsingTable.toString()
-              + " skipping schema creation for this table. multi="
-              + table.isMultiTable() + " auxiliary=" + table.isAuxiliaryTable()
-              + " primary=" + table.isPrimaryTable());
+        if (repositoriesUsingTable != null) {
+          if (pRepository.isLoggingDebug())
+            pRepository.logDebug("Table " + table.getName()
+                                 + " already defined by repository "
+                                 + repositoriesUsingTable.toString()
+                                 + " skipping schema creation for this table. multi="
+                                 + table.isMultiTable() + " auxiliary=" + table.isAuxiliaryTable()
+                                 + " primary=" + table.isPrimaryTable());
+          if (!repositoriesUsingTable.contains(pRepository))
+            repositoriesUsingTable.add(pRepository);
         } else {
           // Only add the model if we have never seen this table created
           buildSingleTableModel(mDatabase, table, pRepository);
