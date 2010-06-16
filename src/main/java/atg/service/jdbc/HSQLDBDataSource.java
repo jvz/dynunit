@@ -35,7 +35,7 @@ public class HSQLDBDataSource extends InitializingDataSourceBase {
 
   // Don't shutdown HSQLDB by default. It might stop before other components
   // that require it.
-  public boolean mShutdownHSQLDB = false;
+  public boolean mShutdownHSQLDB = true;
 
   /**
    * Returns true if the "SHUTDOWN" sql statment should be sent to HSQLDB
