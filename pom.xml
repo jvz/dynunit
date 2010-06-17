@@ -204,6 +204,28 @@
       <version>9.1</version>
       <scope>provided</scope>
     </dependency>
+    <!--
+      NOTE: You must import DSS/classes.jar from an ATG installation
+      into your maven repository to satify this dependency. For example:
+      mvn install:install-file -DgroupId=atg -DartifactId=dss
+      -Dversion=9.1 -Dpackaging=jar
+      -Dfile=c:\ATG\ATG9.1\DSS\lib\classes.jar -DgeneratePom=true
+      See: src/main/bin/install.bat for a windows batch script to do this for you
+    -->
+
+    <dependency>
+      <groupId>atg</groupId>
+      <artifactId>dss</artifactId>
+      <version>9.1</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>atg</groupId>
+      <artifactId>dss-resources</artifactId>
+      <version>9.1</version>
+      <scope>provided</scope>
+    </dependency>
 
     <!--  -->
     <!-- STOP: ATG Jars -->

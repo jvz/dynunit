@@ -320,7 +320,8 @@ public class GSARepositorySchemaGenerator {
             t.addForeignKey(foreignKey);
           }
         } else {
-          pRepository.logDebug("skipping adding fk, it already exists " + fkName);
+          if (pRepository.isLoggingDebug())
+	    pRepository.logDebug("skipping adding fk, it already exists " + fkName);
         }
 
         // --------------------------

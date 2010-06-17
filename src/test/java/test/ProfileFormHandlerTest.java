@@ -11,6 +11,10 @@ import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusTestUtils;
 import atg.nucleus.ServiceException;
 import atg.repository.MutableRepository;
+import atg.servlet.DynamoHttpServletRequest;
+import atg.servlet.ServletUtil;
+import atg.servlet.ServletTestUtils;
+
 import junit.framework.TestCase;
 
 /**
@@ -23,6 +27,7 @@ public class ProfileFormHandlerTest extends TestCase {
   public static final String PROFILE_ADAPTER_REPOSITORY_PATH = "/atg/userprofiling/ProfileAdapterRepository";
   Logger mLogger = Logger.getLogger(this.getClass());
   Nucleus mNucleus = null;
+  ServletTestUtils mServletTestUtils = new ServletTestUtils();
 
   // ------------------------------------
   /**
@@ -70,6 +75,32 @@ public class ProfileFormHandlerTest extends TestCase {
   public void testProfileFormHandler() throws Exception {
     MutableRepository par = (MutableRepository) mNucleus.resolveName(PROFILE_ADAPTER_REPOSITORY_PATH);
     assertNotNull(par);
+  }
+
+  /**
+   * Run a second test to be sure that HSQLDB shuts down
+   * properly between tests
+   **/
+  public void testProfileFormHandlerAgain() throws Exception {
+    assertNotNull(mNucleus.getCreationFilter());
+    Object s = mNucleus.resolveName("/atg/scenario/ScenarioManager");
+    assertNull(s);
+
+    DynamoHttpServletRequest requestOld = null;
+    try {
+      DynamoHttpServletRequest request =
+        mServletTestUtils.createDynamoHttpServletRequestForSession(
+                                                                   mNucleus, "mySessionId", "new");
+      requestOld =
+        ServletUtil.setCurrentRequest(request);
+      MutableRepository par = (MutableRepository) mNucleus.resolveName(PROFILE_ADAPTER_REPOSITORY_PATH);
+      assertNotNull(par);
+      
+      //assertNotNull("Request component",
+      //              request.resolveName("/atg/userprofiling/ProfileFormHandler"));
+    } finally {
+      ServletUtil.setCurrentRequest(requestOld);
+    }
   }
 
 
