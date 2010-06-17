@@ -4,7 +4,7 @@
   <groupId>net.sf.atgdust</groupId>
   <artifactId>atgdust</artifactId>
   <name>ATG DUST</name>
-  <version>1.2-alpha</version>
+  <version>1.2.1-alpha</version>
   <description> ATG DUST is a framework for building JUnit tests for
     applications built on the ATG Dynamo platform. This framework allows
     one to quickly write test code that depends up Nucleus or ATG
