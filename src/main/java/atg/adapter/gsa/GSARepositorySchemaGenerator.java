@@ -175,7 +175,14 @@ public class GSARepositorySchemaGenerator {
 
         List<GSARepository> repositoriesUsingTable = SchemaTracker
             .getSchemaTracker().getTableToRepository().get(table.getName());
-        if (repositoriesUsingTable != null) {
+        // Skip if we have added this table
+        // and it is already in the model
+        // Actually, checking the model
+        // is probably enough
+
+        if (repositoriesUsingTable != null
+            && (mDatabase.findTable(table.getName()) != null)
+            ) {
           if (pRepository.isLoggingDebug())
             pRepository.logDebug("Table " + table.getName()
                                  + " already defined by repository "
@@ -299,10 +306,11 @@ public class GSARepositorySchemaGenerator {
           .findTable(referencedTableName);
         String fkName = (t.getName() + c.getName() + "FK"
                          + referencedTableName + referencedColumnName);
+
         
         foreignKey.setName(fkName);
-        // don't add this fk if the name is already used
-        if (referencedTable != null && !mUsedFKNames.contains(fkName)) {
+        
+        if (referencedTable != null) {
           Column referencedColumn = referencedTable
             .findColumn(referencedColumnName);
           if (referencedTable.getName().equals(t.getName())
@@ -317,11 +325,15 @@ public class GSARepositorySchemaGenerator {
             reference.setLocalColumn(c);
             foreignKey.addReference(reference);
             foreignKey.setForeignTable(referencedTable);
-            t.addForeignKey(foreignKey);
+            // try to find existing fk
+            ForeignKey existingKey = t.findForeignKey(foreignKey);
+            // don't add this fk if the name is already used
+            if (existingKey == null)
+              t.addForeignKey(foreignKey);
           }
         } else {
           if (pRepository.isLoggingDebug())
-	    pRepository.logDebug("skipping adding fk, it already exists " + fkName);
+	    pRepository.logDebug("skipping adding fk, referenced table is null" + fkName);
         }
 
         // --------------------------

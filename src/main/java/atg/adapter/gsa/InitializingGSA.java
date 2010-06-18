@@ -639,12 +639,11 @@ public class InitializingGSA extends GSARepository {
     // otherwise, just drop tables based on startSQLRepository SQL
 
     if (isUseDDLUtils()) {
-      if (!Nucleus.getGlobalNucleus().isStopping()) {
-        // build a new one
-        mGenerator = new GSARepositorySchemaGenerator(this);
-      }
-
       try {
+        if (!Nucleus.getGlobalNucleus().isStopping()) {
+          // build a new one
+          mGenerator = new GSARepositorySchemaGenerator(this);
+        }
         if (mGenerator != null)
           mGenerator.dropSchema(true);
       } catch (DatabaseOperationException e) {
