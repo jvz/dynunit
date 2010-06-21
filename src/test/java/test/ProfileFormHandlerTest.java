@@ -96,8 +96,8 @@ public class ProfileFormHandlerTest extends TestCase {
       MutableRepository par = (MutableRepository) mNucleus.resolveName(PROFILE_ADAPTER_REPOSITORY_PATH);
       assertNotNull(par);
       
-      //assertNotNull("Request component",
-      //              request.resolveName("/atg/userprofiling/ProfileFormHandler"));
+      assertNotNull("Request component",
+                    request.resolveName("/atg/userprofiling/ProfileFormHandler"));
     } finally {
       ServletUtil.setCurrentRequest(requestOld);
     }
