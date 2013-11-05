@@ -4,7 +4,7 @@
   <groupId>net.sf.atgdust</groupId>
   <artifactId>atgdust</artifactId>
   <name>ATG DUST</name>
-  <version>1.2.1-alpha</version>
+  <version>2.0.0</version>
   <description> ATG DUST is a framework for building JUnit tests for
     applications built on the ATG Dynamo platform. This framework allows
     one to quickly write test code that depends up Nucleus or ATG
@@ -18,17 +18,20 @@
     describe how to create standalone Junit tests which can startup
     repositories and use the DynamoHttpServletResponse classes. 
   </description>
-  <url>http://atgdust.sourceforge.net/</url>
+  <url>https://github.com/jvz/atgdust</url>
   <issueManagement>
     <system>Issue Tracker</system>
-    <url>http://sourceforge.net/tracker/?group_id=196325</url>
+    <url>https://github.com/jvz/atgdust/issues</url>
   </issueManagement>
+  <!--
+       TODO set up mailing list or forum
   <mailingLists>
     <mailingList>
       <name>ATG DUST Forums</name>
       <post>https://sourceforge.net/apps/phpbb/atgdust/</post>
     </mailingList>
   </mailingLists>
+  -->
   <developers>
     <developer>
       <id>adamb06</id>
@@ -48,8 +51,19 @@
       </roles>
       <timezone>+1</timezone>
     </developer>
+    <developer>
+        <id>jvz</id>
+        <name>Matt Sicker</name>
+        <email>boards@gmail.com</email>
+        <roles>
+            <role>developer</role>
+        </roles>
+        <timezone>-6</timezone>
+    </developer>
   </developers>
 
+  <!--
+       TODO set up maven repository
   <repositories>
     <repository>
       <id>atgdust.sourceforge.net</id>
@@ -62,6 +76,7 @@
       </releases>
       </repository>
   </repositories>
+  -->
 
 
   <licenses>
@@ -72,12 +87,11 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:svn:https://atgdust.svn.sourceforge.net/svnroot/atgdust</connection>
-    <developerConnection>
-      scm:svn:https://atgdust.svn.sourceforge.net/svnroot/atgdust 
-    </developerConnection>
-    <url>http://atgdust.svn.sourceforge.net/viewvc/atgdust/</url>
+      <connection>scm:git:https://github.com/jvz/atgdust.git</connection>
+      <developerConnection>scm:git:https://github.com/jvz/atgdust.git</developerConnection>
+      <url>https://github.com/jvz/atgdust</url>
   </scm>
+
   <build>
     <plugins>
 
@@ -368,17 +382,18 @@
       </plugin>
     </plugins>
   </reporting>
+  <!--
+       still more maven repository stuff to set up here
   <distributionManagement>
     <repository>
       <id>atgdust.sourceforge.net</id>
       <name>ATG DUST SourceForge Maven Repository</name>
       <url>sftp://adamb06,atgdust@web.sourceforge.net/home/groups/a/at/atgdust/htdocs/repo/m2-repository</url>
     </repository>
-   <!-- Remember to do:  ssh -t adamb06,atgdust@shell.sourceforge.net
-    	create before a "mvn site-deploy" -->
     <site>
       <id>atgdust.sourceforge.net</id>
         <url>scp://shell.sourceforge.net/home/groups/a/at/atgdust/htdocs</url> 
     </site>
   </distributionManagement>
+  -->
 </project>
