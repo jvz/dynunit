@@ -1,21 +1,21 @@
 
-Download ATG Dust
+Download DynUnit
 
-  ATG Dust is available in two formats. You may either download a pre compiled jar file
-  containing classes or you may check out the entire project from SubVersion.
+  DynUnit is available in two formats. You may either download a pre compiled jar file
+  containing classes or you may check out the entire project from GitHub.
   
-* Check out from Sub Version
+* Check out from GitHub
 
- ATG Dust source code is available at the following URL:
+ DynUnit source code is available at the following URL:
 
 +------------------------------------------+
-svn checkout https://atgdust.svn.sourceforge.net/svnroot/atgdust/trunk atgdust
+git clone https://github.com/jvz/dynunit.git
 +------------------------------------------+
 
 * Download
 
- ATG Dust is also available precompiled including source. The current version is 1.0.
- You can download it from {{{http://sourceforge.net/projects/atgdust/}HERE}}.
+ DynUnit is also available pre-compiled including source. The current version is 1.0.0.
+ You can download it from {{{https://github.com/jvz/dynunit/releases}HERE}}.
  
  
   

@@ -1,399 +1,451 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>net.sf.atgdust</groupId>
-  <artifactId>atgdust</artifactId>
-  <name>ATG DUST</name>
-  <version>2.0.0</version>
-  <description> ATG DUST is a framework for building JUnit tests for
-    applications built on the ATG Dynamo platform. This framework allows
-    one to quickly write test code that depends up Nucleus or ATG
-    Repositories. By using this framework one can drastically cut down
-    on development time. It takes only a few seconds to start up a test
-    with a repository, but it may take multiple minutes to start up an
-    application server. To get started with DUST, take a look at
-    http://atgdust.sourceforge.net/first-test.html. This page will walk
-    you through the process of running a basic test which starts
-    Nucleus. After that, read the other getting started guides to
-    describe how to create standalone Junit tests which can startup
-    repositories and use the DynamoHttpServletResponse classes. 
-  </description>
-  <url>https://github.com/jvz/atgdust</url>
-  <issueManagement>
-    <system>Issue Tracker</system>
-    <url>https://github.com/jvz/atgdust/issues</url>
-  </issueManagement>
-  <!--
-       TODO set up mailing list or forum
-  <mailingLists>
-    <mailingList>
-      <name>ATG DUST Forums</name>
-      <post>https://sourceforge.net/apps/phpbb/atgdust/</post>
-    </mailingList>
-  </mailingLists>
-  -->
-  <developers>
-    <developer>
-      <id>adamb06</id>
-      <name>adamb06</name>
-      <email>adamb06@users.sourceforge.net</email>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>-5</timezone>
-    </developer>
-    <developer>
-      <id>rob_ert</id>
-      <name>Robert</name>
-      <email>rob_ert@users.sourceforge.net</email>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-        <id>jvz</id>
-        <name>Matt Sicker</name>
-        <email>boards@gmail.com</email>
-        <roles>
-            <role>developer</role>
-        </roles>
-        <timezone>-6</timezone>
-    </developer>
-  </developers>
-
-  <!--
-       TODO set up maven repository
-  <repositories>
-    <repository>
-      <id>atgdust.sourceforge.net</id>
-      <url>http://atgdust.sourceforge.net/repo/m2-repository</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      </repository>
-  </repositories>
-  -->
-
-
-  <licenses>
-    <license>
-      <name>Apache License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  <scm>
-      <connection>scm:git:https://github.com/jvz/atgdust.git</connection>
-      <developerConnection>scm:git:https://github.com/jvz/atgdust.git</developerConnection>
-      <url>https://github.com/jvz/atgdust</url>
-  </scm>
-
-  <build>
-    <plugins>
-
-       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>pertest</forkMode>
- <!--         <argLine>${maven.test.jvmargs}</argLine> -->
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>.</directory>
-              <includes>
-                <include>testingconfig</include>
-              </includes>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-scm-plugin</artifactId>
-        <configuration>
-          <connectionType>developerConnection</connectionType>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
+<?xml version="1.0"?>
 <!--
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>emma-maven-plugin</artifactId>
-        <inherited>true</inherited>          
-          <executions>
-          <execution>
-            <phase>process-classes</phase>               
-            <goals>
-              <goal>instrument</goal>
-            </goals>
-          </execution> 
-        </executions> 
-      </plugin>       
-
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <inherited>true</inherited>
-        <configuration>
-          <forkMode>once</forkMode>
-          <reportFormat>xml</reportFormat>
-          <classesDirectory>${project.build.directory}/generated-classes/emma/classes</classesDirectory>    
-        </configuration>  
-      </plugin> 
--->
-      <!--
-        <plugin> <artifactId>maven-clover-plugin</artifactId>
-        <executions> <execution> <phase>pre-site</phase> <goals>
-        <goal>instrument</goal> </goals> </execution> </executions>
-        <configuration> <jdk>1.5</jdk> </configuration> </plugin>
-      -->
-    </plugins>
-  </build>
-  <dependencies>
-  <!--  -->
-  <!-- START: ATG Jars -->
-  <!--  -->
-    <!--
-      NOTE: You must import DAS/classes.jar from an ATG installation
-      into your maven repository to satify this dependency. For example:
-      mvn install:install-file -DgroupId=atg -DartifactId=das
-      -Dversion=9.1 -Dpackaging=jar
-      -Dfile=c:\ATG\ATG9.1\DAS\lib\classes.jar -DgeneratePom=true
-      See: src/main/bin/install.bats/sh for a script to do this for you
-    -->
-    <dependency>
-      <groupId>atg</groupId>
-      <artifactId>das</artifactId>
-      <version>9.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <!--
-      NOTE: You must import DAS/resources.jar from an ATG installation
-      into your maven repository to satisfy this dependency. For
-      example: mvn install:install-file -DgroupId=atg
-      -DartifactId=das-resources -Dversion=9.1 -Dpackaging=jar
-      -Dfile=c:\ATG\ATG9.1\DAS\lib\resources.jar -DgeneratePom=true
-    -->
-    <dependency>
-      <groupId>atg</groupId>
-      <artifactId>das-resources</artifactId>
-      <version>9.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <!--
-      NOTE: You must import DPS/classes.jar from an ATG installation
-      into your maven repository to satify this dependency. For example:
-      mvn install:install-file -DgroupId=atg -DartifactId=dps
-      -Dversion=9.1 -Dpackaging=jar
-      -Dfile=c:\ATG\ATG9.1\DPS\lib\classes.jar -DgeneratePom=true
-      See: src/main/bin/install.bat for a windows batch script to do this for you
-    -->
-    <dependency>
-      <groupId>atg</groupId>
-      <artifactId>dps</artifactId>
-      <version>9.1</version>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>atg</groupId>
-      <artifactId>dps-resources</artifactId>
-      <version>9.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <!--
-      NOTE: You must import DSS/classes.jar from an ATG installation
-      into your maven repository to satify this dependency. For example:
-      mvn install:install-file -DgroupId=atg -DartifactId=dss
-      -Dversion=9.1 -Dpackaging=jar
-      -Dfile=c:\ATG\ATG9.1\DSS\lib\classes.jar -DgeneratePom=true
-      See: src/main/bin/install.bat for a windows batch script to do this for you
-    -->
-
-    <dependency>
-      <groupId>atg</groupId>
-      <artifactId>dss</artifactId>
-      <version>9.1</version>
-      <scope>provided</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>atg</groupId>
-      <artifactId>dss-resources</artifactId>
-      <version>9.1</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!--  -->
-    <!-- STOP: ATG Jars -->
-    <!--  -->
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.14</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-dbcp</groupId>
-      <artifactId>commons-dbcp</artifactId>
-      <version>1.2.2</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.2</version>
-    </dependency>
-    <dependency>
-      <groupId>hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <version>1.8.0.1</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.4</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jsp-api</artifactId>
-      <version>2.0</version>
-    </dependency>
-    <!--
-      NOTE: You must import mysql jdbc drive from into your maven
-      repository to satisfy this dependency. For example: mvn
-      deploy:deploy-file -DgroupId=mysql-connector
-      -DartifactId=mysql-connector-java -Dversion=5.0.7 -Dpackaging=jar
-      -Dfile=c:\tmp\mysql-5.0.7-java-connector.jar -DgeneratePom=true
-    <dependency>
-      <groupId>mysql-connector</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>5.0.7</version>
-      <scope>provided</scope>
-    </dependency>
-    -->
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>1.4</version>
-    </dependency>
-    <dependency>
-    	<groupId>org.apache.derby</groupId>
-    	<artifactId>derby</artifactId>
-    	<version>10.4.2.0</version>
-    	<scope>test</scope>
-    </dependency>
-    
-    <dependency>
-   	<groupId>org.apache.ddlutils</groupId>
-    	<artifactId>ddlutils</artifactId>
-    	<version>1.0</version>
-    </dependency>
-    <!--
-      <dependency> <groupId>com.bsdroot.util.parallelization</groupId>
-      <artifactId>parallelization-util</artifactId>
-      <version>1.0-SNAPSHOT</version> </dependency>
-    -->
-  </dependencies>
-  <reporting>
-    <plugins>
-      <!--
-        <plugin> <artifactId>maven-clover-plugin</artifactId>
-        <configuration> <jdk>1.5</jdk> </configuration> </plugin>
-      -->
-      <plugin>      
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>emma-maven-plugin</artifactId>
-      </plugin>
-     <!-- 
-      <plugin>      
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
-      </plugin>
-      -->
-      <plugin> 
-        <groupId>org.codehaus.mojo</groupId> 
-        <artifactId>surefire-report-maven-plugin</artifactId> 
-        <inherited>true</inherited>
-      </plugin>         
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jxr-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>taglist-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <configuration>
-          <targetJdk>1.5</targetJdk>
-          <rulesets>
-            <ruleset>/rulesets/basic.xml</ruleset>
-            <ruleset>/rulesets/controversial.xml</ruleset>
-          </rulesets>
-          <format>xml</format>
-          <linkXref>true</linkXref>
-          <sourceEncoding>utf-8</sourceEncoding>
-          <minimumTokens>100</minimumTokens>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <configuration>
-          <threshold>Normal</threshold>
-          <effort>Max</effort>
-          <visitors>FindDeadLocalStores,UnreadFields</visitors>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>changelog-maven-plugin</artifactId>
-        <configuration>
-          <type>range</type>
-          <range>30</range>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.0-beta-1</version>
-        <configuration>
-          <descriptor>src/main/assembly/dep.xml</descriptor>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-  <!--
-       still more maven repository stuff to set up here
-  <distributionManagement>
-    <repository>
-      <id>atgdust.sourceforge.net</id>
-      <name>ATG DUST SourceForge Maven Repository</name>
-      <url>sftp://adamb06,atgdust@web.sourceforge.net/home/groups/a/at/atgdust/htdocs/repo/m2-repository</url>
-    </repository>
-    <site>
-      <id>atgdust.sourceforge.net</id>
-        <url>scp://shell.sourceforge.net/home/groups/a/at/atgdust/htdocs</url> 
-    </site>
-  </distributionManagement>
+  ~ Copyright 2013 Matt Sicker and Contributors
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
   -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.dynunit</groupId>
+    <artifactId>dynunit</artifactId>
+    <name>dynunit</name>
+    <version>1.0.0</version>
+    <!-- TODO: update description -->
+    <description>ATG DUST is a framework for building JUnit tests for
+        applications built on the ATG Dynamo platform. This framework allows
+        one to quickly write test code that depends up Nucleus or ATG
+        Repositories. By using this framework one can drastically cut down
+        on development time. It takes only a few seconds to start up a test
+        with a repository, but it may take multiple minutes to start up an
+        application server. To get started with DUST, take a look at
+        http://atgdust.sourceforge.net/first-test.html. This page will walk
+        you through the process of running a basic test which starts
+        Nucleus. After that, read the other getting started guides to
+        describe how to create standalone Junit tests which can startup
+        repositories and use the DynamoHttpServletResponse classes.
+    </description>
+    <url>http://dynunit.org/</url>
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/jvz/dynunit/issues</url>
+    </issueManagement>
+    <!-- TODO set up mailing list or forum -->
+    <developers>
+        <developer>
+            <id>jvz</id>
+            <name>Matt Sicker</name>
+            <email>boards@gmail.com</email>
+            <roles>
+                <role>Lead Developer</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>America/Chicago</timezone>
+        </developer>
+        <developer>
+            <id>adamb06</id>
+            <name>adamb06</name>
+            <email>adamb06@users.sourceforge.net</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>rob_ert</id>
+            <name>Robert</name>
+            <email>rob_ert@users.sourceforge.net</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+    <repositories>
+        <repository>
+            <id>official-maven-repo</id>
+            <url>http://repo.maven.apache.org/maven2/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+    <!--
+         TODO set up maven repository
+    <repositories>
+      <repository>
+        <id>atgdust.sourceforge.net</id>
+        <url>http://atgdust.sourceforge.net/repo/m2-repository</url>
+        <snapshots>
+          <enabled>true</enabled>
+        </snapshots>
+        <releases>
+          <enabled>true</enabled>
+        </releases>
+        </repository>
+    </repositories>
+    -->
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:https://github.com/jvz/dynunit.git</connection>
+        <developerConnection>scm:git:https://github.com/jvz/dynunit.git</developerConnection>
+        <url>https://github.com/jvz/dynunit</url>
+    </scm>
+    <build>
+        <plugins>
+            <!-- core plugins -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>.</directory>
+                            <includes>
+                                <include>testingconfig</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.16</version>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-scm-plugin</artifactId>
+                <version>1.8.1</version>
+                <configuration>
+                    <connectionType>developerConnection</connectionType>
+                </configuration>
+            </plugin>
+
+            <!-- code signing -->
+            <plugin>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <!-- TODO: replace ATG dependencies with mockito classes -->
+        <!--  -->
+        <!-- START: ATG Jars -->
+        <!--  -->
+        <!--
+          NOTE: You must import DAS/classes.jar from an ATG installation
+          into your maven repository to satify this dependency. For example:
+          mvn install:install-file -DgroupId=atg -DartifactId=das
+          -Dversion=9.1 -Dpackaging=jar
+          -Dfile=c:\ATG\ATG9.1\DAS\lib\classes.jar -DgeneratePom=true
+          See: src/main/bin/install.bats/sh for a script to do this for you
+        -->
+        <dependency>
+            <groupId>atg</groupId>
+            <artifactId>das</artifactId>
+            <version>10.1.2</version>
+            <!-- XXX: this could use "system" instead -->
+            <scope>provided</scope>
+        </dependency>
+        <!--
+          NOTE: You must import DAS/resources.jar from an ATG installation
+          into your maven repository to satisfy this dependency. For
+          example: mvn install:install-file -DgroupId=atg
+          -DartifactId=das-resources -Dversion=9.1 -Dpackaging=jar
+          -Dfile=c:\ATG\ATG9.1\DAS\lib\resources.jar -DgeneratePom=true
+        -->
+        <dependency>
+            <groupId>atg</groupId>
+            <artifactId>das-resources</artifactId>
+            <version>10.1.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--
+          NOTE: You must import DPS/classes.jar from an ATG installation
+          into your maven repository to satify this dependency. For example:
+          mvn install:install-file -DgroupId=atg -DartifactId=dps
+          -Dversion=9.1 -Dpackaging=jar
+          -Dfile=c:\ATG\ATG9.1\DPS\lib\classes.jar -DgeneratePom=true
+          See: src/main/bin/install.bat for a windows batch script to do this for you
+        -->
+        <dependency>
+            <groupId>atg</groupId>
+            <artifactId>dps</artifactId>
+            <version>10.1.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>atg</groupId>
+            <artifactId>dps-resources</artifactId>
+            <version>10.1.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--
+          NOTE: You must import DSS/classes.jar from an ATG installation
+          into your maven repository to satify this dependency. For example:
+          mvn install:install-file -DgroupId=atg -DartifactId=dss
+          -Dversion=9.1 -Dpackaging=jar
+          -Dfile=c:\ATG\ATG9.1\DSS\lib\classes.jar -DgeneratePom=true
+          See: src/main/bin/install.bat for a windows batch script to do this for you
+        -->
+        <dependency>
+            <groupId>atg</groupId>
+            <artifactId>dss</artifactId>
+            <version>10.1.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>atg</groupId>
+            <artifactId>dss-resources</artifactId>
+            <version>10.1.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--  -->
+        <!-- STOP: ATG Jars -->
+        <!--  -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.0-beta9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.0-beta9</version>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+            <version>2.0-beta9</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <!-- Testing frameworks -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+        </dependency>
+
+        <!-- Databases -->
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>10.10.1.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Java EE things -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>javax.servlet.jsp-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+
+        <!--
+          database connectors
+          remember to add your own!
+        -->
+
+        <!-- Oracle JDBC driver -->
+        <dependency>
+            <groupId>ojdbc</groupId>
+            <artifactId>ojdbc</artifactId>
+            <version>14</version>
+        </dependency>
+
+        <!-- jTDS driver -->
+        <dependency>
+            <groupId>net.sourceforge.jtds</groupId>
+            <artifactId>jtds</artifactId>
+            <version>1.3.1</version>
+        </dependency>
+
+        <!--
+          NOTE: You must import mysql jdbc drive from into your maven
+          repository to satisfy this dependency. For example: mvn
+          deploy:deploy-file -DgroupId=mysql-connector
+          -DartifactId=mysql-connector-java -Dversion=5.0.7 -Dpackaging=jar
+          -Dfile=c:\tmp\mysql-5.0.7-java-connector.jar -DgeneratePom=true
+        <dependency>
+          <groupId>mysql-connector</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>5.0.7</version>
+          <scope>provided</scope>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ddlutils</groupId>
+            <artifactId>ddlutils</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+    <reporting>
+        <plugins>
+            <!--
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>emma-maven-plugin</artifactId>
+            </plugin>
+            -->
+            <plugin>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.16</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>2.3</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>taglist-maven-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <targetJdk>1.6</targetJdk>
+                    <rulesets>
+                        <ruleset>/rulesets/basic.xml</ruleset>
+                        <ruleset>/rulesets/controversial.xml</ruleset>
+                    </rulesets>
+                    <format>xml</format>
+                    <linkXref>true</linkXref>
+                    <sourceEncoding>utf-8</sourceEncoding>
+                    <minimumTokens>100</minimumTokens>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.5.2</version>
+                <configuration>
+                    <threshold>Normal</threshold>
+                    <effort>Max</effort>
+                    <visitors>FindDeadLocalStores,UnreadFields</visitors>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-changes-plugin</artifactId>
+                <version>2.9</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>github-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <!--
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>changelog-maven-plugin</artifactId>
+                <configuration>
+                    <type>range</type>
+                    <range>30</range>
+                </configuration>
+            </plugin>
+            -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <descriptor>src/main/assembly/dep.xml</descriptor>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+    <!--
+         still more maven repository stuff to set up here
+    <distributionManagement>
+      <repository>
+        <id>atgdust.sourceforge.net</id>
+        <name>ATG DUST SourceForge Maven Repository</name>
+        <url>sftp://adamb06,atgdust@web.sourceforge.net/home/groups/a/at/atgdust/htdocs/repo/m2-repository</url>
+      </repository>
+      <site>
+        <id>atgdust.sourceforge.net</id>
+          <url>scp://shell.sourceforge.net/home/groups/a/at/atgdust/htdocs</url>
+      </site>
+    </distributionManagement>
+    -->
 </project>

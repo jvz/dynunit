@@ -1,11 +1,11 @@
-Unit Testing Dynamo FormhHandlers
+Unit Testing Dynamo FormHandlers
 
 * Introduction 
 
   FormHandlers are an often used pattern in ATG. Basically a FormHandler allows one to map an HTML form
   field to a Nucleus component property. Ideally formhandlers really shouldn't have any "business logic" in them and therefore
   the type of testing required on the formhandler should be more about checking if it handles errors, null inputs etc...
-  Often though there is much more business logic than that in a formhandler. Beware, existing formahandlers with lots of business logic are going to be tough to unit test and may require some refactoring to be made more easily testable.
+  Often though there is much more business logic than that in a formhandler. Beware, existing formhandlers with lots of business logic are going to be tough to unit test and may require some refactoring to be made more easily testable.
 
 * Capabilities
 
