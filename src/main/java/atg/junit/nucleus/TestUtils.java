@@ -1211,10 +1211,10 @@ public class TestUtils
 
             // add the File attachments
             if ( pFiles != null ) {
-                for ( int i = 0; i < pFiles.length; i++ ) {
+                for ( File pFile : pFiles ) {
                     MimeBodyPart part = new MimeBodyPart();
-                    part.setDataHandler(new DataHandler(new FileDataSource(pFiles[i])));
-                    part.setFileName(pFiles[i].getName());
+                    part.setDataHandler(new DataHandler(new FileDataSource(pFile)));
+                    part.setFileName(pFile.getName());
                     mp.addBodyPart(part);
                 }
             }
@@ -1748,7 +1748,7 @@ public class TestUtils
 
         while ( modules.hasNext() ) {
             AppModule module = (AppModule) modules.next();
-            for ( int i = 0; i < APPLICATION_PRODUCT_MODULES.length; i++ ) {
+            for ( String APPLICATION_PRODUCT_MODULE : APPLICATION_PRODUCT_MODULES ) {
                 // in order to work around bug 80207, we allow a colon ":" in
                 // the specified module names.  if a colon exists, the name
                 // before the colon is the name of the module that would be
@@ -1756,28 +1756,27 @@ public class TestUtils
                 // colon is the module containing the MANIFEST.MF file with
                 // build info.  if there is no colon, assume the two modules
                 // are the same.
-                int idx = APPLICATION_PRODUCT_MODULES[i].indexOf(":");
+                int idx = APPLICATION_PRODUCT_MODULE.indexOf(":");
                 if ( idx == -1 ) {
                     // no colon...
-                    if ( (APPLICATION_PRODUCT_MODULES[i]).equals(module.getName()) ) {
+                    if ( (APPLICATION_PRODUCT_MODULE).equals(module.getName()) ) {
                         apps.add(module);
                     }
                 } else {
-                    if ( APPLICATION_PRODUCT_MODULES[i].substring(0, idx)
-                                                       .equals(module.getName()) ) {
+                    if ( APPLICATION_PRODUCT_MODULE.substring(0, idx).equals(module.getName()) ) {
                         // NOTE: getAppLauncher().getModule(...) will return a
                         // module as long as it exists; the module does not need
                         // to be running.
                         try {
                             AppModule mod = getAppLauncher().getModule(
-                                    APPLICATION_PRODUCT_MODULES[i].substring(idx + 1)
+                                    APPLICATION_PRODUCT_MODULE.substring(idx + 1)
                             );
                             logger.info("Mod: {}", mod);
                             if ( mod != null ) {
                                 apps.add(mod);
                             } else {
                                 throw new Exception(
-                                        APPLICATION_PRODUCT_MODULES[i].substring(
+                                        APPLICATION_PRODUCT_MODULE.substring(
                                                 idx + 1
                                         ) + " not found."
                                 );
@@ -1786,7 +1785,7 @@ public class TestUtils
                             logger.catching(ale);
                             logger.warn(
                                     "Cannot resolve module '{}'.",
-                                    APPLICATION_PRODUCT_MODULES[i].substring(idx + 1)
+                                    APPLICATION_PRODUCT_MODULE.substring(idx + 1)
                             );
                         }
                     }

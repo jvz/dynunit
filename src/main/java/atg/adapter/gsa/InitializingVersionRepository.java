@@ -134,9 +134,9 @@ public class InitializingVersionRepository
         }
 
         List<String> v = new ArrayList<String>();
-        for ( int i = 0; i < f.length; i++ ) {
-            if ( !v.contains(f[i].getAbsolutePath()) ) {
-                v.add(f[i].getAbsolutePath());
+        for ( File aF : f ) {
+            if ( !v.contains(aF.getAbsolutePath()) ) {
+                v.add(aF.getAbsolutePath());
             }
         }
 
@@ -185,8 +185,8 @@ public class InitializingVersionRepository
             mSQLProcessor.setLoggingInfo(this.isLoggingInfo());
             mSQLProcessor.setLoggingWarning(this.isLoggingWarning());
             LogListener[] listeners = this.getLogListeners();
-            for ( int i = 0; i < listeners.length; i++ ) {
-                mSQLProcessor.addLogListener(listeners[i]);
+            for ( LogListener listener : listeners ) {
+                mSQLProcessor.addLogListener(listener);
             }
         }
 
@@ -760,9 +760,7 @@ public class InitializingVersionRepository
             GSAItemDescriptor desc = itemDescriptors[i];
             Table[] tables = desc.getTables();
             if ( tables != null ) {
-                for ( int j = 0; j < tables.length; j++ ) {
-                    Table t = tables[j];
-
+                for ( Table t : tables ) {
                     if ( !t.isInherited() && !tableNames.contains(t.getName()) ) {
                         sqlContext.clear();
                         create = t.generateSQL(sqlContext, pDatabaseName);
@@ -814,8 +812,8 @@ public class InitializingVersionRepository
 
         if ( isLoggingDebug() ) {
             logDebug("The following files will be imported:");
-            for ( int i = 0; i < loadFiles.length; i++ ) {
-                logDebug("file: " + loadFiles[i]);
+            for ( String loadFile : loadFiles ) {
+                logDebug("file: " + loadFile);
             }
         }
 
@@ -1076,12 +1074,12 @@ public class InitializingVersionRepository
      */
     private String getDatabaseType() {
         String type = getDatabaseName();
-        for ( int i = 0; i < dbTypes.length; i++ ) {
-            if ( type.toLowerCase().indexOf(dbTypes[i].toLowerCase()) > -1 ) {
-                if ( dbTypes[i].equals(SYBASE2) ) {
+        for ( String dbType : dbTypes ) {
+            if ( type.toLowerCase().indexOf(dbType.toLowerCase()) > -1 ) {
+                if ( dbType.equals(SYBASE2) ) {
                     return SYBASE;
                 }
-                return dbTypes[i];
+                return dbType;
             }
         }
         return DEFAULT;
@@ -1206,8 +1204,8 @@ public class InitializingVersionRepository
         // for sql server auto-commit must be true
         //            if ( getDatabaseType().equals( MICROSOFT ) ) sp.setAutoCommit(true);
         SQLFileParser parser = new SQLFileParser();
-        for ( int i = 0; i < pFiles.length; i++ ) {
-            String file = pFiles[i];
+        for ( String pFile : pFiles ) {
+            String file = pFile;
             // switch the file path so everything is forward slashes
             file = file.replace('\\', '/');
             String cmd = null;

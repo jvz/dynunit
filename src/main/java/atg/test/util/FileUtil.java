@@ -33,7 +33,6 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -144,9 +143,7 @@ public class FileUtil {
                 out.newLine();
             }
             if ( settings != null ) {
-                for ( final Iterator<Entry<String, String>> it = settings.entrySet().iterator();
-                      it.hasNext(); ) {
-                    final Entry<String, String> entry = it.next();
+                for ( final Entry<String, String> entry : settings.entrySet() ) {
                     out.write(
                             entry.getKey() + "=" + entry.getValue()
                     );

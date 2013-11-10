@@ -355,9 +355,7 @@ public class AtgDustCase
 
         final Map<String, String> connectionSettings = new HashMap<String, String>();
 
-        for ( final Iterator<Entry<Object, Object>> it = connectionProperties.entrySet().iterator();
-              it.hasNext(); ) {
-            final Entry<Object, Object> entry = it.next();
+        for ( final Entry<Object, Object> entry : connectionProperties.entrySet() ) {
             connectionSettings.put(
                     (String) entry.getKey(), (String) entry.getValue()
             );

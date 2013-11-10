@@ -543,9 +543,7 @@ public class SQLFileParser {
         // ****************************************
         List<String> v = new ArrayList<String>();
         v = readFileAndLoadData();
-        String s = "";
-        for ( int i = 0; i < v.size(); i++ ) {
-            s = v.get(i);
+        for ( String s : v ) {
             s = trimDebuggingCharacters(s);
             logger.info(s);
         }

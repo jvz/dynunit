@@ -400,16 +400,16 @@ public class ServletTestUtils {
                 // just ignore, I reckon
             } else if ( objValue.getClass() == String[].class ) {
                 String[] rgstr = (String[]) (objValue);
-                for ( int i = 0; i < rgstr.length; i++ ) {
+                for ( String aRgstr : rgstr ) {
                     escapeAndAppendParamNameAndValue(
-                            strbuf, strKey, rgstr[i]
+                            strbuf, strKey, aRgstr
                     );
                 }
             } else if ( objValue instanceof ParamStackQueryParams ) {
                 String[] rgstr = ((ParamStackQueryParams) objValue).getValues();
-                for ( int i = 0; i < rgstr.length; i++ ) {
+                for ( String aRgstr : rgstr ) {
                     escapeAndAppendParamNameAndValue(
-                            strbuf, strKey, rgstr[i]
+                            strbuf, strKey, aRgstr
                     );
                 }
             } else if ( objValue instanceof Collection ) {

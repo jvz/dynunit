@@ -131,9 +131,9 @@ public class InitializingGSA
         }
 
         List<String> v = new ArrayList<String>();
-        for ( int i = 0; i < f.length; i++ ) {
-            if ( !v.contains(f[i].getAbsolutePath()) ) {
-                v.add(f[i].getAbsolutePath());
+        for ( File aF : f ) {
+            if ( !v.contains(aF.getAbsolutePath()) ) {
+                v.add(aF.getAbsolutePath());
             }
         }
 
@@ -182,8 +182,8 @@ public class InitializingGSA
             mSQLProcessor.setLoggingInfo(this.isLoggingInfo());
             mSQLProcessor.setLoggingWarning(this.isLoggingWarning());
             LogListener[] listeners = this.getLogListeners();
-            for ( int i = 0; i < listeners.length; i++ ) {
-                mSQLProcessor.addLogListener(listeners[i]);
+            for ( LogListener listener : listeners ) {
+                mSQLProcessor.addLogListener(listener);
             }
         }
 
@@ -756,8 +756,8 @@ public class InitializingGSA
 
         if ( isLoggingDebug() ) {
             logDebug("The following files will be imported:");
-            for ( int i = 0; i < loadFiles.length; i++ ) {
-                logDebug("file: " + loadFiles[i]);
+            for ( String loadFile : loadFiles ) {
+                logDebug("file: " + loadFile);
             }
         }
 
@@ -884,8 +884,7 @@ public class InitializingGSA
             GSAItemDescriptor desc = itemDescriptors[i];
             Table[] tables = desc.getTables();
             if ( tables != null ) {
-                for ( int j = 0; j < tables.length; j++ ) {
-                    Table t = tables[j];
+                for ( Table t : tables ) {
                     if ( !t.isInherited() ) {
                         sqlContext.clear();
                         create = t.generateSQL(sqlContext, pDatabaseName);
@@ -991,12 +990,12 @@ public class InitializingGSA
      */
     private String getDatabaseType() {
         String type = getDatabaseName();
-        for ( int i = 0; i < dbTypes.length; i++ ) {
-            if ( type.toLowerCase().indexOf(dbTypes[i].toLowerCase()) > -1 ) {
-                if ( dbTypes[i].equals(SYBASE2) ) {
+        for ( String dbType : dbTypes ) {
+            if ( type.toLowerCase().indexOf(dbType.toLowerCase()) > -1 ) {
+                if ( dbType.equals(SYBASE2) ) {
                     return SYBASE;
                 }
-                return dbTypes[i];
+                return dbType;
             }
         }
         return DEFAULT;
@@ -1077,10 +1076,10 @@ public class InitializingGSA
         keys.addAll(getSqlCreateFiles().keySet());
         keys.addAll(getSqlDropFiles().keySet());
         Set<String> allow_keys = new HashSet<String>();
-        for ( int i = 0; i < dbTypes.length; i++ ) {
-            keys.remove(dbTypes[i]);
-            if ( !dbTypes[i].equals(SYBASE2) ) {
-                allow_keys.add(dbTypes[i]);
+        for ( String dbType1 : dbTypes ) {
+            keys.remove(dbType1);
+            if ( !dbType1.equals(SYBASE2) ) {
+                allow_keys.add(dbType1);
             }
         }
         if ( keys.size() > 0 ) {
@@ -1101,14 +1100,14 @@ public class InitializingGSA
         }
 
         // otherwise, check each dbType individually
-        for ( int i = 0; i < dbTypes.length; i++ ) {
-            boolean isCreate = (getSqlCreateFiles().get(dbTypes[i]) != null);
-            boolean isDrop = (getSqlDropFiles().get(dbTypes[i]) != null);
+        for ( String dbType : dbTypes ) {
+            boolean isCreate = (getSqlCreateFiles().get(dbType) != null);
+            boolean isDrop = (getSqlDropFiles().get(dbType) != null);
             if ( !isAllowNoDrop() ) {
                 if ( isCreate && !isDrop && !isDefaultDrop ) {
                     throw new RepositoryException(
                             "Mapping exists for database type "
-                            + dbTypes[i]
+                            + dbType
                             + " in property 'sqlCreateFiles', but not in property 'sqlDropFiles', and "
                             + "there is no default specified."
                     );
@@ -1116,7 +1115,7 @@ public class InitializingGSA
                 if ( isDrop && !isCreate && !isDefaultCreate ) {
                     throw new RepositoryException(
                             "Mapping exists for database type "
-                            + dbTypes[i]
+                            + dbType
                             + " in property 'sqlDropFiles', but not in property 'sqlCreateFiles', and "
                             + "there is no default specified."
                     );
@@ -1154,12 +1153,11 @@ public class InitializingGSA
             // if (getDatabaseType().equals(MICROSOFT))
             //  sp.setAutoCommit(true);
             SQLFileParser parser = new SQLFileParser();
-            for ( int i = 0; i < pFiles.length; i++ ) {
-                String file = pFiles[i];
+            for ( String file : pFiles ) {
                 // switch the file path so everything is forward slashes
                 file = file.replace('\\', '/');
-                String cmd = null;
-                Iterator cmds = null;
+                String cmd;
+                Iterator cmds;
                 if ( isLoggingInfo() ) {
                     logInfo("Executing SQL file: " + file);
                 }

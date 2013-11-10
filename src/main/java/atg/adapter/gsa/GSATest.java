@@ -293,8 +293,7 @@ public class GSATest
         }
         RepositoryPropertyDescriptor[] propDescriptors = (RepositoryPropertyDescriptor[]) descriptor
                 .getPropertyDescriptors();
-        for ( int j = 0; j < propDescriptors.length; j++ ) {
-            RepositoryPropertyDescriptor propertyDescriptor = propDescriptors[j];
+        for ( RepositoryPropertyDescriptor propertyDescriptor : propDescriptors ) {
             if ( propertyDescriptor.isWritable()
                  && !propertyDescriptor.isIdProperty()
                  && propertyDescriptor.isRequired() ) {

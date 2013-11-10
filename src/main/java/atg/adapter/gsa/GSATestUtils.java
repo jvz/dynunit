@@ -1180,9 +1180,8 @@ public class GSATestUtils {
             GSAItemDescriptor desc = itemDescriptors[i];
             Table[] tables = desc.getTables();
             if ( tables != null ) {
-                for ( int j = 0; j < tables.length; j++ ) {
-                    String name = tables[j].getName();
-                    names.add(name);
+                for ( Table table : tables ) {
+                    names.add(table.getName());
                 }
             }
         }
@@ -1203,9 +1202,9 @@ public class GSATestUtils {
     public void assertEmptyRepository(DBUtils dbTwo, GSARepository storeRepository)
             throws Exception {
         String[] namesAfter = getTableNames(storeRepository);
-        for ( int i = 0; i < namesAfter.length; i++ ) {
-            log.info(namesAfter[i] + ":" + dbTwo.getRowCount(namesAfter[i]));
-            Assert.assertEquals(0, dbTwo.getRowCount(namesAfter[i]));
+        for ( String aNamesAfter : namesAfter ) {
+            log.info(aNamesAfter + ":" + dbTwo.getRowCount(aNamesAfter));
+            Assert.assertEquals(0, dbTwo.getRowCount(aNamesAfter));
         }
     }
     // ---------------------------------
