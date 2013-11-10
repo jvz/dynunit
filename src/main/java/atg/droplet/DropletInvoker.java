@@ -794,7 +794,7 @@ public class DropletInvoker {
             boolean bResult = pResult;
             if ( null != mOparamExistsOverrideMap.get(pParameterName) ) {
                 // override map always wins
-                bResult = mOparamExistsOverrideMap.get(pParameterName).booleanValue();
+                bResult = mOparamExistsOverrideMap.get(pParameterName);
             } else {
                 if ( !bResult && getOparamsExistByDefault() ) {
                     bResult = true;

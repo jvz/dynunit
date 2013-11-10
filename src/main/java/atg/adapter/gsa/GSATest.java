@@ -353,17 +353,17 @@ public class GSATest
                 } else {
                     long val = gen.generateLongId(idSpaceNames[i]);
                     if ( types[i] == Long.class ) {
-                        newId[i] = Long.valueOf(val);
+                        newId[i] = val;
                     } else if ( types[i] == Float.class ) {
-                        newId[i] = Float.valueOf((float) val);
+                        newId[i] = (float) val;
                     } else if ( types[i] == Double.class ) {
-                        newId[i] = Double.valueOf((float) val);
+                        newId[i] = (double) val;
                     } else if ( types[i] == java.sql.Timestamp.class ) {
                         newId[i] = new java.sql.Timestamp(val);
                     } else if ( types[i] == java.util.Date.class ) {
                         newId[i] = new java.util.Date(val);
                     } else {
-                        newId[i] = Integer.valueOf((int) val);
+                        newId[i] = (int) val;
                     }
                 }
             }
@@ -509,35 +509,35 @@ public class GSATest
      * @return
      */
     private Object generateDouble() {
-        return new Double(random.nextDouble());
+        return random.nextDouble();
     }
 
     /**
      * @return
      */
     private Object generateInteger() {
-        return Integer.valueOf(random.nextInt(32768));
+        return random.nextInt(32768);
     }
 
     /**
      * @return
      */
     private Object generateFloat() {
-        return new Float(random.nextFloat());
+        return random.nextFloat();
     }
 
     /**
      * @return
      */
     private Object generateLong() {
-        return Long.valueOf(random.nextInt(32278));
+        return (long) random.nextInt(32278);
     }
 
     /**
      * @return
      */
     private Object generateShort() {
-        return Short.valueOf((short) (random.nextInt(100)));
+        return (short) (random.nextInt(100));
     }
 
     /**
@@ -546,14 +546,14 @@ public class GSATest
     private Object generateByte() {
         byte[] bytes = new byte[1];
         random.nextBytes(bytes);
-        return Byte.valueOf(bytes[0]);
+        return bytes[0];
     }
 
     /**
      * @return
      */
     private Object generateBoolean() {
-        return Boolean.valueOf(random.nextBoolean());
+        return random.nextBoolean();
     }
 
     /**

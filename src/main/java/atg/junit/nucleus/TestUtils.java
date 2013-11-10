@@ -650,9 +650,9 @@ public class TestUtils
     public static boolean isGenericAppServer() {
         try {
             ServletUtil.class.newInstance();
-            return ((Boolean) invokeMethod(
+            return (Boolean) invokeMethod(
                     dynamoEnv(), "isGenericJ2EEServer", null, null, null
-            )).booleanValue();
+            );
         } catch ( Throwable t ) {
             logger.catching(t);
         }
@@ -2001,7 +2001,7 @@ public class TestUtils
         Boolean isBigEar = (Boolean) invokeMethod(
                 dynamoEnv(), "isBigEar", null, null, Boolean.FALSE
         );
-        return isBigEar.booleanValue();
+        return isBigEar;
     }
 
     /**
@@ -2012,7 +2012,7 @@ public class TestUtils
         Boolean isStandalone = (Boolean) invokeMethod(
                 dynamoEnv(), "getStandaloneMode", null, null, Boolean.FALSE
         );
-        return isStandalone.booleanValue();
+        return isStandalone;
     }
 
     /**
@@ -2035,18 +2035,16 @@ public class TestUtils
                     dynamoEnv(), "getProperty", new Class[] { String.class }, args, null
             );
             if ( propval != null ) {
-                isliveconfig = Boolean.valueOf("on".equalsIgnoreCase(propval));
+                isliveconfig = "on".equalsIgnoreCase(propval);
             } else {
-                isliveconfig = Boolean.valueOf(
-                        "on".equalsIgnoreCase(
-                                System.getProperty(
-                                        "atg.dynamo.liveconfig"
-                                )
+                isliveconfig = "on".equalsIgnoreCase(
+                        System.getProperty(
+                                "atg.dynamo.liveconfig"
                         )
                 );
             }
         }
-        return isliveconfig != null && isliveconfig.booleanValue();
+        return isliveconfig != null && isliveconfig;
     }
 
     public static Object invokeMethod(Object pObj,
