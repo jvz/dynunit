@@ -19,7 +19,8 @@ package atg.test.util;
 import atg.adapter.gsa.GSATestUtils;
 import atg.adapter.gsa.SQLFileParser;
 import atg.core.util.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class DBUtils {
 
     private Properties mJDBCProperties;
 
-    private static Logger log = Logger.getLogger(DBUtils.class);
+    private static Logger log = LogManager.getLogger();
     // ---------------------------
 
     /**
@@ -163,11 +164,11 @@ public class DBUtils {
     }
 
     /**
-     * @param pString
-     * @param pString2
-     * @param pString3
-     * @param pString4
-     * @param pString5
+     * @param pHostName
+     * @param pPort
+     * @param pDBName
+     * @param pUser
+     * @param pPassword
      *
      * @return
      */
@@ -222,7 +223,6 @@ public class DBUtils {
      *
      * @param pHostName host name of db server
      * @param pPort     port number of db
-     * @param pDBName   database name
      * @param pUser     database username
      * @param pPassword database user's password
      *
@@ -234,7 +234,6 @@ public class DBUtils {
                                                   String pUser,
                                                   String pPassword) {
         Properties props = new Properties();
-        props = new Properties();
         String port = pPort;
         if ( pPort == null ) {
             port = "1313";
@@ -266,7 +265,6 @@ public class DBUtils {
                                                    String pUser,
                                                    String pPassword) {
         Properties props = new Properties();
-        props = new Properties();
         String port = pPort;
         if ( pPort == null ) {
             port = "5000";
@@ -349,9 +347,7 @@ public class DBUtils {
         ); // password
         mDatabaseType = conn.getMetaData().getDatabaseProductName();
         mDatabaseVersion = conn.getMetaData().getDatabaseProductVersion();
-        log.info(
-                "Connected to " + mDatabaseType + " Version: " + mDatabaseVersion
-        );
+        log.info("Connected to {} version {}", mDatabaseType, mDatabaseVersion);
         executeCreateIdGenerator();
     }
 
@@ -382,10 +378,11 @@ public class DBUtils {
             rs = st.executeQuery("SELECT COUNT(*) FROM " + pTable); // run the query
 
             rs.next();
-            int count = rs.getInt(1);
-            return count;
+            return rs.getInt(1);
         } finally {
-            st.close(); // NOTE!! if you close a statement the associated ResultSet is
+            if ( st != null ) {
+                st.close();
+            }
         }
 
     }
@@ -425,7 +422,7 @@ public class DBUtils {
         int i = st.executeUpdate(expression); // run the query
 
         if ( i == -1 ) {
-            log.info("db error : " + expression);
+            log.info("db error : {}", expression);
         }
 
         st.close();
@@ -451,10 +448,8 @@ public class DBUtils {
                 o = rs.getObject(i + 1); // Is SQL the first column is indexed
 
                 // with 1 not 0
-                System.out.print(o.toString() + " ");
+                log.info(o);
             }
-
-            log.info(" ");
         }
     } //void dump( ResultSet rs )
 
@@ -518,10 +513,10 @@ public class DBUtils {
                     cmd = StringUtils.replace(cmd, "varchar(", "VARCHAR2(");
                     cmd = StringUtils.replace(cmd, "binary", "RAW (250)");
                 }
-                log.info("Executing " + cmd);
+                log.info("Executing {}", cmd);
                 update(cmd);
             } catch ( SQLException e ) {
-                log.info(e.getMessage());
+                log.catching(e);
             }
         }
     }

@@ -28,7 +28,8 @@ import atg.nucleus.ServiceEvent;
 import atg.nucleus.ServiceException;
 import atg.nucleus.logging.LogListener;
 import atg.repository.RepositoryException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -85,7 +86,7 @@ import java.util.Properties;
 public class InitializingVersionRepository
         extends VersionRepository {
 
-    private static Logger log = Logger.getLogger(InitializingVersionRepository.class);
+    private static Logger log = LogManager.getLogger();
 
     // -----------------------------------
     // ---From Properties File------------
@@ -1197,9 +1198,9 @@ public class InitializingVersionRepository
     /**
      * executes the specified SQL files against this Repository's DataSource.
      *
-     * @param String[] the files to execute
-     * @param boolean  true if execution should stop at first error.  if false, then a warning
-     *                 will be printed for encountered errors.
+     * @param pFiles       the files to execute
+     * @param pStopAtError true if execution should stop at first error.  if false, then a warning
+     *                     will be printed for encountered errors.
      *
      * @throws RepositoryException if pStopAtError is true and an error occurs while
      *                             executing one of the sql statements.

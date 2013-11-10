@@ -17,7 +17,8 @@
 package atg.test.util;
 
 import atg.applauncher.core.util.JarUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -46,7 +47,7 @@ import java.util.Map.Entry;
 @SuppressWarnings("unchecked")
 public class FileUtil {
 
-    private static Logger log = Logger.getLogger(FileUtil.class);
+    private static Logger log = LogManager.getLogger();
 
     private static boolean isDirty = false;
 
@@ -96,26 +97,10 @@ public class FileUtil {
              && CONFIG_FILES_TIMESTAMPS.get(src) != null
              && CONFIG_FILES_TIMESTAMPS.get(src) == srcFile.lastModified()
              && dstFile.exists() ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug(
-                        String.format(
-                                "%s last modified hasn't changed and destination still exists", src
-                        )
-                );
-            }
+            log.debug("{} last modified hasn't changed and destination still exists", src);
         } else {
-            if ( log.isDebugEnabled() ) {
-                log.debug(
-                        String.format(
-                                "Copy: src file %s ts %s : ", src, srcFile.lastModified()
-                        )
-                );
-                log.debug(
-                        String.format(
-                                "Copy: dest file %s ts %s : ", dst, dstFile.lastModified()
-                        )
-                );
-            }
+            log.debug("Copy: src file {} ts {}", src, srcFile.lastModified());
+            log.debug("Copy: dest file {} ts {}", dst, dstFile.lastModified());
 
             final FileChannel srcChannel = new FileInputStream(src).getChannel();
             final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
@@ -125,6 +110,8 @@ public class FileUtil {
         }
 
     }
+
+    // XXX: can't this use java.util.Properties
 
     /**
      * @param componentName                The name of the nucleus component
@@ -194,14 +181,10 @@ public class FileUtil {
              && CONFIG_FILES_GLOBAL_FORCE.get(file.getPath()) == file.lastModified()
              && file.exists() ) {
             isDirty = false;
-            if ( log.isDebugEnabled() ) {
-                log.debug(
-                        String.format(
-                                "%s last modified hasn't changed and file still exists, no need for global scope force",
-                                file.getPath()
-                        )
-                );
-            }
+            log.debug(
+                    "{} last modified hasn't changed and file still exists, "
+                    + "no need for global scope force", file.getPath()
+            );
         } else {
             final BufferedWriter out = new BufferedWriter(new FileWriter(TMP_FILE));
             final BufferedReader in = new BufferedReader(new FileReader(file));
@@ -260,15 +243,11 @@ public class FileUtil {
     public static Map<String, Long> deserialize(final File file, final long serialTtl) {
 
         if ( file.exists() && file.lastModified() < System.currentTimeMillis() - serialTtl ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug(
-                        String.format(
-                                "Deleting previous serial %s " + "because it's older then %s m/s",
-                                file.getPath(),
-                                serialTtl
-                        )
-                );
-            }
+            log.debug(
+                    "Deleting previous serial {} because it's older than {} ms",
+                    file.getPath(),
+                    serialTtl
+            );
             file.delete();
         }
 
@@ -289,7 +268,7 @@ public class FileUtil {
                 }
             }
         } catch ( Exception e ) {
-            log.error("Error: ", e);
+            log.catching(e);
         }
         if ( o == null ) {
             o = new HashMap<String, Long>();

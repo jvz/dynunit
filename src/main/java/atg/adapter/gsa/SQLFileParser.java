@@ -16,7 +16,8 @@
 
 package atg.adapter.gsa;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,7 +41,7 @@ import java.util.List;
  */
 public class SQLFileParser {
 
-    private static Logger log = Logger.getLogger(SQLFileParser.class);
+    private static Logger log = LogManager.getLogger();
 
     // ****************************************
     // THERE IS ONLY ONE CLASS VARIABLE

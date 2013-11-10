@@ -20,13 +20,14 @@ import atg.applauncher.AppLauncher;
 import atg.applauncher.AppModule;
 import atg.nucleus.DynamoEnv;
 import atg.nucleus.Nucleus;
-import atg.service.dynamo.LicenseImpl;
+import atg.service.dynamo.LicenseImpl; // FIXME: not in dependencies
 import atg.service.email.ContentPart;
 import atg.service.email.EmailEvent;
 import atg.service.email.MimeMessageUtils;
 import atg.service.email.SMTPEmailSender;
 import atg.servlet.ServletUtil;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Node;
 
 import javax.activation.DataHandler;
@@ -56,6 +57,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.jar.Manifest;
 
+// TODO: holy shit this file is huge
 /**
  * This class is used to hold useful utilty methods people may
  * need when running tests.
@@ -63,7 +65,7 @@ import java.util.jar.Manifest;
 public class TestUtils
         extends atg.nucleus.GenericService {
 
-    private static Logger log = Logger.getLogger(TestUtils.class);
+    private static Logger logger = LogManager.getLogger();
 
     // names of app servers types that may be specified by the
     // 'atg.dynamo.appserver' system property
@@ -275,11 +277,13 @@ public class TestUtils
         try {
             root = getDynamoHomeDir().getParentFile();
         } catch ( Throwable t ) {
+            logger.catching(t);
         }
         if ( root == null ) {
             try {
                 root = new File(System.getProperty(ROOT_VAR));
             } catch ( Throwable t ) {
+                logger.catching(t);
             }
         }
         return root;
@@ -304,11 +308,13 @@ public class TestUtils
         try {
             root = getModuleResourceFile("home", ".").getCanonicalFile();
         } catch ( Throwable t ) {
+            logger.catching(t);
         }
         if ( root == null ) {
             try {
                 root = new File(System.getProperty(HOME_VAR));
             } catch ( Throwable t ) {
+                logger.catching(t);
             }
         }
 
@@ -323,6 +329,7 @@ public class TestUtils
         try {
             return new File(System.getProperty(ATG_J2EESERVER_ROOT));
         } catch ( Throwable t ) {
+            logger.catching(t);
             return null;
         }
     }
@@ -613,6 +620,7 @@ public class TestUtils
             InetAddress address = InetAddress.getLocalHost();
             return address.getHostName();
         } catch ( UnknownHostException uhe ) {
+            logger.catching(uhe);
         }
 
         return "unknown";
@@ -651,6 +659,7 @@ public class TestUtils
                     dynamoEnv(), "isGenericJ2EEServer", null, null, null
             )).booleanValue();
         } catch ( Throwable t ) {
+            logger.catching(t);
         }
         return false;
     }
@@ -689,6 +698,7 @@ public class TestUtils
                 }
             }
         } catch ( Throwable e ) {
+            logger.catching(e);
         }
 
         if ( version != null ) {
@@ -880,6 +890,7 @@ public class TestUtils
                 }
             }
         } catch ( Throwable e ) {
+            logger.catching(e);
         }
 
         if ( version != null ) {
@@ -938,6 +949,7 @@ public class TestUtils
                 return log.getAbsolutePath();
             }
         } catch ( Throwable t ) {
+            logger.catching(t);
         }
         return null;
     }
@@ -983,9 +995,11 @@ public class TestUtils
                         return ver;
                     }
                 } catch ( Throwable ti ) {
+                    logger.catching(ti);
                 }
             }
         } catch ( Throwable t ) {
+            logger.catching(t);
         }
         return UNKNOWN_INFO;
     }
@@ -1003,6 +1017,7 @@ public class TestUtils
                                                                                CONFIGURATION_COMPONENT
                                                                        );
             } catch ( Throwable t ) {
+                logger.catching(t);
             }
         }
         return DYN_CONFIG;
@@ -1064,7 +1079,7 @@ public class TestUtils
             sender.setEmailHandlerHostName(MAILHOST);
             sender.sendEmailEvent(em);
         } catch ( Exception e ) {
-            log.info("Caught exception sending email: " + e.toString());
+            logger.catching(e);
             return false;
         }
         return true;
@@ -1112,6 +1127,7 @@ public class TestUtils
                     sendEmail(address.trim(), pMsg, pSubject, null, null, null, pBodyEncoding);
                 }
             } catch ( Exception e ) {
+                logger.catching(e);
             }
         }
     }
@@ -1217,8 +1233,7 @@ public class TestUtils
             sender.setEmailHandlerHostName(MAILHOST);
             sender.sendEmailEvent(em);
         } catch ( Exception e ) {
-            log.info("Caught exception sending email: " + e.toString());
-            e.printStackTrace();
+            logger.catching(e);
         }
     }
 
@@ -1303,6 +1318,7 @@ public class TestUtils
                     );
                 }
             } catch ( Exception e ) {
+                logger.catching(e);
             }
         }
     }
@@ -1392,7 +1408,7 @@ public class TestUtils
             return results.toString();
         } catch ( MalformedURLException e ) {
             if ( pThrow ) {
-                throw e;
+                throw logger.throwing(e);
             } else {
                 results.append(
                         "\nEncountered an unexpected error while trying to retrieve the configuration info."
@@ -1406,7 +1422,7 @@ public class TestUtils
             }
         } catch ( IOException ioe ) {
             if ( pThrow ) {
-                throw ioe;
+                throw logger.throwing(ioe);
             } else {
                 results.append(
                         "\nEncountered an unexpected error while trying to retrieve the configuration info."
@@ -1423,12 +1439,14 @@ public class TestUtils
                 try {
                     in.close();
                 } catch ( Exception e ) {
+                    logger.catching(e);
                 }
             }
             if ( isr != null ) {
                 try {
                     isr.close();
                 } catch ( Exception e ) {
+                    logger.catching(e);
                 }
             }
         }
@@ -1447,6 +1465,7 @@ public class TestUtils
         try {
             return accessURL(pUrl, false);
         } catch ( Exception e ) {
+            logger.catching(e);
             return "\nEncountered an unexpected error while trying to retrieve the configuration info."
                    +
                    "\nWhen the url "
@@ -1477,13 +1496,14 @@ public class TestUtils
             fos = new FileOutputStream(pFile);
             fos.write(pBytes);
         } catch ( IOException e ) {
-            throw e;
+            throw logger.throwing(e);
         } finally {
             try {
                 if ( fos != null ) {
                     fos.close();
                 }
             } catch ( IOException exc ) {
+                logger.catching(exc);
             }
         }
     }
@@ -1758,7 +1778,7 @@ public class TestUtils
                             AppModule mod = getAppLauncher().getModule(
                                     APPLICATION_PRODUCT_MODULES[i].substring(idx + 1)
                             );
-                            log.info("\nMod: " + mod);
+                            logger.info("Mod: {}", mod);
                             if ( mod != null ) {
                                 apps.add(mod);
                             } else {
@@ -1769,13 +1789,9 @@ public class TestUtils
                                 );
                             }
                         } catch ( Exception ale ) {
-                            log.info(
-                                    "*** WARNING [atg.junit.nucleus.TestUtils] "
-                                    + "Can not resolve module '"
-                                    + APPLICATION_PRODUCT_MODULES[i].substring(idx + 1)
-                                    + "'. "
-                                    + ale.getMessage()
-                            );
+                            logger.catching(ale);
+                            logger.warn("Cannot resolve module '{}'.",
+                                        APPLICATION_PRODUCT_MODULES[i].substring(idx + 1));
                         }
                     }
                 }
@@ -1843,6 +1859,7 @@ public class TestUtils
             moduleID = ref.substring(0, idx);        // extract moduleID
             resourceURI = ref.substring(idx + 13);  // extract resourceURI
         } catch ( Throwable t ) {
+            logger.catching(t);
             throw new IllegalArgumentException(
                     "Can not resolve appModuleReference. "
                     + "Illegal reference syntax: "
@@ -1862,18 +1879,12 @@ public class TestUtils
     }
 
     /**
-     * Logs a message using Nucleus.logInfo() if Nucleus is available.
-     * Otherwise it logs using log.info()
+     * Logs a message using log4j.
      *
-     * @param pMessage
+     * @param pMessage Log message to output.
      */
     public static void log(String pMessage) {
-        Nucleus n = Nucleus.getGlobalNucleus();
-        if ( n != null ) {
-            n.logInfo(pMessage);
-        } else {
-            log.info(new java.util.Date() + ":" + pMessage);
-        }
+        logger.info(pMessage);
     }
 
     /**
@@ -1982,6 +1993,7 @@ public class TestUtils
             try {
                 mDynamoEnv = (DynamoEnv) DynamoEnv.class.newInstance();
             } catch ( Throwable t ) {
+                logger.catching(t);
             }
         }
         return mDynamoEnv;
@@ -2058,6 +2070,7 @@ public class TestUtils
             //if ( isLoggingDebug() ) logDebug("Method '" + pMethodName + "'
             //invoked - return value: " + returnval);
         } catch ( Throwable t ) {
+            logger.catching(t);
             //if ( isLoggingDebug() ) logDebug("Method '" + pMethodName + "'
             //could not be invoked.", t);
             returnval = pDefault;

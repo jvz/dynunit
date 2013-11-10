@@ -24,7 +24,8 @@ import atg.nucleus.logging.PrintStreamLogger;
 import atg.service.lockmanager.ClientLockManager;
 import atg.test.util.FileUtil;
 import atg.xml.tools.apache.ApacheXMLToolsFactory;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,15 +50,12 @@ public final class BasicConfiguration {
 
     protected final Map<String, String> settings = new HashMap<String, String>();
 
-    private static Logger log = Logger.getLogger(BasicConfiguration.class);
+    private static Logger log = LogManager.getLogger();
 
     public void setDebug(final boolean isDebug) {
         this.isDebug = Boolean.toString(isDebug);
     }
 
-    /**
-     * @param isDebug
-     */
     public BasicConfiguration() {
         super();
     }

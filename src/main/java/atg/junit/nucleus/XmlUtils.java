@@ -21,7 +21,8 @@ import atg.xml.tools.DefaultErrorHandler;
 import atg.xml.tools.DefaultXMLToolsFactory;
 import atg.xml.tools.XMLToDOMParser;
 import atg.xml.tools.XMLToolsFactory;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -31,7 +32,6 @@ import org.w3c.dom.Text;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,7 +42,7 @@ import java.util.List;
  */
 public class XmlUtils {
 
-    private static Logger log = Logger.getLogger(XmlUtils.class);
+    private static Logger log = LogManager.getLogger();
 
     /**
      * Initializes the XML file to be parsed and gets the Document tree for it.
@@ -57,6 +57,7 @@ public class XmlUtils {
             throws FileNotFoundException, Exception {
         XMLToolsFactory factory = DefaultXMLToolsFactory.getInstance();
         XMLToDOMParser parser = factory.createXMLToDOMParser();
+        // XXX: god damn logging
         ApplicationLoggingImpl logger = new ApplicationLoggingImpl(
                 "[UnitTests.base:atg.junit.nucleus.XmlUtils]"
         );
@@ -75,13 +76,13 @@ public class XmlUtils {
      *                 Nodes for the XML
      *                 document:
      *                 <pre>
-     *                                    &lt;foo&lt;
-     *                                      &lt;bar&lt;
-     *                                        &lt;flippy .../&lt;
-     *                                        &lt;flippy .../&lt;
-     *                                      &lt;/bar&lt;
-     *                                    &lt;/foo&lt;
-     *                                  </pre>
+     *                                                    &lt;foo&lt;
+     *                                                      &lt;bar&lt;
+     *                                                        &lt;flippy .../&lt;
+     *                                                        &lt;flippy .../&lt;
+     *                                                      &lt;/bar&lt;
+     *                                                    &lt;/foo&lt;
+     *                                                  </pre>
      *
      * @return List the requested child Nodes.  an empty List if no child Nodes exist.
      * @throws FileNotFoundException if the specified file can not be located.
@@ -102,13 +103,13 @@ public class XmlUtils {
      *                 Nodes for the XML
      *                 document:
      *                 <pre>
-     *                                    &lt;foo&lt;
-     *                                      &lt;bar&lt;
-     *                                        &lt;flippy .../&lt;
-     *                                        &lt;flippy .../&lt;
-     *                                      &lt;/bar&lt;
-     *                                    &lt;/foo&lt;
-     *                                  </pre>
+     *                                                    &lt;foo&lt;
+     *                                                      &lt;bar&lt;
+     *                                                        &lt;flippy .../&lt;
+     *                                                        &lt;flippy .../&lt;
+     *                                                      &lt;/bar&lt;
+     *                                                    &lt;/foo&lt;
+     *                                                  </pre>
      *
      * @return List the requested child Nodes.  an empty List if no child Nodes exist.
      *         null if the specified Document was null.
@@ -130,13 +131,13 @@ public class XmlUtils {
      *                 Nodes for the XML
      *                 document:
      *                 <pre>
-     *                                    &lt;foo&lt;
-     *                                      &lt;bar&lt;
-     *                                        &lt;flippy .../&lt;
-     *                                        &lt;flippy .../&lt;
-     *                                      &lt;/bar&lt;
-     *                                    &lt;/foo&lt;
-     *                                  </pre>
+     *                                                    &lt;foo&lt;
+     *                                                      &lt;bar&lt;
+     *                                                        &lt;flippy .../&lt;
+     *                                                        &lt;flippy .../&lt;
+     *                                                      &lt;/bar&lt;
+     *                                                    &lt;/foo&lt;
+     *                                                  </pre>
      *
      * @return List the requested child Nodes.  an empty List if no child Nodes exist.
      */
@@ -431,27 +432,25 @@ public class XmlUtils {
     public static void main(String[] pArgs) {
         String file = "C:\\temp\\registry.xml";
         //String file = "/work/systest/qma/temp/registry.xml";
-        log.info("bea's registry file:=[" + file + "]");
+        log.info("BEA's registry file: [{}]", file);
         String[] children = { "host", "product", "release" };
         try {
             List<Node> nodes = getNodes(new File(file), false, children);
             if ( nodes == null ) {
-                System.out.print("Nodes is null.");
+                log.error("Nodes is null.");
             } else if ( nodes.size() == 0 ) {
-                System.out.print("Nodes is empty.");
+                log.error("Nodes is empty.");
             } else {
-                Iterator<Node> iter = nodes.iterator();
-                while ( iter.hasNext() ) {
-                    Node n = iter.next();
+                for ( Node n : nodes ) {
                     log.info(
-                            "Got Node: " + getAttribute(n, "level") + "/" + getAttribute(
-                                    n, "ServicePackLevel"
-                            )
+                            "Got Node: {}/{}",
+                            getAttribute(n, "level"),
+                            getAttribute(n, "ServicePackLevel")
                     );
                 }
             }
         } catch ( Throwable t ) {
-            t.printStackTrace();
+            log.catching(t);
         }
 
         log.info("-------------------");

@@ -26,7 +26,8 @@ import atg.test.util.FileUtil;
 import atg.test.util.RepositoryManager;
 import junit.framework.TestCase;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,8 +42,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+// TODO: this should be converted to some sort of runner
+
 /**
- * Replacement base class for {@link AtgDustTestCase}. Extend this class and use
+ * Replacement base class for AtgDustTestCase. Extend this class and use
  * the following 'pattern' whenever you want to junit test some atg components:
  * <ul>
  * <li><b>Copy</b> all needed configuration and repository mapping files to a
@@ -99,7 +102,7 @@ import java.util.Properties;
 public class AtgDustCase
         extends TestCase {
 
-    private static final Logger log = Logger.getLogger(AtgDustCase.class);
+    private static final Logger log = LogManager.getLogger();
 
     private RepositoryManager repositoryManager = new RepositoryManager();
 
@@ -153,11 +156,7 @@ public class AtgDustCase
 
         setConfigurationLocation(dstDir);
 
-        if ( log.isDebugEnabled() ) {
-            log.debug(
-                    "Copying configuration files and " + "forcing global scope on all configs"
-            );
-        }
+        log.debug("Copying configurating files and forcing global scope on all configs.");
         preCopyingOfConfigurationFiles(srcDirs, excludes);
 
         for ( final String srcs : srcDirs ) {
@@ -229,18 +228,12 @@ public class AtgDustCase
         // The Last dstdir is used for Configuration location
         setConfigurationLocation(distsAsList.get(distsAsList.size() - 1));
 
-        if ( log.isDebugEnabled() ) {
-            log.debug(
-                    "Copying configuration files and " + "forcing global scope on all configs"
-            );
-        }
+        log.debug("Copying configuration files and forcing global scope on all configs.");
         preCopyingOfConfigurationFiles(
                 srcsAsList.toArray(new String[] { }), excludes
         );
 
-        log.info(
-                "Copying configuration files and " + "forcing global scope on all configs"
-        );
+        log.info("Copying configuration files and forcing global scope on all configs");
         // copy all files to it's destination
         for ( String config : configs ) {
             FileUtil.copyDirectory(
@@ -320,17 +313,22 @@ public class AtgDustCase
      *                             database):
      *                             <p/>
      *                             <pre>
-     *                                                         final Properties properties = new
-     *                             Properties();
-     *                                                         properties.put(&quot;driver&quot;,
-     *                             &quot;com.mysql.jdbc.Driver&quot;);
-     *                                                         properties.put(&quot;url&quot;,
-     *                             &quot;jdbc:mysql://localhost:3306/someDb&quot;);
-     *                                                         properties.put(&quot;user&quot;,
-     *                             &quot;someUserName&quot;);
-     *                                                         properties.put(&quot;password&quot;,
-     *                             &quot;somePassword&quot;);
-     *                                                         </pre>
+     *                                                                                     final
+     *                             Properties properties = new
+     *                                                         Properties();
+     *
+     *                             properties.put(&quot;driver&quot;,
+     *                                                         &quot;com.mysql.jdbc.Driver&quot;);
+     *
+     *                             properties.put(&quot;url&quot;,
+     *                                                         &quot;jdbc:mysql://localhost:3306/someDb&quot;);
+     *
+     *                             properties.put(&quot;user&quot;,
+     *                                                         &quot;someUserName&quot;);
+     *
+     *                             properties.put(&quot;password&quot;,
+     *                                                         &quot;somePassword&quot;);
+     *                                                                                     </pre>
      * @param dropTables           If <code>true</code> then existing tables will be dropped and
      *                             re-created, if set to <code>false</code> the existing tables
      *                             will be used.
@@ -409,11 +407,7 @@ public class AtgDustCase
      */
     protected final void setConfigurationLocation(final String configurationLocation) {
         this.configurationLocation = new File(configurationLocation);
-        if ( log.isDebugEnabled() ) {
-            log.debug(
-                    "Using configuration location: " + this.configurationLocation.getPath()
-            );
-        }
+        log.debug("Using configuration location: {}", this.configurationLocation.getPath());
     }
 
     /**
@@ -467,7 +461,7 @@ public class AtgDustCase
                 for ( String property : environment.split(";") ) {
                     String[] keyvalue = property.split("=");
                     System.setProperty(keyvalue[0], keyvalue[1]);
-                    log.info(keyvalue[0] + "=" + keyvalue[1]);
+                    log.info("{} = {}", keyvalue[0], keyvalue[1]);
                 }
             }
 
@@ -486,9 +480,7 @@ public class AtgDustCase
                 fullConfigPath = fullConfigPath + localConfig.replace("/", File.separator);
             }
 
-            log.info(
-                    "The full config path used to start nucleus: " + fullConfigPath
-            );
+            log.info("The full config path used to start nucleus: {}", fullConfigPath);
             System.setProperty(
                     "atg.configpath", new File(fullConfigPath).getAbsolutePath()
             );
@@ -546,9 +538,7 @@ public class AtgDustCase
             }
         }
         if ( isDirty ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug("Config files timestamps map is dirty an will be re serialized");
-            }
+            log.debug("Config files timestamps map is dirty an will be re serialized");
 
             FileUtil.serialize(TIMESTAMP_SER, CONFIG_FILES_TIMESTAMPS);
         }
@@ -598,7 +588,7 @@ public class AtgDustCase
                         list
                 );
             } catch ( Exception e ) {
-                log.error("Error: ", e);
+                log.catching(e);
             }
         }
 
@@ -606,20 +596,19 @@ public class AtgDustCase
 
     static {
         final String s = System.getProperty("SERIAL_TTL");
-        if ( log.isDebugEnabled() ) {
-            log.debug(
-                    s == null ? "SERIAL_TTL has not been set "
-                                + "using default value of: "
-                                + SERIAL_TTL
-                                + " m/s or start VM with -DSERIAL_TTL=some_number_value" :
-                            "SERIAL_TTL is set to:"
-                            + s
-            );
-        }
+        log.debug(
+                s == null ? "SERIAL_TTL has not been set "
+                            + "using default value of: "
+                            + SERIAL_TTL
+                            + " m/s or start VM with -DSERIAL_TTL=some_number_value" :
+                        "SERIAL_TTL is set to:"
+                        + s
+        );
         try {
             SERIAL_TTL = s != null ? Long.parseLong(s) * 1000 : SERIAL_TTL;
         } catch ( NumberFormatException e ) {
-            log.error("Error using the -DSERIAL_TTL value: ", e);
+            log.catching(e);
+            //log.error("Error using the -DSERIAL_TTL value: ", e);
         }
         CONFIG_FILES_TIMESTAMPS = FileUtil.deserialize(
                 TIMESTAMP_SER, SERIAL_TTL
@@ -631,6 +620,7 @@ public class AtgDustCase
         try {
             perflib = Class.forName("com.bsdroot.util.concurrent.SchedulerService");
         } catch ( ClassNotFoundException e ) {
+            log.catching(e);
             log.debug(
                     "com.bsdroot.util.concurrent experimantal performance library not found, continuing normally"
             );

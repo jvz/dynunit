@@ -17,7 +17,8 @@
 package atg.service.jdbc;
 
 import atg.nucleus.ServiceException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -38,7 +39,7 @@ import java.sql.SQLException;
 public class DerbyDataSource
         extends InitializingDataSourceBase {
 
-    static Logger sLog = Logger.getLogger(DerbyDataSource.class);
+    static Logger sLog = LogManager.getLogger();
 
     private String framework = "embedded";
 
@@ -55,7 +56,7 @@ public class DerbyDataSource
     @Override
     public void doStartService()
             throws ServiceException {
-        logInfo("Starting DerbyDataSource.");
+        sLog.trace("Starting up Derby data source");
         loadDriver();
         this.setURL(protocol + getDatabaseName() + ";create=true");
         this.setDriver(driver);
@@ -117,6 +118,7 @@ public class DerbyDataSource
                 // Note that for single database shutdown, the expected
                 // SQL state is "08006", and the error code is 45000.
             } else if ( (se.getErrorCode() == 45000) && ("08006".equals(se.getSQLState())) ) {
+                sLog.trace("Derby was already shut down.");
                 // database is already shutdown
             } else {
                 // if the error code or SQLState is different, we have
@@ -138,12 +140,8 @@ public class DerbyDataSource
         // Unwraps the entire exception chain to unveil the real cause of the
         // Exception.
         while ( e != null ) {
-            System.err.println("\n----- SQLException -----");
-            System.err.println("  SQL State:  " + e.getSQLState());
-            System.err.println("  Error Code: " + e.getErrorCode());
-            System.err.println("  Message:    " + e.getMessage());
-            // for stack traces, refer to derby.log or uncomment this:
-            // e.printStackTrace(System.err);
+            sLog.error("SQL State: {}. Error Code: {}. Message: {}.", e.getSQLState(),
+                       e.getErrorCode(), e.getMessage());
             e = e.getNextException();
         }
     }
@@ -170,15 +168,14 @@ public class DerbyDataSource
         try {
             Class.forName(driver).newInstance();
         } catch ( ClassNotFoundException cnfe ) {
-            sLog.error("\nUnable to load the JDBC driver " + driver);
-            sLog.error("Please check your CLASSPATH.");
-            cnfe.printStackTrace(System.err);
+            sLog.catching(cnfe);
+            sLog.error("Unable to load the JDBC driver {}", driver);
         } catch ( InstantiationException ie ) {
-            sLog.error("\nUnable to instantiate the JDBC driver " + driver);
-            ie.printStackTrace(System.err);
+            sLog.catching(ie);
+            sLog.error("Unable to instantiate the JDBC driver {}", driver);
         } catch ( IllegalAccessException iae ) {
-            sLog.error("\nNot allowed to access the JDBC driver " + driver);
-            iae.printStackTrace(System.err);
+            sLog.catching(iae);
+            sLog.error("Not allowed to access the JDBC driver {}", driver);
         }
     }
 

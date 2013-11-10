@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package atg.adapter.gsa;
 
 import atg.beans.DynamicPropertyDescriptor;
@@ -26,7 +27,9 @@ import atg.service.idgen.IdGenerator;
 import atg.service.idgen.IdGeneratorException;
 import atg.test.util.DBUtils;
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.beans.PropertyEditor;
 import java.io.File;
@@ -38,6 +41,7 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.Random;
 
+// TODO: port to JUnit4
 /**
  * A basic GSA test which is expected to be extended than used directly.
  * Has several utility methods.
@@ -49,7 +53,7 @@ public class GSATest
 
     private final transient Random random = new Random();
 
-    private static Logger log = Logger.getLogger(GSATest.class);
+    private static Logger log = LogManager.getLogger();
 
     private HashMap<String, File> mConfigDir = new HashMap<String, File>();
 
@@ -233,7 +237,7 @@ public class GSATest
     }
 
     /**
-     * @param dbName
+     * @param props
      *
      * @return
      * @throws Exception
@@ -465,9 +469,9 @@ public class GSATest
             try {
                 peinst = peclass.newInstance();
             } catch ( InstantiationException e ) {
-                log.error("Error: ", e);
+                log.catching(Level.ERROR, e);
             } catch ( IllegalAccessException e ) {
-                log.error("Error: ", e);
+                log.catching(Level.ERROR, e);
             }
             if ( peinst instanceof PropertyEditor ) {
                 return (PropertyEditor) peinst;

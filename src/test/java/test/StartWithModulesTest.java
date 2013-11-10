@@ -21,8 +21,8 @@ import atg.nucleus.NucleusTestUtils;
 import atg.nucleus.ServiceException;
 import atg.repository.MutableRepository;
 import junit.framework.TestCase;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -47,7 +47,7 @@ import java.io.IOException;
 public class StartWithModulesTest
         extends TestCase {
 
-    Logger mLogger = Logger.getLogger(this.getClass());
+    Logger mLogger = LogManager.getLogger();
 
     Nucleus mNucleus = null;
 
@@ -58,7 +58,7 @@ public class StartWithModulesTest
      */
     @Override
     public void setUp() {
-        mLogger.log(Level.INFO, "Start Nucleus.");
+        mLogger.info("Starting Nucleus.");
         try {
             System.setProperty("derby.locks.deadlockTrace", "true");
             mNucleus = NucleusTestUtils.startNucleusWithModules(
@@ -81,7 +81,7 @@ public class StartWithModulesTest
      */
     @Override
     public void tearDown() {
-        mLogger.log(Level.INFO, "Stop Nucleus");
+        mLogger.info("Stopping Nucleus.");
         if ( mNucleus != null ) {
             try {
                 NucleusTestUtils.shutdownNucleus(mNucleus);

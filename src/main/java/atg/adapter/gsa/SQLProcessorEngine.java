@@ -55,8 +55,6 @@ public class SQLProcessorEngine
     public SQLProcessorEngine() {
     }
 
-    ;
-
     /**
      * Construct a generator
      */

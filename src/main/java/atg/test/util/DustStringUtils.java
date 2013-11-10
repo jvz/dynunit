@@ -30,7 +30,7 @@ public class DustStringUtils {
      * Join the specified string with the specified separator.
      * Any other instances of pSeparator are doubled.
      *
-     * @param pArgs      the strings to be quoted
+     * @param pStrings      the strings to be quoted
      * @param pSeparator the character to use as a separator
      *
      * @return the joined string, with quoting.
@@ -42,6 +42,7 @@ public class DustStringUtils {
         String strSingle = Character.toString(pSeparator);
         String strDouble = strSingle + strSingle;
         StringBuilder sb = new StringBuilder();
+        // FIXME: this looks fucked up
         boolean bFirstTime = false;
         for ( String strCur : pStrings ) {
             sb.append(strCur.replace(strSingle, strDouble));

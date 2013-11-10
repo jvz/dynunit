@@ -17,7 +17,8 @@
 package atg.adapter.gsa;
 
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.Properties;
@@ -31,7 +32,7 @@ import java.util.Properties;
 public class GSATestUtilsTest
         extends TestCase {
 
-    private static Logger log = Logger.getLogger(GSATestUtilsTest.class);
+    private static Logger log = LogManager.getLogger(GSATestUtilsTest.class);
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(GSATestUtilsTest.class);

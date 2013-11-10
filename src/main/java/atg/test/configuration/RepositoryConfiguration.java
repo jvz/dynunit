@@ -28,7 +28,8 @@ import atg.service.idgen.SQLIdGenerator;
 import atg.service.jdbc.FakeXADataSource;
 import atg.service.jdbc.MonitoredDataSource;
 import atg.test.util.FileUtil;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -57,7 +58,7 @@ public final class RepositoryConfiguration {
 
     protected final Map<String, String> settings = new HashMap<String, String>();
 
-    private static Logger log = Logger.getLogger(RepositoryConfiguration.class);
+    private static Logger log = LogManager.getLogger(RepositoryConfiguration.class);
 
     public void setDebug(final boolean isDebug) {
         this.isDebug = Boolean.toString(isDebug);

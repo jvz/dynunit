@@ -79,9 +79,7 @@ public class HSQLDBDataSource
         this.setURL(props.getProperty("URL"));
         this.setUser(props.getProperty("user"));
         this.setPassword(props.getProperty("password"));
-        if ( isLoggingInfo() ) {
-            logInfo("HSQLDB DataSource starting with properties " + props.toString());
-        }
+        vlogInfo("HSQLDB DataSource starting with properties " + props.toString());
         super.doStartService();
     }
 
@@ -94,18 +92,14 @@ public class HSQLDBDataSource
     @Override
     public void doStopService() {
         if ( mShutdownHSQLDB ) {
-            if ( isLoggingInfo() ) {
-                logInfo("HSQLDB DataSource shutting down.");
-            }
+            vlogInfo("HSQLDB DataSource shutting down.");
             Connection connection = null;
             try {
                 connection = this.getDriverManagerConnection();
                 Statement st = connection.createStatement();
                 st.execute("SHUTDOWN");
             } catch ( SQLException e ) {
-                if ( isLoggingError() ) {
-                    logError(e.getMessage());
-                }
+                vlogError(e.getMessage());
             } finally {
                 if ( connection != null ) {
                     try {

@@ -17,7 +17,8 @@
 package atg.test.util;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +41,7 @@ import java.util.Properties;
  */
 public class RepositoryManager {
 
-    private static Logger log = Logger.getLogger(RepositoryManager.class);
+    private static Logger log = LogManager.getLogger(RepositoryManager.class);
 
     private boolean isDefaultInMemoryDb;
 
@@ -88,13 +89,7 @@ public class RepositoryManager {
         dataSource.setPassword(settings.get("password"));
         dataSource.setUrl(settings.get("url"));
 
-        log.info(
-                String.format(
-                        "Connected to '%s' using driver '%s'",
-                        dataSource.getUrl(),
-                        dataSource.getDriverClassName()
-                )
-        );
+        log.info("Connected to '{}' using driver '{}'", dataSource.getUrl(), dataSource.getDriverClassName());
 
         if ( dropTables ) {
             createIdGeneratorTables();
@@ -131,6 +126,7 @@ public class RepositoryManager {
         try {
             statement.executeUpdate("DROP TABLE DAS_ID_GENERATOR");
         } catch ( SQLException e ) {
+            log.catching(e);
             // just try drop any existing DAS_ID_GENERATOR if desired
         }
         // create new DAS_ID_GENERATOR

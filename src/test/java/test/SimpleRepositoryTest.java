@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package test;
 
 import atg.adapter.gsa.GSARepository;
@@ -25,7 +26,8 @@ import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryItem;
 import atg.test.util.DBUtils;
 import atg.test.util.FileUtil;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.Arrays;
@@ -39,7 +41,7 @@ import java.util.Properties;
 public class SimpleRepositoryTest
         extends GSATest {
 
-    private static Logger log = Logger.getLogger(SimpleRepositoryTest.class);
+    private static Logger log = LogManager.getLogger(SimpleRepositoryTest.class);
 
     public void testSimple()
             throws Exception {
@@ -54,7 +56,7 @@ public class SimpleRepositoryTest
         // Define the path to our repository definition file called
         // "simpleRepository.xml"
         final String[] definitionFiles = { "/test/simpleRepository.xml" };
-        log.info(" definitionFile[0]=" + definitionFiles[0]);
+        log.info("definitionFile[0]={}", definitionFiles[0]);
 
         // Copy all related properties and definition files to the previously
         // configured configpath

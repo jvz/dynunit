@@ -34,7 +34,8 @@ import atg.versionmanager.VersionManager;
 import atg.versionmanager.Workspace;
 import atg.versionmanager.exceptions.VersionException;
 import junit.framework.Assert;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -79,7 +80,7 @@ public class GSATestUtils {
 
     private static GSATestUtils SINGLETON_VERSIONED = null;
 
-    private static Logger log = Logger.getLogger(GSATestUtils.class);
+    private static Logger log = LogManager.getLogger();
 
     /**
      * @param pB
@@ -235,7 +236,7 @@ public class GSATestUtils {
      *
      * @throws IOException
      * @throws Exception
-     * @see GSATestUtils.cleanup
+     * @see atg.adapter.gsa.GSATestUtils#cleanup()
      */
     public void initializeMinimalConfigpath(File pRoot,
                                             String pRepositoryPath,
@@ -281,7 +282,7 @@ public class GSATestUtils {
      *
      * @throws IOException
      * @throws Exception
-     * @see GSATestUtils.cleanup
+     * @see atg.adapter.gsa.GSATestUtils#cleanup()
      */
     public void initializeMinimalConfigpath(File pRoot,
                                             String pRepositoryPath,
@@ -596,7 +597,6 @@ public class GSATestUtils {
      * Creates a GLOBAL.properties
      *
      * @param pRoot
-     * @param pJDBCProperties
      *
      * @return
      * @throws IOException
@@ -776,7 +776,7 @@ public class GSATestUtils {
      * @param pRoot
      * @param pRepositoryPath
      * @param pDefinitionFiles
-     * @param pSQLAbsolutePath
+     * @param pCreateSQLAbsolutePath
      * @param pDropSQLAbsolutePath
      * @param pImportFiles
      *
@@ -811,7 +811,7 @@ public class GSATestUtils {
      * @param pRoot
      * @param pRepositoryPath
      * @param pDefinitionFiles
-     * @param pSQLAbsolutePath
+     * @param pCreateSQLAbsolutePath
      * @param pDropSQLAbsolutePath
      * @param pImportFiles
      *
@@ -1039,7 +1039,8 @@ public class GSATestUtils {
     }
 
     /**
-     * @param prop
+     * @param pConfigRoot
+     * @param  pString
      *
      * @throws FileNotFoundException
      * @throws IOException
@@ -1050,7 +1051,8 @@ public class GSATestUtils {
     }
 
     /**
-     * @param prop
+     * @param pConfigRoot
+     * @param pString
      * @param configPath where in config path the file must be copied.
      *
      * @throws FileNotFoundException
@@ -1151,8 +1153,6 @@ public class GSATestUtils {
         );
         File root = new File(pRoot, repositoryDir);
         root.mkdirs();
-
-        ;
 
         return NucleusTestUtils.createProperties(repositoryName, root, clazz, props);
     }
@@ -1403,8 +1403,8 @@ public class GSATestUtils {
     }
 
     /**
-     * @param pVersionRepository
-     * @param pString
+     * @param pRepository
+     * @param pItemDescriptorName
      */
     public static void dumpTables(GSARepository pRepository, String pItemDescriptorName)
             throws RepositoryException, SQLException {

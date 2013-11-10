@@ -24,8 +24,8 @@ import atg.servlet.DynamoHttpServletRequest;
 import atg.servlet.ServletTestUtils;
 import atg.servlet.ServletUtil;
 import junit.framework.TestCase;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class ProfileFormHandlerTest
 
     public static final String PROFILE_ADAPTER_REPOSITORY_PATH = "/atg/userprofiling/ProfileAdapterRepository";
 
-    Logger mLogger = Logger.getLogger(this.getClass());
+    Logger mLogger = LogManager.getLogger();
 
     Nucleus mNucleus = null;
 
@@ -53,7 +53,7 @@ public class ProfileFormHandlerTest
      */
     @Override
     public void setUp() {
-        mLogger.log(Level.INFO, "Start Nucleus.");
+        mLogger.info("Starting Nucleus.");
         try {
             System.setProperty("derby.locks.deadlockTrace", "true");
             mNucleus = NucleusTestUtils.startNucleusWithModules(
@@ -76,7 +76,7 @@ public class ProfileFormHandlerTest
      */
     @Override
     public void tearDown() {
-        mLogger.log(Level.INFO, "Stop Nucleus");
+        mLogger.info("Stopping Nucleus.");
         if ( mNucleus != null ) {
             try {
                 NucleusTestUtils.shutdownNucleus(mNucleus);

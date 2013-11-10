@@ -20,7 +20,8 @@ import atg.dtm.TransactionDemarcation;
 import atg.dtm.TransactionDemarcationException;
 import atg.nucleus.GenericService;
 import atg.service.jdbc.BasicDataSource;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
@@ -45,7 +46,7 @@ import java.util.List;
 public class SQLProcessor {
     // =============== MEMBER VARIABLES =================
 
-    private static Logger log = Logger.getLogger(SQLProcessor.class);
+    private static Logger log = LogManager.getLogger(SQLProcessor.class);
 
     DataSource mDataSource;
 
@@ -186,8 +187,8 @@ public class SQLProcessor {
     /**
      * Construct with specified DataSource
      *
-     * @param TransactionManager manager - the TransactionManager to use to monitor transactions
-     * @param DataSource         dataSource - the DataSource to use for db connections
+     * @param pTxManager  the TransactionManager to use to monitor transactions
+     * @param pDataSource the DataSource to use for db connections
      */
     public SQLProcessor(TransactionManager pTxManager, DataSource pDataSource) {
         setDataSource(pDataSource);
@@ -198,11 +199,11 @@ public class SQLProcessor {
      * Constructor with specified user/password/driver/URL.  specified parameters are used
      * to create a DataSource connection to the database.
      *
-     * @param TransactionManager manager - the TransactionManager to use to monitor transactions
-     * @param String             username - name of user to connect to db
-     * @param String             password - pwd to connectc to db
-     * @param String             driver - driver specification to connect to db
-     * @param String             url - url to connect to db
+     * @param pTxManager the TransactionManager to use to monitor transactions
+     * @param pUsername  name of user to connect to db
+     * @param pPassword  password to connect to db
+     * @param pDriver    driver specification to connect to db
+     * @param pURL       url to connect to db
      *
      * @throws SQLException if an error occurs creating the DataSource
      */
@@ -262,7 +263,7 @@ public class SQLProcessor {
                 //most of this method is annoying try/catch/finally blocks
                 //inflicted on us by JTA. the real work is here.
                 s = c.createStatement();
-                debug("Executing SQL [" + pSQL + "]");
+                log.debug("Executing SQL [{}]", pSQL);
                 s.execute(pSQL);
             } finally {
                 close(s);
@@ -300,7 +301,7 @@ public class SQLProcessor {
                 //most of this method is annoying try/catch/finally blocks
                 //inflicted on us by JTA. the real work is here.
                 s = c.createStatement();
-                debug("Executing query [" + pQuery + "]");
+                log.debug("Executing query [{}]", pQuery);
                 rs = s.executeQuery(pQuery);
 
                 while ( rs.next() ) {
@@ -326,15 +327,15 @@ public class SQLProcessor {
      * tables may not be able to be dropped and this method will throw a
      * SQLException
      *
-     * @param Collection of names of tables to be dropped
-     * @param boolean    cascadeConstraints.  true if 'CASCADE CONSTRAINTS' should be used in
-     *                   drop statement.
-     * @param boolean    preview. if true then iterative behavior is disabled and method simply
-     *                   prints one drop statement that would be executed for each table.
-     *                   iterative
-     *                   behavior has
-     *                   to be disabled since it doesn't make sense if drops are not being
-     *                   executed.
+     * @param pNames              collection of names of tables to be dropped
+     * @param pCascadeConstraints true if 'CASCADE CONSTRAINTS' should be used in
+     *                            drop statement.
+     * @param pPreview            if true then iterative behavior is disabled and method simply
+     *                            prints one drop statement that would be executed for each table.
+     *                            iterative
+     *                            behavior has
+     *                            to be disabled since it doesn't make sense if drops are not being
+     *                            executed.
      *
      * @throws SQLException thrown if all tables can not be dropped
      */
@@ -366,7 +367,7 @@ public class SQLProcessor {
                 if ( tableExists(table) ) {
                     try {
                         dropTable(table, pCascadeConstraints, pPreview);
-                        debug("Dropped table: " + table);
+                        log.debug("Dropped table: {}", table);
                     } catch ( SQLException se ) {
                         // if this is the last iteration, throw an exception
                         if ( attempt + 1 >= maxIterations ) {
@@ -389,8 +390,8 @@ public class SQLProcessor {
      * Get a DB connection
      *
      * @return the connection
-     * @throws SQLProcessorException if there is DB trouble or
-     *                               DataSource trouble
+     * @throws SQLException if there is DB trouble or
+     *                      DataSource trouble
      */
     Connection getConnection()
             throws SQLException {
@@ -449,9 +450,9 @@ public class SQLProcessor {
      * passed as a method with the SQL that has been set as the dropTableSQL
      * property.  By default, this property is set to "Drop table"
      *
-     * @param String  - the name of the table to drop
-     * @param boolean cascadeConstraints.  true if 'CASCADE CONSTRAINTS' should be used in
-     *                drop statement.
+     * @param pName               the name of the table to drop
+     * @param pCascadeConstraints true if 'CASCADE CONSTRAINTS' should be used in
+     *                            drop statement.
      *
      * @throws SQLException thrown if an error occurs trying
      *                      to drop the table
@@ -476,9 +477,9 @@ public class SQLProcessor {
      * as a parameter to the String that has been set in the
      * determineTableExistsSQL property
      *
-     * @param String - name of table to check for existence of
+     * @param pTableName name of table to check for existence of
      *
-     * @return boolean - true if table exists; false otherwise
+     * @return boolean true if table exists; false otherwise
      * @throws TransactionDemarcationException
      *          if a tx error occurs
      */

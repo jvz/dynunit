@@ -16,7 +16,8 @@
 
 package atg.service.idgen;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.sql.DataSource;
 import java.sql.DatabaseMetaData;
@@ -40,7 +41,7 @@ public class IdGeneratorInitializer {
 
     private InitializingIdGenerator mGenerator;
 
-    Logger log = Logger.getLogger(IdGeneratorInitializer.class);
+    Logger log = LogManager.getLogger();
 
     /**
      * Creates a new IdGeneratorInitializer used for the given generator,
@@ -93,7 +94,7 @@ public class IdGeneratorInitializer {
             try {
                 mMetaDataMap.put(ds, ds.getConnection().getMetaData());
             } catch ( SQLException e ) {
-                log.error("Failed to get DatabaseMetaData.", e);
+                log.catching(e);
             }
         }
         return mMetaDataMap.get(ds);
@@ -117,7 +118,7 @@ public class IdGeneratorInitializer {
                 exists = true;
             }
         } catch ( SQLException e ) {
-            ; // eat it
+            log.catching(e);
         }
         return exists;
     }
@@ -150,14 +151,16 @@ public class IdGeneratorInitializer {
             st = mGenerator.getDataSource().getConnection().createStatement(); // statements
             int i = st.executeUpdate(pStatement); // run the query
             if ( i == -1 ) {
-                log.error("Error creating tables with statement" + pStatement);
+                log.error("Error creating tables with statement {}", pStatement);
             }
             success = true;
         } finally {
             try {
-                st.close();
+                if ( st != null ) {
+                    st.close();
+                }
             } catch ( SQLException e ) {
-                ; // eat it
+                log.catching(e);
             }
         }
         return success;

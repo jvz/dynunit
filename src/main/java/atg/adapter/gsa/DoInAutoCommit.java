@@ -16,8 +16,9 @@
 
 package atg.adapter.gsa;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.transaction.InvalidTransactionException;
 import javax.transaction.SystemException;
@@ -31,7 +32,7 @@ class DoInAutoCommit {
 
     GSARepository mRepository = null;
 
-    Logger mLogger = Logger.getLogger(this.getClass());
+    Logger mLogger = LogManager.getLogger(this.getClass());
 
     /**
      * Creates a new DoInAutoCommit which operates on the given repository.
@@ -64,50 +65,32 @@ class DoInAutoCommit {
             // Otherwise MSSQL will hang
             suspended = mRepository.getTransactionManager().suspend();
             Connection c = mRepository.getConnection();
-            if ( mLogger.isDebugEnabled() ) {
-                mLogger.log(
-                        Priority.DEBUG, "autoCommit = " + c.getAutoCommit() + " connection=" + c
-                );
-            }
+            mLogger.debug("autoCommit = {} connection = {}", c.getAutoCommit(), c);
             boolean savedAutoCommit = c.getAutoCommit();
-            if ( mLogger.isDebugEnabled() ) {
-                mLogger.log(Priority.DEBUG, "Setting auto commit = true on connection " + c);
-            }
+            mLogger.debug("Setting autoCommit to true on connection {}", c);
             c.setAutoCommit(true);
             try {
                 pWork.doInAutoCommit(c);
                 success = true;
             } finally {
                 if ( c != null ) {
-                    if ( mLogger.isDebugEnabled() ) {
-                        mLogger.log(
-                                Priority.DEBUG, "Reverting autoCommit back to " + savedAutoCommit
-                        );
-                    }
+                    mLogger.debug("Reverting autoCommit back to {}", savedAutoCommit);
                     c.setAutoCommit(savedAutoCommit);
                 }
                 if ( suspended != null ) {
                     try {
                         mRepository.getTransactionManager().resume(suspended);
                     } catch ( InvalidTransactionException e ) {
-                        if ( mRepository.isLoggingError() ) {
-                            mLogger.log(Priority.ERROR, e);
-                        }
+                        mLogger.catching(Level.ERROR, e);
                     } catch ( IllegalStateException e ) {
-                        if ( mRepository.isLoggingError() ) {
-                            mLogger.log(Priority.ERROR, e);
-                        }
+                        mLogger.catching(Level.ERROR, e);
                     }
                 }
             }
         } catch ( SystemException e ) {
-            if ( mRepository.isLoggingError() ) {
-                mLogger.log(Priority.ERROR, e);
-            }
+            mLogger.catching(Level.ERROR, e);
         } catch ( SQLException e ) {
-            if ( mRepository.isLoggingError() ) {
-                mLogger.log(Priority.ERROR, e);
-            }
+            mLogger.catching(Level.ERROR, e);
         }
         return success;
     }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package test;
 
 import atg.adapter.gsa.GSARepository;
@@ -22,7 +23,8 @@ import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryException;
 import atg.repository.RepositoryItem;
 import atg.test.AtgDustCase;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,7 +44,7 @@ public class SongsRepositoryTest
         extends AtgDustCase {
 
     @SuppressWarnings("unused")
-    private static Logger log = Logger.getLogger(SongsRepositoryTest.class);
+    private static Logger log = LogManager.getLogger();
 
     @Override
     public void setUp()

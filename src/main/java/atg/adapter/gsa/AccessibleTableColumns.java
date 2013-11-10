@@ -16,7 +16,8 @@
 
 package atg.adapter.gsa;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -29,7 +30,7 @@ import java.util.List;
  */
 public class AccessibleTableColumns {
 
-    public Logger mLogger = Logger.getLogger(this.getClass());
+    Logger log = LogManager.getLogger();
 
     public TableColumns mTableColumns;
 
@@ -118,13 +119,13 @@ public class AccessibleTableColumns {
             columnDefinitionNode.setAccessible(true);
             field = columnDefinitionNode.get(mTableColumns);
         } catch ( SecurityException e ) {
-            mLogger.error(e);
+            log.catching(e);
         } catch ( NoSuchFieldException e ) {
-            mLogger.error(e);
+            log.catching(e);
         } catch ( IllegalArgumentException e ) {
-            mLogger.error(e);
+            log.catching(e);
         } catch ( IllegalAccessException e ) {
-            mLogger.error(e);
+            log.catching(e);
         }
         return field;
     }
