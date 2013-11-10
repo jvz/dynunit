@@ -45,9 +45,9 @@ public class DBUtils {
 
     private Connection conn; //our connnection to the db - presist for life of
 
-    private Properties mJDBCProperties;
+    private final Properties mJDBCProperties;
 
-    private static Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
     // ---------------------------
 
     /**

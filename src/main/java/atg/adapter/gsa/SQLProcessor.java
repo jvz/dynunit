@@ -46,7 +46,7 @@ import java.util.List;
 public class SQLProcessor {
     // =============== MEMBER VARIABLES =================
 
-    private static Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     private DataSource mDataSource;
 

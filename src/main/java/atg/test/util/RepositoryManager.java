@@ -41,7 +41,7 @@ import java.util.Properties;
  */
 public class RepositoryManager {
 
-    private static Logger log = LogManager.getLogger(RepositoryManager.class);
+    private static final Logger log = LogManager.getLogger(RepositoryManager.class);
 
     private boolean isDefaultInMemoryDb;
 

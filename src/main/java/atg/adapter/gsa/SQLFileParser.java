@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class SQLFileParser {
 
-    private static Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     // ****************************************
     // THERE IS ONLY ONE CLASS VARIABLE

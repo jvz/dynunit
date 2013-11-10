@@ -30,7 +30,7 @@ import java.io.IOException;
 public class AtgDustCaseTest
         extends TestCase {
 
-    private AtgDustCase atgCase = new AtgDustCase();
+    private final AtgDustCase atgCase = new AtgDustCase();
 
     /*
      * (non-Javadoc)

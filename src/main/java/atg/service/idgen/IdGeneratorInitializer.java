@@ -39,9 +39,9 @@ public class IdGeneratorInitializer {
 
     private static final String DROP_TABLE_TEMPLATE = "DROP TABLE";
 
-    private InitializingIdGenerator mGenerator;
+    private final InitializingIdGenerator mGenerator;
 
-    private static Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     /**
      * Creates a new IdGeneratorInitializer used for the given generator,
@@ -81,7 +81,7 @@ public class IdGeneratorInitializer {
         );
     }
 
-    private Map<DataSource, DatabaseMetaData> mMetaDataMap = new HashMap<DataSource, DatabaseMetaData>();
+    private final Map<DataSource, DatabaseMetaData> mMetaDataMap = new HashMap<DataSource, DatabaseMetaData>();
 
     /**
      * Returns a cached instance of the DB metadata for the current connection

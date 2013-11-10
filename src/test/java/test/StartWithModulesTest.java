@@ -47,7 +47,7 @@ import java.io.IOException;
 public class StartWithModulesTest
         extends TestCase {
 
-    private static Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     private Nucleus mNucleus = null;
 

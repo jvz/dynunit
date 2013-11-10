@@ -32,7 +32,7 @@ class DoInAutoCommit {
 
     private GSARepository mRepository = null;
 
-    private static Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     /**
      * Creates a new DoInAutoCommit which operates on the given repository.

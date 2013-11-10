@@ -50,7 +50,7 @@ public final class BasicConfiguration {
 
     private final Map<String, String> settings = new HashMap<String, String>();
 
-    private static Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
 
     public void setDebug(final boolean isDebug) {
         this.isDebug = Boolean.toString(isDebug);

@@ -47,7 +47,7 @@ import java.util.Map.Entry;
 @SuppressWarnings("unchecked")
 public class FileUtil {
 
-    private static Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
 
     private static boolean isDirty = false;
 

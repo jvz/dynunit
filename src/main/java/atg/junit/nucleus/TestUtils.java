@@ -65,7 +65,7 @@ import java.util.jar.Manifest;
 public class TestUtils
         extends atg.nucleus.GenericService {
 
-    private static Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     // names of app servers types that may be specified by the
     // 'atg.dynamo.appserver' system property

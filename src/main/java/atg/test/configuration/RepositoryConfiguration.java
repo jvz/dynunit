@@ -58,7 +58,7 @@ public final class RepositoryConfiguration {
 
     private final Map<String, String> settings = new HashMap<String, String>();
 
-    private static Logger logger = LogManager.getLogger(RepositoryConfiguration.class);
+    private static final Logger logger = LogManager.getLogger(RepositoryConfiguration.class);
 
     public void setDebug(final boolean isDebug) {
         this.isDebug = Boolean.toString(isDebug);

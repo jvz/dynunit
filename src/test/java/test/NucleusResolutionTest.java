@@ -31,7 +31,7 @@ public class NucleusResolutionTest
 
     private Nucleus mNucleus;
 
-    private ServletTestUtils mServletTestUtils = new ServletTestUtils();
+    private final ServletTestUtils mServletTestUtils = new ServletTestUtils();
 
     /**
      * Start up Nucleus. In this case DAS is the base module.

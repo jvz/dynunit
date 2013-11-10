@@ -53,9 +53,9 @@ public class GSATest
 
     private final transient Random random = new Random();
 
-    private static Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
 
-    private HashMap<String, File> mConfigDir = new HashMap<String, File>();
+    private final HashMap<String, File> mConfigDir = new HashMap<String, File>();
 
     /**
      *

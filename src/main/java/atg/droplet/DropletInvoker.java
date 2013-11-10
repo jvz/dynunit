@@ -87,7 +87,7 @@ public class DropletInvoker {
     // -------------------------------------
     // Member variables
 
-    private Map<String, Boolean> mOparamExistsOverrideMap = new HashMap<String, Boolean>();
+    private final Map<String, Boolean> mOparamExistsOverrideMap = new HashMap<String, Boolean>();
 
     private ServletTestUtils mServletTestUtils;
 
@@ -97,7 +97,7 @@ public class DropletInvoker {
 
     private String mSessionId;
 
-    private Nucleus mNucleus;
+    private final Nucleus mNucleus;
 
     // -------------------------------------
     // Properties
@@ -486,9 +486,9 @@ public class DropletInvoker {
      */
     public static class RenderedOutputParameter {
 
-        Map<String, Object> mFrameParameters;
+        final Map<String, Object> mFrameParameters;
 
-        String mName;
+        final String mName;
 
         /**
          * Created a representation of a rendered OutputParameter.
@@ -564,15 +564,15 @@ public class DropletInvoker {
      */
     public class DropletResult {
 
-        Servlet mDroplet;
+        final Servlet mDroplet;
 
-        DynamoHttpServletRequest mRequest;
+        final DynamoHttpServletRequest mRequest;
 
-        DynamoHttpServletResponse mResponse;
+        final DynamoHttpServletResponse mResponse;
 
-        List<RenderedOutputParameter> mRenderedParameters = new ArrayList<RenderedOutputParameter>();
+        final List<RenderedOutputParameter> mRenderedParameters = new ArrayList<RenderedOutputParameter>();
 
-        Map<String, List<RenderedOutputParameter>> mNameToRenderedParameters = new HashMap<String, List<RenderedOutputParameter>>();
+        final Map<String, List<RenderedOutputParameter>> mNameToRenderedParameters = new HashMap<String, List<RenderedOutputParameter>>();
 
         /**
          * Create a new DropletResult.
@@ -759,7 +759,7 @@ public class DropletInvoker {
         /**
          * The droplet result to which we will add RenderedOutputParameter.
          */
-        DropletResult mDropletResult;
+        final DropletResult mDropletResult;
 
         /**
          * Create a new instance that will invoke addRenderedParameter to

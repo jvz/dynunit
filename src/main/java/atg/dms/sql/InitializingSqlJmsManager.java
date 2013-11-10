@@ -44,7 +44,7 @@ public class InitializingSqlJmsManager
 
     private String mSQLRepositoryPath = "/atg/dynamo/service/jdbc/SQLRepository";
 
-    private boolean mCreatingSchemaOnStartup = true;
+    private final boolean mCreatingSchemaOnStartup = true;
 
     private boolean mDropSchemaOnShutdown = false;
 

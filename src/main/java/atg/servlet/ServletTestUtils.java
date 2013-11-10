@@ -463,7 +463,7 @@ public class ServletTestUtils {
     static class SessionIdSettingGenericHttpServletRequest
             extends GenericHttpServletRequest {
 
-        String mSessionId;
+        final String mSessionId;
 
         SessionIdSettingGenericHttpServletRequest(String pSessionId) {
             mSessionId = pSessionId;
@@ -622,7 +622,7 @@ public class ServletTestUtils {
 
         private boolean mRecordDispatches;
 
-        private List<TestingDispatchRecord> mDispatchRecords = new ArrayList<TestingDispatchRecord>(
+        private final List<TestingDispatchRecord> mDispatchRecords = new ArrayList<TestingDispatchRecord>(
                 0
         );
 
@@ -3968,11 +3968,11 @@ public class ServletTestUtils {
     static class TestingRequestDispatcher
             implements RequestDispatcher {
 
-        ServletContext mServletContext;
+        final ServletContext mServletContext;
 
-        String mPath;
+        final String mPath;
 
-        RequestDispatcher mDispatcher;
+        final RequestDispatcher mDispatcher;
 
 
         /**
@@ -4026,11 +4026,11 @@ public class ServletTestUtils {
      */
     public static class TestingDispatchRecord {
 
-        ServletContext mServletContext;
+        final ServletContext mServletContext;
 
-        String mPath;
+        final String mPath;
 
-        boolean mIsInclude;
+        final boolean mIsInclude;
 
         /**
          * Create a TestingDispatchRecord.

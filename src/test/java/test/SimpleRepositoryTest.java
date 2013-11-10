@@ -41,7 +41,7 @@ import java.util.Properties;
 public class SimpleRepositoryTest
         extends GSATest {
 
-    private static Logger log = LogManager.getLogger(SimpleRepositoryTest.class);
+    private static final Logger log = LogManager.getLogger(SimpleRepositoryTest.class);
 
     public void testSimple()
             throws Exception {

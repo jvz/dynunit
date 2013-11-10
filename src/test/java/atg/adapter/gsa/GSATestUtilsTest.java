@@ -32,7 +32,7 @@ import java.util.Properties;
 public class GSATestUtilsTest
         extends TestCase {
 
-    private static Logger log = LogManager.getLogger(GSATestUtilsTest.class);
+    private static final Logger log = LogManager.getLogger(GSATestUtilsTest.class);
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(GSATestUtilsTest.class);

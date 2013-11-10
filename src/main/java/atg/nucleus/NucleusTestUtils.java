@@ -86,18 +86,18 @@ public class NucleusTestUtils {
      * created by startNucleusWithModules(). True by default, but
      * can be set to false for debugging.
      */
-    private static boolean sRemoveTempAtgServerDirectories = true;
+    private static final boolean sRemoveTempAtgServerDirectories = true;
 
     /**
      * A map from Nucleus instance to temporary directory. Used by
      * startNucleusWithModules.
      */
-    private static Map<Nucleus, File> sNucleusToTempAtgServerDirectory = Collections.synchronizedMap(new HashMap<Nucleus, File>());
+    private static final Map<Nucleus, File> sNucleusToTempAtgServerDirectory = Collections.synchronizedMap(new HashMap<Nucleus, File>());
 
     /**
      * Cache of the config path for a given Class. Used by getConfigpath.
      */
-    private static Map<Class, Map<String, File>> sConfigDir = new HashMap<Class, Map<String, File>>();
+    private static final Map<Class, Map<String, File>> sConfigDir = new HashMap<Class, Map<String, File>>();
 
     /**
      * Creates an Initial.properties file
@@ -1012,23 +1012,23 @@ public class NucleusTestUtils {
         /**
          * List of dynamo modules.
          */
-        private String[] mModules;
+        private final String[] mModules;
 
         /**
          * Class whose package data subdir is relative to.
          */
-        private Class mClassRelativeTo;
+        private final Class mClassRelativeTo;
 
         /**
          * The base config directory, realtive to mClassRelativeTo's package
          * + "/data". If null, then "config"
          */
-        private String mBaseConfigDirectory;
+        private final String mBaseConfigDirectory;
 
         /**
          * The Nucleus path of the intial service to resolve.
          */
-        private String mInitialService;
+        private final String mInitialService;
 
         private String[] mLayers;
 

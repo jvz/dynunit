@@ -40,11 +40,11 @@ public class ProfileFormHandlerTest
 
     private static final String PROFILE_ADAPTER_REPOSITORY_PATH = "/atg/userprofiling/ProfileAdapterRepository";
 
-    private static Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     private Nucleus mNucleus = null;
 
-    private ServletTestUtils mServletTestUtils = new ServletTestUtils();
+    private final ServletTestUtils mServletTestUtils = new ServletTestUtils();
 
     // ------------------------------------
 

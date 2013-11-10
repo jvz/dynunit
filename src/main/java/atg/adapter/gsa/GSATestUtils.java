@@ -68,11 +68,11 @@ import java.util.Properties;
  */
 public class GSATestUtils {
 
-    private static List<File> mFilesCreated = new ArrayList<File>();
+    private static final List<File> mFilesCreated = new ArrayList<File>();
 
-    private static String sClassName = "atg.adapter.gsa.InitializingGSA";
+    private static final String sClassName = "atg.adapter.gsa.InitializingGSA";
 
-    private static String sVersionedClassName = "atg.adapter.gsa.InitializingVersionRepository";
+    private static final String sVersionedClassName = "atg.adapter.gsa.InitializingVersionRepository";
 
     private boolean mVersioned = false;
 
@@ -80,7 +80,7 @@ public class GSATestUtils {
 
     private static GSATestUtils SINGLETON_VERSIONED = null;
 
-    private static Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
 
     /**
      * @param pB

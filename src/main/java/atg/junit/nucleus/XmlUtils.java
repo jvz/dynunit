@@ -42,7 +42,7 @@ import java.util.List;
  */
 public class XmlUtils {
 
-    private static Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
 
     /**
      * Initializes the XML file to be parsed and gets the Document tree for it.

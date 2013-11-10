@@ -39,15 +39,15 @@ import java.sql.SQLException;
 public class DerbyDataSource
         extends InitializingDataSourceBase {
 
-    private static Logger sLog = LogManager.getLogger();
+    private static final Logger sLog = LogManager.getLogger();
 
     private String framework = "embedded";
 
-    private String driver = "org.apache.derby.jdbc.EmbeddedDriver";
+    private final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
 
-    private String protocol = "jdbc:derby:";
+    private final String protocol = "jdbc:derby:";
 
-    private boolean mAddedShutdownHook = false;
+    private final boolean mAddedShutdownHook = false;
 
     /**
      * Sets Derby JDBC properties to be used when the first client asks for a

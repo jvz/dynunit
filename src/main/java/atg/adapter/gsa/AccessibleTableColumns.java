@@ -30,9 +30,9 @@ import java.util.List;
  */
 class AccessibleTableColumns {
 
-    private static Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
-    private TableColumns mTableColumns;
+    private final TableColumns mTableColumns;
 
     public AccessibleTableColumns(TableColumns pTable) {
         mTableColumns = pTable;

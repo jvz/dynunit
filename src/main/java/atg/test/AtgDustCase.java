@@ -104,7 +104,7 @@ public class AtgDustCase
 
     private static final Logger log = LogManager.getLogger();
 
-    private RepositoryManager repositoryManager = new RepositoryManager();
+    private final RepositoryManager repositoryManager = new RepositoryManager();
 
     private final BasicConfiguration basicConfiguration = new BasicConfiguration();
 
@@ -122,9 +122,11 @@ public class AtgDustCase
 
     private List<String> configDstsDir;
 
-    private static Map<String, Long> CONFIG_FILES_TIMESTAMPS, CONFIG_FILES_GLOBAL_FORCE = null;
+    private static final Map<String, Long> CONFIG_FILES_TIMESTAMPS;
 
-    private static Class<?> perflib;
+    private static final Map<String, Long> CONFIG_FILES_GLOBAL_FORCE = null;
+
+    private static final Class<?> perflib;
 
     private static final File TIMESTAMP_SER = new File(
             System.getProperty("java.io.tmpdir") + File.separator + "atg-dust-tstamp-rh.ser"
@@ -134,7 +136,7 @@ public class AtgDustCase
             System.getProperty("java.io.tmpdir") + File.separator + "atg-dust-gforce-rh.ser"
     );
 
-    private static long SERIAL_TTL = 43200000L;
+    private static final long SERIAL_TTL = 43200000L;
 
     /**
      * Every *.properties file copied using this method will have it's scope (if

@@ -973,23 +973,23 @@ public class InitializingGSA
 
     // ---------- methods to help with user-specified SQL files -----------
     // allowable db types to specify
-    private String SOLID = "solid";
+    private final String SOLID = "solid";
 
-    private String ORACLE = "oracle";
+    private final String ORACLE = "oracle";
 
-    private String MICROSOFT = "microsoft";
+    private final String MICROSOFT = "microsoft";
 
-    private String INFORMIX = "informix";
+    private final String INFORMIX = "informix";
 
-    private String DB2 = "db2";
+    private final String DB2 = "db2";
 
-    private String SYBASE = "sybase";
+    private final String SYBASE = "sybase";
 
-    private String SYBASE2 = "Adaptive Server Enterprise"; // sybase 12.5
+    private final String SYBASE2 = "Adaptive Server Enterprise"; // sybase 12.5
 
-    private String DEFAULT = "default";
+    private final String DEFAULT = "default";
 
-    private String[] dbTypes = {
+    private final String[] dbTypes = {
             SOLID, ORACLE, MICROSOFT, INFORMIX, DB2, SYBASE, SYBASE2, DEFAULT
     };
 
