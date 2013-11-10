@@ -68,11 +68,11 @@ import java.util.Properties;
  */
 public class GSATestUtils {
 
-    public static List<File> mFilesCreated = new ArrayList<File>();
+    private static List<File> mFilesCreated = new ArrayList<File>();
 
-    public static String sClassName = "atg.adapter.gsa.InitializingGSA";
+    private static String sClassName = "atg.adapter.gsa.InitializingGSA";
 
-    public static String sVersionedClassName = "atg.adapter.gsa.InitializingVersionRepository";
+    private static String sVersionedClassName = "atg.adapter.gsa.InitializingVersionRepository";
 
     private boolean mVersioned = false;
 
@@ -1058,11 +1058,10 @@ public class GSATestUtils {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void copyToConfigpath(File pConfigRoot, String pString, String configPath)
+    public void copyToConfigpath(final File pConfigRoot, final String path, String configPath)
             throws FileNotFoundException, IOException {
         // create the version manager repository
         pConfigRoot.mkdirs();
-        String path = pString;
         if ( configPath == null ) {
             configPath = path.substring(0, path.lastIndexOf('/'));
         }
@@ -1074,7 +1073,7 @@ public class GSATestUtils {
         }
         prop.createNewFile();
         OutputStream os = new FileOutputStream(prop);
-        InputStream dataStream = this.getClass().getClassLoader().getResourceAsStream(pString);
+        InputStream dataStream = this.getClass().getClassLoader().getResourceAsStream(path);
         while ( dataStream.available() != 0 ) {
             byte[] buff = new byte[1024];
             int available = dataStream.available();

@@ -60,7 +60,7 @@ public class DropletInvokerTest
     //-------------------------------------
     // Member variables
 
-    Nucleus mNucleus;
+    private Nucleus mNucleus;
 
     //-------------------------------------
     // Properties
@@ -105,7 +105,7 @@ public class DropletInvokerTest
         doTestForEach();
     }
 
-    public void doTestSwitch()
+    void doTestSwitch()
             throws ServletException, IOException {
         DropletInvoker invoker = new DropletInvoker(mNucleus);
         DynamoHttpServletRequest request = invoker.getRequest();
@@ -148,7 +148,7 @@ public class DropletInvokerTest
     }
 
 
-    public void doTestForEach()
+    void doTestForEach()
             throws ServletException, IOException {
         DropletInvoker invoker = new DropletInvoker(mNucleus);
 

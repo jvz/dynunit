@@ -168,7 +168,7 @@ public class ServletTestUtils {
      * @param pMethod     The HTTP method for this request. For example GET,POST,PUT
      */
     public TestingDynamoHttpServletRequest createDynamoHttpServletRequestForSession(Nucleus pNucleus,
-                                                                                    Map<String, ? extends Object> pParameters,
+                                                                                    Map<String, ?> pParameters,
                                                                                     int pBufferSize,
                                                                                     String pMethod,
                                                                                     String pSessionId) {
@@ -236,7 +236,7 @@ public class ServletTestUtils {
      * the mime-typer will not be set by
      * createDynamoHttpServletRequest.
      */
-    protected String getMimeTyperPath() {
+    String getMimeTyperPath() {
         return "/atg/dynamo/servlet/pipeline/MimeTyper";
     }
 
@@ -244,7 +244,7 @@ public class ServletTestUtils {
      * Return the path of the request scope manager. A null value
      * means the scope manager will not be created.
      */
-    protected String getRequestScopeManagerPath() {
+    String getRequestScopeManagerPath() {
         return "/atg/dynamo/servlet/pipeline/RequestScopeManager";
     }
 
@@ -252,7 +252,7 @@ public class ServletTestUtils {
      * Return the path of the request scope manager. A null value
      * means the scope manager will not be created.
      */
-    protected String getWindowScopeManagerPath() {
+    String getWindowScopeManagerPath() {
         return "/atg/dynamo/servlet/pipeline/WindowScopeManager";
     }
 
@@ -261,7 +261,7 @@ public class ServletTestUtils {
      * the AppServerConfig will not be checked by
      * createDynamoHttpServletRequestForSession.
      */
-    protected String getAppServerConfigPath() {
+    String getAppServerConfigPath() {
         return "/atg/dynamo/service/AppServerConfig";
     }
 
@@ -281,7 +281,7 @@ public class ServletTestUtils {
      *                    this request
      * @param pMethod     The HTTP method for this request. For example GET,POST,PUT
      */
-    public TestingDynamoHttpServletRequest createDynamoHttpServletRequest(Map<String, ? extends Object> pParameters,
+    public TestingDynamoHttpServletRequest createDynamoHttpServletRequest(Map<String, ?> pParameters,
                                                                           int pBufferSize,
                                                                           String pMethod) {
         return createDynamoHttpServletRequest(
@@ -343,7 +343,7 @@ public class ServletTestUtils {
      * @param pSessionId  The session id on the request. Null means
      *                    use default.
      */
-    public TestingDynamoHttpServletRequest createDynamoHttpServletRequest(Map<String, ? extends Object> pParameters,
+    public TestingDynamoHttpServletRequest createDynamoHttpServletRequest(Map<String, ?> pParameters,
                                                                           int pBufferSize,
                                                                           String pMethod,
                                                                           String pSessionId) {
@@ -371,7 +371,7 @@ public class ServletTestUtils {
     /**
      * Create a generic HTTP servlet request, or subclass.
      */
-    protected GenericHttpServletRequest createGenericHttpServletRequest(String pSessionId) {
+    GenericHttpServletRequest createGenericHttpServletRequest(String pSessionId) {
         if ( pSessionId != null ) {
             return new SessionIdSettingGenericHttpServletRequest(pSessionId);
         }
@@ -380,13 +380,13 @@ public class ServletTestUtils {
     }
 
 
-    public String createQueryString(Map<String, ? extends Object> pParameters) {
+    public String createQueryString(Map<String, ?> pParameters) {
         if ( pParameters == null ) {
             return null;
         }
         // have to use StringBuffer for URLUtils
         StringBuffer strbuf = new StringBuffer();
-        for ( Map.Entry<String, ? extends Object> entryCur : pParameters.entrySet() ) {
+        for ( Map.Entry<String, ?> entryCur : pParameters.entrySet() ) {
 
             String strKey = entryCur.getKey();
             Object objValue = entryCur.getValue();
@@ -443,9 +443,7 @@ public class ServletTestUtils {
      * @param pName   the name of the query param to append
      * @param pValue  the value of the query param to append
      */
-    protected void escapeAndAppendParamNameAndValue(StringBuffer pBuffer,
-                                                    String pName,
-                                                    String pValue) {
+    void escapeAndAppendParamNameAndValue(StringBuffer pBuffer, String pName, String pValue) {
 
         if ( pBuffer.length() == 0 ) {
             pBuffer.append("?");

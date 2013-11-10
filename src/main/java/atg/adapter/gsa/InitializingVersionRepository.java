@@ -86,7 +86,7 @@ import java.util.Properties;
 public class InitializingVersionRepository
         extends VersionRepository {
 
-    private static Logger log = LogManager.getLogger();
+    private static Logger logger = LogManager.getLogger();
 
     // -----------------------------------
     // ---From Properties File------------
@@ -435,7 +435,7 @@ public class InitializingVersionRepository
         return mDoCheckin;
     }
 
-    public boolean mRestartAfterTableCreation = true;
+    private boolean mRestartAfterTableCreation = true;
 
     /**
      * Returns true if this repository will attempt to
@@ -674,7 +674,6 @@ public class InitializingVersionRepository
         if ( isLoggingInfo() ) {
             logInfo("Can not drop tables based on startSQLRepositoryRepository SQL. Please specified DropFiles!");
         }
-        return;
     }
 
     /**
@@ -706,7 +705,7 @@ public class InitializingVersionRepository
             // before executing the createFiles we always execute the drop files
             String[] dropFiles = getSpecifiedDropFiles();
             executeSqlFiles(dropFiles, false);
-            log.info(createFiles);
+            logger.info(createFiles);
             executeSqlFiles(createFiles, true);
             return true;
         }
@@ -874,7 +873,7 @@ public class InitializingVersionRepository
                         }
                     }
                     return;
-                } else if ( pProjectName == null && (pDoCheckin == true && pComment == null) ) {
+                } else if ( pProjectName == null && (pDoCheckin && pComment == null) ) {
                     if ( isLoggingError() ) {
                         logError("Error: comment required for a versioned import");
                     }
@@ -884,7 +883,7 @@ public class InitializingVersionRepository
                         logError("Error: user required for a versioned import");
                     }
                     return;
-                } else if ( pProjectName != null && pDoCheckin == true && pComment == null ) {
+                } else if ( pProjectName != null && pDoCheckin && pComment == null ) {
                     if ( isLoggingError() ) {
                         logError("Error: comment required for a versioned import");
                     }
@@ -1054,21 +1053,21 @@ public class InitializingVersionRepository
 
     // ---------- methods to help with user-specified SQL files -----------
     // allowable db types to specify
-    public String SOLID = "solid";
+    private String SOLID = "solid";
 
-    public String ORACLE = "oracle";
+    private String ORACLE = "oracle";
 
-    public String MICROSOFT = "microsoft";
+    private String MICROSOFT = "microsoft";
 
-    public String INFORMIX = "informix";
+    private String INFORMIX = "informix";
 
-    public String DB2 = "db2";
+    private String DB2 = "db2";
 
-    public String SYBASE = "sybase";
+    private String SYBASE = "sybase";
 
-    public String SYBASE2 = "Adaptive Server Enterprise"; // sybase 12.5
+    private String SYBASE2 = "Adaptive Server Enterprise"; // sybase 12.5
 
-    public String DEFAULT = "default";
+    private String DEFAULT = "default";
 
     private String[] dbTypes = {
             SOLID, ORACLE, MICROSOFT, INFORMIX, DB2, SYBASE, SYBASE2, DEFAULT

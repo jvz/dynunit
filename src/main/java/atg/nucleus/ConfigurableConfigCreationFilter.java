@@ -47,7 +47,7 @@ public class ConfigurableConfigCreationFilter
      * Our ordered set of dropped components. Saved as a set
      * to be more efficient for lookups.
      */
-    protected Set<String> mDroppedComponents = new LinkedHashSet<String>();
+    private Set<String> mDroppedComponents = new LinkedHashSet<String>();
 
     /**
      * Get list of component paths to filter out.
@@ -69,7 +69,7 @@ public class ConfigurableConfigCreationFilter
     //-------------------------------------
     // property: droppedPaths
     //-------------------------------------
-    protected String[] mDroppedPaths;
+    private String[] mDroppedPaths;
 
     /**
      * Get the list of component prefixes to filter out.

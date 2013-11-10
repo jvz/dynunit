@@ -56,7 +56,6 @@ public class NucleusTestUtilsTest
             try {
                 n = new Nucleus(null);
             } catch ( LicenseFailureException licExc ) {
-                ;
             }
             Object component = new String("I'm the test component");
             String path = "/foo/Test";

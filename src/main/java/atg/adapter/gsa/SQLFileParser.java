@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class SQLFileParser {
 
-    private static Logger log = LogManager.getLogger();
+    private static Logger logger = LogManager.getLogger();
 
     // ****************************************
     // THERE IS ONLY ONE CLASS VARIABLE
@@ -384,7 +384,7 @@ public class SQLFileParser {
 
                 while ( line != null ) // It is not the end of the file, LOOK FOR KEY WORDS
                 {
-                    //log.info ("DEBUG:" + line);
+                    //logger.info ("DEBUG:" + line);
 
                     lineTemp = line;
                     lineTemp = checkForComments(lineTemp);
@@ -548,7 +548,7 @@ public class SQLFileParser {
             s = trimDebuggingCharacters(s);
 
             if ( logToSystemOut ) {
-                //log.info("\n\n" + s );
+                //logger.info("\n\n" + s );
             } else {
                 //  if (isLoggingInfo ()) logInfo(s);
             }
@@ -563,14 +563,14 @@ public class SQLFileParser {
     }
 
     // This is useful for debugging this application
-    public boolean logToSystemOut = false;
+    private boolean logToSystemOut = false;
 
     public static void main(String[] args) {
         SQLFileParser t = new SQLFileParser();
         t.logToSystemOut = true;
         Iterator<String> cmds = t.parseSQLFiles(args).iterator();
         while ( cmds.hasNext() ) {
-            log.info("\n\n" + cmds.next());
+            logger.info("\n\n" + cmds.next());
         }
     }
 

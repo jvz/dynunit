@@ -32,7 +32,7 @@ import java.sql.Statement;
 public class IdGeneratorTest
         extends TestCase {
 
-    Nucleus mNucleus = null;
+    private Nucleus mNucleus = null;
 
     protected void setUp()
             throws Exception {

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package atg.adapter.gsa;
 
 import atg.adapter.gsa.xml.TemplateParser;
@@ -336,7 +337,7 @@ public class InitializingGSA
         return mSqlDropFiles;
     }
 
-    public boolean mAllowNoDrop = true;
+    private boolean mAllowNoDrop = true;
 
     /**
      * If true, one may specify create scripts, but no drop scripts. Otherwise it
@@ -412,7 +413,7 @@ public class InitializingGSA
         return mTemporaryInstantiation;
     }
 
-    public boolean mRestartAfterTableCreation = true;
+    private boolean mRestartAfterTableCreation = true;
 
     private GSARepositorySchemaGenerator mGenerator;
 
@@ -972,21 +973,21 @@ public class InitializingGSA
 
     // ---------- methods to help with user-specified SQL files -----------
     // allowable db types to specify
-    public String SOLID = "solid";
+    private String SOLID = "solid";
 
-    public String ORACLE = "oracle";
+    private String ORACLE = "oracle";
 
-    public String MICROSOFT = "microsoft";
+    private String MICROSOFT = "microsoft";
 
-    public String INFORMIX = "informix";
+    private String INFORMIX = "informix";
 
-    public String DB2 = "db2";
+    private String DB2 = "db2";
 
-    public String SYBASE = "sybase";
+    private String SYBASE = "sybase";
 
-    public String SYBASE2 = "Adaptive Server Enterprise"; // sybase 12.5
+    private String SYBASE2 = "Adaptive Server Enterprise"; // sybase 12.5
 
-    public String DEFAULT = "default";
+    private String DEFAULT = "default";
 
     private String[] dbTypes = {
             SOLID, ORACLE, MICROSOFT, INFORMIX, DB2, SYBASE, SYBASE2, DEFAULT

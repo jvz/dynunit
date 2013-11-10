@@ -63,7 +63,7 @@ public class NucleusTestUtils {
 
     //-------------------------------------
 
-    public static final Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
 
     public static final String ATG_DUST_TESTCONFIG = "atg.dust.testconfig";
 
@@ -86,18 +86,18 @@ public class NucleusTestUtils {
      * created by startNucleusWithModules(). True by default, but
      * can be set to false for debugging.
      */
-    public static boolean sRemoveTempAtgServerDirectories = true;
+    private static boolean sRemoveTempAtgServerDirectories = true;
 
     /**
      * A map from Nucleus instance to temporary directory. Used by
      * startNucleusWithModules.
      */
-    static Map<Nucleus, File> sNucleusToTempAtgServerDirectory = Collections.synchronizedMap(new HashMap<Nucleus, File>());
+    private static Map<Nucleus, File> sNucleusToTempAtgServerDirectory = Collections.synchronizedMap(new HashMap<Nucleus, File>());
 
     /**
      * Cache of the config path for a given Class. Used by getConfigpath.
      */
-    static Map<Class, Map<String, File>> sConfigDir = new HashMap<Class, Map<String, File>>();
+    private static Map<Class, Map<String, File>> sConfigDir = new HashMap<Class, Map<String, File>>();
 
     /**
      * Creates an Initial.properties file
@@ -252,8 +252,7 @@ public class NucleusTestUtils {
         System.setProperty("atg.dynamo.license.read", "true");
         System.setProperty("atg.license.read", "true");
         NucleusServlet.addNamingFactoriesAndProtocolHandlers();
-        Nucleus n = Nucleus.startNucleus(new String[] { pSingleConfigpathEntry });
-        return n;
+        return Nucleus.startNucleus(new String[] { pSingleConfigpathEntry });
     }
 
     /**
@@ -698,7 +697,7 @@ public class NucleusTestUtils {
      * DYNAMO_ROOT by various means. This is mostly made complicated
      * by the ROAD DUST environment being so different from devtools.
      */
-    static String findDynamoRoot() {
+    private static String findDynamoRoot() {
         // now let's try to find dynamo home...
         String dynamoRootStr = DynamoEnv.getProperty("atg.dynamo.root");
 
@@ -804,7 +803,7 @@ public class NucleusTestUtils {
      * Try to convert a file URL to a File object. You'd think this would be
      * easier, but no.
      */
-    static File urlToFile(URL url) {
+    private static File urlToFile(URL url) {
         URI uri;
 
         if ( !"file".equals(url.getProtocol()) ) {
@@ -852,7 +851,7 @@ public class NucleusTestUtils {
      * @return the created temporary server directory.
      * @throws IOException if an error occurs
      */
-    protected static File createTempServerDir()
+    private static File createTempServerDir()
             throws IOException {
         File fileTemp = File.createTempFile("tempServer", "dir");
         fileTemp.delete();
@@ -1227,7 +1226,6 @@ public class NucleusTestUtils {
          * chance to adjust any command-line options.
          */
         public void modifyNucleusCommandLineOptions(List<String> listArgs) {
-            return;
         }
     } // end inner-class NucleusStartupOptions
 

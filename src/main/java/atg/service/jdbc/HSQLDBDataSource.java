@@ -41,7 +41,7 @@ public class HSQLDBDataSource
 
     // Don't shutdown HSQLDB by default. It might stop before other components
     // that require it.
-    public boolean mShutdownHSQLDB = true;
+    private boolean mShutdownHSQLDB = true;
 
     /**
      * Returns true if the "SHUTDOWN" sql statment should be sent to HSQLDB
@@ -105,7 +105,7 @@ public class HSQLDBDataSource
                     try {
                         connection.close();
                     } catch ( SQLException e ) {
-                        ; // eat it
+                        // eat it
                     }
                 }
             }

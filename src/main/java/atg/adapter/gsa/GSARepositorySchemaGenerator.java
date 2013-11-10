@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package atg.adapter.gsa;
 
 import atg.repository.RepositoryException;
@@ -58,16 +59,16 @@ import java.util.Set;
 public class GSARepositorySchemaGenerator {
 
     // The repository upon which we are working.
-    public GSARepository mRepository = null;
+    private GSARepository mRepository = null;
 
     // The DDLUtils Platform object
-    public Platform mPlatform = null;
+    private Platform mPlatform = null;
 
     // The DDLUtils Database Model
-    public Database mDatabase = null;
+    private Database mDatabase = null;
 
     // Tool for mapping database types
-    public DatabaseTypeNameToJDBC mDatabaseTypeNameToJDBC = null;
+    private DatabaseTypeNameToJDBC mDatabaseTypeNameToJDBC = null;
 
     static Set mUsedFKNames = new HashSet();
 

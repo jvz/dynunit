@@ -64,7 +64,7 @@ public class SimpleComponent
      *
      * @throws ServiceException
      */
-    public void prepare()
+    void prepare()
             throws ServiceException {
         Nucleus n = Nucleus.getGlobalNucleus();
         if ( n == null ) {

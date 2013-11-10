@@ -27,7 +27,7 @@ package atg.service.jdbc;
 public class InitializingDataSourceBase
         extends FakeXADataSource {
 
-    public String mDatabaseName = "testdb";
+    private String mDatabaseName = "testdb";
 
     /**
      * Returns the name of the database to use with HSQLDB. The defaut name is

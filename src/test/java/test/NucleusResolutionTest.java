@@ -29,9 +29,9 @@ import junit.framework.TestCase;
 public class NucleusResolutionTest
         extends TestCase {
 
-    Nucleus mNucleus;
+    private Nucleus mNucleus;
 
-    ServletTestUtils mServletTestUtils = new ServletTestUtils();
+    private ServletTestUtils mServletTestUtils = new ServletTestUtils();
 
     /**
      * Start up Nucleus. In this case DAS is the base module.
@@ -74,7 +74,7 @@ public class NucleusResolutionTest
     }
 
 
-    public Object resolveWithRequest(DynamoHttpServletRequest pRequest, String pNucleusPath) {
+    Object resolveWithRequest(DynamoHttpServletRequest pRequest, String pNucleusPath) {
         DynamoHttpServletRequest requestOld = ServletUtil.setCurrentRequest(pRequest);
         try {
             Object objResult = pRequest.resolveName(pNucleusPath);

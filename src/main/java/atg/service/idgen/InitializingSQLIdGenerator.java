@@ -33,12 +33,12 @@ public class InitializingSQLIdGenerator
         extends SQLIdGenerator
         implements InitializingIdGenerator {
 
-    IdGeneratorInitializer mInitializer;
+    private IdGeneratorInitializer mInitializer;
 
     /**
      * The SQL statement required to create the table used by this component.
      */
-    public static final String CREATE_STATEMENT = " create table das_id_generator ("
+    private static final String CREATE_STATEMENT = " create table das_id_generator ("
                                                   + "id_space_name   varchar(60) not null,"
                                                   + "seed    numeric(19,0)   not null,"
                                                   + " batch_size      integer not null,"

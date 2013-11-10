@@ -126,9 +126,11 @@ public class AtgDustCase
 
     private static Class<?> perflib;
 
-    public static final File TIMESTAMP_SER = new File(
+    private static final File TIMESTAMP_SER = new File(
             System.getProperty("java.io.tmpdir") + File.separator + "atg-dust-tstamp-rh.ser"
-    ), GLOBAL_FORCE_SER = new File(
+    );
+
+    private static final File GLOBAL_FORCE_SER = new File(
             System.getProperty("java.io.tmpdir") + File.separator + "atg-dust-gforce-rh.ser"
     );
 
@@ -267,9 +269,9 @@ public class AtgDustCase
      *
      * @throws IOException If we have some File related errors
      */
-    protected final void createPropertyFile(final String configurationStagingLocation,
-                                            final String nucleusComponentPath,
-                                            final Class<?> clazz)
+    final void createPropertyFile(final String configurationStagingLocation,
+                                  final String nucleusComponentPath,
+                                  final Class<?> clazz)
             throws IOException {
         this.configurationLocation = new File(configurationStagingLocation);
         FileUtil.createPropertyFile(

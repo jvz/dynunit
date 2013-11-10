@@ -71,22 +71,22 @@ public class TestUtils
     // 'atg.dynamo.appserver' system property
     // Dynamo currently does not distinguish between generic
     // Tomcat and JBoss, everything is just referred to as 'tomcat'
-    public static final String APP_SERVER_DAS = "das";
+    private static final String APP_SERVER_DAS = "das";
 
-    public static final String APP_SERVER_BEA = "weblogic";
+    private static final String APP_SERVER_BEA = "weblogic";
 
-    public static final String APP_SERVER_IBM = "websphere";
+    private static final String APP_SERVER_IBM = "websphere";
 
-    public static final String APP_SERVER_TOMCAT = "tomcat";
+    private static final String APP_SERVER_TOMCAT = "tomcat";
 
     // names of various vendors that ATG works with
-    public static final String VENDOR_ATG = "ATG";
+    private static final String VENDOR_ATG = "ATG";
 
-    public static final String VENDOR_BEA = "BEA";
+    private static final String VENDOR_BEA = "BEA";
 
-    public static final String VENDOR_IBM = "IBM";
+    private static final String VENDOR_IBM = "IBM";
 
-    public static final String VENDOR_JBOSS = "JBOSS";
+    private static final String VENDOR_JBOSS = "JBOSS";
 
     // the variable that points to the installation directory for dynamo
     private static final String ROOT_VAR = "atg.dynamo.root";
@@ -121,14 +121,14 @@ public class TestUtils
     // piece of information can not be definitively determined.  in
     // particular, used when reporting about product build and version
     // information
-    public static final String UNKNOWN_INFO = "unknown";
+    private static final String UNKNOWN_INFO = "unknown";
 
     /**
      * property to track the DUST version being used.  utilized by
      * ATGXMLFileTestResultReported so we can tag XML result files for
      * compatibility validation when passed to the XML file logger
      */
-    public static int DUST_VERSION = 1;
+    private static int DUST_VERSION = 1;
 
     /**
      * specifies the DUST version being used.  utilized by
@@ -155,7 +155,7 @@ public class TestUtils
      * logged to the database to correlate the result with a user
      * account in the test management system.
      */
-    public static String DUST_USERNAME = System.getProperty("user.name");
+    private static String DUST_USERNAME = System.getProperty("user.name");
 
     /**
      * specifies the DUST user.  utilized when results are logged to
@@ -184,7 +184,7 @@ public class TestUtils
      * by TSM to correlate a specifid result with the testrun used to
      * install and configure the test Dynamo.
      */
-    public static String TSM_TESTRUN = null;
+    private static String TSM_TESTRUN = null;
 
     /**
      * Specifies the TSM testrun this result is part of.  utilized by
@@ -209,7 +209,7 @@ public class TestUtils
      * to inform end-users of time at which machine was last synced.
      * must be specified by test setup before test is run.
      */
-    public static String P4SYNCTIME = null;
+    private static String P4SYNCTIME = null;
 
     /**
      * property to track the p4 sync time for tests.  utilized by TSM
@@ -235,7 +235,7 @@ public class TestUtils
      * installation, returns null.  Should <b>only</b> be used by
      * System tests.
      */
-    public static File DYNAMO_INSTALL_DIR = null;
+    private static File DYNAMO_INSTALL_DIR = null;
 
     /**
      * Returns the directory in which Dynamo was installed.  If the
@@ -1637,7 +1637,7 @@ public class TestUtils
     /**
      * product module corresponding to ATG Dynamo
      */
-    public static String ATGDYNAMO_PRODUCT_MODULE = "DPS";
+    private static String ATGDYNAMO_PRODUCT_MODULE = "DPS";
 
     /**
      * specifies the name of the ATG Dynamo product module that will be
@@ -1719,7 +1719,7 @@ public class TestUtils
     /**
      * possible application product modules that may be installed
      */
-    public static String[] APPLICATION_PRODUCT_MODULES = { "ACA", "ABTest", "DCS-SO", "CAF" };
+    private static String[] APPLICATION_PRODUCT_MODULES = { "ACA", "ABTest", "DCS-SO", "CAF" };
 
     /**
      * specifies the names of possible application product modules that

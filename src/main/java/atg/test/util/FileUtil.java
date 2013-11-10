@@ -51,8 +51,6 @@ public class FileUtil {
 
     private static boolean isDirty = false;
 
-    ;
-
     private static Map<String, Long> CONFIG_FILES_TIMESTAMPS, CONFIG_FILES_GLOBAL_FORCE;
 
     /**
@@ -88,7 +86,7 @@ public class FileUtil {
      *
      * @throws IOException
      */
-    public static void copyFile(final String src, final String dst)
+    private static void copyFile(final String src, final String dst)
             throws IOException {
         final File srcFile = new File(src);
         final File dstFile = new File(dst);
@@ -162,7 +160,7 @@ public class FileUtil {
         }
     }
 
-    public static final String COULD_NOT_DELETE_TEMP_DIRECTORY = "Couldn't delete temp directory. ";
+    private static final String COULD_NOT_DELETE_TEMP_DIRECTORY = "Couldn't delete temp directory. ";
 
     public void searchAndReplace(final String originalValue, final String newValue, final File file)
             throws IOException {

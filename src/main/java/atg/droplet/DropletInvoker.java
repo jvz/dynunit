@@ -87,17 +87,17 @@ public class DropletInvoker {
     // -------------------------------------
     // Member variables
 
-    Map<String, Boolean> mOparamExistsOverrideMap = new HashMap<String, Boolean>();
+    private Map<String, Boolean> mOparamExistsOverrideMap = new HashMap<String, Boolean>();
 
-    ServletTestUtils mServletTestUtils;
+    private ServletTestUtils mServletTestUtils;
 
-    TestingDynamoHttpServletRequest mRequest;
+    private TestingDynamoHttpServletRequest mRequest;
 
-    TestingDynamoHttpServletResponse mResponse;
+    private TestingDynamoHttpServletResponse mResponse;
 
-    String mSessionId;
+    private String mSessionId;
 
-    Nucleus mNucleus;
+    private Nucleus mNucleus;
 
     // -------------------------------------
     // Properties
@@ -475,8 +475,7 @@ public class DropletInvoker {
      * @return a Map for a new request.
      */
     protected Map<String, Object> createValueParametersMapForNewRequest() {
-        Map<String, Object> mapResult = new HashMap<String, Object>();
-        return mapResult;
+        return new HashMap<String, Object>();
     }
 
     // -------------------------------------

@@ -45,7 +45,7 @@ public class SQLProcessorEngine
         extends GenericService {
 
     // Vendor String for Apache Derby
-    public static final String APACHE_DERBY = "Apache Derby";
+    private static final String APACHE_DERBY = "Apache Derby";
 
   /* =========== CONSTRUCTORS ============= */
 
@@ -69,7 +69,7 @@ public class SQLProcessorEngine
      * DataSource from which to get DB connections this property is NOT a public
      * property because it is extracted from the repository property
      */
-    DataSource mDataSource;
+    private DataSource mDataSource;
 
     private void setDataSource(DataSource pDataSource) {
         mDataSource = pDataSource;
@@ -82,7 +82,7 @@ public class SQLProcessorEngine
     /**
      * GSARespository from which to get the DataSource and TransactionManager
      */
-    GSARepository mRepository;
+    private GSARepository mRepository;
 
     public void setRepository(GSARepository pRep) {
         mRepository = pRep;
@@ -96,7 +96,7 @@ public class SQLProcessorEngine
      * String executed to determine whether a table exists. The table name is
      * appended to the end of the string before execution occurs.
      */
-    String mDetermineTableExistsSQL = "SELECT count(*) from";
+    private String mDetermineTableExistsSQL = "SELECT count(*) from";
 
     public void setDetermineTableExistsSQL(String pStr) {
         mDetermineTableExistsSQL = pStr;
@@ -110,7 +110,7 @@ public class SQLProcessorEngine
      * String executed to drop a table. The table name is appended to the end of
      * the string before execution
      */
-    String mDropTableSQL = "DROP TABLE";
+    private String mDropTableSQL = "DROP TABLE";
 
     public void setDropTableSQL(String pStr) {
         mDropTableSQL = pStr;
@@ -126,7 +126,7 @@ public class SQLProcessorEngine
      * "CREATE TABLE" This delimiter _will_ be included in the final create
      * statements
      */
-    String mCreateTableBeginDelimiter = "CREATE TABLE";
+    private String mCreateTableBeginDelimiter = "CREATE TABLE";
 
     public void setCreateTableBeginDelimiter(String pStr) {
         mCreateTableBeginDelimiter = pStr;
@@ -141,7 +141,7 @@ public class SQLProcessorEngine
      * into an array of individual Create Table statements default value is ";"
      * This delimiter _will not_ be included in the final create statements
      */
-    String mCreateTableEndDelimiter = ";";
+    private String mCreateTableEndDelimiter = ";";
 
     public void setCreateTableEndDelimiter(String pStr) {
         mCreateTableEndDelimiter = pStr;
@@ -200,7 +200,7 @@ public class SQLProcessorEngine
      *
      * @param pConnection connection to close, may be null
      */
-    private final void close(Connection pConnection) {
+    private void close(Connection pConnection) {
         if ( pConnection != null ) {
             try {
                 pConnection.close();
@@ -244,7 +244,7 @@ public class SQLProcessorEngine
      *
      * @param pStatement statement to close, may be null
      */
-    private final void close(Statement pStatement) {
+    private void close(Statement pStatement) {
         if ( pStatement != null ) {
             try {
                 pStatement.close();
@@ -497,7 +497,7 @@ public class SQLProcessorEngine
                 try {
                     c.close();
                 } catch ( SQLException e ) {
-                    ; // eat it
+                    // eat it
                 }
             }
         }
@@ -620,7 +620,7 @@ public class SQLProcessorEngine
      *
      * @return Vector of table names
      */
-    private List<String> getTableNames(List<String> pStatements) {
+    private List<String> getTableNames(final List<String> pStatements) {
         if ( isLoggingDebug() ) {
             logDebug("Getting table names...");
         }
@@ -764,9 +764,8 @@ public class SQLProcessorEngine
      *         to execute
      * @throws SQLProcessorException if we detect a bad loop trying to resolve references
      */
-    private List<String> reorderCreateStatements(List<String> pStatements)
+    private List<String> reorderCreateStatements(final List<String> statements)
             throws SQLProcessorException {
-        List<String> statements = pStatements;
         List<String> names = getTableNames(statements);
         List<String> orderedStatements = new ArrayList<String>();
 
@@ -1042,7 +1041,6 @@ public class SQLProcessorEngine
             try {
                 c.close();
             } catch ( SQLException e ) {
-                ;
             }
         }
         return foundTables;

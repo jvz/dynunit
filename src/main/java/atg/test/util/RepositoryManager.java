@@ -97,7 +97,7 @@ public class RepositoryManager {
             log.info("Existing tables will be used.");
         }
 
-        isDefaultInMemoryDb = settings.get("url") == null ? false : settings.get("url").contains(
+        isDefaultInMemoryDb = settings.get("url") != null && settings.get("url").contains(
                 "jdbc:hsqldb:mem:testDb"
         );
 

@@ -99,7 +99,7 @@ public class GSATest
      *
      * @return
      */
-    public File getConfigpath(String pConfigDirectory) {
+    File getConfigpath(String pConfigDirectory) {
         if ( mConfigDir.get(pConfigDirectory) == null ) {
             String configdirname = "config";
             String packageName = StringUtils.replace(
@@ -145,10 +145,10 @@ public class GSATest
      * @throws Exception
      * @throws Exception
      */
-    protected void setUpAndTest(File pConfigPathWhereToCreateTheRepository,
-                                String[] definitionFiles,
-                                Properties pDBProperties,
-                                String pMethodName)
+    void setUpAndTest(File pConfigPathWhereToCreateTheRepository,
+                      String[] definitionFiles,
+                      Properties pDBProperties,
+                      String pMethodName)
             throws Exception {
         String repositoryComponentPath = "/" + getName() + "Repository";
         GSATestUtils.getGSATestUtils().initializeMinimalConfigpath(
@@ -245,13 +245,12 @@ public class GSATest
      */
     protected DBUtils initDB(Properties props)
             throws Exception, SQLException {
-        DBUtils db = new DBUtils(
+        return new DBUtils(
                 props.getProperty("URL"),
                 props.getProperty("driver"),
                 props.getProperty("user"),
                 props.getProperty("password")
         );
-        return db;
     }
 
     /**
@@ -319,7 +318,7 @@ public class GSATest
      *         repository with this item descriptor.
      * @throws RepositoryException if there is trouble creating the id
      */
-    protected GSAId getNewCompoundId(GSARepository r, GSAItemDescriptor desc)
+    GSAId getNewCompoundId(GSARepository r, GSAItemDescriptor desc)
             throws RepositoryException {
         // make sure we have a repository
         if ( r == null ) {
@@ -374,7 +373,7 @@ public class GSATest
     }
 
     @SuppressWarnings("unchecked")
-    protected Object generateDummyValue(RepositoryPropertyDescriptor propertyDescriptor) {
+    Object generateDummyValue(RepositoryPropertyDescriptor propertyDescriptor) {
         if ( getEnumeratedValues(propertyDescriptor) != null ) {
             return null;// ignore enums for now.
         }

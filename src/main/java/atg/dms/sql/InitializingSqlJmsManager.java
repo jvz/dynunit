@@ -42,13 +42,13 @@ import java.sql.SQLException;
 public class InitializingSqlJmsManager
         extends SqlJmsManager {
 
-    public String mSQLRepositoryPath = "/atg/dynamo/service/jdbc/SQLRepository";
+    private String mSQLRepositoryPath = "/atg/dynamo/service/jdbc/SQLRepository";
 
-    boolean mCreatingSchemaOnStartup = true;
+    private boolean mCreatingSchemaOnStartup = true;
 
-    boolean mDropSchemaOnShutdown = false;
+    private boolean mDropSchemaOnShutdown = false;
 
-    boolean mDropSchemaOnStartup = true;
+    private boolean mDropSchemaOnStartup = true;
 
     // ---------------------
 
@@ -163,7 +163,6 @@ public class InitializingSqlJmsManager
                 try {
                     c.close();
                 } catch ( SQLException e ) {
-                    ;
                 }
             }
         }

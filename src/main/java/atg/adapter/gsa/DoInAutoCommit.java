@@ -30,9 +30,9 @@ class DoInAutoCommit {
 
     private final GSARepositorySchemaGenerator mAutoCommit;
 
-    GSARepository mRepository = null;
+    private GSARepository mRepository = null;
 
-    Logger mLogger = LogManager.getLogger(this.getClass());
+    private static Logger logger = LogManager.getLogger();
 
     /**
      * Creates a new DoInAutoCommit which operates on the given repository.
@@ -65,32 +65,32 @@ class DoInAutoCommit {
             // Otherwise MSSQL will hang
             suspended = mRepository.getTransactionManager().suspend();
             Connection c = mRepository.getConnection();
-            mLogger.debug("autoCommit = {} connection = {}", c.getAutoCommit(), c);
+            logger.debug("autoCommit = {} connection = {}", c.getAutoCommit(), c);
             boolean savedAutoCommit = c.getAutoCommit();
-            mLogger.debug("Setting autoCommit to true on connection {}", c);
+            logger.debug("Setting autoCommit to true on connection {}", c);
             c.setAutoCommit(true);
             try {
                 pWork.doInAutoCommit(c);
                 success = true;
             } finally {
                 if ( c != null ) {
-                    mLogger.debug("Reverting autoCommit back to {}", savedAutoCommit);
+                    logger.debug("Reverting autoCommit back to {}", savedAutoCommit);
                     c.setAutoCommit(savedAutoCommit);
                 }
                 if ( suspended != null ) {
                     try {
                         mRepository.getTransactionManager().resume(suspended);
                     } catch ( InvalidTransactionException e ) {
-                        mLogger.catching(Level.ERROR, e);
+                        logger.catching(Level.ERROR, e);
                     } catch ( IllegalStateException e ) {
-                        mLogger.catching(Level.ERROR, e);
+                        logger.catching(Level.ERROR, e);
                     }
                 }
             }
         } catch ( SystemException e ) {
-            mLogger.catching(Level.ERROR, e);
+            logger.catching(Level.ERROR, e);
         } catch ( SQLException e ) {
-            mLogger.catching(Level.ERROR, e);
+            logger.catching(Level.ERROR, e);
         }
         return success;
     }

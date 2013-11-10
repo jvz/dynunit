@@ -21,7 +21,7 @@ import java.util.List;
 
 public class SchemaTracker {
 
-    public HashMap<String, List<GSARepository>> mTableToRepository = new HashMap<String, List<GSARepository>>();
+    private HashMap<String, List<GSARepository>> mTableToRepository = new HashMap<String, List<GSARepository>>();
 
     /**
      * @return the tableToRepository

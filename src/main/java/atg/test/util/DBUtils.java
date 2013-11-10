@@ -43,7 +43,7 @@ import java.util.Properties;
  */
 public class DBUtils {
 
-    public Connection conn; //our connnection to the db - presist for life of
+    private Connection conn; //our connnection to the db - presist for life of
 
     private Properties mJDBCProperties;
 
@@ -312,7 +312,7 @@ public class DBUtils {
         );
     }
 
-    public String mDatabaseType = null;
+    private String mDatabaseType = null;
 
     private String mDatabaseVersion;
 
@@ -428,7 +428,7 @@ public class DBUtils {
         st.close();
     } // void update()
 
-    public void dump(ResultSet rs)
+    void dump(ResultSet rs)
             throws SQLException {
 
         // the order of the rows in a cursor
@@ -458,7 +458,7 @@ public class DBUtils {
      *
      * @throws SQLException
      */
-    public void executeCreateIdGenerator()
+    void executeCreateIdGenerator()
             throws SQLException {
         try {
             if ( !isDB2() ) {

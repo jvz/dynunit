@@ -46,9 +46,9 @@ import java.util.List;
 public class SQLProcessor {
     // =============== MEMBER VARIABLES =================
 
-    private static Logger log = LogManager.getLogger(SQLProcessor.class);
+    private static Logger logger = LogManager.getLogger();
 
-    DataSource mDataSource;
+    private DataSource mDataSource;
 
     /**
      * sets the DataSource from which to get DB connections
@@ -64,7 +64,7 @@ public class SQLProcessor {
         return mDataSource;
     }
 
-    TransactionManager mTxManager;
+    private TransactionManager mTxManager;
 
     /**
      * sets the TransactionManager that should be used to monitor transactions
@@ -80,7 +80,7 @@ public class SQLProcessor {
         return mTxManager;
     }
 
-    String mDetermineTableExistsSQL = "SELECT * from ";
+    private String mDetermineTableExistsSQL = "SELECT * from ";
 
     /**
      * sets String executed to determine whether a table exists. The table
@@ -98,7 +98,7 @@ public class SQLProcessor {
         return mDetermineTableExistsSQL;
     }
 
-    String mDropTableSQL = "DROP TABLE ";
+    private String mDropTableSQL = "DROP TABLE ";
 
     /**
      * sets String executed to drop a table.  The table name is appended to the
@@ -122,7 +122,7 @@ public class SQLProcessor {
      * default value is "CREATE TABLE"
      * This delimiter _will_ be included in the final create statements
      */
-    String mCreateTableBeginDelimiter = "CREATE TABLE ";
+    private String mCreateTableBeginDelimiter = "CREATE TABLE ";
 
     public void setCreateTableBeginDelimiter(String pStr) {
         mCreateTableBeginDelimiter = pStr;
@@ -138,7 +138,7 @@ public class SQLProcessor {
      * default value is ";"
      * This delimiter _will not_ be included in the final create statements
      */
-    String mCreateTableEndDelimiter = ";";
+    private String mCreateTableEndDelimiter = ";";
 
     public void setCreateTableEndDelimiter(String pStr) {
         mCreateTableEndDelimiter = pStr;
@@ -263,7 +263,7 @@ public class SQLProcessor {
                 //most of this method is annoying try/catch/finally blocks
                 //inflicted on us by JTA. the real work is here.
                 s = c.createStatement();
-                log.debug("Executing SQL [{}]", pSQL);
+                logger.debug("Executing SQL [{}]", pSQL);
                 s.execute(pSQL);
             } finally {
                 close(s);
@@ -301,7 +301,7 @@ public class SQLProcessor {
                 //most of this method is annoying try/catch/finally blocks
                 //inflicted on us by JTA. the real work is here.
                 s = c.createStatement();
-                log.debug("Executing query [{}]", pQuery);
+                logger.debug("Executing query [{}]", pQuery);
                 rs = s.executeQuery(pQuery);
 
                 while ( rs.next() ) {
@@ -367,7 +367,7 @@ public class SQLProcessor {
                 if ( tableExists(table) ) {
                     try {
                         dropTable(table, pCascadeConstraints, pPreview);
-                        log.debug("Dropped table: {}", table);
+                        logger.debug("Dropped table: {}", table);
                     } catch ( SQLException se ) {
                         // if this is the last iteration, throw an exception
                         if ( attempt + 1 >= maxIterations ) {
@@ -409,7 +409,7 @@ public class SQLProcessor {
      *
      * @throws SQLException if an error occurs trying to close a non-null connection
      */
-    private final void close(Connection pConnection)
+    private void close(Connection pConnection)
             throws SQLException {
         if ( pConnection != null ) {
             pConnection.close();
@@ -423,7 +423,7 @@ public class SQLProcessor {
      *
      * @throws SQLException if an error occurs closing a non-null ResultSet
      */
-    private final void close(ResultSet pResultSet)
+    private void close(ResultSet pResultSet)
             throws SQLException {
         if ( pResultSet != null ) {
             pResultSet.close();
@@ -437,7 +437,7 @@ public class SQLProcessor {
      *
      * @throws SQLException if an error occurs closing a non-null Statement
      */
-    private final void close(Statement pStatement)
+    private void close(Statement pStatement)
             throws SQLException {
         if ( pStatement != null ) {
             pStatement.close();
@@ -465,7 +465,7 @@ public class SQLProcessor {
         }
 
         if ( pPreview ) {
-            log.info(sql);
+            logger.info(sql);
         } else {
             executeSQL(sql);
         }
