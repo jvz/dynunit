@@ -23,7 +23,6 @@ import atg.junit.nucleus.TestUtils;
 import atg.naming.NameContext;
 import atg.naming.NameContextBindingEvent;
 import atg.nucleus.Configuration;
-import atg.nucleus.GenericService;
 import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusNameResolver;
 import atg.nucleus.ServiceEvent;
@@ -138,7 +137,7 @@ public class InitializingGSA
             }
         }
 
-        return (String[]) v.toArray(new String[v.size()]);
+        return v.toArray(new String[v.size()]);
     }
 
     // do we want to strip the 'references(..)' statements from SQL
@@ -581,7 +580,7 @@ public class InitializingGSA
         // bound to the same name context as the original repository
         // This changes will make sure that getAbsoluteName() returns
         // a correct value.
-        NameContext nc = ((GenericService) this).getNameContext();
+        NameContext nc = this.getNameContext();
         NameContextBindingEvent bindingEvent = new NameContextBindingEvent(
                 this.getName(), newRepository, this.getNameContext()
         );
@@ -652,7 +651,7 @@ public class InitializingGSA
         // execute SQL files, if specified
         String[] dropFiles = getSpecifiedDropFiles();
         if ( dropFiles != null ) {
-            if ( isExecuteCreateAndDropScripts() && dropFiles != null ) {
+            if ( isExecuteCreateAndDropScripts() ) {
                 executeSqlFiles(dropFiles, false);
             } else if ( isLoggingInfo() ) {
                 logInfo("Skipping execution of SQL scripts b/c property 'executeCreateAndDropScripts' is false or there are no drop scripts.");
@@ -766,7 +765,7 @@ public class InitializingGSA
 
         // now load the import files if they were specified
         PrintWriter ps = new PrintWriter(System.out);
-        if ( loadFiles != null && loadFiles.length > 0 ) {
+        if ( loadFiles.length > 0 ) {
             try {
                 TemplateParser.importFiles(
                         this, loadFiles, ps, isImportWithTransaction()
@@ -1140,6 +1139,7 @@ public class InitializingGSA
      */
     private void executeSqlFiles(String[] pFiles, boolean pStopAtError)
             throws RepositoryException {
+        // XXX: again with this bullshit
         SQLProcessor sp = new SQLProcessor(getTransactionManager(), getDataSource());
         boolean success = false;
         TransactionDemarcation td = new TransactionDemarcation();

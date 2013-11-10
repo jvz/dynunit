@@ -303,6 +303,7 @@ public class SQLFileParser {
 
 
     private List<String> readFileAndLoadData() {
+        // XXX: disregard note below
 
         // ****************************************
         // THIS FUNCTION IS THE ENGINE FOR THIS

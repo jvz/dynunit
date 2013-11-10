@@ -22,7 +22,6 @@ import atg.adapter.version.VersionRepository;
 import atg.junit.nucleus.TestUtils;
 import atg.naming.NameContextBindingEvent;
 import atg.nucleus.Configuration;
-import atg.nucleus.GenericService;
 import atg.nucleus.NucleusNameResolver;
 import atg.nucleus.ServiceEvent;
 import atg.nucleus.ServiceException;
@@ -141,7 +140,7 @@ public class InitializingVersionRepository
             }
         }
 
-        return (String[]) v.toArray(new String[v.size()]);
+        return v.toArray(new String[v.size()]);
     }
 
     // do we want to strip the 'references(..)' statements from SQL
@@ -588,7 +587,7 @@ public class InitializingVersionRepository
         // bound to the same name context as the original repository
         // This changes will make sure that getAbsoluteName() returns
         // a correct value.
-        ((GenericService) this).getNameContext();
+        this.getNameContext();
         new NameContextBindingEvent(
                 this.getName() + "_ver", getWrappedRepository(), this.getNameContext()
         );
@@ -826,7 +825,7 @@ public class InitializingVersionRepository
 
         // now load the import files if they were specified
         PrintWriter ps = new PrintWriter(System.out);
-        if ( loadFiles != null && loadFiles.length > 0 ) {
+        if ( loadFiles.length > 0 ) {
             try {
 
                 String pProjectName = getProjectName();

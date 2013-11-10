@@ -274,7 +274,7 @@ public class XmlUtils {
             return null;
         }
         try {
-            return new Integer(pValue.trim());
+            return new Integer(pValue != null ? pValue.trim() : null);
         } catch ( Throwable t ) {
             throw new FileFormatException(
                     "Invalid Integer value '"
@@ -328,11 +328,12 @@ public class XmlUtils {
      */
     public static Long getLongValue(String pValue, String pDescriptor, boolean pAllowNull)
             throws FileFormatException {
+        // TODO: StringUtils.trimToNull() would be great for this
         if ( (pValue == null || pValue.trim().length() == 0) && pAllowNull ) {
             return null;
         }
         try {
-            return new Long(pValue.trim());
+            return new Long(pValue != null ? pValue.trim() : null);
         } catch ( Throwable t ) {
             throw new FileFormatException(
                     "Invalid Long value '"

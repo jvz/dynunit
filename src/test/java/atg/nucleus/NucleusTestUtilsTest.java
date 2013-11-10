@@ -72,8 +72,9 @@ public class NucleusTestUtilsTest
             assertEquals(component, result);
             assertEquals(component2, result2);
         } finally {
-            n.stopService();
-            n = null;
+            if ( n != null ) {
+                n.stopService();
+            }
         }
     }
 

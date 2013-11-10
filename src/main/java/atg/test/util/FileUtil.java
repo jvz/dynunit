@@ -258,9 +258,7 @@ public class FileUtil {
                 try {
                     o = (Map<String, Long>) in.readObject();
                 } finally {
-                    if ( in != null ) {
-                        in.close();
-                    }
+                    in.close();
                 }
             }
         } catch ( Exception e ) {

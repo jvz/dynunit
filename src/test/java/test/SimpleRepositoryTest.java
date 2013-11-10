@@ -63,7 +63,7 @@ public class SimpleRepositoryTest
         FileUtil.copyDirectory(
                 "src/test/resources/config",
                 configpath.getPath(),
-                Arrays.asList(new String[] { ".svn" })
+                Arrays.asList(".svn")
         );
 
         // Use the DBUtils utility class to get JDBC properties for an in memory
@@ -105,9 +105,7 @@ public class SimpleRepositoryTest
             rollback = false;
         } finally {
             // End the transaction, rollback on error
-            if ( td != null ) {
-                td.end(rollback);
-            }
+            td.end(rollback);
             // shut down Nucleus
             n.stopService();
             // Shut down HSQLDB

@@ -957,6 +957,7 @@ public class TestUtils
      * the value of the 'implVersion' attribute.
      */
     public static String getJBossVersion() {
+        // XXX: might want to simplify this
         try {
             File versionFile = new File(getJBossHomeDir(), "jar-versions.xml");
             if ( !versionFile.exists() ) {
@@ -1543,7 +1544,7 @@ public class TestUtils
         while ( st.hasMoreTokens() ) {
             files.add(expand(st.nextToken(), pPrimaryMapping));
         }
-        return (String[]) files.toArray(new String[files.size()]);
+        return files.toArray(new String[files.size()]);
     }
 
     /**
@@ -1790,7 +1791,7 @@ public class TestUtils
             }
         }
 
-        return (AppModule[]) apps.toArray(new AppModule[apps.size()]);
+        return apps.toArray(new AppModule[apps.size()]);
     }
 
     // =========== generic AppModule info retrieval methods ====================
@@ -1983,7 +1984,7 @@ public class TestUtils
     private static DynamoEnv dynamoEnv() {
         if ( mDynamoEnv == null ) {
             try {
-                mDynamoEnv = (DynamoEnv) DynamoEnv.class.newInstance();
+                mDynamoEnv = DynamoEnv.class.newInstance();
             } catch ( Throwable t ) {
                 logger.catching(t);
             }

@@ -68,8 +68,12 @@ public class IdGeneratorTest
             );
             assertNotNull("no results, table not created " + idgen.getTableName(), result);
         } finally {
-            result.close();
-            c.close();
+            if ( result != null ) {
+                result.close();
+            }
+            if ( c != null ) {
+                c.close();
+            }
         }
     }
 

@@ -116,18 +116,23 @@ public class GSATest
             if ( dataURL == null ) {
                 URL root = this.getClass().getClassLoader().getResource(packageName);
 
-                File f = new File(root.getFile());
+                File f = null;
+                if ( root != null ) {
+                    f = new File(root.getFile());
+                }
                 File f2 = new File(f, "/data/" + configdirname);
                 f2.mkdirs();
                 dataURL = this.getClass().getClassLoader().getResource(configFolder);
             }
 
-            mConfigDir.put(pConfigDirectory, new File(dataURL.getFile()));
+            if ( dataURL != null ) {
+                mConfigDir.put(pConfigDirectory, new File(dataURL.getFile()));
+            }
         }
         System.setProperty(
-                "atg.configpath", ((File) mConfigDir.get(pConfigDirectory)).getAbsolutePath()
+                "atg.configpath", mConfigDir.get(pConfigDirectory).getAbsolutePath()
         );
-        return (File) mConfigDir.get(pConfigDirectory);
+        return mConfigDir.get(pConfigDirectory);
     }
 
     /**
@@ -165,7 +170,7 @@ public class GSATest
         GSARepository r = (GSARepository) n.resolveName(repositoryComponentPath);
         try {
             getClass().getMethod(pMethodName, new Class[] { GSARepository.class })
-                    .invoke(this, new Object[] { r });
+                    .invoke(this, r);
         } catch ( NoSuchMethodError e ) {
             throw new AssertionError(
                     "Please declare a method with name "

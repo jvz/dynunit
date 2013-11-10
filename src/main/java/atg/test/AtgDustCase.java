@@ -243,7 +243,7 @@ public class AtgDustCase
             FileUtil.copyDirectory(
                     config.split(" to ")[0],
                     config.split(" to ")[1],
-                    Arrays.asList(excludes == null ? new String[] { } : excludes)
+                    Arrays.asList(excludes)
             );
             log.debug(config);
             log.debug(config.split(" to ")[0]);
@@ -423,9 +423,7 @@ public class AtgDustCase
     protected void tearDown()
             throws Exception {
         super.tearDown();
-        if ( repositoryManager != null ) {
-            repositoryManager.shutdownInMemoryDbAndCloseConnections();
-        }
+        repositoryManager.shutdownInMemoryDbAndCloseConnections();
         if ( nucleus != null ) {
             nucleus.doStopService();
             nucleus.stopService();

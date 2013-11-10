@@ -318,7 +318,10 @@ public class NucleusTestUtils {
             if ( dataURL == null ) {
                 URL root = pClassRelativeTo.getClassLoader().getResource(packageName);
 
-                File f = new File(root.getFile());
+                File f = null;
+                if ( root != null ) {
+                    f = new File(root.getFile());
+                }
                 File f2 = new File(f, "/data/" + configdirname);
                 if ( pCreate ) {
                     f2.mkdirs();
@@ -552,6 +555,7 @@ public class NucleusTestUtils {
      */
     public static Nucleus startNucleusWithModules(NucleusStartupOptions pOptions)
             throws ServletException {
+        // XXX: what is with these enormous methods?
 
         if ( pOptions.getInitialService() == null ) {
             throw new IllegalArgumentException("Initial service must be specified.");

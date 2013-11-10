@@ -295,6 +295,7 @@ public class SQLProcessorEngine
                 close(c);
             }
         } catch ( TransactionDemarcationException e1 ) {
+            // FIXME: yeah this doesn't work the way one might think
             if ( error == null ) {
                 error = new SQLProcessorException(e1);
             } else if ( isLoggingError() ) {
@@ -766,6 +767,7 @@ public class SQLProcessorEngine
      */
     private List<String> reorderCreateStatements(final List<String> statements)
             throws SQLProcessorException {
+        // XXX: another overly complicated method
         List<String> names = getTableNames(statements);
         List<String> orderedStatements = new ArrayList<String>();
 
@@ -1038,7 +1040,9 @@ public class SQLProcessorEngine
             e.printStackTrace();
         } finally {
             try {
-                c.close();
+                if ( c != null ) {
+                    c.close();
+                }
             } catch ( SQLException ignored ) {
             }
         }

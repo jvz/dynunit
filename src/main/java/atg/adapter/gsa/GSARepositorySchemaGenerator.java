@@ -239,6 +239,7 @@ public class GSARepositorySchemaGenerator {
      */
     void buildSingleTableModel(Database pDb, Table pTable, GSARepository pRepository)
             throws RepositoryException {
+        // XXX: holy shitwaffles simplify this shit
         TableColumns columns = new TableColumns(
                 pTable, pRepository.getDatabaseTableInfo()
         );

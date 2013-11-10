@@ -70,7 +70,7 @@ public class SimpleComponent
         if ( n == null ) {
             throw new ServiceException("Nucleus is not running.");
         } else {
-            ((ApplicationLogging) n).logInfo("Prepared.");
+            n.logInfo("Prepared.");
         }
         isCleanStart = true;
     }

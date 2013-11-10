@@ -73,10 +73,8 @@ class DoInAutoCommit {
                 pWork.doInAutoCommit(c);
                 success = true;
             } finally {
-                if ( c != null ) {
-                    logger.debug("Reverting autoCommit back to {}", savedAutoCommit);
-                    c.setAutoCommit(savedAutoCommit);
-                }
+                logger.debug("Reverting autoCommit back to {}", savedAutoCommit);
+                c.setAutoCommit(savedAutoCommit);
                 if ( suspended != null ) {
                     try {
                         mRepository.getTransactionManager().resume(suspended);

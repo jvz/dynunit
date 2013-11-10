@@ -164,7 +164,7 @@ public class GSATestUtils {
         .getName()+"-Shadow", newRepository, pRepository.getNameContext());
     newRepository.nameContextElementBound(bindingEvent);
     */
-        NameContext nc = ((GenericService) pRepository).getNameContext();
+        NameContext nc = pRepository.getNameContext();
         nc.putElement(pRepository.getName() + "-Shadow", newRepository);
 
         if ( pStart ) {
@@ -857,7 +857,7 @@ public class GSATestUtils {
                         + " Does not exist in configpath. But it does in classpath. Copying over to configpath"
                 );
                 copyToConfigpath(pRoot, pDefinitionFiles[i]);
-            } else if ( obj == null && !new File(pRoot, pDefinitionFiles[i]).exists() ) {
+            } else if ( !new File(pRoot, pDefinitionFiles[i]).exists() ) {
                 throw new AssertionError(
                         "ERROR: Repository definition file "
                         + pDefinitionFiles[i]
@@ -885,7 +885,7 @@ public class GSATestUtils {
                             + " Does not exist in configpath. But it does in classpath. Copying over to configpath"
                     );
                     copyToConfigpath(pRoot, pImportFiles[i]);
-                } else if ( obj == null && !new File(pRoot, pImportFiles[i]).exists() ) {
+                } else if ( !new File(pRoot, pImportFiles[i]).exists() ) {
                     throw new AssertionError(
                             "ERROR: Repository definition file "
                             + pDefinitionFiles[i]
@@ -1187,7 +1187,7 @@ public class GSATestUtils {
                 }
             }
         }
-        return (String[]) names.toArray(new String[names.size()]);
+        return names.toArray(new String[names.size()]);
     }
     // ---------------------------------
 
@@ -1320,6 +1320,7 @@ public class GSATestUtils {
      */
     public static void dumpTable(Table pTable, Collection<String> pPrintColumnNames)
             throws SQLException {
+        // XXX: what in the fuck
         GSARepository gsa = pTable.getItemDescriptor().getGSARepository();
         Connection c = null;
         PreparedStatement st = null;
