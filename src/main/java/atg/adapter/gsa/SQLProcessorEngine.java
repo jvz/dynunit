@@ -1039,7 +1039,7 @@ public class SQLProcessorEngine
         } finally {
             try {
                 c.close();
-            } catch ( SQLException e ) {
+            } catch ( SQLException ignored ) {
             }
         }
         return foundTables;

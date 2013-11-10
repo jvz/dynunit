@@ -528,6 +528,7 @@ public class InitializingVersionRepository
         try {
             setLoadColumnInfosAtStartup(loadColumnInfosAtStartup);
         } catch ( Throwable t ) {
+            logger.catching(t);
         }
 
         try {

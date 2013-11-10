@@ -47,7 +47,7 @@ public class DBUtils {
 
     private final Properties mJDBCProperties;
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
     // ---------------------------
 
     /**
@@ -347,7 +347,7 @@ public class DBUtils {
         ); // password
         mDatabaseType = conn.getMetaData().getDatabaseProductName();
         mDatabaseVersion = conn.getMetaData().getDatabaseProductVersion();
-        log.info("Connected to {} version {}", mDatabaseType, mDatabaseVersion);
+        logger.info("Connected to {} version {}", mDatabaseType, mDatabaseVersion);
         executeCreateIdGenerator();
     }
 
@@ -414,7 +414,7 @@ public class DBUtils {
     //use for SQL commands CREATE, DROP, INSERT and UPDATE
     public synchronized void update(String expression)
             throws SQLException {
-        //log.info("DBUtils.update : " + expression);
+        //logger.info("DBUtils.update : " + expression);
         Statement st = null;
 
         st = conn.createStatement(); // statements
@@ -422,7 +422,7 @@ public class DBUtils {
         int i = st.executeUpdate(expression); // run the query
 
         if ( i == -1 ) {
-            log.info("db error : {}", expression);
+            logger.info("db error : {}", expression);
         }
 
         st.close();
@@ -448,7 +448,7 @@ public class DBUtils {
                 o = rs.getObject(i + 1); // Is SQL the first column is indexed
 
                 // with 1 not 0
-                log.info(o);
+                logger.info(o);
             }
         }
     } //void dump( ResultSet rs )
@@ -476,11 +476,11 @@ public class DBUtils {
             }
         } catch ( SQLException e ) {
             // drop and try again
-            log.info("DROPPING DAS_ID_GENERATOR");
+            logger.info("DROPPING DAS_ID_GENERATOR");
             try {
                 update("drop table das_id_generator");
             } catch ( SQLException ex ) {
-
+                logger.catching(ex);
             }
             if ( !isDB2() ) {
                 update(
@@ -500,7 +500,7 @@ public class DBUtils {
     }
 
     public void executeSQLFile(File pFile) {
-        log.info("Attemping to execute " + pFile);
+        logger.info("Attemping to execute " + pFile);
         SQLFileParser parser = new SQLFileParser();
         Collection<String> c = parser.parseSQLFile(pFile.getAbsolutePath());
         Iterator<String> cmds = c.iterator();
@@ -513,10 +513,10 @@ public class DBUtils {
                     cmd = StringUtils.replace(cmd, "varchar(", "VARCHAR2(");
                     cmd = StringUtils.replace(cmd, "binary", "RAW (250)");
                 }
-                log.info("Executing {}", cmd);
+                logger.info("Executing {}", cmd);
                 update(cmd);
             } catch ( SQLException e ) {
-                log.catching(e);
+                logger.catching(e);
             }
         }
     }

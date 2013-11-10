@@ -162,7 +162,7 @@ public class InitializingSqlJmsManager
             if ( c != null ) {
                 try {
                     c.close();
-                } catch ( SQLException e ) {
+                } catch ( SQLException ignored ) {
                 }
             }
         }

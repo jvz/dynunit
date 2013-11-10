@@ -63,7 +63,7 @@ public class NucleusTestUtils {
 
     //-------------------------------------
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     public static final String ATG_DUST_TESTCONFIG = "atg.dust.testconfig";
 
@@ -363,7 +363,7 @@ public class NucleusTestUtils {
             // Not a jar file url
             return new File(dataURL.getFile());
         }
-        log.info(EXTRACT_TEMP_JAR_FILE_FOR_PATH + dataURL.getFile());
+        logger.info(EXTRACT_TEMP_JAR_FILE_FOR_PATH + dataURL.getFile());
         File configDir = null;
         try {
             File tmpFile = File.createTempFile("atg-dust" + System.currentTimeMillis(), ".tmp");
@@ -629,7 +629,7 @@ public class NucleusTestUtils {
                 configpath = configpath + File.pathSeparator +
                              fileTestConfig.getAbsolutePath();
             } else if ( fileTestConfig != null ) {
-                log.error(
+                logger.error(
                         "Warning: did not find directory " + fileTestConfig.getAbsolutePath()
                 );
             }
@@ -641,7 +641,7 @@ public class NucleusTestUtils {
                              + File.separatorChar
                              + "licenseconfig";
             } else {
-                log.warn(
+                logger.warn(
                         "The DUST_HOME environment variable is not set."
                         + " License files (if needed) should be placed in $DUST_HOME/licenseconfig."
                 );
@@ -662,7 +662,7 @@ public class NucleusTestUtils {
             listArgs.add(pOptions.getInitialService());
 
             PropertyEditors.registerEditors();
-            log.info("Starting nucleus with arguments: " + listArgs);
+            logger.info("Starting nucleus with arguments: " + listArgs);
             Nucleus n = Nucleus.startNucleus(listArgs.toArray(new String[0]));
 
             // remember our temporary server directory for later deletion
@@ -749,7 +749,7 @@ public class NucleusTestUtils {
                 );
                 if ( filePotentialHomeLocalconfigDir.exists() ) {
                     dynamoRootStr = new File(currentDir, "Dynamo").getAbsolutePath();
-                    log.debug("Found dynamo root via parent directory: " + dynamoRootStr);
+                    logger.debug("Found dynamo root via parent directory: " + dynamoRootStr);
                     break;
                 }
                 currentDir = currentDir.getParentFile();
@@ -783,7 +783,7 @@ public class NucleusTestUtils {
                     while ( (fileCur != null) && fileCur.exists() ) {
                         if ( new File(fileCur, strSubPath).exists() ) {
                             dynamoRootStr = fileCur.getAbsolutePath();
-                            log.debug(
+                            logger.debug(
                                     "Found dynamo root by Nucleus.class location: " + dynamoRootStr
                             );
 
@@ -965,7 +965,7 @@ public class NucleusTestUtils {
                     if ( bComplete ) {
                         // only throw if we if we finished our try clause, because
                         // otherwise we might block our initial exception
-                        throw e;
+                        throw logger.throwing(e);
                     }
                 } finally {
                     sNucleusToTempAtgServerDirectory.remove(pNucleus);
@@ -988,14 +988,14 @@ public class NucleusTestUtils {
             socket = new ServerSocket(0);
             freePort = socket.getLocalPort();
         } catch ( IOException e ) {
-            log.catching(e);
+            logger.catching(e);
         } finally {
             try {
                 if ( socket != null ) {
                     socket.close();
                 }
             } catch ( IOException e ) {
-                log.catching(e);
+                logger.catching(e);
             }
         }
         return freePort;
