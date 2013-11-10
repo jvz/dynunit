@@ -253,7 +253,7 @@ public class SQLFileParser {
 
         //sLineRead = sLineRead;
         for ( int i = 0; i < iArraySize; i++ ) {
-            if ( sLineRead.toUpperCase().indexOf(sKeywordList[i]) > -1 ) {
+            if ( sLineRead.toUpperCase().contains(sKeywordList[i]) ) {
                 return (sLineRead.substring(0, sLineRead.indexOf(sKeywordList[i])));
             }
         }
@@ -269,7 +269,7 @@ public class SQLFileParser {
         // THE SEMICOLON.
         // ****************************************
 
-        if ( sCurrentLine.indexOf(";") > -1 ) {
+        if ( sCurrentLine.contains(";") ) {
             sCurrentLine = sCurrentLine.substring(0, sCurrentLine.indexOf(";"));
         }
         return (sCurrentLine);
@@ -290,9 +290,9 @@ public class SQLFileParser {
         sCurrentLine = RemoveWhiteSpaceFromString(sCurrentLine);
         int iLength = sCurrentLine.length() - 2;
         //int iIndex = sCurrentLine.indexOf("/");
-        if ( (sCurrentLine.indexOf("/") > -1) && (sCurrentLine.indexOf("/") >= iLength) ) {
+        if ( (sCurrentLine.contains("/")) && (sCurrentLine.indexOf("/") >= iLength) ) {
             sCurrentLine = sCurrentLine.substring(0, sCurrentLine.indexOf("/"));
-        } else if ( (sCurrentLine.indexOf("/") > -1) && (sCurrentLine.indexOf("/") == 0) ) {
+        } else if ( (sCurrentLine.contains("/")) && (sCurrentLine.indexOf("/") == 0) ) {
             sCurrentLine = "";
         }
 

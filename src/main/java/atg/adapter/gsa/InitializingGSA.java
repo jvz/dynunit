@@ -991,7 +991,7 @@ public class InitializingGSA
     private String getDatabaseType() {
         String type = getDatabaseName();
         for ( String dbType : dbTypes ) {
-            if ( type.toLowerCase().indexOf(dbType.toLowerCase()) > -1 ) {
+            if ( type.toLowerCase().contains(dbType.toLowerCase()) ) {
                 if ( dbType.equals(SYBASE2) ) {
                     return SYBASE;
                 }

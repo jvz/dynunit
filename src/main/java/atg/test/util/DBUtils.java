@@ -561,7 +561,7 @@ public class DBUtils {
      * @return
      */
     public static boolean isOracle(Properties pProps) {
-        return pProps.get("driver").toString().toLowerCase().indexOf("oracle") != -1;
+        return pProps.get("driver").toString().toLowerCase().contains("oracle");
     }
 
     /**
@@ -570,7 +570,7 @@ public class DBUtils {
      * @return
      */
     public static boolean isSybase(Properties pProps) {
-        return pProps.get("driver").toString().toLowerCase().indexOf("sybase") != -1;
+        return pProps.get("driver").toString().toLowerCase().contains("sybase");
     }
 
     /**
@@ -588,7 +588,7 @@ public class DBUtils {
      * @return
      */
     public static boolean isDB2(Properties pProps) {
-        return pProps.get("driver").toString().indexOf("DB2") != -1;
+        return pProps.get("driver").toString().contains("DB2");
     }
 
 
