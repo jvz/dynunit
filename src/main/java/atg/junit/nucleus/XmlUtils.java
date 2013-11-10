@@ -54,7 +54,7 @@ public class XmlUtils {
      * @throws Exception             if an error occurs parsing the file to a DOM.
      */
     public static Document initializeFile(File pXmlFile, boolean pValidateDoc)
-            throws FileNotFoundException, Exception {
+            throws Exception {
         XMLToolsFactory factory = DefaultXMLToolsFactory.getInstance();
         XMLToDOMParser parser = factory.createXMLToDOMParser();
         // XXX: god damn logging
@@ -89,7 +89,7 @@ public class XmlUtils {
      * @throws Exception             if an error occurs parsing the file to a DOM.
      */
     public static List<Node> getNodes(File pXmlFile, boolean pValidateDoc, String[] pChildren)
-            throws FileNotFoundException, Exception {
+            throws Exception {
         return getNodes(initializeFile(pXmlFile, pValidateDoc), pChildren);
     }
 

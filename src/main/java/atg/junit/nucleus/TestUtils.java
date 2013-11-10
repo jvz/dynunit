@@ -1391,7 +1391,7 @@ public class TestUtils
      * @throws IOException           if error happens while reading and pThrow is true
      */
     public static String accessURL(String pUrl, boolean pThrow)
-            throws MalformedURLException, IOException {
+            throws IOException {
         URL url = null;
         StringBuffer results = new StringBuffer();
         BufferedReader in = null;

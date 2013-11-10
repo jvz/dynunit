@@ -244,7 +244,7 @@ public class GSATest
      * @throws SQLException
      */
     protected DBUtils initDB(Properties props)
-            throws Exception, SQLException {
+            throws Exception {
         return new DBUtils(
                 props.getProperty("URL"),
                 props.getProperty("driver"),

@@ -245,7 +245,7 @@ public class GSATestUtils {
                                             String pCreateSQLAbsolutePath,
                                             String pDropSQLAbsolutePath,
                                             String[] pImportFile)
-            throws IOException, Exception {
+            throws Exception {
         initializeMinimalConfigpath(
                 pRoot,
                 pRepositoryPath,
@@ -292,7 +292,7 @@ public class GSATestUtils {
                                             String pDropSQLAbsolutePath,
                                             String[] pImportFile,
                                             boolean pLogging)
-            throws IOException, Exception {
+            throws Exception {
         initializeMinimalConfigpath(
                 pRoot,
                 pRepositoryPath,
@@ -319,7 +319,7 @@ public class GSATestUtils {
                                             boolean pLogging,
                                             String pFakeXADataSourceComponentName,
                                             String pJTDataSourceComponentName)
-            throws IOException, Exception {
+            throws Exception {
         if ( pRepositoryPath != null ) {
             createRepositoryPropertiesFile(
                     pRoot,
@@ -1046,7 +1046,7 @@ public class GSATestUtils {
      * @throws IOException
      */
     public void copyToConfigpath(File pConfigRoot, String pString)
-            throws FileNotFoundException, IOException {
+            throws IOException {
         copyToConfigpath(pConfigRoot, pString, null);
     }
 
@@ -1059,7 +1059,7 @@ public class GSATestUtils {
      * @throws IOException
      */
     public void copyToConfigpath(final File pConfigRoot, final String path, String configPath)
-            throws FileNotFoundException, IOException {
+            throws IOException {
         // create the version manager repository
         pConfigRoot.mkdirs();
         if ( configPath == null ) {
@@ -1202,7 +1202,7 @@ public class GSATestUtils {
      * @throws SQLException
      */
     public void assertEmptyRepository(DBUtils dbTwo, GSARepository storeRepository)
-            throws Exception, SQLException {
+            throws Exception {
         String[] namesAfter = getTableNames(storeRepository);
         for ( int i = 0; i < namesAfter.length; i++ ) {
             log.info(namesAfter[i] + ":" + dbTwo.getRowCount(namesAfter[i]));
