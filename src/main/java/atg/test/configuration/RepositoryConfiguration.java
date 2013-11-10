@@ -54,11 +54,11 @@ public final class RepositoryConfiguration {
     // TODO-1 []: re-add versioned repository support?
     // TODO-2 []: better/more uniform way of handling properties file creation
 
-    protected String isDebug = Boolean.FALSE.toString();
+    private String isDebug = Boolean.FALSE.toString();
 
-    protected final Map<String, String> settings = new HashMap<String, String>();
+    private final Map<String, String> settings = new HashMap<String, String>();
 
-    private static Logger log = LogManager.getLogger(RepositoryConfiguration.class);
+    private static final Logger logger = LogManager.getLogger(RepositoryConfiguration.class);
 
     public void setDebug(final boolean isDebug) {
         this.isDebug = Boolean.toString(isDebug);
@@ -82,7 +82,7 @@ public final class RepositoryConfiguration {
         this.createSQLRepositoryEventServer(root);
         this.createJtdDataSource(root);
 
-        log.info("Created repository configuration fileset");
+        logger.info("Created repository configuration fileset");
     }
 
     /**
@@ -213,8 +213,8 @@ public final class RepositoryConfiguration {
         this.settings.clear();
 
         final StringBuilder defFiles = new StringBuilder();
-        for ( int i = 0; i < definitionFiles.length; i++ ) {
-            defFiles.append("/" + definitionFiles[i]);
+        for ( String definitionFile : definitionFiles ) {
+            defFiles.append("/").append(definitionFile);
         }
         settings.put("definitionFiles", defFiles.toString());
 

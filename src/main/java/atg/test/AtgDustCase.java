@@ -36,7 +36,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -77,7 +76,7 @@ import java.util.Properties;
  * <ul>
  * <li><b>{@link AtgDustCase#prepareRepository(String, String...)}</b> for
  * testing against an default in-memory hsql database or <b>
- * {@link AtgDustCase#prepareRepository(String, Properties, boolean, String...)}
+ * {@link AtgDustCase#prepareRepository(String, java.util.Properties, boolean, boolean, String...)}
  * </b> for testing against an existing database.</li>
  * </ul>
  * <p/>
@@ -102,9 +101,9 @@ import java.util.Properties;
 public class AtgDustCase
         extends TestCase {
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
-    private RepositoryManager repositoryManager = new RepositoryManager();
+    private final RepositoryManager repositoryManager = new RepositoryManager();
 
     private final BasicConfiguration basicConfiguration = new BasicConfiguration();
 
@@ -122,13 +121,17 @@ public class AtgDustCase
 
     private List<String> configDstsDir;
 
-    private static Map<String, Long> CONFIG_FILES_TIMESTAMPS, CONFIG_FILES_GLOBAL_FORCE = null;
+    private static final Map<String, Long> CONFIG_FILES_TIMESTAMPS;
+
+    private static Map<String, Long> CONFIG_FILES_GLOBAL_FORCE = null;
 
     private static Class<?> perflib;
 
-    public static final File TIMESTAMP_SER = new File(
+    private static final File TIMESTAMP_SER = new File(
             System.getProperty("java.io.tmpdir") + File.separator + "atg-dust-tstamp-rh.ser"
-    ), GLOBAL_FORCE_SER = new File(
+    );
+
+    private static final File GLOBAL_FORCE_SER = new File(
             System.getProperty("java.io.tmpdir") + File.separator + "atg-dust-gforce-rh.ser"
     );
 
@@ -156,7 +159,7 @@ public class AtgDustCase
 
         setConfigurationLocation(dstDir);
 
-        log.debug("Copying configurating files and forcing global scope on all configs.");
+        logger.debug("Copying configurating files and forcing global scope on all configs.");
         preCopyingOfConfigurationFiles(srcDirs, excludes);
 
         for ( final String srcs : srcDirs ) {
@@ -228,22 +231,22 @@ public class AtgDustCase
         // The Last dstdir is used for Configuration location
         setConfigurationLocation(distsAsList.get(distsAsList.size() - 1));
 
-        log.debug("Copying configuration files and forcing global scope on all configs.");
+        logger.debug("Copying configuration files and forcing global scope on all configs.");
         preCopyingOfConfigurationFiles(
-                srcsAsList.toArray(new String[] { }), excludes
+                srcsAsList.toArray(new String[srcsAsList.size()]), excludes
         );
 
-        log.info("Copying configuration files and forcing global scope on all configs");
+        logger.info("Copying configuration files and forcing global scope on all configs");
         // copy all files to it's destination
         for ( String config : configs ) {
             FileUtil.copyDirectory(
                     config.split(" to ")[0],
                     config.split(" to ")[1],
-                    Arrays.asList(excludes == null ? new String[] { } : excludes)
+                    Arrays.asList(excludes)
             );
-            log.debug(config);
-            log.debug(config.split(" to ")[0]);
-            log.debug(config.split(" to ")[1]);
+            logger.debug(config);
+            logger.debug(config.split(" to ")[0]);
+            logger.debug(config.split(" to ")[1]);
         }
 
         // forcing global scope on all configurations
@@ -267,9 +270,9 @@ public class AtgDustCase
      *
      * @throws IOException If we have some File related errors
      */
-    protected final void createPropertyFile(final String configurationStagingLocation,
-                                            final String nucleusComponentPath,
-                                            final Class<?> clazz)
+    final void createPropertyFile(final String configurationStagingLocation,
+                                  final String nucleusComponentPath,
+                                  final Class<?> clazz)
             throws IOException {
         this.configurationLocation = new File(configurationStagingLocation);
         FileUtil.createPropertyFile(
@@ -351,9 +354,7 @@ public class AtgDustCase
 
         final Map<String, String> connectionSettings = new HashMap<String, String>();
 
-        for ( final Iterator<Entry<Object, Object>> it = connectionProperties.entrySet().iterator();
-              it.hasNext(); ) {
-            final Entry<Object, Object> entry = it.next();
+        for ( final Entry<Object, Object> entry : connectionProperties.entrySet() ) {
             connectionSettings.put(
                     (String) entry.getKey(), (String) entry.getValue()
             );
@@ -407,7 +408,7 @@ public class AtgDustCase
      */
     protected final void setConfigurationLocation(final String configurationLocation) {
         this.configurationLocation = new File(configurationLocation);
-        log.debug("Using configuration location: {}", this.configurationLocation.getPath());
+        logger.debug("Using configuration location: {}", this.configurationLocation.getPath());
     }
 
     /**
@@ -419,9 +420,7 @@ public class AtgDustCase
     protected void tearDown()
             throws Exception {
         super.tearDown();
-        if ( repositoryManager != null ) {
-            repositoryManager.shutdownInMemoryDbAndCloseConnections();
-        }
+        repositoryManager.shutdownInMemoryDbAndCloseConnections();
         if ( nucleus != null ) {
             nucleus.doStopService();
             nucleus.stopService();
@@ -434,7 +433,7 @@ public class AtgDustCase
      *
      * @param isDebug Setting this to <code>true</code> will enable debug on all
      *                (currently only on repository related) components, setting it
-     *                to <code>false</code> turn's the debug off again.
+     *                to <code>false</code> turns the debug off again.
      */
     protected void setDebug(boolean isDebug) {
         this.isDebug = isDebug;
@@ -443,7 +442,6 @@ public class AtgDustCase
     /**
      * @param configpath
      *
-     * @return
      * @throws IOException
      */
     private void startNucleus(final File configpath)
@@ -461,7 +459,7 @@ public class AtgDustCase
                 for ( String property : environment.split(";") ) {
                     String[] keyvalue = property.split("=");
                     System.setProperty(keyvalue[0], keyvalue[1]);
-                    log.info("{} = {}", keyvalue[0], keyvalue[1]);
+                    logger.info("{} = {}", keyvalue[0], keyvalue[1]);
                 }
             }
 
@@ -480,7 +478,7 @@ public class AtgDustCase
                 fullConfigPath = fullConfigPath + localConfig.replace("/", File.separator);
             }
 
-            log.info("The full config path used to start nucleus: {}", fullConfigPath);
+            logger.info("The full config path used to start nucleus: {}", fullConfigPath);
             System.setProperty(
                     "atg.configpath", new File(fullConfigPath).getAbsolutePath()
             );
@@ -538,7 +536,7 @@ public class AtgDustCase
             }
         }
         if ( isDirty ) {
-            log.debug("Config files timestamps map is dirty an will be re serialized");
+            logger.debug("Config files timestamps map is dirty an will be re serialized");
 
             FileUtil.serialize(TIMESTAMP_SER, CONFIG_FILES_TIMESTAMPS);
         }
@@ -588,7 +586,7 @@ public class AtgDustCase
                         list
                 );
             } catch ( Exception e ) {
-                log.catching(e);
+                logger.catching(e);
             }
         }
 
@@ -596,7 +594,7 @@ public class AtgDustCase
 
     static {
         final String s = System.getProperty("SERIAL_TTL");
-        log.debug(
+        logger.debug(
                 s == null ? "SERIAL_TTL has not been set "
                             + "using default value of: "
                             + SERIAL_TTL
@@ -607,8 +605,8 @@ public class AtgDustCase
         try {
             SERIAL_TTL = s != null ? Long.parseLong(s) * 1000 : SERIAL_TTL;
         } catch ( NumberFormatException e ) {
-            log.catching(e);
-            //log.error("Error using the -DSERIAL_TTL value: ", e);
+            logger.catching(e);
+            //logger.error("Error using the -DSERIAL_TTL value: ", e);
         }
         CONFIG_FILES_TIMESTAMPS = FileUtil.deserialize(
                 TIMESTAMP_SER, SERIAL_TTL
@@ -620,9 +618,9 @@ public class AtgDustCase
         try {
             perflib = Class.forName("com.bsdroot.util.concurrent.SchedulerService");
         } catch ( ClassNotFoundException e ) {
-            log.catching(e);
-            log.debug(
-                    "com.bsdroot.util.concurrent experimantal performance library not found, continuing normally"
+            logger.catching(e);
+            logger.debug(
+                    "com.bsdroot.util.concurrent experimental performance library not found, continuing normally"
             );
         }
     }

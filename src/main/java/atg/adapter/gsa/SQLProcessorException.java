@@ -57,7 +57,6 @@ public class SQLProcessorException
      * Construct an SQLProcessorException
      *
      * @param pSourceException source exception
-     * @param pMessage         message
      */
     public SQLProcessorException(Throwable pSourceException) {
         super(pSourceException);

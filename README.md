@@ -1,7 +1,7 @@
-atgdust
+DynUnit
 =======
 
-Fork of atgdust for use with JUnit4
+Fork of ATG DUST for use with JUnit4 and various newer libraries.
 
 ## Usage
 First, you need to copy a few JARs to your local Maven repository (default is `~/.m2/repository/`).

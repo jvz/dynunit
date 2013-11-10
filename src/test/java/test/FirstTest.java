@@ -57,7 +57,7 @@ public class FirstTest
         SimpleComponent testComponent = null;
         try {
             testComponent = (SimpleComponent) n.resolveName("/test/SimpleComponentGlobalScope");
-            assertNotNull("Could not resolve test componet", testComponent);
+            assertNotNull("Could not resolve test component", testComponent);
             assertTrue(
                     "Test component did not start up cleanly.", testComponent.isCleanStart
             );

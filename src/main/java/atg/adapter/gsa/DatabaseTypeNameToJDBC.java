@@ -29,9 +29,9 @@ package atg.adapter.gsa;
  */
 public class DatabaseTypeNameToJDBC {
 
-    public DatabaseTableInfo mTableInfo = null;
+    private DatabaseTableInfo mTableInfo = null;
 
-    public static final int UNKNOWN = -9999;
+    private static final int UNKNOWN = -9999;
 
     // -------------------------------
 

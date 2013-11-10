@@ -33,7 +33,6 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,11 +46,9 @@ import java.util.Map.Entry;
 @SuppressWarnings("unchecked")
 public class FileUtil {
 
-    private static Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
 
     private static boolean isDirty = false;
-
-    ;
 
     private static Map<String, Long> CONFIG_FILES_TIMESTAMPS, CONFIG_FILES_GLOBAL_FORCE;
 
@@ -88,7 +85,7 @@ public class FileUtil {
      *
      * @throws IOException
      */
-    public static void copyFile(final String src, final String dst)
+    private static void copyFile(final String src, final String dst)
             throws IOException {
         final File srcFile = new File(src);
         final File dstFile = new File(dst);
@@ -146,13 +143,9 @@ public class FileUtil {
                 out.newLine();
             }
             if ( settings != null ) {
-                for ( final Iterator<Entry<String, String>> it = settings.entrySet().iterator();
-                      it.hasNext(); ) {
-                    final Entry<String, String> entry = it.next();
+                for ( final Entry<String, String> entry : settings.entrySet() ) {
                     out.write(
-                            new StringBuilder(entry.getKey()).append("=").append(
-                                    entry.getValue()
-                            ).toString()
+                            entry.getKey() + "=" + entry.getValue()
                     );
                     out.newLine();
                 }
@@ -162,7 +155,7 @@ public class FileUtil {
         }
     }
 
-    public static final String COULD_NOT_DELETE_TEMP_DIRECTORY = "Couldn't delete temp directory. ";
+    private static final String COULD_NOT_DELETE_TEMP_DIRECTORY = "Couldn't delete temp directory. ";
 
     public void searchAndReplace(final String originalValue, final String newValue, final File file)
             throws IOException {
@@ -262,9 +255,7 @@ public class FileUtil {
                 try {
                     o = (Map<String, Long>) in.readObject();
                 } finally {
-                    if ( in != null ) {
-                        in.close();
-                    }
+                    in.close();
                 }
             }
         } catch ( Exception e ) {

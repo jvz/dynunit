@@ -26,7 +26,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -41,7 +40,7 @@ import java.util.List;
  */
 public class SQLFileParser {
 
-    private static Logger log = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     // ****************************************
     // THERE IS ONLY ONE CLASS VARIABLE
@@ -221,7 +220,7 @@ public class SQLFileParser {
                 // we need to check more than just whether the line starts
                 // with the keyword.  we also have to try to determine that
                 // the keyword we found is actually NOT just the beginning of a
-                // bigger word.  for example, GOogle.
+                // bigger word.  for example, Google.
                 // so...
                 if ( sLineRead.length() == sKeywordList[i].trim().length() ) {
                     // if the whole line is just the keyword...
@@ -254,7 +253,7 @@ public class SQLFileParser {
 
         //sLineRead = sLineRead;
         for ( int i = 0; i < iArraySize; i++ ) {
-            if ( sLineRead.toUpperCase().indexOf(sKeywordList[i]) > -1 ) {
+            if ( sLineRead.toUpperCase().contains(sKeywordList[i]) ) {
                 return (sLineRead.substring(0, sLineRead.indexOf(sKeywordList[i])));
             }
         }
@@ -270,7 +269,7 @@ public class SQLFileParser {
         // THE SEMICOLON.
         // ****************************************
 
-        if ( sCurrentLine.indexOf(";") > -1 ) {
+        if ( sCurrentLine.contains(";") ) {
             sCurrentLine = sCurrentLine.substring(0, sCurrentLine.indexOf(";"));
         }
         return (sCurrentLine);
@@ -291,9 +290,9 @@ public class SQLFileParser {
         sCurrentLine = RemoveWhiteSpaceFromString(sCurrentLine);
         int iLength = sCurrentLine.length() - 2;
         //int iIndex = sCurrentLine.indexOf("/");
-        if ( (sCurrentLine.indexOf("/") > -1) && (sCurrentLine.indexOf("/") >= iLength) ) {
+        if ( (sCurrentLine.contains("/")) && (sCurrentLine.indexOf("/") >= iLength) ) {
             sCurrentLine = sCurrentLine.substring(0, sCurrentLine.indexOf("/"));
-        } else if ( (sCurrentLine.indexOf("/") > -1) && (sCurrentLine.indexOf("/") == 0) ) {
+        } else if ( (sCurrentLine.contains("/")) && (sCurrentLine.indexOf("/") == 0) ) {
             sCurrentLine = "";
         }
 
@@ -303,6 +302,7 @@ public class SQLFileParser {
 
 
     private List<String> readFileAndLoadData() {
+        // XXX: disregard note below
 
         // ****************************************
         // THIS FUNCTION IS THE ENGINE FOR THIS
@@ -384,7 +384,7 @@ public class SQLFileParser {
 
                 while ( line != null ) // It is not the end of the file, LOOK FOR KEY WORDS
                 {
-                    //log.info ("DEBUG:" + line);
+                    //logger.info ("DEBUG:" + line);
 
                     lineTemp = line;
                     lineTemp = checkForComments(lineTemp);
@@ -542,16 +542,9 @@ public class SQLFileParser {
         // ****************************************
         List<String> v = new ArrayList<String>();
         v = readFileAndLoadData();
-        String s = "";
-        for ( int i = 0; i < v.size(); i++ ) {
-            s = v.get(i).toString();
+        for ( String s : v ) {
             s = trimDebuggingCharacters(s);
-
-            if ( logToSystemOut ) {
-                //log.info("\n\n" + s );
-            } else {
-                //  if (isLoggingInfo ()) logInfo(s);
-            }
+            logger.info(s);
         }
 
         return v;
@@ -563,14 +556,13 @@ public class SQLFileParser {
     }
 
     // This is useful for debugging this application
-    public boolean logToSystemOut = false;
+    private boolean logToSystemOut = false;
 
     public static void main(String[] args) {
         SQLFileParser t = new SQLFileParser();
         t.logToSystemOut = true;
-        Iterator<String> cmds = t.parseSQLFiles(args).iterator();
-        while ( cmds.hasNext() ) {
-            log.info("\n\n" + cmds.next());
+        for ( String s : t.parseSQLFiles(args) ) {
+            logger.info("\n\n" + s);
         }
     }
 

@@ -47,9 +47,9 @@ import java.io.IOException;
 public class StartWithModulesTest
         extends TestCase {
 
-    Logger mLogger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
-    Nucleus mNucleus = null;
+    private Nucleus mNucleus = null;
 
     // ------------------------------------
 
@@ -58,7 +58,7 @@ public class StartWithModulesTest
      */
     @Override
     public void setUp() {
-        mLogger.info("Starting Nucleus.");
+        logger.info("Starting Nucleus.");
         try {
             System.setProperty("derby.locks.deadlockTrace", "true");
             mNucleus = NucleusTestUtils.startNucleusWithModules(
@@ -81,7 +81,7 @@ public class StartWithModulesTest
      */
     @Override
     public void tearDown() {
-        mLogger.info("Stopping Nucleus.");
+        logger.info("Stopping Nucleus.");
         if ( mNucleus != null ) {
             try {
                 NucleusTestUtils.shutdownNucleus(mNucleus);

@@ -45,7 +45,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -57,13 +56,13 @@ import java.util.Properties;
  * @version $Id: //test/UnitTests/base/main/src/Java/atg/nucleus/NucleusTestUtils.java#21 $
  *          <p/>
  *          This class contains some utility methods to make it faster
- *          to write a unit test that needs to resolve componants against Nucleus.
+ *          to write a unit test that needs to resolve components against Nucleus.
  */
 public class NucleusTestUtils {
 
     //-------------------------------------
 
-    public static final Logger log = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     public static final String ATG_DUST_TESTCONFIG = "atg.dust.testconfig";
 
@@ -82,22 +81,22 @@ public class NucleusTestUtils {
     public static String CLASS_VERSION = "$Id: //test/UnitTests/base/main/src/Java/atg/nucleus/NucleusTestUtils.java#21 $$Change: 556195 $";
 
     /**
-     * Whether or not to remove tempoary ATG server directories
+     * Whether or not to remove temporary ATG server directories
      * created by startNucleusWithModules(). True by default, but
      * can be set to false for debugging.
      */
-    public static boolean sRemoveTempAtgServerDirectories = true;
+    private static final boolean sRemoveTempAtgServerDirectories = true;
 
     /**
      * A map from Nucleus instance to temporary directory. Used by
      * startNucleusWithModules.
      */
-    static Map<Nucleus, File> sNucleusToTempAtgServerDirectory = Collections.synchronizedMap(new HashMap<Nucleus, File>());
+    private static final Map<Nucleus, File> sNucleusToTempAtgServerDirectory = Collections.synchronizedMap(new HashMap<Nucleus, File>());
 
     /**
      * Cache of the config path for a given Class. Used by getConfigpath.
      */
-    static Map<Class, Map<String, File>> sConfigDir = new HashMap<Class, Map<String, File>>();
+    private static final Map<Class, Map<String, File>> sConfigDir = new HashMap<Class, Map<String, File>>();
 
     /**
      * Creates an Initial.properties file
@@ -113,13 +112,12 @@ public class NucleusTestUtils {
     public static File createInitial(File pRoot, List pInitialServices)
             throws IOException {
         Properties prop = new Properties();
-        Iterator iter = pInitialServices.iterator();
-        StringBuffer services = new StringBuffer();
-        while ( iter.hasNext() ) {
-            if ( services.length() != 0 ) {
-                services.append(",");
+        StringBuilder services = new StringBuilder();
+        for ( Object service : pInitialServices ) {
+            if ( services.length() > 0 ) {
+                services.append(',');
             }
-            services.append((String) iter.next());
+            services.append((String) service);
         }
         prop.put("initialServices", services.toString());
         return NucleusTestUtils.createProperties(
@@ -165,9 +163,8 @@ public class NucleusTestUtils {
                 fw.write(classLine);
             }
             if ( pProps != null ) {
-                Iterator iter = pProps.keySet().iterator();
-                while ( iter.hasNext() ) {
-                    String key = (String) iter.next();
+                for ( Object o : pProps.keySet() ) {
+                    String key = (String) o;
                     String thisLine = key + "=" + StringUtils.replace(
                             pProps.getProperty(key), '\\', "\\\\"
                     ) + "\n";
@@ -189,7 +186,7 @@ public class NucleusTestUtils {
      * the whole configuration and binding process.
      *
      * @param pName    The absolute name value to set
-     * @param pService The service whose absolute nameshould be set.
+     * @param pService The service whose absolute name should be set.
      */
     public static void setAbsoluteName(String pName, GenericService pService) {
         pService.mAbsoluteName = pName;
@@ -252,8 +249,7 @@ public class NucleusTestUtils {
         System.setProperty("atg.dynamo.license.read", "true");
         System.setProperty("atg.license.read", "true");
         NucleusServlet.addNamingFactoriesAndProtocolHandlers();
-        Nucleus n = Nucleus.startNucleus(new String[] { pSingleConfigpathEntry });
-        return n;
+        return Nucleus.startNucleus(new String[] { pSingleConfigpathEntry });
     }
 
     /**
@@ -275,7 +271,7 @@ public class NucleusTestUtils {
      * Returns a file in the pBaseConfigDirectory (or pBaseConfigDirectory +
      * "data") subdirectory of the the passed in class's location.<P>
      * <p/>
-     * The directory location is calculated as (in psuedocode):
+     * The directory location is calculated as (in psuedo-code):
      * <code>
      * (pClassRelativeTo's package location) + "/" + (pConfigDirectory or "data") + "/config"
      * </code>
@@ -319,7 +315,10 @@ public class NucleusTestUtils {
             if ( dataURL == null ) {
                 URL root = pClassRelativeTo.getClassLoader().getResource(packageName);
 
-                File f = new File(root.getFile());
+                File f = null;
+                if ( root != null ) {
+                    f = new File(root.getFile());
+                }
                 File f2 = new File(f, "/data/" + configdirname);
                 if ( pCreate ) {
                     f2.mkdirs();
@@ -352,7 +351,7 @@ public class NucleusTestUtils {
      * Given a URL this method will extract the jar contents to a temp dir and return that path.
      * It also adds a shutdown hook to cleanup the tmp dir on normal jvm completion.
      * If the given URL does not appear to be a path into a jar archive, this method returns
-     * a new File object initialied with <code>dataURL.getFile()</code>.
+     * a new File object initialized with <code>dataURL.getFile()</code>.
      *
      * @return A temporary directory to be used as a configdir
      */
@@ -364,7 +363,7 @@ public class NucleusTestUtils {
             // Not a jar file url
             return new File(dataURL.getFile());
         }
-        log.info(EXTRACT_TEMP_JAR_FILE_FOR_PATH + dataURL.getFile());
+        logger.info(EXTRACT_TEMP_JAR_FILE_FOR_PATH + dataURL.getFile());
         File configDir = null;
         try {
             File tmpFile = File.createTempFile("atg-dust" + System.currentTimeMillis(), ".tmp");
@@ -415,7 +414,7 @@ public class NucleusTestUtils {
      * Returns a file in the pBaseConfigDirectory (or pBaseConfigDirectory +
      * "data") subdirectory of the the passed in class's location.
      * <p/>
-     * The directory location is calculated as (in psuedocode): <code>
+     * The directory location is calculated as (in pseudo-code): <code>
      * (pClassRelativeTo's package location) + "/" + (pConfigDirectory or "data") + "/config"
      * </code>
      * This method always creates the config/data subdirectory if it does not
@@ -454,7 +453,7 @@ public class NucleusTestUtils {
      * specified list of Dynamo modules ("DAS", "DPS", "DSS",
      * "Publishing.base", etc). Additionally adds a directory calculated relative
      * to the location of pClassRelativeTo's package name from the classloader.
-     * The added config directory is calculated as (in psuedocode):
+     * The added config directory is calculated as (in pseudo-code):
      * <code>
      * (pClassRelativeTo's package location) + "/data/" +  (pClassRelativeTo's simpleClassName) +
      * "/config"
@@ -514,7 +513,7 @@ public class NucleusTestUtils {
      * specified list of Dynamo modules ("DAS", "DPS", "DSS",
      * "Publishing.base", etc). Additionally adds a directory calculated relative
      * to the location of pClassRelativeTo's package name from the classloader.
-     * The added config directory is calculated as (in psuedocode):
+     * The added config directory is calculated as (in pseudo-code):
      * <code>
      * (pClassRelativeTo's package location) + "/data/" +  (pBaseConfigDirectory or "config")
      * </code>
@@ -553,6 +552,7 @@ public class NucleusTestUtils {
      */
     public static Nucleus startNucleusWithModules(NucleusStartupOptions pOptions)
             throws ServletException {
+        // XXX: what is with these enormous methods?
 
         if ( pOptions.getInitialService() == null ) {
             throw new IllegalArgumentException("Initial service must be specified.");
@@ -630,7 +630,7 @@ public class NucleusTestUtils {
                 configpath = configpath + File.pathSeparator +
                              fileTestConfig.getAbsolutePath();
             } else if ( fileTestConfig != null ) {
-                log.error(
+                logger.error(
                         "Warning: did not find directory " + fileTestConfig.getAbsolutePath()
                 );
             }
@@ -642,7 +642,7 @@ public class NucleusTestUtils {
                              + File.separatorChar
                              + "licenseconfig";
             } else {
-                log.warn(
+                logger.warn(
                         "The DUST_HOME environment variable is not set."
                         + " License files (if needed) should be placed in $DUST_HOME/licenseconfig."
                 );
@@ -663,8 +663,8 @@ public class NucleusTestUtils {
             listArgs.add(pOptions.getInitialService());
 
             PropertyEditors.registerEditors();
-            log.info("Starting nucleus with arguments: " + listArgs);
-            Nucleus n = Nucleus.startNucleus(listArgs.toArray(new String[0]));
+            logger.info("Starting nucleus with arguments: " + listArgs);
+            Nucleus n = Nucleus.startNucleus(listArgs.toArray(new String[listArgs.size()]));
 
             // remember our temporary server directory for later deletion
             sNucleusToTempAtgServerDirectory.put(n, fileServerDir);
@@ -674,9 +674,9 @@ public class NucleusTestUtils {
 
             return n;
         } catch ( AppLauncherException e ) {
-            throw new ServletException(e);
+            throw logger.throwing(new ServletException(e));
         } catch ( IOException e ) {
-            throw new ServletException(e);
+            throw logger.throwing(new ServletException(e));
         } finally {
             if ( (fileServerDir != null) && sRemoveTempAtgServerDirectories ) {
                 try {
@@ -698,7 +698,7 @@ public class NucleusTestUtils {
      * DYNAMO_ROOT by various means. This is mostly made complicated
      * by the ROAD DUST environment being so different from devtools.
      */
-    static String findDynamoRoot() {
+    private static String findDynamoRoot() {
         // now let's try to find dynamo home...
         String dynamoRootStr = DynamoEnv.getProperty("atg.dynamo.root");
 
@@ -750,7 +750,7 @@ public class NucleusTestUtils {
                 );
                 if ( filePotentialHomeLocalconfigDir.exists() ) {
                     dynamoRootStr = new File(currentDir, "Dynamo").getAbsolutePath();
-                    log.debug("Found dynamo root via parent directory: " + dynamoRootStr);
+                    logger.debug("Found dynamo root via parent directory: " + dynamoRootStr);
                     break;
                 }
                 currentDir = currentDir.getParentFile();
@@ -784,7 +784,7 @@ public class NucleusTestUtils {
                     while ( (fileCur != null) && fileCur.exists() ) {
                         if ( new File(fileCur, strSubPath).exists() ) {
                             dynamoRootStr = fileCur.getAbsolutePath();
-                            log.debug(
+                            logger.debug(
                                     "Found dynamo root by Nucleus.class location: " + dynamoRootStr
                             );
 
@@ -804,7 +804,7 @@ public class NucleusTestUtils {
      * Try to convert a file URL to a File object. You'd think this would be
      * easier, but no.
      */
-    static File urlToFile(URL url) {
+    private static File urlToFile(URL url) {
         URI uri;
 
         if ( !"file".equals(url.getProtocol()) ) {
@@ -852,7 +852,7 @@ public class NucleusTestUtils {
      * @return the created temporary server directory.
      * @throws IOException if an error occurs
      */
-    protected static File createTempServerDir()
+    private static File createTempServerDir()
             throws IOException {
         File fileTemp = File.createTempFile("tempServer", "dir");
         fileTemp.delete();
@@ -877,7 +877,7 @@ public class NucleusTestUtils {
      * specified list of Dynamo modules ("DAS", "DPS", "DSS",
      * "Publishing.base", etc). Additionally adds a directory calculated relative
      * to the location of pClassRelativeTo's package name from the classloader.
-     * The added config directory is calculated as (in psuedocode):
+     * The added config directory is calculated as (in pseudo-code):
      * <code>
      * (pClassRelativeTo's package location) + "/data/" +  (pBaseConfigDirectory or "config")
      * </code>
@@ -966,7 +966,7 @@ public class NucleusTestUtils {
                     if ( bComplete ) {
                         // only throw if we if we finished our try clause, because
                         // otherwise we might block our initial exception
-                        throw e;
+                        throw logger.throwing(e);
                     }
                 } finally {
                     sNucleusToTempAtgServerDirectory.remove(pNucleus);
@@ -989,14 +989,14 @@ public class NucleusTestUtils {
             socket = new ServerSocket(0);
             freePort = socket.getLocalPort();
         } catch ( IOException e ) {
-            log.catching(e);
+            logger.catching(e);
         } finally {
             try {
                 if ( socket != null ) {
                     socket.close();
                 }
             } catch ( IOException e ) {
-                log.catching(e);
+                logger.catching(e);
             }
         }
         return freePort;
@@ -1013,23 +1013,23 @@ public class NucleusTestUtils {
         /**
          * List of dynamo modules.
          */
-        private String[] mModules;
+        private final String[] mModules;
 
         /**
          * Class whose package data subdir is relative to.
          */
-        private Class mClassRelativeTo;
+        private final Class mClassRelativeTo;
 
         /**
-         * The base config directory, realtive to mClassRelativeTo's package
+         * The base config directory, relative to mClassRelativeTo's package
          * + "/data". If null, then "config"
          */
-        private String mBaseConfigDirectory;
+        private final String mBaseConfigDirectory;
 
         /**
-         * The Nucleus path of the intial service to resolve.
+         * The Nucleus path of the initial service to resolve.
          */
-        private String mInitialService;
+        private final String mInitialService;
 
         private String[] mLayers;
 
@@ -1062,10 +1062,6 @@ public class NucleusTestUtils {
          * @param pInitialService  the nucleus path of the Nucleus component
          *                         to start-up. This is a required property to prevent accidental
          *                         full start-up.
-         *
-         * @return the started Nucleus instance that should later be shut down
-         *         with the shutdownNucleus method.
-         * @throws ServletException if an error occurs
          */
         public NucleusStartupOptions(String[] pModules,
                                      Class pClassRelativeTo,
@@ -1084,7 +1080,7 @@ public class NucleusTestUtils {
          * "Publishing.base", etc).
          * Additionally sets opts to add a directory calculated relative
          * to the location of pClassRelativeTo's package name from the classloader.
-         * The added config directory is calculated as (in psuedocode):
+         * The added config directory is calculated as (in pseudo-code):
          * <code>
          * (pClassRelativeTo's package location) + "/" + (pConfigDirectory or "data") + "/config"
          * </code>
@@ -1105,12 +1101,7 @@ public class NucleusTestUtils {
          *                             ("data/" + pBaseConfigDirectory) rather than "data/config".
          * @param pInitialService      the nucleus path of the Nucleus component
          *                             to start-up. This is a required property to prevent
-         *                             accidental
-         *                             full start-up.
-         *
-         * @return the started Nucleus instance that should later be shut down
-         *         with the shutdownNucleus method.
-         * @throws ServletException if an error occurs
+         *                             accidental full start-up.
          */
         public NucleusStartupOptions(String[] pModules,
                                      Class pClassRelativeTo,
@@ -1156,7 +1147,7 @@ public class NucleusTestUtils {
 
         /**
          * Set the basic config directory. This is the directory that will be
-         * taked on to the package path of the classRelativeTo class. If this
+         * tacked on to the package path of the classRelativeTo class. If this
          * property is non-null, the relative configuration subdirectory will
          * be ("data/" + baseConfigDirectory).
          */
@@ -1227,7 +1218,6 @@ public class NucleusTestUtils {
          * chance to adjust any command-line options.
          */
         public void modifyNucleusCommandLineOptions(List<String> listArgs) {
-            return;
         }
     } // end inner-class NucleusStartupOptions
 

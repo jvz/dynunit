@@ -46,11 +46,11 @@ import java.util.Map;
  */
 public final class BasicConfiguration {
 
-    protected String isDebug = Boolean.FALSE.toString();
+    private String isDebug = Boolean.FALSE.toString();
 
-    protected final Map<String, String> settings = new HashMap<String, String>();
+    private final Map<String, String> settings = new HashMap<String, String>();
 
-    private static Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
 
     public void setDebug(final boolean isDebug) {
         this.isDebug = Boolean.toString(isDebug);

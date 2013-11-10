@@ -18,7 +18,7 @@ package atg.service.jdbc;
 
 
 /**
- * Base class for InitializingDataSource's common functionaliy.
+ * Base class for InitializingDataSource's common functionality.
  *
  * @author adamb
  * @version $Id:$
@@ -27,10 +27,10 @@ package atg.service.jdbc;
 public class InitializingDataSourceBase
         extends FakeXADataSource {
 
-    public String mDatabaseName = "testdb";
+    private String mDatabaseName = "testdb";
 
     /**
-     * Returns the name of the database to use with HSQLDB. The defaut name is
+     * Returns the name of the database to use with HSQLDB. The default name is
      * "testdb"
      *
      * @return

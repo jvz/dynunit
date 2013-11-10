@@ -43,7 +43,7 @@ public class SimpleComponentTest
         // don't use
         // AtgDusCase and therefore bypass the whole optimized property copying
         // way implemented in AtgDusCase. This will result in the original property
-        // file with scope request overwriting the chnaged property file with forced
+        // file with scope request overwriting the changed property file with forced
         // global scope. Because the pattern is different from the other tests a
         // re-copy and re-global-scope-force will be executed.
 

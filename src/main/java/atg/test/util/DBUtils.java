@@ -31,7 +31,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Properties;
 
 /**
@@ -43,15 +42,15 @@ import java.util.Properties;
  */
 public class DBUtils {
 
-    public Connection conn; //our connnection to the db - presist for life of
+    private Connection conn; //our connection to the db - persist for life of
 
-    private Properties mJDBCProperties;
+    private final Properties mJDBCProperties;
 
-    private static Logger log = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
     // ---------------------------
 
     /**
-     * Returns a Properties object preconfigured to create
+     * Returns a Properties object pre-configured to create
      * an HSQLDB in memory database connecting with user "sa"
      * password ""
      *
@@ -72,7 +71,7 @@ public class DBUtils {
 
 
     /**
-     * Returns a Properties object preconfigured to create
+     * Returns a Properties object pre-configured to create
      * an HSQLDB in memory database connecting with user "sa"
      * password ""
      *
@@ -91,11 +90,11 @@ public class DBUtils {
     }
 
     /**
-     * Returns a Properties object preconfigured to create
+     * Returns a Properties object pre-configured to create
      * an HSQLDB in memory database connecting with user "sa"
      * password ""
      *
-     * @param pTestDBName
+     * @param pPath
      */
     public static Properties getHSQLDBFileDBConnection(String pPath) {
         Properties props = new Properties();
@@ -277,11 +276,9 @@ public class DBUtils {
     }
 
     /**
-     * Returns a Properties object preconfigured to create
+     * Returns a Properties object pre-configured to create
      * an HSQLDB in memory database connecting with user "sa"
      * password ""
-     *
-     * @param pTestDBName
      */
     public static Properties getHSQLDBInMemoryDBConnection() {
         return getHSQLDBInMemoryDBConnection("testdb");
@@ -312,7 +309,7 @@ public class DBUtils {
         );
     }
 
-    public String mDatabaseType = null;
+    private String mDatabaseType = null;
 
     private String mDatabaseVersion;
 
@@ -335,19 +332,19 @@ public class DBUtils {
 
 
         // connect to the database. This will load the db files and start the
-        // database if it is not alread running.
+        // database if it is not already running.
         // db_file_name_prefix is used to open or create files that hold the state
         // of the db.
         // It can contain directory names relative to the
         // current working directory
         conn = DriverManager.getConnection(
-                pURL, // filenames
+                pURL, // file names
                 pUser, // username
                 pPassword
         ); // password
         mDatabaseType = conn.getMetaData().getDatabaseProductName();
         mDatabaseVersion = conn.getMetaData().getDatabaseProductVersion();
-        log.info("Connected to {} version {}", mDatabaseType, mDatabaseVersion);
+        logger.info("Connected to {} version {}", mDatabaseType, mDatabaseVersion);
         executeCreateIdGenerator();
     }
 
@@ -414,7 +411,7 @@ public class DBUtils {
     //use for SQL commands CREATE, DROP, INSERT and UPDATE
     public synchronized void update(String expression)
             throws SQLException {
-        //log.info("DBUtils.update : " + expression);
+        //logger.info("DBUtils.update : " + expression);
         Statement st = null;
 
         st = conn.createStatement(); // statements
@@ -422,13 +419,13 @@ public class DBUtils {
         int i = st.executeUpdate(expression); // run the query
 
         if ( i == -1 ) {
-            log.info("db error : {}", expression);
+            logger.info("db error : {}", expression);
         }
 
         st.close();
     } // void update()
 
-    public void dump(ResultSet rs)
+    void dump(ResultSet rs)
             throws SQLException {
 
         // the order of the rows in a cursor
@@ -448,17 +445,12 @@ public class DBUtils {
                 o = rs.getObject(i + 1); // Is SQL the first column is indexed
 
                 // with 1 not 0
-                log.info(o);
+                logger.info(o);
             }
         }
     } //void dump( ResultSet rs )
 
-    /**
-     * @param db
-     *
-     * @throws SQLException
-     */
-    public void executeCreateIdGenerator()
+    void executeCreateIdGenerator()
             throws SQLException {
         try {
             if ( !isDB2() ) {
@@ -476,11 +468,11 @@ public class DBUtils {
             }
         } catch ( SQLException e ) {
             // drop and try again
-            log.info("DROPPING DAS_ID_GENERATOR");
+            logger.info("DROPPING DAS_ID_GENERATOR");
             try {
                 update("drop table das_id_generator");
             } catch ( SQLException ex ) {
-
+                logger.catching(ex);
             }
             if ( !isDB2() ) {
                 update(
@@ -500,12 +492,10 @@ public class DBUtils {
     }
 
     public void executeSQLFile(File pFile) {
-        log.info("Attemping to execute " + pFile);
+        logger.info("Attempting to execute {}", pFile);
         SQLFileParser parser = new SQLFileParser();
         Collection<String> c = parser.parseSQLFile(pFile.getAbsolutePath());
-        Iterator<String> cmds = c.iterator();
-        while ( cmds.hasNext() ) {
-            String cmd = cmds.next();
+        for ( String cmd : c ) {
             try {
                 if ( "Oracle".equals(mDatabaseType) ) {
                     cmd = StringUtils.replace(cmd, "numeric", "NUMBER");
@@ -513,10 +503,10 @@ public class DBUtils {
                     cmd = StringUtils.replace(cmd, "varchar(", "VARCHAR2(");
                     cmd = StringUtils.replace(cmd, "binary", "RAW (250)");
                 }
-                log.info("Executing {}", cmd);
+                logger.info("Executing {}", cmd);
                 update(cmd);
             } catch ( SQLException e ) {
-                log.catching(e);
+                logger.catching(e);
             }
         }
     }
@@ -571,7 +561,7 @@ public class DBUtils {
      * @return
      */
     public static boolean isOracle(Properties pProps) {
-        return pProps.get("driver").toString().toLowerCase().indexOf("oracle") != -1;
+        return pProps.get("driver").toString().toLowerCase().contains("oracle");
     }
 
     /**
@@ -580,7 +570,7 @@ public class DBUtils {
      * @return
      */
     public static boolean isSybase(Properties pProps) {
-        return pProps.get("driver").toString().toLowerCase().indexOf("sybase") != -1;
+        return pProps.get("driver").toString().toLowerCase().contains("sybase");
     }
 
     /**
@@ -598,42 +588,22 @@ public class DBUtils {
      * @return
      */
     public static boolean isDB2(Properties pProps) {
-        return pProps.get("driver").toString().indexOf("DB2") != -1;
+        return pProps.get("driver").toString().contains("DB2");
     }
 
 
-    /**
-     * @param pProps
-     *
-     * @return
-     */
     public boolean isOracle() {
         return DBUtils.isMSSQLServer(mJDBCProperties);
     }
 
-    /**
-     * @param pProps
-     *
-     * @return
-     */
     public boolean isSybase() {
         return DBUtils.isMSSQLServer(mJDBCProperties);
     }
 
-    /**
-     * @param pProps
-     *
-     * @return
-     */
     public boolean isMSSQLServer() {
         return DBUtils.isMSSQLServer(mJDBCProperties);
     }
 
-    /**
-     * @param pProps
-     *
-     * @return
-     */
     public boolean isDB2() {
         return DBUtils.isDB2(mJDBCProperties);
     }

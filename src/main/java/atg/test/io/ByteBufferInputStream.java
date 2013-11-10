@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package atg.test.io;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ import java.nio.ByteBuffer;
  * @version $Id:$
  * @see ByteBuffer
  */
-public class ByteBufferInputStream
+class ByteBufferInputStream
         extends InputStream {
     //-------------------------------------
 

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package atg.adapter.gsa;
 
 import atg.repository.RepositoryException;
@@ -58,16 +59,16 @@ import java.util.Set;
 public class GSARepositorySchemaGenerator {
 
     // The repository upon which we are working.
-    public GSARepository mRepository = null;
+    private GSARepository mRepository = null;
 
     // The DDLUtils Platform object
-    public Platform mPlatform = null;
+    private Platform mPlatform = null;
 
     // The DDLUtils Database Model
-    public Database mDatabase = null;
+    private Database mDatabase = null;
 
     // Tool for mapping database types
-    public DatabaseTypeNameToJDBC mDatabaseTypeNameToJDBC = null;
+    private DatabaseTypeNameToJDBC mDatabaseTypeNameToJDBC = null;
 
     static Set mUsedFKNames = new HashSet();
 
@@ -238,11 +239,12 @@ public class GSARepositorySchemaGenerator {
      */
     void buildSingleTableModel(Database pDb, Table pTable, GSARepository pRepository)
             throws RepositoryException {
+        // XXX: holy shitwaffles simplify this shit
         TableColumns columns = new TableColumns(
                 pTable, pRepository.getDatabaseTableInfo()
         );
         pTable.collectColumnsForName(columns);
-        AccessibleTableColumns atable = new AccessibleTableColumns(columns);
+        AccessibleTableColumns accessibleTableColumns = new AccessibleTableColumns(columns);
 
         // --------------------------
         // Table Definition
@@ -258,12 +260,12 @@ public class GSARepositorySchemaGenerator {
         ColumnDefinitionNode columnDefinition = null;
         boolean proceed = false;
 
-        for ( columnDefinition = atable.getHead(), proceed = true;
+        for ( columnDefinition = accessibleTableColumns.getHead(), proceed = true;
               columnDefinition != null && proceed;
               columnDefinition = columnDefinition.mNext ) {
             // No need to iterate the next time if there is just one element in the
             // linked list
-            if ( atable.getHead() == atable.getTail() ) {
+            if ( accessibleTableColumns.getHead() == accessibleTableColumns.getTail() ) {
                 proceed = false;
             }
 
@@ -286,8 +288,8 @@ public class GSARepositorySchemaGenerator {
             // Primary Key
             // --------------------------
 
-            if ( atable.getPrimaryKeys().contains(c.getName()) || c.getName()
-                                                                   .equals(atable.getMultiColumnName()) ) {
+            if ( accessibleTableColumns.getPrimaryKeys().contains(c.getName()) || c.getName()
+                                                                   .equals(accessibleTableColumns.getMultiColumnName()) ) {
                 c.setPrimaryKey(true);
             }
 
@@ -295,7 +297,7 @@ public class GSARepositorySchemaGenerator {
             // Null/NotNull
             // --------------------------
 
-            if ( columnDefinition.mIsRequired || atable.getPrimaryKeys()
+            if ( columnDefinition.mIsRequired || accessibleTableColumns.getPrimaryKeys()
                                                        .contains(columnDefinition.mColumnName) ) {
                 c.setRequired(true);
             } else {
@@ -376,7 +378,7 @@ public class GSARepositorySchemaGenerator {
                 // Foreign Keys
                 // --------------------------
 
-                if ( atable.getForeignKeys() != null && !columns.mVersioned ) {
+                if ( accessibleTableColumns.getForeignKeys() != null && !columns.mVersioned ) {
                     // TODO: Add ForeignKeys
                 }
             }
@@ -435,11 +437,10 @@ public class GSARepositorySchemaGenerator {
      * @param pContinueOnError - If true, continue on error, else fail.
      * @param pDrop            - If true, drops schema first before attempting to create it.
      *
-     * @throws SQLException
      * @throws DatabaseOperationException
      */
     public void createSchema(final boolean pContinueOnError, final boolean pDrop)
-            throws DatabaseOperationException, SQLException {
+            throws DatabaseOperationException {
         boolean success = new DoInAutoCommit(this, mRepository).doInAutoCommit(
                 new AutoCommitable() {
                     @Override
@@ -463,11 +464,10 @@ public class GSARepositorySchemaGenerator {
      *
      * @param pContinueOnError - If true, continue on error, else fail.
      *
-     * @throws SQLException
      * @throws DatabaseOperationException
      */
     public void dropSchema(final boolean pContinueOnError)
-            throws DatabaseOperationException, SQLException {
+            throws DatabaseOperationException {
         boolean success = new DoInAutoCommit(this, mRepository).doInAutoCommit(
                 new AutoCommitable() {
                     @Override

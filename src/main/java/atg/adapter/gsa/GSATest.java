@@ -53,9 +53,9 @@ public class GSATest
 
     private final transient Random random = new Random();
 
-    private static Logger log = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
-    private HashMap<String, File> mConfigDir = new HashMap<String, File>();
+    private final HashMap<String, File> mConfigDir = new HashMap<String, File>();
 
     /**
      *
@@ -63,22 +63,6 @@ public class GSATest
     public GSATest() {
         super();
         // TODO Auto-generated constructor stub
-    }
-
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp()
-            throws Exception {
-        super.setUp();
-    }
-
-    /*
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown()
-            throws Exception {
-        super.tearDown();
     }
 
     /**
@@ -99,7 +83,7 @@ public class GSATest
      *
      * @return
      */
-    public File getConfigpath(String pConfigDirectory) {
+    File getConfigpath(String pConfigDirectory) {
         if ( mConfigDir.get(pConfigDirectory) == null ) {
             String configdirname = "config";
             String packageName = StringUtils.replace(
@@ -116,18 +100,23 @@ public class GSATest
             if ( dataURL == null ) {
                 URL root = this.getClass().getClassLoader().getResource(packageName);
 
-                File f = new File(root.getFile());
+                File f = null;
+                if ( root != null ) {
+                    f = new File(root.getFile());
+                }
                 File f2 = new File(f, "/data/" + configdirname);
                 f2.mkdirs();
                 dataURL = this.getClass().getClassLoader().getResource(configFolder);
             }
 
-            mConfigDir.put(pConfigDirectory, new File(dataURL.getFile()));
+            if ( dataURL != null ) {
+                mConfigDir.put(pConfigDirectory, new File(dataURL.getFile()));
+            }
         }
         System.setProperty(
-                "atg.configpath", ((File) mConfigDir.get(pConfigDirectory)).getAbsolutePath()
+                "atg.configpath", mConfigDir.get(pConfigDirectory).getAbsolutePath()
         );
-        return (File) mConfigDir.get(pConfigDirectory);
+        return mConfigDir.get(pConfigDirectory);
     }
 
     /**
@@ -143,12 +132,11 @@ public class GSATest
      * @param pMethodName
      *
      * @throws Exception
-     * @throws Exception
      */
-    protected void setUpAndTest(File pConfigPathWhereToCreateTheRepository,
-                                String[] definitionFiles,
-                                Properties pDBProperties,
-                                String pMethodName)
+    void setUpAndTest(File pConfigPathWhereToCreateTheRepository,
+                      String[] definitionFiles,
+                      Properties pDBProperties,
+                      String pMethodName)
             throws Exception {
         String repositoryComponentPath = "/" + getName() + "Repository";
         GSATestUtils.getGSATestUtils().initializeMinimalConfigpath(
@@ -165,7 +153,7 @@ public class GSATest
         GSARepository r = (GSARepository) n.resolveName(repositoryComponentPath);
         try {
             getClass().getMethod(pMethodName, new Class[] { GSARepository.class })
-                    .invoke(this, new Object[] { r });
+                    .invoke(this, r);
         } catch ( NoSuchMethodError e ) {
             throw new AssertionError(
                     "Please declare a method with name "
@@ -181,13 +169,12 @@ public class GSATest
 
 
     /**
-     * Createa a file using reasonable defaults.
+     * Create a file using reasonable defaults.
      * Your definition file should exist in the same package as the test and should be
      * names <test_name>Repository.xml. Configpath is assumed to be what is returned
      *
      * @param pMethodName
      *
-     * @throws Exception
      * @throws Exception
      */
     protected void setUpAndTest(String pMethodName)
@@ -244,14 +231,13 @@ public class GSATest
      * @throws SQLException
      */
     protected DBUtils initDB(Properties props)
-            throws Exception, SQLException {
-        DBUtils db = new DBUtils(
+            throws Exception {
+        return new DBUtils(
                 props.getProperty("URL"),
                 props.getProperty("driver"),
                 props.getProperty("user"),
                 props.getProperty("password")
         );
-        return db;
     }
 
     /**
@@ -291,8 +277,7 @@ public class GSATest
         }
         RepositoryPropertyDescriptor[] propDescriptors = (RepositoryPropertyDescriptor[]) descriptor
                 .getPropertyDescriptors();
-        for ( int j = 0; j < propDescriptors.length; j++ ) {
-            RepositoryPropertyDescriptor propertyDescriptor = propDescriptors[j];
+        for ( RepositoryPropertyDescriptor propertyDescriptor : propDescriptors ) {
             if ( propertyDescriptor.isWritable()
                  && !propertyDescriptor.isIdProperty()
                  && propertyDescriptor.isRequired() ) {
@@ -319,7 +304,7 @@ public class GSATest
      *         repository with this item descriptor.
      * @throws RepositoryException if there is trouble creating the id
      */
-    protected GSAId getNewCompoundId(GSARepository r, GSAItemDescriptor desc)
+    GSAId getNewCompoundId(GSARepository r, GSAItemDescriptor desc)
             throws RepositoryException {
         // make sure we have a repository
         if ( r == null ) {
@@ -352,17 +337,17 @@ public class GSATest
                 } else {
                     long val = gen.generateLongId(idSpaceNames[i]);
                     if ( types[i] == Long.class ) {
-                        newId[i] = Long.valueOf(val);
+                        newId[i] = val;
                     } else if ( types[i] == Float.class ) {
-                        newId[i] = Float.valueOf((float) val);
+                        newId[i] = (float) val;
                     } else if ( types[i] == Double.class ) {
-                        newId[i] = Double.valueOf((float) val);
+                        newId[i] = (double) val;
                     } else if ( types[i] == java.sql.Timestamp.class ) {
                         newId[i] = new java.sql.Timestamp(val);
                     } else if ( types[i] == java.util.Date.class ) {
                         newId[i] = new java.util.Date(val);
                     } else {
-                        newId[i] = Integer.valueOf((int) val);
+                        newId[i] = (int) val;
                     }
                 }
             }
@@ -374,7 +359,7 @@ public class GSATest
     }
 
     @SuppressWarnings("unchecked")
-    protected Object generateDummyValue(RepositoryPropertyDescriptor propertyDescriptor) {
+    Object generateDummyValue(RepositoryPropertyDescriptor propertyDescriptor) {
         if ( getEnumeratedValues(propertyDescriptor) != null ) {
             return null;// ignore enums for now.
         }
@@ -457,24 +442,24 @@ public class GSATest
      * Returns an instance of the property editor, null if there is no
      * property editor
      */
-    PropertyEditor getPropertyEditor(DynamicPropertyDescriptor pDescriptor) {
-        if ( pDescriptor == null ) {
+    PropertyEditor getPropertyEditor(DynamicPropertyDescriptor propertyDescriptor) {
+        if ( propertyDescriptor == null ) {
             return null;
         }
-        Class<?> peclass = pDescriptor.getPropertyEditorClass();
-        if ( peclass == null ) {
-            return pDescriptor.getUIPropertyEditor();
+        Class<?> propertyEditorClass = propertyDescriptor.getPropertyEditorClass();
+        if ( propertyEditorClass == null ) {
+            return propertyDescriptor.getUIPropertyEditor();
         } else {
-            Object peinst = null;
+            Object propertyEditor = null;
             try {
-                peinst = peclass.newInstance();
+                propertyEditor = propertyEditorClass.newInstance();
             } catch ( InstantiationException e ) {
-                log.catching(Level.ERROR, e);
+                logger.catching(Level.ERROR, e);
             } catch ( IllegalAccessException e ) {
-                log.catching(Level.ERROR, e);
+                logger.catching(Level.ERROR, e);
             }
-            if ( peinst instanceof PropertyEditor ) {
-                return (PropertyEditor) peinst;
+            if ( propertyEditor instanceof PropertyEditor ) {
+                return (PropertyEditor) propertyEditor;
             } else {
                 return null;
             }
@@ -508,35 +493,35 @@ public class GSATest
      * @return
      */
     private Object generateDouble() {
-        return new Double(random.nextDouble());
+        return random.nextDouble();
     }
 
     /**
      * @return
      */
     private Object generateInteger() {
-        return Integer.valueOf(random.nextInt(32768));
+        return random.nextInt(32768);
     }
 
     /**
      * @return
      */
     private Object generateFloat() {
-        return new Float(random.nextFloat());
+        return random.nextFloat();
     }
 
     /**
      * @return
      */
     private Object generateLong() {
-        return Long.valueOf(random.nextInt(32278));
+        return (long) random.nextInt(32278);
     }
 
     /**
      * @return
      */
     private Object generateShort() {
-        return Short.valueOf((short) (random.nextInt(100)));
+        return (short) (random.nextInt(100));
     }
 
     /**
@@ -545,14 +530,14 @@ public class GSATest
     private Object generateByte() {
         byte[] bytes = new byte[1];
         random.nextBytes(bytes);
-        return Byte.valueOf(bytes[0]);
+        return bytes[0];
     }
 
     /**
      * @return
      */
     private Object generateBoolean() {
-        return Boolean.valueOf(random.nextBoolean());
+        return random.nextBoolean();
     }
 
     /**

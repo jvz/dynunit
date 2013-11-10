@@ -32,7 +32,7 @@ import java.sql.Statement;
 public class IdGeneratorTest
         extends TestCase {
 
-    Nucleus mNucleus = null;
+    private Nucleus mNucleus = null;
 
     protected void setUp()
             throws Exception {
@@ -68,8 +68,12 @@ public class IdGeneratorTest
             );
             assertNotNull("no results, table not created " + idgen.getTableName(), result);
         } finally {
-            result.close();
-            c.close();
+            if ( result != null ) {
+                result.close();
+            }
+            if ( c != null ) {
+                c.close();
+            }
         }
     }
 

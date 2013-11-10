@@ -21,7 +21,6 @@ import atg.adapter.gsa.xml.VersioningContextUtil;
 import atg.adapter.version.VersionRepository;
 import atg.naming.NameContext;
 import atg.nucleus.Configuration;
-import atg.nucleus.GenericService;
 import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusNameResolver;
 import atg.nucleus.NucleusTestUtils;
@@ -33,7 +32,6 @@ import atg.test.util.DBUtils;
 import atg.versionmanager.VersionManager;
 import atg.versionmanager.Workspace;
 import atg.versionmanager.exceptions.VersionException;
-import junit.framework.Assert;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -58,6 +56,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * A utility class to simplify testing with GSARepositories inside of junit
@@ -68,11 +69,11 @@ import java.util.Properties;
  */
 public class GSATestUtils {
 
-    public static List<File> mFilesCreated = new ArrayList<File>();
+    private static final List<File> mFilesCreated = new ArrayList<File>();
 
-    public static String sClassName = "atg.adapter.gsa.InitializingGSA";
+    private static final String sClassName = "atg.adapter.gsa.InitializingGSA";
 
-    public static String sVersionedClassName = "atg.adapter.gsa.InitializingVersionRepository";
+    private static final String sVersionedClassName = "atg.adapter.gsa.InitializingVersionRepository";
 
     private boolean mVersioned = false;
 
@@ -80,7 +81,7 @@ public class GSATestUtils {
 
     private static GSATestUtils SINGLETON_VERSIONED = null;
 
-    private static Logger log = LogManager.getLogger();
+    private static final Logger log = LogManager.getLogger();
 
     /**
      * @param pB
@@ -92,10 +93,10 @@ public class GSATestUtils {
 
     /**
      * Duplicates the given array of repositories.
-     * This method first binds the repositories into nucleus under the name XXXX-Shadow,
-     * where XXXX is the original name.
+     * This method first binds the repositories into nucleus under the name Foo-Shadow,
+     * where Foo is the original name.
      * After all repositories are bound, then they are started.
-     * This allows for repositories with circular references to each other to be deplicated.
+     * This allows for repositories with circular references to each other to be replicated.
      * The pRepositories array and pDS array should be in sync. That is the first item in the
      * repository array, pRepositories,  will use the first data source in the pDS array and so on.
      *
@@ -164,7 +165,7 @@ public class GSATestUtils {
         .getName()+"-Shadow", newRepository, pRepository.getNameContext());
     newRepository.nameContextElementBound(bindingEvent);
     */
-        NameContext nc = ((GenericService) pRepository).getNameContext();
+        NameContext nc = pRepository.getNameContext();
         nc.putElement(pRepository.getName() + "-Shadow", newRepository);
 
         if ( pStart ) {
@@ -245,7 +246,7 @@ public class GSATestUtils {
                                             String pCreateSQLAbsolutePath,
                                             String pDropSQLAbsolutePath,
                                             String[] pImportFile)
-            throws IOException, Exception {
+            throws Exception {
         initializeMinimalConfigpath(
                 pRoot,
                 pRepositoryPath,
@@ -278,7 +279,8 @@ public class GSATestUtils {
      * @param pDefinitionFiles Array of Nucleus paths to definition files
      * @param pJDBCProperties  properties object containing JDBC connection information
      * @param pImportFile
-     * @param pLogging         if true log to stdout, else logging is disabled
+     * @param pLogging         if true log to stdout, else logging is disabled [not really; see
+     *                         log4j]
      *
      * @throws IOException
      * @throws Exception
@@ -292,7 +294,7 @@ public class GSATestUtils {
                                             String pDropSQLAbsolutePath,
                                             String[] pImportFile,
                                             boolean pLogging)
-            throws IOException, Exception {
+            throws Exception {
         initializeMinimalConfigpath(
                 pRoot,
                 pRepositoryPath,
@@ -319,7 +321,7 @@ public class GSATestUtils {
                                             boolean pLogging,
                                             String pFakeXADataSourceComponentName,
                                             String pJTDataSourceComponentName)
-            throws IOException, Exception {
+            throws Exception {
         if ( pRepositoryPath != null ) {
             createRepositoryPropertiesFile(
                     pRoot,
@@ -372,9 +374,7 @@ public class GSATestUtils {
      * Deletes any files created by initializing the configpath
      */
     public void cleanup() {
-        Iterator<File> iter = mFilesCreated.iterator();
-        while ( iter.hasNext() ) {
-            File f = iter.next();
+        for ( File f : mFilesCreated ) {
             f.delete();
         }
         mFilesCreated.clear();
@@ -847,7 +847,7 @@ public class GSATestUtils {
 
         Properties props = new Properties();
         props.put("repositoryName", "TestRepository" + System.currentTimeMillis());
-        StringBuffer definitionFiles = new StringBuffer();
+        StringBuilder definitionFiles = new StringBuilder();
         for ( int i = 0; i < pDefinitionFiles.length; i++ ) {
             Object obj = this.getClass().getClassLoader().getResource(pDefinitionFiles[i]);
             if ( obj != null ) {
@@ -857,7 +857,7 @@ public class GSATestUtils {
                         + " Does not exist in configpath. But it does in classpath. Copying over to configpath"
                 );
                 copyToConfigpath(pRoot, pDefinitionFiles[i]);
-            } else if ( obj == null && !new File(pRoot, pDefinitionFiles[i]).exists() ) {
+            } else if ( !new File(pRoot, pDefinitionFiles[i]).exists() ) {
                 throw new AssertionError(
                         "ERROR: Repository definition file "
                         + pDefinitionFiles[i]
@@ -866,14 +866,14 @@ public class GSATestUtils {
                 );
             }
 
-            definitionFiles.append("/" + pDefinitionFiles[i]);
+            definitionFiles.append("/").append(pDefinitionFiles[i]);
             if ( i < (pDefinitionFiles.length - 1) ) {
                 definitionFiles.append(",");
             }
         }
         props.put("definitionFiles", definitionFiles.toString());
         if ( pImportFiles != null ) {
-            StringBuffer importFiles = new StringBuffer();
+            StringBuilder importFiles = new StringBuilder();
             for ( int i = 0; i < pImportFiles.length; i++ ) {
                 Object obj = this.getClass().getClassLoader().getResource(
                         pDefinitionFiles[i]
@@ -885,7 +885,7 @@ public class GSATestUtils {
                             + " Does not exist in configpath. But it does in classpath. Copying over to configpath"
                     );
                     copyToConfigpath(pRoot, pImportFiles[i]);
-                } else if ( obj == null && !new File(pRoot, pImportFiles[i]).exists() ) {
+                } else if ( !new File(pRoot, pImportFiles[i]).exists() ) {
                     throw new AssertionError(
                             "ERROR: Repository definition file "
                             + pDefinitionFiles[i]
@@ -1046,23 +1046,22 @@ public class GSATestUtils {
      * @throws IOException
      */
     public void copyToConfigpath(File pConfigRoot, String pString)
-            throws FileNotFoundException, IOException {
+            throws IOException {
         copyToConfigpath(pConfigRoot, pString, null);
     }
 
     /**
      * @param pConfigRoot
-     * @param pString
+     * @param path
      * @param configPath where in config path the file must be copied.
      *
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void copyToConfigpath(File pConfigRoot, String pString, String configPath)
-            throws FileNotFoundException, IOException {
+    public void copyToConfigpath(final File pConfigRoot, final String path, String configPath)
+            throws IOException {
         // create the version manager repository
         pConfigRoot.mkdirs();
-        String path = pString;
         if ( configPath == null ) {
             configPath = path.substring(0, path.lastIndexOf('/'));
         }
@@ -1074,7 +1073,7 @@ public class GSATestUtils {
         }
         prop.createNewFile();
         OutputStream os = new FileOutputStream(prop);
-        InputStream dataStream = this.getClass().getClassLoader().getResourceAsStream(pString);
+        InputStream dataStream = this.getClass().getClassLoader().getResourceAsStream(path);
         while ( dataStream.available() != 0 ) {
             byte[] buff = new byte[1024];
             int available = dataStream.available();
@@ -1121,7 +1120,7 @@ public class GSATestUtils {
         String clazz = "atg.adapter.gsa.InitializingVersionRepository";
         Properties props = new Properties();
         props.put("repositoryName", "TestRepository");
-        StringBuffer definitionFiles = new StringBuffer();
+        StringBuilder definitionFiles = new StringBuilder();
         for ( int i = 0; i < pDefinitionFiles.length; i++ ) {
             definitionFiles.append(pDefinitionFiles[i]);
             if ( i < (pDefinitionFiles.length - 1) ) {
@@ -1182,13 +1181,12 @@ public class GSATestUtils {
             GSAItemDescriptor desc = itemDescriptors[i];
             Table[] tables = desc.getTables();
             if ( tables != null ) {
-                for ( int j = 0; j < tables.length; j++ ) {
-                    String name = tables[j].getName();
-                    names.add(name);
+                for ( Table table : tables ) {
+                    names.add(table.getName());
                 }
             }
         }
-        return (String[]) names.toArray(new String[0]);
+        return names.toArray(new String[names.size()]);
     }
     // ---------------------------------
 
@@ -1203,11 +1201,11 @@ public class GSATestUtils {
      * @throws SQLException
      */
     public void assertEmptyRepository(DBUtils dbTwo, GSARepository storeRepository)
-            throws Exception, SQLException {
+            throws Exception {
         String[] namesAfter = getTableNames(storeRepository);
-        for ( int i = 0; i < namesAfter.length; i++ ) {
-            log.info(namesAfter[i] + ":" + dbTwo.getRowCount(namesAfter[i]));
-            Assert.assertEquals(0, dbTwo.getRowCount(namesAfter[i]));
+        for ( String aNamesAfter : namesAfter ) {
+            log.info(aNamesAfter + ":" + dbTwo.getRowCount(aNamesAfter));
+            assertEquals(0, dbTwo.getRowCount(aNamesAfter));
         }
     }
     // ---------------------------------
@@ -1321,6 +1319,7 @@ public class GSATestUtils {
      */
     public static void dumpTable(Table pTable, Collection<String> pPrintColumnNames)
             throws SQLException {
+        // XXX: what in the fuck
         GSARepository gsa = pTable.getItemDescriptor().getGSARepository();
         Connection c = null;
         PreparedStatement st = null;
@@ -1369,10 +1368,8 @@ public class GSATestUtils {
             System.out.print("\n");
             while ( rs.next() ) {
                 int i = 1;
-                Iterator<?> iter = colNames.iterator();
-                while ( iter.hasNext() ) {
+                for ( Object colName : colNames ) {
                     //String columnName =  iter.next();
-                    iter.next();
                     Object obj = rs.getObject(i++);
                     if ( obj == null ) {
                         obj = "NULL";
@@ -1403,23 +1400,20 @@ public class GSATestUtils {
     }
 
     /**
-     * @param pRepository
-     * @param pItemDescriptorName
+     * @param repository
+     * @param itemDescriptorName
      */
-    public static void dumpTables(GSARepository pRepository, String pItemDescriptorName)
+    public static void dumpTables(GSARepository repository, String itemDescriptorName)
             throws RepositoryException, SQLException {
-        GSAItemDescriptor itemdesc = (GSAItemDescriptor) pRepository.getItemDescriptor(
-                pItemDescriptorName
+        GSAItemDescriptor itemDescriptor = (GSAItemDescriptor) repository.getItemDescriptor(
+                itemDescriptorName
         );
-        Table[] tables = itemdesc.getTables();
-        HashSet<String> doneTables = new HashSet<String>();
-        for ( int i = 0; tables != null && i < tables.length; i++ ) {
-            Table table = tables[i];
-            if ( doneTables.contains(table.getName()) ) {
-                continue;
+        Set<String> doneTables = new HashSet<String>();
+        for ( Table table : itemDescriptor.getTables() ) {
+            if ( !doneTables.contains(table.getName()) ) {
+                dumpTable(table, new ArrayList<String>());
+                doneTables.add(table.getName())
             }
-            dumpTable(table, new ArrayList<String>());
-            doneTables.add(table.getName());
         }
     }
 }

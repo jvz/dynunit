@@ -39,9 +39,9 @@ public class IdGeneratorInitializer {
 
     private static final String DROP_TABLE_TEMPLATE = "DROP TABLE";
 
-    private InitializingIdGenerator mGenerator;
+    private final InitializingIdGenerator mGenerator;
 
-    Logger log = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     /**
      * Creates a new IdGeneratorInitializer used for the given generator,
@@ -81,7 +81,7 @@ public class IdGeneratorInitializer {
         );
     }
 
-    public Map<DataSource, DatabaseMetaData> mMetaDataMap = new HashMap<DataSource, DatabaseMetaData>();
+    private final Map<DataSource, DatabaseMetaData> mMetaDataMap = new HashMap<DataSource, DatabaseMetaData>();
 
     /**
      * Returns a cached instance of the DB metadata for the current connection
@@ -94,7 +94,7 @@ public class IdGeneratorInitializer {
             try {
                 mMetaDataMap.put(ds, ds.getConnection().getMetaData());
             } catch ( SQLException e ) {
-                log.catching(e);
+                logger.catching(e);
             }
         }
         return mMetaDataMap.get(ds);
@@ -118,7 +118,7 @@ public class IdGeneratorInitializer {
                 exists = true;
             }
         } catch ( SQLException e ) {
-            log.catching(e);
+            logger.catching(e);
         }
         return exists;
     }
@@ -133,7 +133,7 @@ public class IdGeneratorInitializer {
     void initializeTables()
             throws SQLException {
         String statement = mGenerator.getCreateStatement();
-        log.info("Creating IdGenerator tables : " + statement);
+        logger.info("Creating IdGenerator tables : " + statement);
         executeUpdateStatement(statement);
     }
 
@@ -151,7 +151,7 @@ public class IdGeneratorInitializer {
             st = mGenerator.getDataSource().getConnection().createStatement(); // statements
             int i = st.executeUpdate(pStatement); // run the query
             if ( i == -1 ) {
-                log.error("Error creating tables with statement {}", pStatement);
+                logger.error("Error creating tables with statement {}", pStatement);
             }
             success = true;
         } finally {
@@ -160,7 +160,7 @@ public class IdGeneratorInitializer {
                     st.close();
                 }
             } catch ( SQLException e ) {
-                log.catching(e);
+                logger.catching(e);
             }
         }
         return success;

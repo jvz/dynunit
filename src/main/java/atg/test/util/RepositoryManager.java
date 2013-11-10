@@ -21,7 +21,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
@@ -41,7 +40,7 @@ import java.util.Properties;
  */
 public class RepositoryManager {
 
-    private static Logger log = LogManager.getLogger(RepositoryManager.class);
+    private static final Logger log = LogManager.getLogger(RepositoryManager.class);
 
     private boolean isDefaultInMemoryDb;
 
@@ -70,11 +69,10 @@ public class RepositoryManager {
      * @param dropTables      If <code>true</code> then existing tables will be dropped and
      *                        re-created, if set to <code>false</code> the existing tables
      *                        will be used.
-     * @param isDebug         Enables or disables debugging.
+     * @param isDebug         Enables or disables debugging. (Not really. See log4j config).
      * @param definitionFiles One or more needed repository definition files.
      *
      * @throws SQLException
-     * @throws IOException
      */
     public void initializeMinimalRepositoryConfiguration(File configRoot,
                                                          String repositoryPath,
@@ -82,7 +80,7 @@ public class RepositoryManager {
                                                          final boolean dropTables,
                                                          final boolean isDebug,
                                                          String... definitionFiles)
-            throws SQLException, IOException {
+            throws SQLException {
 
         dataSource.setDriverClassName(settings.get("driver"));
         dataSource.setUsername(settings.get("user"));
@@ -97,7 +95,7 @@ public class RepositoryManager {
             log.info("Existing tables will be used.");
         }
 
-        isDefaultInMemoryDb = settings.get("url") == null ? false : settings.get("url").contains(
+        isDefaultInMemoryDb = settings.get("url") != null && settings.get("url").contains(
                 "jdbc:hsqldb:mem:testDb"
         );
 

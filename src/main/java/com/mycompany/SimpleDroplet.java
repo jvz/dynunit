@@ -32,11 +32,11 @@ public class SimpleDroplet
     /**
      *
      */
-    public static final String USERNAME = "username";
+    private static final String USERNAME = "username";
 
-    String mUsername = null;
+    private String mUsername = null;
 
-    String mUsernameFromInputStream = null;
+    private String mUsernameFromInputStream = null;
 
     /**
      * Called to execute this droplet

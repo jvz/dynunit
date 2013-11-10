@@ -20,7 +20,7 @@ import atg.applauncher.AppLauncher;
 import atg.applauncher.AppModule;
 import atg.nucleus.DynamoEnv;
 import atg.nucleus.Nucleus;
-import atg.service.dynamo.LicenseImpl; // FIXME: not in dependencies
+import atg.service.dynamo.LicenseImpl;
 import atg.service.email.ContentPart;
 import atg.service.email.EmailEvent;
 import atg.service.email.MimeMessageUtils;
@@ -58,35 +58,36 @@ import java.util.StringTokenizer;
 import java.util.jar.Manifest;
 
 // TODO: holy shit this file is huge
+
 /**
- * This class is used to hold useful utilty methods people may
+ * This class is used to hold useful utility methods people may
  * need when running tests.
  */
 public class TestUtils
         extends atg.nucleus.GenericService {
 
-    private static Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     // names of app servers types that may be specified by the
     // 'atg.dynamo.appserver' system property
     // Dynamo currently does not distinguish between generic
     // Tomcat and JBoss, everything is just referred to as 'tomcat'
-    public static final String APP_SERVER_DAS = "das";
+    private static final String APP_SERVER_DAS = "das";
 
-    public static final String APP_SERVER_BEA = "weblogic";
+    private static final String APP_SERVER_BEA = "weblogic";
 
-    public static final String APP_SERVER_IBM = "websphere";
+    private static final String APP_SERVER_IBM = "websphere";
 
-    public static final String APP_SERVER_TOMCAT = "tomcat";
+    private static final String APP_SERVER_TOMCAT = "tomcat";
 
     // names of various vendors that ATG works with
-    public static final String VENDOR_ATG = "ATG";
+    private static final String VENDOR_ATG = "ATG";
 
-    public static final String VENDOR_BEA = "BEA";
+    private static final String VENDOR_BEA = "BEA";
 
-    public static final String VENDOR_IBM = "IBM";
+    private static final String VENDOR_IBM = "IBM";
 
-    public static final String VENDOR_JBOSS = "JBOSS";
+    private static final String VENDOR_JBOSS = "JBOSS";
 
     // the variable that points to the installation directory for dynamo
     private static final String ROOT_VAR = "atg.dynamo.root";
@@ -121,14 +122,14 @@ public class TestUtils
     // piece of information can not be definitively determined.  in
     // particular, used when reporting about product build and version
     // information
-    public static final String UNKNOWN_INFO = "unknown";
+    private static final String UNKNOWN_INFO = "unknown";
 
     /**
      * property to track the DUST version being used.  utilized by
      * ATGXMLFileTestResultReported so we can tag XML result files for
      * compatibility validation when passed to the XML file logger
      */
-    public static int DUST_VERSION = 1;
+    private static int DUST_VERSION = 1;
 
     /**
      * specifies the DUST version being used.  utilized by
@@ -155,7 +156,7 @@ public class TestUtils
      * logged to the database to correlate the result with a user
      * account in the test management system.
      */
-    public static String DUST_USERNAME = System.getProperty("user.name");
+    private static String DUST_USERNAME = System.getProperty("user.name");
 
     /**
      * specifies the DUST user.  utilized when results are logged to
@@ -184,7 +185,7 @@ public class TestUtils
      * by TSM to correlate a specifid result with the testrun used to
      * install and configure the test Dynamo.
      */
-    public static String TSM_TESTRUN = null;
+    private static String TSM_TESTRUN = null;
 
     /**
      * Specifies the TSM testrun this result is part of.  utilized by
@@ -209,7 +210,7 @@ public class TestUtils
      * to inform end-users of time at which machine was last synced.
      * must be specified by test setup before test is run.
      */
-    public static String P4SYNCTIME = null;
+    private static String P4SYNCTIME = null;
 
     /**
      * property to track the p4 sync time for tests.  utilized by TSM
@@ -235,7 +236,7 @@ public class TestUtils
      * installation, returns null.  Should <b>only</b> be used by
      * System tests.
      */
-    public static File DYNAMO_INSTALL_DIR = null;
+    private static File DYNAMO_INSTALL_DIR = null;
 
     /**
      * Returns the directory in which Dynamo was installed.  If the
@@ -462,15 +463,9 @@ public class TestUtils
     public static boolean isDynamoInstalled() {
         try {
             // if j2ee server is not installed then Dynamo must be...
-            if ( getAtgJ2eeServerInstallDir() == null ) {
-                return true;
-            }
-            // if the j2ee server root is the same as the dynamo root then
-            // we're running only the j2ee server
-            else {
-                return (!getAtgJ2eeServerInstallDir().getCanonicalFile()
-                        .equals(getDynamoRootDir().getCanonicalFile()));
-            }
+            return getAtgJ2eeServerInstallDir() == null
+                   || (!getAtgJ2eeServerInstallDir().getCanonicalFile()
+                    .equals(getDynamoRootDir().getCanonicalFile()));
         } catch ( IOException ioe ) {
             // this should never happen, but if it does return false...
             return false;
@@ -520,22 +515,22 @@ public class TestUtils
      * use.  returns null if Dynamo is not running.
      */
     public static String getDynamoProductInfo() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         AppModule dynamo = getAtgDynamoModule();
 
         if ( dynamo == null ) {
             return null;
         }
 
-        sb.append(getDynamoProductName() + " version " + getAtgVersion(dynamo));
+        sb.append(getDynamoProductName()).append(" version ").append(getAtgVersion(dynamo));
         String build = getAtgBuildNumber(dynamo);
         if ( !build.equals(UNKNOWN_INFO) ) {
-            sb.append(" build " + build);
+            sb.append(" build ").append(build);
         }
         String patch_version = getAtgPatchVersion(dynamo);
         String patch_build = getAtgPatchBuildNumber(dynamo);
         if ( !(patch_version == null) && !patch_version.equals(UNKNOWN_INFO) ) {
-            sb.append(" with patch " + patch_version + " build " + patch_build);
+            sb.append(" with patch ").append(patch_version).append(" build ").append(patch_build);
         }
 
         return sb.toString();
@@ -546,17 +541,17 @@ public class TestUtils
      * being used.
      */
     public static String getAppServerProductInfo() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
-        sb.append(getAppServerProductName() + " version " + getAppServerVersion());
+        sb.append(getAppServerProductName()).append(" version ").append(getAppServerVersion());
         String build = getAppServerBuildNumber();
         if ( !build.equals(UNKNOWN_INFO) ) {
-            sb.append(" build " + build);
+            sb.append(" build ").append(build);
         }
         String patch_version = getAppServerPatchVersion();
         String patch_build = getAppServerPatchBuildNumber();
         if ( !(patch_version == null) && !patch_version.equals(UNKNOWN_INFO) ) {
-            sb.append(" with patch " + patch_version + " build " + patch_build);
+            sb.append(" with patch ").append(patch_version).append(" build ").append(patch_build);
         }
 
         return sb.toString();
@@ -655,9 +650,9 @@ public class TestUtils
     public static boolean isGenericAppServer() {
         try {
             ServletUtil.class.newInstance();
-            return ((Boolean) invokeMethod(
+            return (Boolean) invokeMethod(
                     dynamoEnv(), "isGenericJ2EEServer", null, null, null
-            )).booleanValue();
+            );
         } catch ( Throwable t ) {
             logger.catching(t);
         }
@@ -691,9 +686,7 @@ public class TestUtils
             String[] children1 = { "version" };
             List<Node> nodes1 = XmlUtils.getNodes(f, false, children1);
             if ( nodes1 != null ) {
-                Iterator<Node> iter1 = nodes1.iterator();
-                while ( iter1.hasNext() ) {
-                    Node n1 = iter1.next();
+                for ( Node n1 : nodes1 ) {
                     version = XmlUtils.getNodeTextValue(n1);
                 }
             }
@@ -879,11 +872,9 @@ public class TestUtils
             String[] children = { "host", "product", "release" };
             List<Node> nodes = XmlUtils.getNodes(f, false, children);
             if ( nodes != null ) {
-                Iterator<Node> iter = nodes.iterator();
                 // I expect there to only be one <host><product><release> node
                 // so this iteration should really just loop over one node.
-                while ( iter.hasNext() ) {
-                    Node n = iter.next();
+                for ( Node n : nodes ) {
                     version = XmlUtils.getAttribute(n, "level", "0") + "." +
                               XmlUtils.getAttribute(n, "ServicePackLevel", "0") + "." +
                               XmlUtils.getAttribute(n, "PatchLevel", "0");
@@ -963,6 +954,7 @@ public class TestUtils
      * the value of the 'implVersion' attribute.
      */
     public static String getJBossVersion() {
+        // XXX: might want to simplify this
         try {
             File versionFile = new File(getJBossHomeDir(), "jar-versions.xml");
             if ( !versionFile.exists() ) {
@@ -973,10 +965,8 @@ public class TestUtils
                 return UNKNOWN_INFO;
             }
             String[] children = { "jar" };
-            Iterator<Node> nodes = XmlUtils.getNodes(versionFile, false, children).iterator();
-            while ( nodes.hasNext() ) {
+            for ( Node node : XmlUtils.getNodes(versionFile, false, children) ) {
                 try {
-                    Node node = nodes.next();
                     String name = node.getAttributes().getNamedItem("name").getNodeValue();
                     log("Checking node: " + name);
                     if ( name.equals("jboss.jar") ) {
@@ -1026,11 +1016,11 @@ public class TestUtils
     /**
      * returns the session limit of the specified license component
      *
-     * @param String  the component name of the license in question
-     * @param boolean true if Nucleus should attempt to create the license
-     *                component if it does not exist
+     * @param pLicense the component name of the license in question
+     * @param pResolve true if Nucleus should attempt to create the license
+     *                 component if it does not exist
      *
-     * @return int the session limit for the license.  0 if the license does not
+     * @return The session limit for the license.  0 if the license does not
      *         resolve.
      */
     public static int getSessionLimit(String pLicense, boolean pResolve) {
@@ -1181,9 +1171,7 @@ public class TestUtils
 
             // add the text attachments
             if ( pTextAttachments != null ) {
-                Iterator<String> textkeys = pTextAttachments.keySet().iterator();
-                while ( textkeys.hasNext() ) {
-                    String key = textkeys.next();
+                for ( String key : pTextAttachments.keySet() ) {
                     Object val = pTextAttachments.get(key);
                     if ( val != null ) {
                         MimeBodyPart part = new MimeBodyPart();
@@ -1198,9 +1186,7 @@ public class TestUtils
 
             // add the html attachments
             if ( pHTMLAttachments != null ) {
-                Iterator<String> htmlkeys = pHTMLAttachments.keySet().iterator();
-                while ( htmlkeys.hasNext() ) {
-                    String key = htmlkeys.next();
+                for ( String key : pHTMLAttachments.keySet() ) {
                     Object val = pHTMLAttachments.get(key);
                     if ( val != null ) {
                         MimeBodyPart part = new MimeBodyPart();
@@ -1215,10 +1201,10 @@ public class TestUtils
 
             // add the File attachments
             if ( pFiles != null ) {
-                for ( int i = 0; i < pFiles.length; i++ ) {
+                for ( File pFile : pFiles ) {
                     MimeBodyPart part = new MimeBodyPart();
-                    part.setDataHandler(new DataHandler(new FileDataSource(pFiles[i])));
-                    part.setFileName(pFiles[i].getName());
+                    part.setDataHandler(new DataHandler(new FileDataSource(pFile)));
+                    part.setFileName(pFile.getName());
                     mp.addBodyPart(part);
                 }
             }
@@ -1391,9 +1377,9 @@ public class TestUtils
      * @throws IOException           if error happens while reading and pThrow is true
      */
     public static String accessURL(String pUrl, boolean pThrow)
-            throws MalformedURLException, IOException {
+            throws IOException {
         URL url = null;
-        StringBuffer results = new StringBuffer();
+        StringBuilder results = new StringBuilder();
         BufferedReader in = null;
         InputStreamReader isr = null;
         try {
@@ -1403,7 +1389,7 @@ public class TestUtils
             in = new BufferedReader(isr);
             String line = null;
             while ( (line = in.readLine()) != null ) {
-                results.append(line + "\n");
+                results.append(line).append("\n");
             }
             return results.toString();
         } catch ( MalformedURLException e ) {
@@ -1412,13 +1398,12 @@ public class TestUtils
             } else {
                 results.append(
                         "\nEncountered an unexpected error while trying to retrieve the configuration info."
-                        +
-                        "\nWhen the url "
-                        + url
-                        + " was requested, this error was received: \n"
-                        + getStackTrace(e)
-                        + "\n"
-                );
+                        + "\nWhen the url "
+                )
+                       .append(url)
+                       .append(" was requested, this error was received: \n")
+                       .append(getStackTrace(e))
+                       .append("\n");
             }
         } catch ( IOException ioe ) {
             if ( pThrow ) {
@@ -1426,13 +1411,12 @@ public class TestUtils
             } else {
                 results.append(
                         "\nEncountered an unexpected error while trying to retrieve the configuration info."
-                        +
-                        "\nWhen the url "
-                        + url
-                        + " was requested, this error was received: \n"
-                        + getStackTrace(ioe)
-                        + "\n"
-                );
+                        + "\nWhen the url "
+                )
+                       .append(url)
+                       .append(" was requested, this error was received: \n")
+                       .append(getStackTrace(ioe))
+                       .append("\n");
             }
         } finally {
             if ( in != null ) {
@@ -1481,8 +1465,8 @@ public class TestUtils
     /**
      * Writes the byte array into the specified file.
      *
-     * @param File   pFile the file to write to
-     * @param byte[] the bytes to write
+     * @param pFile  the file to write to
+     * @param pBytes the bytes to write
      *
      * @throws IOException if an error occurred opening or reading the file.
      */
@@ -1513,8 +1497,8 @@ public class TestUtils
      * array and expands all System property variables in the Strings.
      * it does not check whether resolved file paths exist.
      *
-     * @param String delimited string of files to be converted to array.
-     * @param String delimiter string used to separated files
+     * @param pFiles     delimited string of files to be converted to array.
+     * @param pDelimiter delimiter string used to separated files
      *
      * @return String[] array of expanded paths
      * @throws Exception if files can't be resolved properly
@@ -1529,14 +1513,14 @@ public class TestUtils
      * and expands all variables in the Strings.  it does not check whether
      * resolved file paths exist.
      *
-     * @param String     delimited string of files to be converted to array.
-     * @param String     delimiter string used to separated files
-     * @param Properties optional primary mapping of key/value pairs to
-     *                   substitute into file paths whererever the syntax <tt>{...}</tt>
-     *                   is found.  If parameter is null, or mapping not found, then
-     *                   System.getProperties() is checked.
+     * @param pFiles          delimited string of files to be converted to array.
+     * @param pDelimiter      delimiter string used to separated files
+     * @param pPrimaryMapping optional primary mapping of key/value pairs to
+     *                        substitute into file paths whererever the syntax <tt>{...}</tt>
+     *                        is found.  If parameter is null, or mapping not found, then
+     *                        System.getProperties() is checked.
      *
-     * @return String[] array of expanded paths
+     * @return array of expanded paths
      * @throws Exception if files can't be resolved properly
      */
     public static String[] convertFileArray(String pFiles,
@@ -1551,7 +1535,7 @@ public class TestUtils
         while ( st.hasMoreTokens() ) {
             files.add(expand(st.nextToken(), pPrimaryMapping));
         }
-        return (String[]) files.toArray(new String[files.size()]);
+        return files.toArray(new String[files.size()]);
     }
 
     /**
@@ -1559,7 +1543,7 @@ public class TestUtils
      * String using curly braces syntax <tt>{...}</tt> and returns the
      * resulting String.
      *
-     * @param String the string to expand.
+     * @param pString the string to expand.
      *
      * @throws Exception if a System property resolves to null or if
      *                   the enclosing braces are not properly matched.
@@ -1578,13 +1562,13 @@ public class TestUtils
      * such as
      * "appModuleResource?moduleID=MyModule&resource=my/resource/file".
      *
-     * @param String     the string to expand.
-     * @param Properties an optional primary key/value mapping to use
-     *                   for System property substitutions.  If param is null, or if
-     *                   mapping not found, then System.getProperties().getProperty(xxx)
-     *                   is used.
+     * @param pString         the string to expand.
+     * @param pPrimaryMapping an optional primary key/value mapping to use
+     *                        for System property substitutions.  If param is null, or if
+     *                        mapping not found, then System.getProperties().getProperty(foo)
+     *                        is used.
      *
-     * @return String the expanded string.
+     * @return the expanded string.
      * @throws Exception if a System or AppModuleResource property
      *                   resolves to null or if the enclosing braces are not properly
      *                   matched.
@@ -1637,7 +1621,7 @@ public class TestUtils
     /**
      * product module corresponding to ATG Dynamo
      */
-    public static String ATGDYNAMO_PRODUCT_MODULE = "DPS";
+    private static String ATGDYNAMO_PRODUCT_MODULE = "DPS";
 
     /**
      * specifies the name of the ATG Dynamo product module that will be
@@ -1661,10 +1645,9 @@ public class TestUtils
      */
     public static AppModule getAtgDynamoModule() {
         // get all modules that were started with dynamo
-        Iterator<?> modules = getAppLauncher().getModules().iterator();
 
-        while ( modules.hasNext() ) {
-            AppModule module = (AppModule) modules.next();
+        for ( Object o : getAppLauncher().getModules() ) {
+            AppModule module = (AppModule) o;
             if ( module.getName().equals(getAtgDynamoProductModule()) ) {
                 return module;
             }
@@ -1702,10 +1685,9 @@ public class TestUtils
      */
     public static AppModule getAtgJ2eeServerModule() {
         // get all modules that were started with dynamo
-        Iterator<?> modules = getAppLauncher().getModules().iterator();
 
-        while ( modules.hasNext() ) {
-            AppModule module = (AppModule) modules.next();
+        for ( Object o : getAppLauncher().getModules() ) {
+            AppModule module = (AppModule) o;
             if ( module.getName().equals(getAtgJ2eeServerProductModule()) ) {
                 return module;
             }
@@ -1719,7 +1701,7 @@ public class TestUtils
     /**
      * possible application product modules that may be installed
      */
-    public static String[] APPLICATION_PRODUCT_MODULES = { "ACA", "ABTest", "DCS-SO", "CAF" };
+    private static String[] APPLICATION_PRODUCT_MODULES = { "ACA", "ABTest", "DCS-SO", "CAF" };
 
     /**
      * specifies the names of possible application product modules that
@@ -1750,11 +1732,10 @@ public class TestUtils
         List<AppModule> apps = new LinkedList<AppModule>();
 
         // get all modules that were started with dynamo
-        Iterator<?> modules = getAppLauncher().getModules().iterator();
 
-        while ( modules.hasNext() ) {
-            AppModule module = (AppModule) modules.next();
-            for ( int i = 0; i < APPLICATION_PRODUCT_MODULES.length; i++ ) {
+        for ( Object o : getAppLauncher().getModules() ) {
+            AppModule module = (AppModule) o;
+            for ( String APPLICATION_PRODUCT_MODULE : APPLICATION_PRODUCT_MODULES ) {
                 // in order to work around bug 80207, we allow a colon ":" in
                 // the specified module names.  if a colon exists, the name
                 // before the colon is the name of the module that would be
@@ -1762,43 +1743,44 @@ public class TestUtils
                 // colon is the module containing the MANIFEST.MF file with
                 // build info.  if there is no colon, assume the two modules
                 // are the same.
-                int idx = APPLICATION_PRODUCT_MODULES[i].indexOf(":");
+                int idx = APPLICATION_PRODUCT_MODULE.indexOf(":");
                 if ( idx == -1 ) {
                     // no colon...
-                    if ( (APPLICATION_PRODUCT_MODULES[i]).equals(module.getName()) ) {
+                    if ( (APPLICATION_PRODUCT_MODULE).equals(module.getName()) ) {
                         apps.add(module);
                     }
                 } else {
-                    if ( APPLICATION_PRODUCT_MODULES[i].substring(0, idx)
-                                                       .equals(module.getName()) ) {
+                    if ( APPLICATION_PRODUCT_MODULE.substring(0, idx).equals(module.getName()) ) {
                         // NOTE: getAppLauncher().getModule(...) will return a
                         // module as long as it exists; the module does not need
                         // to be running.
                         try {
                             AppModule mod = getAppLauncher().getModule(
-                                    APPLICATION_PRODUCT_MODULES[i].substring(idx + 1)
+                                    APPLICATION_PRODUCT_MODULE.substring(idx + 1)
                             );
                             logger.info("Mod: {}", mod);
                             if ( mod != null ) {
                                 apps.add(mod);
                             } else {
                                 throw new Exception(
-                                        APPLICATION_PRODUCT_MODULES[i].substring(
+                                        APPLICATION_PRODUCT_MODULE.substring(
                                                 idx + 1
                                         ) + " not found."
                                 );
                             }
                         } catch ( Exception ale ) {
                             logger.catching(ale);
-                            logger.warn("Cannot resolve module '{}'.",
-                                        APPLICATION_PRODUCT_MODULES[i].substring(idx + 1));
+                            logger.warn(
+                                    "Cannot resolve module '{}'.",
+                                    APPLICATION_PRODUCT_MODULE.substring(idx + 1)
+                            );
                         }
                     }
                 }
             }
         }
 
-        return (AppModule[]) apps.toArray(new AppModule[apps.size()]);
+        return apps.toArray(new AppModule[apps.size()]);
     }
 
     // =========== generic AppModule info retrieval methods ====================
@@ -1821,11 +1803,11 @@ public class TestUtils
      * installed in the Dynamo.  Returned file is <u>not</u> verified
      * to exist.
      *
-     * @param String pModuleName the name of the Dynamo module to look in.  e.g.
-     *               "SystemTests.JSPTest"
-     * @param String pResourceURI the URI of the File to get from the module.  e.g. "mite.xml"
+     * @param pModuleName  the name of the Dynamo module to look in.  e.g.
+     *                     "SystemTests.JSPTest"
+     * @param pResourceURI the URI of the File to get from the module.  e.g. "mite.xml"
      *
-     * @return File the requested file.
+     * @return the requested file.
      */
     public static File getModuleResourceFile(String pModuleName, String pResourceURI) {
         return getAppLauncher().getAppModuleManager().getResourceFile(pModuleName, pResourceURI);
@@ -1835,11 +1817,11 @@ public class TestUtils
      * Resolves an appModuleResource reference by parsing the string
      * into its constituent ModuleID and ResourceURI.
      *
-     * @param String pReference The AppModuleResource reference to resolve.  Expected to be of
-     *               format:
-     *               <br><tt>appModuleResource?moduleID=<i>moduleID</i>&resourceURI=<i>some/URI</i></tt>
+     * @param pReference The AppModuleResource reference to resolve.  Expected to be of
+     *                   format:
+     *                   <br><tt>appModuleResource?moduleID=<i>moduleID</i>&resourceURI=<i>some/URI</i></tt>
      *
-     * @return File the referenced module resource.
+     * @return the referenced module resource.
      * @throws IllegalArgumentException if the specified reference does not have the proper
      *                                  structure.
      */
@@ -1991,7 +1973,7 @@ public class TestUtils
     private static DynamoEnv dynamoEnv() {
         if ( mDynamoEnv == null ) {
             try {
-                mDynamoEnv = (DynamoEnv) DynamoEnv.class.newInstance();
+                mDynamoEnv = DynamoEnv.class.newInstance();
             } catch ( Throwable t ) {
                 logger.catching(t);
             }
@@ -2006,7 +1988,7 @@ public class TestUtils
         Boolean isBigEar = (Boolean) invokeMethod(
                 dynamoEnv(), "isBigEar", null, null, Boolean.FALSE
         );
-        return isBigEar.booleanValue();
+        return isBigEar;
     }
 
     /**
@@ -2017,7 +1999,7 @@ public class TestUtils
         Boolean isStandalone = (Boolean) invokeMethod(
                 dynamoEnv(), "getStandaloneMode", null, null, Boolean.FALSE
         );
-        return isStandalone.booleanValue();
+        return isStandalone;
     }
 
     /**
@@ -2040,22 +2022,16 @@ public class TestUtils
                     dynamoEnv(), "getProperty", new Class[] { String.class }, args, null
             );
             if ( propval != null ) {
-                isliveconfig = Boolean.valueOf("on".equalsIgnoreCase(propval));
+                isliveconfig = "on".equalsIgnoreCase(propval);
             } else {
-                isliveconfig = Boolean.valueOf(
-                        "on".equalsIgnoreCase(
-                                System.getProperty(
-                                        "atg.dynamo.liveconfig"
-                                )
+                isliveconfig = "on".equalsIgnoreCase(
+                        System.getProperty(
+                                "atg.dynamo.liveconfig"
                         )
                 );
             }
         }
-        if ( isliveconfig != null ) {
-            return isliveconfig.booleanValue();
-        } else {
-            return false;
-        }
+        return isliveconfig != null && isliveconfig;
     }
 
     public static Object invokeMethod(Object pObj,

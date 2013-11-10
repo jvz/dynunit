@@ -30,27 +30,7 @@ import java.io.IOException;
 public class AtgDustCaseTest
         extends TestCase {
 
-    private AtgDustCase atgCase = new AtgDustCase();
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp()
-            throws Exception {
-        super.setUp();
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see junit.framework.TestCase#tearDown()
-     */
-    protected void tearDown()
-            throws Exception {
-        super.tearDown();
-    }
+    private final AtgDustCase atgCase = new AtgDustCase();
 
     /**
      * Test method for
@@ -74,7 +54,7 @@ public class AtgDustCaseTest
         try {
             atgCase.tearDown();
         } catch ( Exception e ) {
-            fail("Previous call should not have triggerd an Exception");
+            fail("Previous call should not have triggered an Exception");
         }
 
         try {
@@ -96,7 +76,7 @@ public class AtgDustCaseTest
             atgCase.setDebug(true);
         } catch ( Exception e ) {
             e.printStackTrace();
-            fail("Previous call should not have triggerd an Exception");
+            fail("Previous call should not have triggered an Exception");
         }
 
     }

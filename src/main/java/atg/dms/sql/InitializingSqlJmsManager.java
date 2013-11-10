@@ -42,13 +42,13 @@ import java.sql.SQLException;
 public class InitializingSqlJmsManager
         extends SqlJmsManager {
 
-    public String mSQLRepositoryPath = "/atg/dynamo/service/jdbc/SQLRepository";
+    private String mSQLRepositoryPath = "/atg/dynamo/service/jdbc/SQLRepository";
 
-    boolean mCreatingSchemaOnStartup = true;
+    private final boolean mCreatingSchemaOnStartup = true;
 
-    boolean mDropSchemaOnShutdown = false;
+    private boolean mDropSchemaOnShutdown = false;
 
-    boolean mDropSchemaOnStartup = true;
+    private boolean mDropSchemaOnStartup = true;
 
     // ---------------------
 
@@ -73,8 +73,6 @@ public class InitializingSqlJmsManager
 
     /**
      * Creates the required tables for this component.
-     *
-     * @throws FileNotFoundException
      */
     public void createSchema() {
         String ddlPath = getDDLPath(getDatabaseName());
@@ -162,8 +160,7 @@ public class InitializingSqlJmsManager
             if ( c != null ) {
                 try {
                     c.close();
-                } catch ( SQLException e ) {
-                    ;
+                } catch ( SQLException ignored ) {
                 }
             }
         }

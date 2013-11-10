@@ -38,13 +38,13 @@ import java.io.IOException;
 public class ProfileFormHandlerTest
         extends TestCase {
 
-    public static final String PROFILE_ADAPTER_REPOSITORY_PATH = "/atg/userprofiling/ProfileAdapterRepository";
+    private static final String PROFILE_ADAPTER_REPOSITORY_PATH = "/atg/userprofiling/ProfileAdapterRepository";
 
-    Logger mLogger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
-    Nucleus mNucleus = null;
+    private Nucleus mNucleus = null;
 
-    ServletTestUtils mServletTestUtils = new ServletTestUtils();
+    private final ServletTestUtils mServletTestUtils = new ServletTestUtils();
 
     // ------------------------------------
 
@@ -53,7 +53,7 @@ public class ProfileFormHandlerTest
      */
     @Override
     public void setUp() {
-        mLogger.info("Starting Nucleus.");
+        logger.info("Starting Nucleus.");
         try {
             System.setProperty("derby.locks.deadlockTrace", "true");
             mNucleus = NucleusTestUtils.startNucleusWithModules(
@@ -63,6 +63,7 @@ public class ProfileFormHandlerTest
                     PROFILE_ADAPTER_REPOSITORY_PATH
             );
         } catch ( ServletException e ) {
+            logger.catching(e);
             fail(e.getMessage());
         }
 
@@ -76,13 +77,15 @@ public class ProfileFormHandlerTest
      */
     @Override
     public void tearDown() {
-        mLogger.info("Stopping Nucleus.");
+        logger.info("Stopping Nucleus.");
         if ( mNucleus != null ) {
             try {
                 NucleusTestUtils.shutdownNucleus(mNucleus);
             } catch ( ServiceException e ) {
+                logger.catching(e);
                 fail(e.getMessage());
             } catch ( IOException e ) {
+                logger.catching(e);
                 fail(e.getMessage());
             }
         }

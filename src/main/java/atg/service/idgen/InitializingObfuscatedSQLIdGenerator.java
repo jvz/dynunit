@@ -33,14 +33,14 @@ public class InitializingObfuscatedSQLIdGenerator
         extends ObfuscatedSQLIdGenerator
         implements InitializingIdGenerator {
 
-    IdGeneratorInitializer mInitializer;
+    private IdGeneratorInitializer mInitializer;
 
-    String mCreateStatement = null;
+    private String mCreateStatement = null;
 
     /**
      * The SQL statement required to create the table used by this component.
      */
-    public static final String CREATE_STATEMENT = "create table das_secure_id_gen"
+    private static final String CREATE_STATEMENT = "create table das_secure_id_gen"
                                                   + " (id_space_name   varchar(60)    not null,"
                                                   + "seed    numeric(19,0)    not null,"
                                                   + "batch_size      integer not null,"

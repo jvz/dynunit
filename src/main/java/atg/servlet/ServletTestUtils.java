@@ -67,6 +67,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+// XXX: this file is way too big and is missing hundreds of javadoc definitions
 /**
  * Utility methods for setting up Servlet based tests.
  *
@@ -168,7 +169,7 @@ public class ServletTestUtils {
      * @param pMethod     The HTTP method for this request. For example GET,POST,PUT
      */
     public TestingDynamoHttpServletRequest createDynamoHttpServletRequestForSession(Nucleus pNucleus,
-                                                                                    Map<String, ? extends Object> pParameters,
+                                                                                    Map<String, ?> pParameters,
                                                                                     int pBufferSize,
                                                                                     String pMethod,
                                                                                     String pSessionId) {
@@ -236,7 +237,7 @@ public class ServletTestUtils {
      * the mime-typer will not be set by
      * createDynamoHttpServletRequest.
      */
-    protected String getMimeTyperPath() {
+    String getMimeTyperPath() {
         return "/atg/dynamo/servlet/pipeline/MimeTyper";
     }
 
@@ -244,7 +245,7 @@ public class ServletTestUtils {
      * Return the path of the request scope manager. A null value
      * means the scope manager will not be created.
      */
-    protected String getRequestScopeManagerPath() {
+    String getRequestScopeManagerPath() {
         return "/atg/dynamo/servlet/pipeline/RequestScopeManager";
     }
 
@@ -252,7 +253,7 @@ public class ServletTestUtils {
      * Return the path of the request scope manager. A null value
      * means the scope manager will not be created.
      */
-    protected String getWindowScopeManagerPath() {
+    String getWindowScopeManagerPath() {
         return "/atg/dynamo/servlet/pipeline/WindowScopeManager";
     }
 
@@ -261,7 +262,7 @@ public class ServletTestUtils {
      * the AppServerConfig will not be checked by
      * createDynamoHttpServletRequestForSession.
      */
-    protected String getAppServerConfigPath() {
+    String getAppServerConfigPath() {
         return "/atg/dynamo/service/AppServerConfig";
     }
 
@@ -281,7 +282,7 @@ public class ServletTestUtils {
      *                    this request
      * @param pMethod     The HTTP method for this request. For example GET,POST,PUT
      */
-    public TestingDynamoHttpServletRequest createDynamoHttpServletRequest(Map<String, ? extends Object> pParameters,
+    public TestingDynamoHttpServletRequest createDynamoHttpServletRequest(Map<String, ?> pParameters,
                                                                           int pBufferSize,
                                                                           String pMethod) {
         return createDynamoHttpServletRequest(
@@ -343,7 +344,7 @@ public class ServletTestUtils {
      * @param pSessionId  The session id on the request. Null means
      *                    use default.
      */
-    public TestingDynamoHttpServletRequest createDynamoHttpServletRequest(Map<String, ? extends Object> pParameters,
+    public TestingDynamoHttpServletRequest createDynamoHttpServletRequest(Map<String, ?> pParameters,
                                                                           int pBufferSize,
                                                                           String pMethod,
                                                                           String pSessionId) {
@@ -371,7 +372,7 @@ public class ServletTestUtils {
     /**
      * Create a generic HTTP servlet request, or subclass.
      */
-    protected GenericHttpServletRequest createGenericHttpServletRequest(String pSessionId) {
+    GenericHttpServletRequest createGenericHttpServletRequest(String pSessionId) {
         if ( pSessionId != null ) {
             return new SessionIdSettingGenericHttpServletRequest(pSessionId);
         }
@@ -380,13 +381,13 @@ public class ServletTestUtils {
     }
 
 
-    public String createQueryString(Map<String, ? extends Object> pParameters) {
+    public String createQueryString(Map<String, ?> pParameters) {
         if ( pParameters == null ) {
             return null;
         }
         // have to use StringBuffer for URLUtils
         StringBuffer strbuf = new StringBuffer();
-        for ( Map.Entry<String, ? extends Object> entryCur : pParameters.entrySet() ) {
+        for ( Map.Entry<String, ?> entryCur : pParameters.entrySet() ) {
 
             String strKey = entryCur.getKey();
             Object objValue = entryCur.getValue();
@@ -397,18 +398,18 @@ public class ServletTestUtils {
                 );
             } else if ( objValue == null ) {
                 // just ignore, I reckon
-            } else if ( objValue.getClass() == new String[0].getClass() ) {
+            } else if ( objValue.getClass() == String[].class ) {
                 String[] rgstr = (String[]) (objValue);
-                for ( int i = 0; i < rgstr.length; i++ ) {
+                for ( String aRgstr : rgstr ) {
                     escapeAndAppendParamNameAndValue(
-                            strbuf, strKey, rgstr[i]
+                            strbuf, strKey, aRgstr
                     );
                 }
             } else if ( objValue instanceof ParamStackQueryParams ) {
                 String[] rgstr = ((ParamStackQueryParams) objValue).getValues();
-                for ( int i = 0; i < rgstr.length; i++ ) {
+                for ( String aRgstr : rgstr ) {
                     escapeAndAppendParamNameAndValue(
-                            strbuf, strKey, rgstr[i]
+                            strbuf, strKey, aRgstr
                     );
                 }
             } else if ( objValue instanceof Collection ) {
@@ -443,9 +444,7 @@ public class ServletTestUtils {
      * @param pName   the name of the query param to append
      * @param pValue  the value of the query param to append
      */
-    protected void escapeAndAppendParamNameAndValue(StringBuffer pBuffer,
-                                                    String pName,
-                                                    String pValue) {
+    void escapeAndAppendParamNameAndValue(StringBuffer pBuffer, String pName, String pValue) {
 
         if ( pBuffer.length() == 0 ) {
             pBuffer.append("?");
@@ -465,7 +464,7 @@ public class ServletTestUtils {
     static class SessionIdSettingGenericHttpServletRequest
             extends GenericHttpServletRequest {
 
-        String mSessionId;
+        final String mSessionId;
 
         SessionIdSettingGenericHttpServletRequest(String pSessionId) {
             mSessionId = pSessionId;
@@ -491,7 +490,7 @@ public class ServletTestUtils {
     // -----------------------------
 
     /**
-     * Creates a new DynamoHtttpServletResponse object that can be used in a unit
+     * Creates a new DynamoHttpServletResponse object that can be used in a unit
      * test.
      */
     public TestingDynamoHttpServletResponse createDynamoHttpServletResponse() {
@@ -598,7 +597,7 @@ public class ServletTestUtils {
         mimeTypes.add("xsl");
         mimeTypes.add("text/xml");
 
-        mimeTyper.setExtensionToMimeType(mimeTypes.toArray(new String[0]));
+        mimeTyper.setExtensionToMimeType(mimeTypes.toArray(new String[mimeTypes.size()]));
         mimeTyper.processMimeTypes();
         return mimeTyper;
     }
@@ -624,7 +623,7 @@ public class ServletTestUtils {
 
         private boolean mRecordDispatches;
 
-        private List<TestingDispatchRecord> mDispatchRecords = new ArrayList<TestingDispatchRecord>(
+        private final List<TestingDispatchRecord> mDispatchRecords = new ArrayList<TestingDispatchRecord>(
                 0
         );
 
@@ -675,10 +674,10 @@ public class ServletTestUtils {
         /**
          * Return the list of dispatch records. A record is created by a
          * RequestDispatcher obtained from a TestingDynamoHttpServletRequest
-         * include() if recordDispaches is true).
+         * include() if recordDispatches is true).
          */
         public TestingDispatchRecord[] getDispatchRecords() {
-            return mDispatchRecords.toArray(new TestingDispatchRecord[0]);
+            return mDispatchRecords.toArray(new TestingDispatchRecord[mDispatchRecords.size()]);
         }
 
 
@@ -721,7 +720,7 @@ public class ServletTestUtils {
 
 
         /**
-         * Record request dispatches. Only records if recordDispaches
+         * Record request dispatches. Only records if recordDispatches
          * is true.
          *
          * @param pServletContext the ServletContext of the include or forward
@@ -768,7 +767,7 @@ public class ServletTestUtils {
 
         /**
          * Sets the writer on this response to the given output stream.
-         * Users can get access to this outputstream and examine the
+         * Users can get access to this outputStream and examine the
          * output after the data has been written
          *
          * @param pTestingOutputStream the output stream to use for testing
@@ -1379,7 +1378,7 @@ public class ServletTestUtils {
          * Constructs a new TestingDynamoHttpServletRequest which wraps the given
          * request object.
          * <p/>
-         * NOTE: The getLog() method of DynamoHttpServletRequest is final and cannot be overriden
+         * NOTE: The getLog() method of DynamoHttpServletRequest is final and cannot be overridden
          * in
          * this
          * test version. Therefore you cannot depend upon the functionality of this method call in
@@ -1426,7 +1425,7 @@ public class ServletTestUtils {
          * stream to which an HTTP client would write to a server. IMPORTANT: Be
          * sure to call <code>prepareForRead()</code> after you are done writing
          * to this stream. This allows that data to be read from the input stream
-         * objtained by calling getInputStream() on the underlying request.
+         * obtained by calling getInputStream() on the underlying request.
          *
          * @param pNew if true, a new stream is always created. Otherwise the previous
          *             stream is returned.
@@ -2325,17 +2324,13 @@ public class ServletTestUtils {
 
 
         public boolean isBlockDispatches() {
-            if ( getResponse() instanceof TestingDynamoHttpServletResponse ) {
-                return ((TestingDynamoHttpServletResponse) getResponse()).isBlockDispatches();
-            }
-            return false;
+            return getResponse() instanceof TestingDynamoHttpServletResponse
+                   && ((TestingDynamoHttpServletResponse) getResponse()).isBlockDispatches();
         }
 
         public boolean isRecordDispatches() {
-            if ( getResponse() instanceof TestingDynamoHttpServletResponse ) {
-                return ((TestingDynamoHttpServletResponse) getResponse()).isRecordDispatches();
-            }
-            return false;
+            return getResponse() instanceof TestingDynamoHttpServletResponse
+                   && ((TestingDynamoHttpServletResponse) getResponse()).isRecordDispatches();
         }
 
 
@@ -3970,11 +3965,11 @@ public class ServletTestUtils {
     static class TestingRequestDispatcher
             implements RequestDispatcher {
 
-        ServletContext mServletContext;
+        final ServletContext mServletContext;
 
-        String mPath;
+        final String mPath;
 
-        RequestDispatcher mDispatcher;
+        final RequestDispatcher mDispatcher;
 
 
         /**
@@ -4028,11 +4023,11 @@ public class ServletTestUtils {
      */
     public static class TestingDispatchRecord {
 
-        ServletContext mServletContext;
+        final ServletContext mServletContext;
 
-        String mPath;
+        final String mPath;
 
-        boolean mIsInclude;
+        final boolean mIsInclude;
 
         /**
          * Create a TestingDispatchRecord.
@@ -4063,7 +4058,7 @@ public class ServletTestUtils {
         }
 
         /**
-         * Whether the dispath was a forward.
+         * Whether the dispatch was a forward.
          */
         public boolean isForward() {
             return !mIsInclude;

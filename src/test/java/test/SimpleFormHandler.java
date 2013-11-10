@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package test;
 
 import atg.droplet.GenericFormHandler;
@@ -22,7 +23,7 @@ import atg.servlet.DynamoHttpServletResponse;
 import java.io.IOException;
 
 /**
- * A form handler implemention to be used as example code for testing.
+ * A form handler implementation to be used as example code for testing.
  *
  * @author adamb
  */
@@ -31,7 +32,7 @@ public class SimpleFormHandler
 
     public static final String REDIRECT_URL_PARAM_NAME = "redirectURL";
 
-    public String mErrorURL = "/error.jsp";
+    private String mErrorURL = "/error.jsp";
 
     /**
      * Sets the URL to which this formhandler redirects on any error.

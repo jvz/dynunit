@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package atg.adapter.gsa;
 
 import atg.adapter.gsa.xml.TemplateParser;
@@ -22,7 +23,6 @@ import atg.junit.nucleus.TestUtils;
 import atg.naming.NameContext;
 import atg.naming.NameContextBindingEvent;
 import atg.nucleus.Configuration;
-import atg.nucleus.GenericService;
 import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusNameResolver;
 import atg.nucleus.ServiceEvent;
@@ -34,7 +34,6 @@ import org.apache.ddlutils.DatabaseOperationException;
 import javax.transaction.TransactionManager;
 import java.io.File;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,7 +41,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Vector;
 
 /**
  * This class is an extension of atg.adapter.gsa.GSARepository. It's purpose is
@@ -133,13 +131,13 @@ public class InitializingGSA
         }
 
         List<String> v = new ArrayList<String>();
-        for ( int i = 0; i < f.length; i++ ) {
-            if ( !v.contains(f[i].getAbsolutePath()) ) {
-                v.add(f[i].getAbsolutePath());
+        for ( File aF : f ) {
+            if ( !v.contains(aF.getAbsolutePath()) ) {
+                v.add(aF.getAbsolutePath());
             }
         }
 
-        return (String[]) v.toArray(new String[v.size()]);
+        return v.toArray(new String[v.size()]);
     }
 
     // do we want to strip the 'references(..)' statements from SQL
@@ -157,7 +155,7 @@ public class InitializingGSA
     // do we want to show the create table statements that are executed
     private boolean mShowCreate = false;
 
-    public void setloggingCreateTables(boolean pLog) {
+    public void setLoggingCreateTables(boolean pLog) {
         mShowCreate = pLog;
     }
 
@@ -184,8 +182,8 @@ public class InitializingGSA
             mSQLProcessor.setLoggingInfo(this.isLoggingInfo());
             mSQLProcessor.setLoggingWarning(this.isLoggingWarning());
             LogListener[] listeners = this.getLogListeners();
-            for ( int i = 0; i < listeners.length; i++ ) {
-                mSQLProcessor.addLogListener(listeners[i]);
+            for ( LogListener listener : listeners ) {
+                mSQLProcessor.addLogListener(listener);
             }
         }
 
@@ -278,7 +276,7 @@ public class InitializingGSA
      *           d) if a mapping exists for a db type in 'sqlCreateFiles' then a corresponding
      *              entry (to the specific db type, or to default) must exist.  Otherwise an
      * exception
-     *              is thrown at starup.
+     *              is thrown at startup.
      *
      * </pre>
      * <p/>
@@ -336,7 +334,7 @@ public class InitializingGSA
         return mSqlDropFiles;
     }
 
-    public boolean mAllowNoDrop = true;
+    private boolean mAllowNoDrop = true;
 
     /**
      * If true, one may specify create scripts, but no drop scripts. Otherwise it
@@ -412,7 +410,7 @@ public class InitializingGSA
         return mTemporaryInstantiation;
     }
 
-    public boolean mRestartAfterTableCreation = true;
+    private boolean mRestartAfterTableCreation = true;
 
     private GSARepositorySchemaGenerator mGenerator;
 
@@ -441,8 +439,6 @@ public class InitializingGSA
      * Overrides doStartService from GSARepository to make the repository
      * optionally create required tables and load data using the TemplateParser
      * -import flag.
-     *
-     * @throws RepositoryException (?)
      */
     public void doStartService() {
         // Loading Column Infos in a separate thread
@@ -582,7 +578,7 @@ public class InitializingGSA
         // bound to the same name context as the original repository
         // This changes will make sure that getAbsoluteName() returns
         // a correct value.
-        NameContext nc = ((GenericService) this).getNameContext();
+        NameContext nc = this.getNameContext();
         NameContextBindingEvent bindingEvent = new NameContextBindingEvent(
                 this.getName(), newRepository, this.getNameContext()
         );
@@ -646,14 +642,14 @@ public class InitializingGSA
      *
      * @throws RepositoryException   if an error occurs while retrieving a list of the tables
      *                               associated with the repository
-     * @throws SQLProcessorException if an error occured trying to drop the tables
+     * @throws SQLProcessorException if an error occurred trying to drop the tables
      */
     public void dropTables()
             throws RepositoryException, SQLProcessorException {
         // execute SQL files, if specified
         String[] dropFiles = getSpecifiedDropFiles();
         if ( dropFiles != null ) {
-            if ( isExecuteCreateAndDropScripts() && dropFiles != null ) {
+            if ( isExecuteCreateAndDropScripts() ) {
                 executeSqlFiles(dropFiles, false);
             } else if ( isLoggingInfo() ) {
                 logInfo("Skipping execution of SQL scripts b/c property 'executeCreateAndDropScripts' is false or there are no drop scripts.");
@@ -674,11 +670,9 @@ public class InitializingGSA
                 }
             } catch ( DatabaseOperationException e ) {
                 throw new RepositoryException(e);
-            } catch ( SQLException e ) {
-                throw new RepositoryException(e);
             }
         } else {
-            Vector statements = getCreateStatements(null, null);
+            List<String> statements = getCreateStatements(null, null);
             SQLProcessorEngine processor = getSQLProcessor();
             processor.dropTablesFromCreateStatements(statements);
 
@@ -694,7 +688,7 @@ public class InitializingGSA
      * @return boolean - true if tables were created
      * @throws RepositoryException   if an error occurs while retrieving a list of the tables to
      *                               create
-     * @throws SQLProcessorException if an error occured trying to create the tables
+     * @throws SQLProcessorException if an error occurred trying to create the tables
      */
     private boolean createTables()
             throws RepositoryException, SQLProcessorException {
@@ -724,8 +718,6 @@ public class InitializingGSA
                     createdTables = true;
                 } catch ( DatabaseOperationException e ) {
                     throw new RepositoryException(e);
-                } catch ( SQLException e ) {
-                    throw new RepositoryException(e);
                 }
             }
         } else {
@@ -734,7 +726,7 @@ public class InitializingGSA
             // turn on debug for SQLProcessorEngine if GSA has debug on if
             // (isLoggingDebug())
             spe.setLoggingDebug(true);
-            Vector createStatements = getCreateStatements(null, null);
+            List<String> createStatements = getCreateStatements(null, null);
             createdTables = spe.createTables(createStatements, isDropTablesIfExist());
 
         }
@@ -745,7 +737,7 @@ public class InitializingGSA
     /**
      * This method imports files using the TemplateParser
      *
-     * @throws RepositoryException if an error occured while importing one of the xml files.
+     * @throws RepositoryException if an error occurred while importing one of the xml files.
      */
     private void importFiles()
             throws RepositoryException {
@@ -764,14 +756,14 @@ public class InitializingGSA
 
         if ( isLoggingDebug() ) {
             logDebug("The following files will be imported:");
-            for ( int i = 0; i < loadFiles.length; i++ ) {
-                logDebug("file: " + loadFiles[i]);
+            for ( String loadFile : loadFiles ) {
+                logDebug("file: " + loadFile);
             }
         }
 
         // now load the import files if they were specified
         PrintWriter ps = new PrintWriter(System.out);
-        if ( loadFiles != null && loadFiles.length > 0 ) {
+        if ( loadFiles.length > 0 ) {
             try {
                 TemplateParser.importFiles(
                         this, loadFiles, ps, isImportWithTransaction()
@@ -801,11 +793,11 @@ public class InitializingGSA
         pStr = stripForeignKey(pStr);
 
         // must be of the following format
-        // fieldname data-type null references foo(id),
+        // field-name data-type null references foo(id),
         String ref = "references ";
         String endRef = ",";
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int start = 0;
         int end = 0;
         end = pStr.indexOf(ref);
@@ -865,10 +857,10 @@ public class InitializingGSA
      *
      * @throws RepositoryException if an error occurs with the Repository
      */
-    private Vector getCreateStatements(PrintWriter pOut, String pDatabaseName)
+    private List<String> getCreateStatements(PrintWriter pOut, String pDatabaseName)
             throws RepositoryException {
-        Vector tableStatements = new Vector();
-        Vector indexStatements = new Vector();
+        List<String> tableStatements = new ArrayList<String>();
+        List<String> indexStatements = new ArrayList<String>();
 
         // use current database if none is supplied
         if ( pDatabaseName == null ) {
@@ -892,8 +884,7 @@ public class InitializingGSA
             GSAItemDescriptor desc = itemDescriptors[i];
             Table[] tables = desc.getTables();
             if ( tables != null ) {
-                for ( int j = 0; j < tables.length; j++ ) {
-                    Table t = tables[j];
+                for ( Table t : tables ) {
                     if ( !t.isInherited() ) {
                         sqlContext.clear();
                         create = t.generateSQL(sqlContext, pDatabaseName);
@@ -972,23 +963,23 @@ public class InitializingGSA
 
     // ---------- methods to help with user-specified SQL files -----------
     // allowable db types to specify
-    public String SOLID = "solid";
+    private final String SOLID = "solid";
 
-    public String ORACLE = "oracle";
+    private final String ORACLE = "oracle";
 
-    public String MICROSOFT = "microsoft";
+    private final String MICROSOFT = "microsoft";
 
-    public String INFORMIX = "informix";
+    private final String INFORMIX = "informix";
 
-    public String DB2 = "db2";
+    private final String DB2 = "db2";
 
-    public String SYBASE = "sybase";
+    private final String SYBASE = "sybase";
 
-    public String SYBASE2 = "Adaptive Server Enterprise"; // sybase 12.5
+    private final String SYBASE2 = "Adaptive Server Enterprise"; // sybase 12.5
 
-    public String DEFAULT = "default";
+    private final String DEFAULT = "default";
 
-    private String[] dbTypes = {
+    private final String[] dbTypes = {
             SOLID, ORACLE, MICROSOFT, INFORMIX, DB2, SYBASE, SYBASE2, DEFAULT
     };
 
@@ -999,12 +990,12 @@ public class InitializingGSA
      */
     private String getDatabaseType() {
         String type = getDatabaseName();
-        for ( int i = 0; i < dbTypes.length; i++ ) {
-            if ( type.toLowerCase().indexOf(dbTypes[i].toLowerCase()) > -1 ) {
-                if ( dbTypes[i].equals(SYBASE2) ) {
+        for ( String dbType : dbTypes ) {
+            if ( type.toLowerCase().contains(dbType.toLowerCase()) ) {
+                if ( dbType.equals(SYBASE2) ) {
                     return SYBASE;
                 }
-                return dbTypes[i];
+                return dbType;
             }
         }
         return DEFAULT;
@@ -1081,14 +1072,14 @@ public class InitializingGSA
             setSqlDropFiles(new Properties());
         }
         // make sure all the keys are valid
-        Set keys = new HashSet();
+        Set<Object> keys = new HashSet<Object>();
         keys.addAll(getSqlCreateFiles().keySet());
         keys.addAll(getSqlDropFiles().keySet());
-        Set allow_keys = new HashSet();
-        for ( int i = 0; i < dbTypes.length; i++ ) {
-            keys.remove(dbTypes[i]);
-            if ( !dbTypes[i].equals(SYBASE2) ) {
-                allow_keys.add(dbTypes[i]);
+        Set<String> allow_keys = new HashSet<String>();
+        for ( String dbType1 : dbTypes ) {
+            keys.remove(dbType1);
+            if ( !dbType1.equals(SYBASE2) ) {
+                allow_keys.add(dbType1);
             }
         }
         if ( keys.size() > 0 ) {
@@ -1109,14 +1100,14 @@ public class InitializingGSA
         }
 
         // otherwise, check each dbType individually
-        for ( int i = 0; i < dbTypes.length; i++ ) {
-            boolean isCreate = (getSqlCreateFiles().get(dbTypes[i]) != null);
-            boolean isDrop = (getSqlDropFiles().get(dbTypes[i]) != null);
+        for ( String dbType : dbTypes ) {
+            boolean isCreate = (getSqlCreateFiles().get(dbType) != null);
+            boolean isDrop = (getSqlDropFiles().get(dbType) != null);
             if ( !isAllowNoDrop() ) {
                 if ( isCreate && !isDrop && !isDefaultDrop ) {
                     throw new RepositoryException(
                             "Mapping exists for database type "
-                            + dbTypes[i]
+                            + dbType
                             + " in property 'sqlCreateFiles', but not in property 'sqlDropFiles', and "
                             + "there is no default specified."
                     );
@@ -1124,7 +1115,7 @@ public class InitializingGSA
                 if ( isDrop && !isCreate && !isDefaultCreate ) {
                     throw new RepositoryException(
                             "Mapping exists for database type "
-                            + dbTypes[i]
+                            + dbType
                             + " in property 'sqlDropFiles', but not in property 'sqlCreateFiles', and "
                             + "there is no default specified."
                     );
@@ -1136,15 +1127,16 @@ public class InitializingGSA
     /**
      * executes the specified SQL files against this Repository's DataSource.
      *
-     * @param String  [] the files to execute
-     * @param boolean true if execution should stop at first error. if false, then
-     *                a warning will be printed for encountered errors.
+     * @param pFiles       the files to execute
+     * @param pStopAtError true if execution should stop at first error. if false, then
+     *                     a warning will be printed for encountered errors.
      *
      * @throws RepositoryException if pStopAtError is true and an error occurs while executing
      *                             one of the sql statements.
      */
     private void executeSqlFiles(String[] pFiles, boolean pStopAtError)
             throws RepositoryException {
+        // XXX: again with this bullshit
         SQLProcessor sp = new SQLProcessor(getTransactionManager(), getDataSource());
         boolean success = false;
         TransactionDemarcation td = new TransactionDemarcation();
@@ -1161,12 +1153,11 @@ public class InitializingGSA
             // if (getDatabaseType().equals(MICROSOFT))
             //  sp.setAutoCommit(true);
             SQLFileParser parser = new SQLFileParser();
-            for ( int i = 0; i < pFiles.length; i++ ) {
-                String file = pFiles[i];
+            for ( String file : pFiles ) {
                 // switch the file path so everything is forward slashes
                 file = file.replace('\\', '/');
-                String cmd = null;
-                Iterator cmds = null;
+                String cmd;
+                Iterator cmds;
                 if ( isLoggingInfo() ) {
                     logInfo("Executing SQL file: " + file);
                 }

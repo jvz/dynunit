@@ -32,7 +32,6 @@ import javax.servlet.ServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -87,17 +86,17 @@ public class DropletInvoker {
     // -------------------------------------
     // Member variables
 
-    Map<String, Boolean> mOparamExistsOverrideMap = new HashMap<String, Boolean>();
+    private final Map<String, Boolean> mOparamExistsOverrideMap = new HashMap<String, Boolean>();
 
-    ServletTestUtils mServletTestUtils;
+    private ServletTestUtils mServletTestUtils;
 
-    TestingDynamoHttpServletRequest mRequest;
+    private TestingDynamoHttpServletRequest mRequest;
 
-    TestingDynamoHttpServletResponse mResponse;
+    private TestingDynamoHttpServletResponse mResponse;
 
-    String mSessionId;
+    private String mSessionId;
 
-    Nucleus mNucleus;
+    private final Nucleus mNucleus;
 
     // -------------------------------------
     // Properties
@@ -433,7 +432,7 @@ public class DropletInvoker {
     /**
      * Return newly created TestingDynamoHttpServletResponse. This method is used
      * to create a request for our request property to be used if the form of
-     * invokeDroplet sans request/resposne is invoked.
+     * invokeDroplet sans request/response is invoked.
      *
      * @return a new request
      */
@@ -475,8 +474,7 @@ public class DropletInvoker {
      * @return a Map for a new request.
      */
     protected Map<String, Object> createValueParametersMapForNewRequest() {
-        Map<String, Object> mapResult = new HashMap<String, Object>();
-        return mapResult;
+        return new HashMap<String, Object>();
     }
 
     // -------------------------------------
@@ -487,9 +485,9 @@ public class DropletInvoker {
      */
     public static class RenderedOutputParameter {
 
-        Map<String, Object> mFrameParameters;
+        final Map<String, Object> mFrameParameters;
 
-        String mName;
+        final String mName;
 
         /**
          * Created a representation of a rendered OutputParameter.
@@ -503,16 +501,15 @@ public class DropletInvoker {
                                        DynamoHttpServletResponse pResponse) {
             mName = pName;
             //      mFrameParameters = new HashMap(pRequest.getMapForCurrentFrame());
-            mFrameParameters = new HashMap();
+            mFrameParameters = new HashMap<String, Object>();
 
             // because of a bug with entrySet in 9.0, we go through keys
             // and copy manually, here.
 
             Map mapFrame = pRequest.getMapForCurrentFrame();
 
-            Iterator iterKeys = mapFrame.keySet().iterator();
-            while ( iterKeys.hasNext() ) {
-                String strKey = (String) iterKeys.next();
+            for ( Object o : mapFrame.keySet() ) {
+                String strKey = (String) o;
                 mFrameParameters.put(strKey, mapFrame.get(strKey));
             }
         }
@@ -537,7 +534,7 @@ public class DropletInvoker {
         }
 
         /**
-         * Get the specified frame parameter from the paramter dictionary.
+         * Get the specified frame parameter from the parameter dictionary.
          *
          * @param pName the name of the parameter to return
          *
@@ -560,20 +557,20 @@ public class DropletInvoker {
 
     /**
      * Represents the result of a droplet invocation. Contains properties
-     * representing the droplet, request and response. Also trackes which OPARAMs
+     * representing the droplet, request and response. Also tracks which OPARAMs
      * were rendered during the course of the droplet.
      */
     public class DropletResult {
 
-        Servlet mDroplet;
+        final Servlet mDroplet;
 
-        DynamoHttpServletRequest mRequest;
+        final DynamoHttpServletRequest mRequest;
 
-        DynamoHttpServletResponse mResponse;
+        final DynamoHttpServletResponse mResponse;
 
-        List<RenderedOutputParameter> mRenderedParameters = new ArrayList<RenderedOutputParameter>();
+        final List<RenderedOutputParameter> mRenderedParameters = new ArrayList<RenderedOutputParameter>();
 
-        Map<String, List<RenderedOutputParameter>> mNameToRenderedParameters = new HashMap<String, List<RenderedOutputParameter>>();
+        final Map<String, List<RenderedOutputParameter>> mNameToRenderedParameters = new HashMap<String, List<RenderedOutputParameter>>();
 
         /**
          * Create a new DropletResult.
@@ -760,7 +757,7 @@ public class DropletInvoker {
         /**
          * The droplet result to which we will add RenderedOutputParameter.
          */
-        DropletResult mDropletResult;
+        final DropletResult mDropletResult;
 
         /**
          * Create a new instance that will invoke addRenderedParameter to
@@ -795,7 +792,7 @@ public class DropletInvoker {
             boolean bResult = pResult;
             if ( null != mOparamExistsOverrideMap.get(pParameterName) ) {
                 // override map always wins
-                bResult = mOparamExistsOverrideMap.get(pParameterName).booleanValue();
+                bResult = mOparamExistsOverrideMap.get(pParameterName);
             } else {
                 if ( !bResult && getOparamsExistByDefault() ) {
                     bResult = true;

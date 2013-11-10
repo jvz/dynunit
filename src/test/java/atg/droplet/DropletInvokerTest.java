@@ -60,7 +60,7 @@ public class DropletInvokerTest
     //-------------------------------------
     // Member variables
 
-    Nucleus mNucleus;
+    private Nucleus mNucleus;
 
     //-------------------------------------
     // Properties
@@ -105,13 +105,13 @@ public class DropletInvokerTest
         doTestForEach();
     }
 
-    public void doTestSwitch()
+    void doTestSwitch()
             throws ServletException, IOException {
         DropletInvoker invoker = new DropletInvoker(mNucleus);
         DynamoHttpServletRequest request = invoker.getRequest();
 
         assertNotNull("Request must not be null.", request);
-        assertNotNull("Request's session must not be null.", request.getSession());
+        assertNotNull("Request session must not be null.", request.getSession());
         // test unset if value isn't set
 
         DropletResult result = invoker.invokeDroplet("/atg/dynamo/droplet/Switch");
@@ -148,7 +148,7 @@ public class DropletInvokerTest
     }
 
 
-    public void doTestForEach()
+    void doTestForEach()
             throws ServletException, IOException {
         DropletInvoker invoker = new DropletInvoker(mNucleus);
 
@@ -174,7 +174,7 @@ public class DropletInvokerTest
         );
 
         // use an old-fashioned for, because we want to test numeric
-        // lookups, too.
+        // look-ups, too.
         for ( int i = 0; i < strings.length; i++ ) {
             RenderedOutputParameter oparam = listOutputs.get(i);
 

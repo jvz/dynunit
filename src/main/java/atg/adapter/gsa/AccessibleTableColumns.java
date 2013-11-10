@@ -28,11 +28,11 @@ import java.util.List;
  *
  * @author adamb
  */
-public class AccessibleTableColumns {
+class AccessibleTableColumns {
 
-    Logger log = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
-    public TableColumns mTableColumns;
+    private final TableColumns mTableColumns;
 
     public AccessibleTableColumns(TableColumns pTable) {
         mTableColumns = pTable;
@@ -48,8 +48,7 @@ public class AccessibleTableColumns {
      */
     public ColumnDefinitionNode getHead() {
         String fieldName = "mHead";
-        ColumnDefinitionNode node = (ColumnDefinitionNode) getPrivateField(fieldName);
-        return node;
+        return (ColumnDefinitionNode) getPrivateField(fieldName);
     }
 
     // ------------------------
@@ -62,8 +61,7 @@ public class AccessibleTableColumns {
      */
     public ColumnDefinitionNode getTail() {
         String fieldName = "mTail";
-        ColumnDefinitionNode node = (ColumnDefinitionNode) getPrivateField(fieldName);
-        return node;
+        return  (ColumnDefinitionNode) getPrivateField(fieldName);
     }
 
     // ------------------------
@@ -76,8 +74,7 @@ public class AccessibleTableColumns {
      */
     public List getPrimaryKeys() {
         String fieldName = "mPrimaryKeys";
-        List node = (List) getPrivateField(fieldName);
-        return node;
+        return  (List) getPrivateField(fieldName);
     }
 
     //------------------------
@@ -90,8 +87,7 @@ public class AccessibleTableColumns {
      */
     public List getForeignKeys() {
         String fieldName = "mForeignKeys";
-        List node = (List) getPrivateField(fieldName);
-        return node;
+        return  (List) getPrivateField(fieldName);
     }
 
     // ------------------------
@@ -104,12 +100,11 @@ public class AccessibleTableColumns {
      */
     public String getMultiColumnName() {
         String fieldName = "mMultiColumnName";
-        String node = (String) getPrivateField(fieldName);
-        return node;
+        return  (String) getPrivateField(fieldName);
     }
 
     // ------------------------
-    public Object getPrivateField(String fieldName) {
+    Object getPrivateField(String fieldName) {
         Field columnDefinitionNode = null;
         Object field = null;
         try {
@@ -119,13 +114,13 @@ public class AccessibleTableColumns {
             columnDefinitionNode.setAccessible(true);
             field = columnDefinitionNode.get(mTableColumns);
         } catch ( SecurityException e ) {
-            log.catching(e);
+            logger.catching(e);
         } catch ( NoSuchFieldException e ) {
-            log.catching(e);
+            logger.catching(e);
         } catch ( IllegalArgumentException e ) {
-            log.catching(e);
+            logger.catching(e);
         } catch ( IllegalAccessException e ) {
-            log.catching(e);
+            logger.catching(e);
         }
         return field;
     }

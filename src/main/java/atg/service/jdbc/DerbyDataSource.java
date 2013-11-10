@@ -39,15 +39,15 @@ import java.sql.SQLException;
 public class DerbyDataSource
         extends InitializingDataSourceBase {
 
-    static Logger sLog = LogManager.getLogger();
+    private static final Logger sLog = LogManager.getLogger();
 
     private String framework = "embedded";
 
-    private String driver = "org.apache.derby.jdbc.EmbeddedDriver";
+    private final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
 
-    private String protocol = "jdbc:derby:";
+    private final String protocol = "jdbc:derby:";
 
-    private boolean mAddedShutdownHook = false;
+    private final boolean mAddedShutdownHook = false;
 
     /**
      * Sets Derby JDBC properties to be used when the first client asks for a
@@ -105,7 +105,7 @@ public class DerbyDataSource
             // the shutdown=true attribute shuts down Derby
             DriverManager.getConnection("jdbc:derby:" + name + ";shutdown=true");
 
-            // To shut down a specific database only, but keeep the
+            // To shut down a specific database only, but keep the
             // engine running (for example for connecting to other
             // databases), specify a database in the connection URL:
             // DriverManager.getConnection("jdbc:derby:" + dbName +
@@ -136,7 +136,7 @@ public class DerbyDataSource
      *
      * @param e the SQLException from which to print details.
      */
-    public static void printSQLException(SQLException e) {
+    private static void printSQLException(SQLException e) {
         // Unwraps the entire exception chain to unveil the real cause of the
         // Exception.
         while ( e != null ) {

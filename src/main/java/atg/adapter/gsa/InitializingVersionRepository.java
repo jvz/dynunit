@@ -22,7 +22,6 @@ import atg.adapter.version.VersionRepository;
 import atg.junit.nucleus.TestUtils;
 import atg.naming.NameContextBindingEvent;
 import atg.nucleus.Configuration;
-import atg.nucleus.GenericService;
 import atg.nucleus.NucleusNameResolver;
 import atg.nucleus.ServiceEvent;
 import atg.nucleus.ServiceException;
@@ -86,7 +85,7 @@ import java.util.Properties;
 public class InitializingVersionRepository
         extends VersionRepository {
 
-    private static Logger log = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     // -----------------------------------
     // ---From Properties File------------
@@ -135,13 +134,13 @@ public class InitializingVersionRepository
         }
 
         List<String> v = new ArrayList<String>();
-        for ( int i = 0; i < f.length; i++ ) {
-            if ( !v.contains(f[i].getAbsolutePath()) ) {
-                v.add(f[i].getAbsolutePath());
+        for ( File aF : f ) {
+            if ( !v.contains(aF.getAbsolutePath()) ) {
+                v.add(aF.getAbsolutePath());
             }
         }
 
-        return (String[]) v.toArray(new String[v.size()]);
+        return v.toArray(new String[v.size()]);
     }
 
     // do we want to strip the 'references(..)' statements from SQL
@@ -159,7 +158,7 @@ public class InitializingVersionRepository
     // do we want to show the create table statements that are executed
     private boolean mShowCreate = false;
 
-    public void setloggingCreateTables(boolean pLog) {
+    public void setLoggingCreateTables(boolean pLog) {
         mShowCreate = pLog;
     }
 
@@ -186,8 +185,8 @@ public class InitializingVersionRepository
             mSQLProcessor.setLoggingInfo(this.isLoggingInfo());
             mSQLProcessor.setLoggingWarning(this.isLoggingWarning());
             LogListener[] listeners = this.getLogListeners();
-            for ( int i = 0; i < listeners.length; i++ ) {
-                mSQLProcessor.addLogListener(listeners[i]);
+            for ( LogListener listener : listeners ) {
+                mSQLProcessor.addLogListener(listener);
             }
         }
 
@@ -267,7 +266,7 @@ public class InitializingVersionRepository
      *          d) if a mapping exists for a db type in 'sqlCreateFiles' then a corresponding
      *             entry (to the specific db type, or to default) must exist.  Otherwise an
      * exception
-     *             is thrown at starup.
+     *             is thrown at startup.
      *  </pre>
      * <p>Also, when a file specified in the property 'sqlCreateFiles' is used (i.e. output
      * from startSQLRepository is not being used) then the initializingGSA will always
@@ -435,7 +434,7 @@ public class InitializingVersionRepository
         return mDoCheckin;
     }
 
-    public boolean mRestartAfterTableCreation = true;
+    private boolean mRestartAfterTableCreation = true;
 
     /**
      * Returns true if this repository will attempt to
@@ -481,8 +480,6 @@ public class InitializingVersionRepository
      * Overrides doStartService from VersionRepository to make the
      * repository optionally create required tables by specified sql scripts and load data
      * using the TemplateParser -import flag.
-     *
-     * @throws RepositoryException (?)
      */
     public void doStartService() {
 
@@ -528,6 +525,7 @@ public class InitializingVersionRepository
         try {
             setLoadColumnInfosAtStartup(loadColumnInfosAtStartup);
         } catch ( Throwable t ) {
+            logger.catching(t);
         }
 
         try {
@@ -587,7 +585,7 @@ public class InitializingVersionRepository
         // bound to the same name context as the original repository
         // This changes will make sure that getAbsoluteName() returns
         // a correct value.
-        ((GenericService) this).getNameContext();
+        this.getNameContext();
         new NameContextBindingEvent(
                 this.getName() + "_ver", getWrappedRepository(), this.getNameContext()
         );
@@ -654,11 +652,9 @@ public class InitializingVersionRepository
      *
      * @throws RepositoryException   if an error occurs while retrieving a
      *                               list of the tables associated with the repository
-     * @throws SQLProcessorException if an error occured trying to
-     *                               drop the tables
      */
     public void dropTables()
-            throws RepositoryException, SQLProcessorException {
+            throws RepositoryException {
         // execute SQL files, if specified
         String[] dropFiles = getSpecifiedDropFiles();
         if ( dropFiles != null ) {
@@ -674,7 +670,6 @@ public class InitializingVersionRepository
         if ( isLoggingInfo() ) {
             logInfo("Can not drop tables based on startSQLRepositoryRepository SQL. Please specified DropFiles!");
         }
-        return;
     }
 
     /**
@@ -706,7 +701,7 @@ public class InitializingVersionRepository
             // before executing the createFiles we always execute the drop files
             String[] dropFiles = getSpecifiedDropFiles();
             executeSqlFiles(dropFiles, false);
-            log.info(createFiles);
+            logger.info(createFiles);
             executeSqlFiles(createFiles, true);
             return true;
         }
@@ -765,9 +760,7 @@ public class InitializingVersionRepository
             GSAItemDescriptor desc = itemDescriptors[i];
             Table[] tables = desc.getTables();
             if ( tables != null ) {
-                for ( int j = 0; j < tables.length; j++ ) {
-                    Table t = tables[j];
-
+                for ( Table t : tables ) {
                     if ( !t.isInherited() && !tableNames.contains(t.getName()) ) {
                         sqlContext.clear();
                         create = t.generateSQL(sqlContext, pDatabaseName);
@@ -819,14 +812,14 @@ public class InitializingVersionRepository
 
         if ( isLoggingDebug() ) {
             logDebug("The following files will be imported:");
-            for ( int i = 0; i < loadFiles.length; i++ ) {
-                logDebug("file: " + loadFiles[i]);
+            for ( String loadFile : loadFiles ) {
+                logDebug("file: " + loadFile);
             }
         }
 
         // now load the import files if they were specified
         PrintWriter ps = new PrintWriter(System.out);
-        if ( loadFiles != null && loadFiles.length > 0 ) {
+        if ( loadFiles.length > 0 ) {
             try {
 
                 String pProjectName = getProjectName();
@@ -851,7 +844,7 @@ public class InitializingVersionRepository
                     logDebug("pUser = " + pUser);
                 }
                 if ( isLoggingDebug() ) {
-                    logDebug("pWrokspaceId = " + pWorkspaceId);
+                    logDebug("pWorkspaceId = " + pWorkspaceId);
                 }
                 if ( isLoggingDebug() ) {
                     logDebug("pBranchId = " + pBranchId);
@@ -874,7 +867,7 @@ public class InitializingVersionRepository
                         }
                     }
                     return;
-                } else if ( pProjectName == null && (pDoCheckin == true && pComment == null) ) {
+                } else if ( pProjectName == null && (pDoCheckin && pComment == null) ) {
                     if ( isLoggingError() ) {
                         logError("Error: comment required for a versioned import");
                     }
@@ -884,7 +877,7 @@ public class InitializingVersionRepository
                         logError("Error: user required for a versioned import");
                     }
                     return;
-                } else if ( pProjectName != null && pDoCheckin == true && pComment == null ) {
+                } else if ( pProjectName != null && pDoCheckin && pComment == null ) {
                     if ( isLoggingError() ) {
                         logError("Error: comment required for a versioned import");
                     }
@@ -893,7 +886,8 @@ public class InitializingVersionRepository
 
                 //do importFiles
                 if ( pProjectName != null ) {
-                    // If porjectName is supplied, we will use projectName, projectType, user to create a project and get its workspaceId.
+                    // If projectName is supplied, we will use projectName, projectType,
+                    // user to create a project and get its workspaceId.
                     TemplateParser.importFiles(
                             this,
                             loadFiles,
@@ -955,7 +949,7 @@ public class InitializingVersionRepository
         String ref = "references ";
         String endRef = ",";
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int start = 0;
         int end = 0;
         end = pStr.indexOf(ref);
@@ -1054,23 +1048,23 @@ public class InitializingVersionRepository
 
     // ---------- methods to help with user-specified SQL files -----------
     // allowable db types to specify
-    public String SOLID = "solid";
+    private final String SOLID = "solid";
 
-    public String ORACLE = "oracle";
+    private final String ORACLE = "oracle";
 
-    public String MICROSOFT = "microsoft";
+    private final String MICROSOFT = "microsoft";
 
-    public String INFORMIX = "informix";
+    private final String INFORMIX = "informix";
 
-    public String DB2 = "db2";
+    private final String DB2 = "db2";
 
-    public String SYBASE = "sybase";
+    private final String SYBASE = "sybase";
 
-    public String SYBASE2 = "Adaptive Server Enterprise"; // sybase 12.5
+    private final String SYBASE2 = "Adaptive Server Enterprise"; // sybase 12.5
 
-    public String DEFAULT = "default";
+    private final String DEFAULT = "default";
 
-    private String[] dbTypes = {
+    private final String[] dbTypes = {
             SOLID, ORACLE, MICROSOFT, INFORMIX, DB2, SYBASE, SYBASE2, DEFAULT
     };
 
@@ -1081,12 +1075,12 @@ public class InitializingVersionRepository
      */
     private String getDatabaseType() {
         String type = getDatabaseName();
-        for ( int i = 0; i < dbTypes.length; i++ ) {
-            if ( type.toLowerCase().indexOf(dbTypes[i].toLowerCase()) > -1 ) {
-                if ( dbTypes[i].equals(SYBASE2) ) {
+        for ( String dbType : dbTypes ) {
+            if ( type.toLowerCase().contains(dbType.toLowerCase()) ) {
+                if ( dbType.equals(SYBASE2) ) {
                     return SYBASE;
                 }
-                return dbTypes[i];
+                return dbType;
             }
         }
         return DEFAULT;
@@ -1211,8 +1205,8 @@ public class InitializingVersionRepository
         // for sql server auto-commit must be true
         //            if ( getDatabaseType().equals( MICROSOFT ) ) sp.setAutoCommit(true);
         SQLFileParser parser = new SQLFileParser();
-        for ( int i = 0; i < pFiles.length; i++ ) {
-            String file = pFiles[i];
+        for ( String pFile : pFiles ) {
+            String file = pFile;
             // switch the file path so everything is forward slashes
             file = file.replace('\\', '/');
             String cmd = null;

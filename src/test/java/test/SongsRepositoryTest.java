@@ -33,7 +33,7 @@ import java.util.Properties;
 
 /**
  * Example test case to illustrate the usage of {@link AtgDustCase} built-in
- * database functionalities using on the fly created db's (bases on hsql
+ * database functionality using on the fly created db's (bases on hsql
  * in-memory db) or against external existing databases.
  * <p/>
  * <br/><br/>Based on {@link AtgDustCase}

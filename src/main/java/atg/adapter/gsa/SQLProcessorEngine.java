@@ -45,7 +45,7 @@ public class SQLProcessorEngine
         extends GenericService {
 
     // Vendor String for Apache Derby
-    public static final String APACHE_DERBY = "Apache Derby";
+    private static final String APACHE_DERBY = "Apache Derby";
 
   /* =========== CONSTRUCTORS ============= */
 
@@ -69,7 +69,7 @@ public class SQLProcessorEngine
      * DataSource from which to get DB connections this property is NOT a public
      * property because it is extracted from the repository property
      */
-    DataSource mDataSource;
+    private DataSource mDataSource;
 
     private void setDataSource(DataSource pDataSource) {
         mDataSource = pDataSource;
@@ -80,9 +80,9 @@ public class SQLProcessorEngine
     }
 
     /**
-     * GSARespository from which to get the DataSource and TransactionManager
+     * GSARepository from which to get the DataSource and TransactionManager
      */
-    GSARepository mRepository;
+    private GSARepository mRepository;
 
     public void setRepository(GSARepository pRep) {
         mRepository = pRep;
@@ -96,7 +96,7 @@ public class SQLProcessorEngine
      * String executed to determine whether a table exists. The table name is
      * appended to the end of the string before execution occurs.
      */
-    String mDetermineTableExistsSQL = "SELECT count(*) from";
+    private String mDetermineTableExistsSQL = "SELECT count(*) from";
 
     public void setDetermineTableExistsSQL(String pStr) {
         mDetermineTableExistsSQL = pStr;
@@ -110,7 +110,7 @@ public class SQLProcessorEngine
      * String executed to drop a table. The table name is appended to the end of
      * the string before execution
      */
-    String mDropTableSQL = "DROP TABLE";
+    private String mDropTableSQL = "DROP TABLE";
 
     public void setDropTableSQL(String pStr) {
         mDropTableSQL = pStr;
@@ -126,7 +126,7 @@ public class SQLProcessorEngine
      * "CREATE TABLE" This delimiter _will_ be included in the final create
      * statements
      */
-    String mCreateTableBeginDelimiter = "CREATE TABLE";
+    private String mCreateTableBeginDelimiter = "CREATE TABLE";
 
     public void setCreateTableBeginDelimiter(String pStr) {
         mCreateTableBeginDelimiter = pStr;
@@ -141,7 +141,7 @@ public class SQLProcessorEngine
      * into an array of individual Create Table statements default value is ";"
      * This delimiter _will not_ be included in the final create statements
      */
-    String mCreateTableEndDelimiter = ";";
+    private String mCreateTableEndDelimiter = ";";
 
     public void setCreateTableEndDelimiter(String pStr) {
         mCreateTableEndDelimiter = pStr;
@@ -200,7 +200,7 @@ public class SQLProcessorEngine
      *
      * @param pConnection connection to close, may be null
      */
-    private final void close(Connection pConnection) {
+    private void close(Connection pConnection) {
         if ( pConnection != null ) {
             try {
                 pConnection.close();
@@ -244,7 +244,7 @@ public class SQLProcessorEngine
      *
      * @param pStatement statement to close, may be null
      */
-    private final void close(Statement pStatement) {
+    private void close(Statement pStatement) {
         if ( pStatement != null ) {
             try {
                 pStatement.close();
@@ -259,7 +259,7 @@ public class SQLProcessorEngine
     // -------------------------------------
 
     /**
-     * Perform the specified SQL statement in a new transaction which is commited.
+     * Perform the specified SQL statement in a new transaction which is committed.
      *
      * @param pSQL SQL to execute
      *
@@ -295,6 +295,7 @@ public class SQLProcessorEngine
                 close(c);
             }
         } catch ( TransactionDemarcationException e1 ) {
+            // FIXME: yeah this doesn't work the way one might think
             if ( error == null ) {
                 error = new SQLProcessorException(e1);
             } else if ( isLoggingError() ) {
@@ -330,11 +331,11 @@ public class SQLProcessorEngine
      * properties. By default, createTableBeginDelimiter = "CREATE TABLE" and
      * createTableEndDelimiter = ";"
      *
-     * @param String  pStr - the String containing the CREATE TABLE statements
-     * @param boolean pDrop - indicates whether to drop tables and recreate them
-     *                if the tables already exist in the database
+     * @param pStatements the String containing the CREATE TABLE statements
+     * @param pDrop       indicates whether to drop tables and recreate them
+     *                    if the tables already exist in the database
      *
-     * @return boolean true if any tables were created ( or dropped and created )
+     * @return true if any tables were created ( or dropped and created )
      * @throws SQLProcessorException if an error occurs trying to create the tables
      */
     public boolean createTables(List<String> pStatements, boolean pDrop)
@@ -365,9 +366,7 @@ public class SQLProcessorEngine
         if ( isLoggingInfo() ) {
             logInfo("Creating tables...");
         }
-        Iterator<String> iter = statements.iterator();
-        while ( iter.hasNext() ) {
-            String statement = iter.next();
+        for ( String statement : statements ) {
             String name = getTableName(statement);
             boolean exists = tableExists(name);
 
@@ -426,7 +425,7 @@ public class SQLProcessorEngine
     private String stripNull(String statement) {
         // first make this all uppercase
 
-        StringBuffer subStatements = new StringBuffer();
+        StringBuilder subStatements = new StringBuilder();
         String tempStatement = statement.toUpperCase();
         StringTokenizer st = new StringTokenizer(tempStatement, ",");
         while ( st.hasMoreTokens() ) {
@@ -434,17 +433,17 @@ public class SQLProcessorEngine
             int notNullIndex = tok.indexOf("NOT NULL");
             if ( notNullIndex > -1 ) {
                 // safe to return this unmodified
-                subStatements.append(tok + ",\n");
-            } else if ( tok.indexOf("NULL") > -1 ) {
+                subStatements.append(tok).append(",\n");
+            } else if ( tok.contains("NULL") ) {
                 // need to strip this one.
                 // we assume that we can just remove the five characters above
                 String temp = StringUtils.replace(tok, "NULL", "");
                 // we also have to remove all the trailing spaces
-                subStatements.append(temp.trim() + ",\n");
+                subStatements.append(temp.trim()).append(",\n");
             } else {
                 // safe to return. no null at all.
                 if ( st.hasMoreTokens() ) {
-                    subStatements.append(tok + ",\n");
+                    subStatements.append(tok).append(",\n");
                 } else
                 // End of statement, so no comma
                 {
@@ -497,7 +496,7 @@ public class SQLProcessorEngine
                 try {
                     c.close();
                 } catch ( SQLException e ) {
-                    ; // eat it
+                    // eat it
                 }
             }
         }
@@ -507,7 +506,6 @@ public class SQLProcessorEngine
      * This is a method that is used to execute a 'CREATE TABLE' call. The String
      * you pass in is expected to be of the format CREATE TABLE ( ..... )
      *
-     * @return void
      * @throws SQLProcessorException thrown if an error occurs creating the table
      */
     private void createTable(String pStr)
@@ -528,7 +526,7 @@ public class SQLProcessorEngine
      * exist from tables outside this repository, this method will throw a
      * SQLProcessorException
      *
-     * @param Vector of CREATE TABLE statements indicating which tables to drop
+     * @param pCreateStatements List of CREATE TABLE statements indicating which tables to drop
      *
      * @throws SQLProcessorException thrown if all tables can not be dropped
      */
@@ -545,7 +543,7 @@ public class SQLProcessorEngine
      * exist from tables outside this repository, this method will throw a
      * SQLProcessorException
      *
-     * @param Vector of names of tables to be dropped
+     * @param pNames List of names of tables to be dropped
      *
      * @throws SQLProcessorException thrown if all tables can not be dropped
      */
@@ -562,9 +560,7 @@ public class SQLProcessorEngine
         int attempt = 0;
         do {
             remainingTables = new ArrayList<String>();
-            Iterator<String> tables = tablesToDrop.iterator();
-            while ( tables.hasNext() ) {
-                String table = tables.next();
+            for ( String table : tablesToDrop ) {
                 if ( tableExists(table) ) {
                     try {
                         logInfo("Attempting to drop table: " + table);
@@ -592,7 +588,7 @@ public class SQLProcessorEngine
      * with the SQL that has been set as the dropTableSQL property. By default,
      * this property is set to "Drop table"
      *
-     * @param String - the name of the table to drop
+     * @param pName the name of the table to drop
      *
      * @throws SQLProcessorException thrown if an error occurs trying to drop the table
      */
@@ -618,9 +614,9 @@ public class SQLProcessorEngine
      * statements returned by either a call to getCreateStatements() or
      * getOrderedCreateStatements()
      *
-     * @return Vector of table names
+     * @return List of table names
      */
-    private List<String> getTableNames(List<String> pStatements) {
+    private List<String> getTableNames(final List<String> pStatements) {
         if ( isLoggingDebug() ) {
             logDebug("Getting table names...");
         }
@@ -631,9 +627,8 @@ public class SQLProcessorEngine
         List<String> createStatements = pStatements;
 
         // now get the table name from each statement
-        Iterator<String> iter = createStatements.iterator();
-        while ( iter.hasNext() ) {
-            String thisName = getTableName(iter.next());
+        for ( String createStatement : createStatements ) {
+            String thisName = getTableName(createStatement);
 
             if ( thisName != null && !names.contains(thisName) ) {
                 names.add(thisName);
@@ -651,9 +646,9 @@ public class SQLProcessorEngine
      * statement. It operates by finding the createTableBeginDelimiter and
      * extracting the next word after the delimiter.
      *
-     * @param String - the create table statement
+     * @param pStr The create table statement
      *
-     * @return String - the name of the table; null if name can't be found
+     * @return The name of the table; null if name can't be found
      */
     private String getTableName(String pStr) {
         String STATEMENT_BEGIN = getCreateTableBeginDelimiter();
@@ -751,22 +746,22 @@ public class SQLProcessorEngine
    */
 
     /**
-     * This method is used to order CREATE TABLE statments such that we do not try
+     * This method is used to order CREATE TABLE statements such that we do not try
      * to create a table before any tables that it references. NOTE: if a
      * reference exists for a table outside of this repository we will print a
      * warning, but will _not_ throw an exception. If the referenced table doesn't
      * exist, an exception will be thrown when the referencing table is created.
      *
-     * @param String containing all of the CREATE TABLE statements as generated by a
-     *               call to GSARepository.generateSQL()
+     * @param statements List containing all of the CREATE TABLE statements as generated by a
+     *                   call to GSARepository.generateSQL()
      *
-     * @return Vector of individual CREATE statements that are in the proper order
+     * @return List of individual CREATE statements that are in the proper order
      *         to execute
      * @throws SQLProcessorException if we detect a bad loop trying to resolve references
      */
-    private List<String> reorderCreateStatements(List<String> pStatements)
+    private List<String> reorderCreateStatements(final List<String> statements)
             throws SQLProcessorException {
-        List<String> statements = pStatements;
+        // XXX: another overly complicated method
         List<String> names = getTableNames(statements);
         List<String> orderedStatements = new ArrayList<String>();
 
@@ -800,9 +795,7 @@ public class SQLProcessorEngine
                 refersTo.put(tableName, references);
 
                 // update referencedBy to include this table
-                Iterator<String> refs = references.iterator();
-                while ( refs.hasNext() ) {
-                    String ref = refs.next();
+                for ( String ref : references ) {
                     List<String> v;
                     if ( !referencedBy.containsKey(ref) ) {
                         v = new ArrayList<String>();
@@ -841,9 +834,7 @@ public class SQLProcessorEngine
                 } else {
                     List<String> waitingOnTables = refersTo.get(tableName);
                     boolean okToAdd = true;
-                    Iterator<String> i = waitingOnTables.iterator();
-                    while ( i.hasNext() ) {
-                        String waitingOn = i.next();
+                    for ( String waitingOn : waitingOnTables ) {
                         if ( refersTo.containsKey(waitingOn) ) {
                             okToAdd = false;
                         }
@@ -855,9 +846,7 @@ public class SQLProcessorEngine
                         // let the other tables know this one is made
                         if ( referencedBy.containsKey(tableName) ) {
                             List<String> tablesWaiting = referencedBy.get(tableName);
-                            Iterator<String> j = tablesWaiting.iterator();
-                            while ( j.hasNext() ) {
-                                String table = j.next();
+                            for ( String table : tablesWaiting ) {
                                 List<String> v = refersTo.get(table);
                                 v.remove(tableName);
                             }
@@ -867,9 +856,7 @@ public class SQLProcessorEngine
             }
 
             // after each iteration, remove the newlyAdded statements from the list
-            Iterator<String> k = newlyAdded.iterator();
-            while ( k.hasNext() ) {
-                String s = k.next();
+            for ( String s : newlyAdded ) {
                 statements.remove(s);
             }
 
@@ -877,9 +864,7 @@ public class SQLProcessorEngine
             if ( attempt++ > maxTries ) {
                 if ( isLoggingError() ) {
                     logError("Still trying to resolve: ");
-                    Iterator<String> left = statements.iterator();
-                    while ( left.hasNext() ) {
-                        String table = left.next();
+                    for ( String table : statements ) {
                         logError(table);
                     }
                 }
@@ -897,14 +882,12 @@ public class SQLProcessorEngine
      * references. expected format is: CREATE TABLE foo ( x int not null
      * references bar(id), y varchar null references doo(id), ... )
      *
-     * @param String the CREATE TABLE statement
-     * @param String the name of the table
+     * @param pStr      the CREATE TABLE statement
+     * @param tableName the name of the table
      *
      * @return Vector containing names of referenced tables
-     * @throws SQLProcessorException if the table has a reference to itself
      */
-    private List<String> getTableReferences(String pStr, String tableName)
-            throws SQLProcessorException {
+    private List<String> getTableReferences(String pStr, String tableName) {
         String REFERENCES = " references ";
         List<String> refs = new ArrayList<String>();
 
@@ -936,9 +919,7 @@ public class SQLProcessorEngine
         }
 
         if ( isLoggingDebug() ) {
-            Iterator<String> i = refs.iterator();
-            while ( i.hasNext() ) {
-                String s = i.next();
+            for ( String s : refs ) {
                 logDebug("Found reference: " + s);
             }
         }
@@ -950,16 +931,14 @@ public class SQLProcessorEngine
      * This method is used to determine whether all the items in the second Vector
      * are contained in the first Vector.
      *
-     * @param Vector of the names of all the tables in the repository
-     * @param Vector of the names of all the tables to check for
+     * @param pRepositoryTables list of the names of all the tables in the repository
+     * @param pCheckTables      list of the names of all the tables to check for
      *
      * @return boolean true if all items are in the Vector; false otherwise
      */
     private boolean checkReferencesInRepository(List<String> pRepositoryTables,
                                                 List<String> pCheckTables) {
-        Iterator<String> iter = pCheckTables.iterator();
-        while ( iter.hasNext() ) {
-            String name = iter.next();
+        for ( String name : pCheckTables ) {
             if ( !pRepositoryTables.contains(name) ) {
                 return false;
             }
@@ -972,9 +951,9 @@ public class SQLProcessorEngine
      * method operates by appending the name passed as a parameter to the String
      * that has been set in the determineTableExistsSQL property
      *
-     * @param String - name of table to check for existence of
+     * @param pTableName name of table to check for existence of
      *
-     * @return boolean - true if table exists; false otherwise
+     * @return true if table exists; false otherwise
      */
     private boolean tableExists(String pTableName) {
         // don't bother with query if name is invalid
@@ -1040,9 +1019,10 @@ public class SQLProcessorEngine
             e.printStackTrace();
         } finally {
             try {
-                c.close();
-            } catch ( SQLException e ) {
-                ;
+                if ( c != null ) {
+                    c.close();
+                }
+            } catch ( SQLException ignored ) {
             }
         }
         return foundTables;
