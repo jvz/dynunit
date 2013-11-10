@@ -211,8 +211,7 @@ public class SQLProcessor {
                         String pUsername,
                         String pPassword,
                         String pDriver,
-                        String pURL)
-            throws SQLException {
+                        String pURL) {
         setDataSource(createBasicDataSource(pUsername, pPassword, pDriver, pURL));
         setTransactionManager(pTxManager);
     }

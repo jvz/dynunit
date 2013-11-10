@@ -440,7 +440,7 @@ public class GSARepositorySchemaGenerator {
      * @throws DatabaseOperationException
      */
     public void createSchema(final boolean pContinueOnError, final boolean pDrop)
-            throws DatabaseOperationException, SQLException {
+            throws DatabaseOperationException {
         boolean success = new DoInAutoCommit(this, mRepository).doInAutoCommit(
                 new AutoCommitable() {
                     @Override
@@ -468,7 +468,7 @@ public class GSARepositorySchemaGenerator {
      * @throws DatabaseOperationException
      */
     public void dropSchema(final boolean pContinueOnError)
-            throws DatabaseOperationException, SQLException {
+            throws DatabaseOperationException {
         boolean success = new DoInAutoCommit(this, mRepository).doInAutoCommit(
                 new AutoCommitable() {
                     @Override

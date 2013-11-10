@@ -902,8 +902,7 @@ public class SQLProcessorEngine
      * @return Vector containing names of referenced tables
      * @throws SQLProcessorException if the table has a reference to itself
      */
-    private List<String> getTableReferences(String pStr, String tableName)
-            throws SQLProcessorException {
+    private List<String> getTableReferences(String pStr, String tableName) {
         String REFERENCES = " references ";
         List<String> refs = new ArrayList<String>();
 

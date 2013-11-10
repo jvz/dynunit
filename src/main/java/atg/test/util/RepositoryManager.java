@@ -82,7 +82,7 @@ public class RepositoryManager {
                                                          final boolean dropTables,
                                                          final boolean isDebug,
                                                          String... definitionFiles)
-            throws SQLException, IOException {
+            throws SQLException {
 
         dataSource.setDriverClassName(settings.get("driver"));
         dataSource.setUsername(settings.get("user"));

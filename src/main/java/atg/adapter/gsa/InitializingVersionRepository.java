@@ -658,7 +658,7 @@ public class InitializingVersionRepository
      *                               drop the tables
      */
     public void dropTables()
-            throws RepositoryException, SQLProcessorException {
+            throws RepositoryException {
         // execute SQL files, if specified
         String[] dropFiles = getSpecifiedDropFiles();
         if ( dropFiles != null ) {
