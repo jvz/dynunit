@@ -16,48 +16,50 @@
 
 package atg.nucleus.logging;
 
-import static java.lang.System.out;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Simple class to get logging in unit testing working. Will print messages and
  * {@link Throwable}'s to {@link System#out}.
  *
  * @author robert
+ * @author jvz
  */
 public class ConsoleLogListener
         implements LogListener {
 
-    /**
-     *
-     */
+    @Override
     public void logEvent(final LogEvent logEvent) {
         if ( logEvent != null ) {
+            final Logger logger;
+            final Level level;
+            final String originator = logEvent.getOriginator();
+            final Throwable ex = logEvent.getThrowable();
 
-            String level = "unknown";
-
-            if ( logEvent instanceof DebugLogEvent ) {
-                level = "debug";
-            } else if ( logEvent instanceof ErrorLogEvent ) {
-                level = "error";
-            } else if ( logEvent instanceof InfoLogEvent ) {
-                level = "info";
-            } else if ( logEvent instanceof WarningLogEvent ) {
-                level = "warning";
+            if ( originator != null ) {
+                logger = LogManager.getLogger(originator);
+            } else {
+                logger = LogManager.getLogger();
             }
 
-            out.println(
-                    String.format(
-                            "**** %s\t%s\t%s\t%s\t%s",
-                            level,
-                            logEvent.getDateTimeStamp(),
-                            logEvent.getTimeStamp(),
-                            logEvent.getOriginator(),
-                            logEvent.getMessage()
-                    )
-            );
+            if ( logEvent instanceof DebugLogEvent ) {
+                level = Level.DEBUG;
+            } else if ( logEvent instanceof InfoLogEvent ) {
+                level = Level.INFO;
+            } else if ( logEvent instanceof WarningLogEvent ) {
+                level = Level.WARN;
+            } else if ( logEvent instanceof ErrorLogEvent ) {
+                level = Level.ERROR;
+            } else {
+                level = Level.TRACE; // or would fatal be better here?
+            }
 
-            if ( logEvent.getThrowable() != null ) {
-                logEvent.getThrowable().printStackTrace();
+            if ( ex != null ) {
+                logger.log(level, logEvent.getMessage(), ex);
+            } else {
+                logger.log(level, logEvent.getMessage());
             }
 
         }
