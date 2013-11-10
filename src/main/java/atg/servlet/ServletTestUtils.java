@@ -490,7 +490,7 @@ public class ServletTestUtils {
     // -----------------------------
 
     /**
-     * Creates a new DynamoHtttpServletResponse object that can be used in a unit
+     * Creates a new DynamoHttpServletResponse object that can be used in a unit
      * test.
      */
     public TestingDynamoHttpServletResponse createDynamoHttpServletResponse() {
@@ -674,7 +674,7 @@ public class ServletTestUtils {
         /**
          * Return the list of dispatch records. A record is created by a
          * RequestDispatcher obtained from a TestingDynamoHttpServletRequest
-         * include() if recordDispaches is true).
+         * include() if recordDispatches is true).
          */
         public TestingDispatchRecord[] getDispatchRecords() {
             return mDispatchRecords.toArray(new TestingDispatchRecord[mDispatchRecords.size()]);
@@ -720,7 +720,7 @@ public class ServletTestUtils {
 
 
         /**
-         * Record request dispatches. Only records if recordDispaches
+         * Record request dispatches. Only records if recordDispatches
          * is true.
          *
          * @param pServletContext the ServletContext of the include or forward
@@ -767,7 +767,7 @@ public class ServletTestUtils {
 
         /**
          * Sets the writer on this response to the given output stream.
-         * Users can get access to this outputstream and examine the
+         * Users can get access to this outputStream and examine the
          * output after the data has been written
          *
          * @param pTestingOutputStream the output stream to use for testing
@@ -1378,7 +1378,7 @@ public class ServletTestUtils {
          * Constructs a new TestingDynamoHttpServletRequest which wraps the given
          * request object.
          * <p/>
-         * NOTE: The getLog() method of DynamoHttpServletRequest is final and cannot be overriden
+         * NOTE: The getLog() method of DynamoHttpServletRequest is final and cannot be overridden
          * in
          * this
          * test version. Therefore you cannot depend upon the functionality of this method call in
@@ -1425,7 +1425,7 @@ public class ServletTestUtils {
          * stream to which an HTTP client would write to a server. IMPORTANT: Be
          * sure to call <code>prepareForRead()</code> after you are done writing
          * to this stream. This allows that data to be read from the input stream
-         * objtained by calling getInputStream() on the underlying request.
+         * obtained by calling getInputStream() on the underlying request.
          *
          * @param pNew if true, a new stream is always created. Otherwise the previous
          *             stream is returned.
@@ -4058,7 +4058,7 @@ public class ServletTestUtils {
         }
 
         /**
-         * Whether the dispath was a forward.
+         * Whether the dispatch was a forward.
          */
         public boolean isForward() {
             return !mIsInclude;

@@ -32,7 +32,6 @@ import atg.test.util.DBUtils;
 import atg.versionmanager.VersionManager;
 import atg.versionmanager.Workspace;
 import atg.versionmanager.exceptions.VersionException;
-import junit.framework.Assert;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,6 +56,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * A utility class to simplify testing with GSARepositories inside of junit
@@ -91,10 +93,10 @@ public class GSATestUtils {
 
     /**
      * Duplicates the given array of repositories.
-     * This method first binds the repositories into nucleus under the name XXXX-Shadow,
-     * where XXXX is the original name.
+     * This method first binds the repositories into nucleus under the name Foo-Shadow,
+     * where Foo is the original name.
      * After all repositories are bound, then they are started.
-     * This allows for repositories with circular references to each other to be deplicated.
+     * This allows for repositories with circular references to each other to be replicated.
      * The pRepositories array and pDS array should be in sync. That is the first item in the
      * repository array, pRepositories,  will use the first data source in the pDS array and so on.
      *
@@ -277,7 +279,8 @@ public class GSATestUtils {
      * @param pDefinitionFiles Array of Nucleus paths to definition files
      * @param pJDBCProperties  properties object containing JDBC connection information
      * @param pImportFile
-     * @param pLogging         if true log to stdout, else logging is disabled
+     * @param pLogging         if true log to stdout, else logging is disabled [not really; see
+     *                         log4j]
      *
      * @throws IOException
      * @throws Exception
@@ -1202,7 +1205,7 @@ public class GSATestUtils {
         String[] namesAfter = getTableNames(storeRepository);
         for ( String aNamesAfter : namesAfter ) {
             log.info(aNamesAfter + ":" + dbTwo.getRowCount(aNamesAfter));
-            Assert.assertEquals(0, dbTwo.getRowCount(aNamesAfter));
+            assertEquals(0, dbTwo.getRowCount(aNamesAfter));
         }
     }
     // ---------------------------------
@@ -1397,23 +1400,20 @@ public class GSATestUtils {
     }
 
     /**
-     * @param pRepository
-     * @param pItemDescriptorName
+     * @param repository
+     * @param itemDescriptorName
      */
-    public static void dumpTables(GSARepository pRepository, String pItemDescriptorName)
+    public static void dumpTables(GSARepository repository, String itemDescriptorName)
             throws RepositoryException, SQLException {
-        GSAItemDescriptor itemdesc = (GSAItemDescriptor) pRepository.getItemDescriptor(
-                pItemDescriptorName
+        GSAItemDescriptor itemDescriptor = (GSAItemDescriptor) repository.getItemDescriptor(
+                itemDescriptorName
         );
-        Table[] tables = itemdesc.getTables();
-        HashSet<String> doneTables = new HashSet<String>();
-        for ( int i = 0; tables != null && i < tables.length; i++ ) {
-            Table table = tables[i];
-            if ( doneTables.contains(table.getName()) ) {
-                continue;
+        Set<String> doneTables = new HashSet<String>();
+        for ( Table table : itemDescriptor.getTables() ) {
+            if ( !doneTables.contains(table.getName()) ) {
+                dumpTable(table, new ArrayList<String>());
+                doneTables.add(table.getName())
             }
-            dumpTable(table, new ArrayList<String>());
-            doneTables.add(table.getName());
         }
     }
 }

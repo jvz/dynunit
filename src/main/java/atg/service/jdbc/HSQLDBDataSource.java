@@ -44,7 +44,7 @@ public class HSQLDBDataSource
     private boolean mShutdownHSQLDB = true;
 
     /**
-     * Returns true if the "SHUTDOWN" sql statment should be sent to HSQLDB
+     * Returns true if the "SHUTDOWN" sql statement should be sent to HSQLDB
      * when doStopService is called on this component.
      *
      * @return
@@ -66,7 +66,7 @@ public class HSQLDBDataSource
     // --------------------------
 
     /**
-     * Starts this DataSource. Since the datasource uses an in memory HSQL
+     * Starts this DataSource. Since the data source uses an in memory HSQL
      * database, the database actually is started on the first call to
      * getConnection().
      */

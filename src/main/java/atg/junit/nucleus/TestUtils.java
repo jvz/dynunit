@@ -60,7 +60,7 @@ import java.util.jar.Manifest;
 // TODO: holy shit this file is huge
 
 /**
- * This class is used to hold useful utilty methods people may
+ * This class is used to hold useful utility methods people may
  * need when running tests.
  */
 public class TestUtils

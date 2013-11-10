@@ -42,7 +42,7 @@ import java.util.Properties;
  */
 public class DBUtils {
 
-    private Connection conn; //our connnection to the db - presist for life of
+    private Connection conn; //our connection to the db - persist for life of
 
     private final Properties mJDBCProperties;
 
@@ -50,7 +50,7 @@ public class DBUtils {
     // ---------------------------
 
     /**
-     * Returns a Properties object preconfigured to create
+     * Returns a Properties object pre-configured to create
      * an HSQLDB in memory database connecting with user "sa"
      * password ""
      *
@@ -71,7 +71,7 @@ public class DBUtils {
 
 
     /**
-     * Returns a Properties object preconfigured to create
+     * Returns a Properties object pre-configured to create
      * an HSQLDB in memory database connecting with user "sa"
      * password ""
      *
@@ -90,7 +90,7 @@ public class DBUtils {
     }
 
     /**
-     * Returns a Properties object preconfigured to create
+     * Returns a Properties object pre-configured to create
      * an HSQLDB in memory database connecting with user "sa"
      * password ""
      *
@@ -276,7 +276,7 @@ public class DBUtils {
     }
 
     /**
-     * Returns a Properties object preconfigured to create
+     * Returns a Properties object pre-configured to create
      * an HSQLDB in memory database connecting with user "sa"
      * password ""
      */
@@ -332,13 +332,13 @@ public class DBUtils {
 
 
         // connect to the database. This will load the db files and start the
-        // database if it is not alread running.
+        // database if it is not already running.
         // db_file_name_prefix is used to open or create files that hold the state
         // of the db.
         // It can contain directory names relative to the
         // current working directory
         conn = DriverManager.getConnection(
-                pURL, // filenames
+                pURL, // file names
                 pUser, // username
                 pPassword
         ); // password
@@ -492,7 +492,7 @@ public class DBUtils {
     }
 
     public void executeSQLFile(File pFile) {
-        logger.info("Attemping to execute " + pFile);
+        logger.info("Attempting to execute {}", pFile);
         SQLFileParser parser = new SQLFileParser();
         Collection<String> c = parser.parseSQLFile(pFile.getAbsolutePath());
         for ( String cmd : c ) {

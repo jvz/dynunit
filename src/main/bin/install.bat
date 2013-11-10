@@ -2,7 +2,7 @@
 setlocal
 
 REM
-REM ATG DUST Mavn Repository Installation
+REM ATG DUST Maven Repository Installation
 REM 
 REM This script installs required ATG libraries to a local maven
 REM repository for DUST development.

@@ -80,7 +80,7 @@ public class SQLProcessorEngine
     }
 
     /**
-     * GSARespository from which to get the DataSource and TransactionManager
+     * GSARepository from which to get the DataSource and TransactionManager
      */
     private GSARepository mRepository;
 
@@ -259,7 +259,7 @@ public class SQLProcessorEngine
     // -------------------------------------
 
     /**
-     * Perform the specified SQL statement in a new transaction which is commited.
+     * Perform the specified SQL statement in a new transaction which is committed.
      *
      * @param pSQL SQL to execute
      *
@@ -746,7 +746,7 @@ public class SQLProcessorEngine
    */
 
     /**
-     * This method is used to order CREATE TABLE statments such that we do not try
+     * This method is used to order CREATE TABLE statements such that we do not try
      * to create a table before any tables that it references. NOTE: if a
      * reference exists for a table outside of this repository we will print a
      * warning, but will _not_ throw an exception. If the referenced table doesn't

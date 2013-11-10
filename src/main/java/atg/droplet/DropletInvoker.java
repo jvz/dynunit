@@ -432,7 +432,7 @@ public class DropletInvoker {
     /**
      * Return newly created TestingDynamoHttpServletResponse. This method is used
      * to create a request for our request property to be used if the form of
-     * invokeDroplet sans request/resposne is invoked.
+     * invokeDroplet sans request/response is invoked.
      *
      * @return a new request
      */
@@ -534,7 +534,7 @@ public class DropletInvoker {
         }
 
         /**
-         * Get the specified frame parameter from the paramter dictionary.
+         * Get the specified frame parameter from the parameter dictionary.
          *
          * @param pName the name of the parameter to return
          *
@@ -557,7 +557,7 @@ public class DropletInvoker {
 
     /**
      * Represents the result of a droplet invocation. Contains properties
-     * representing the droplet, request and response. Also trackes which OPARAMs
+     * representing the droplet, request and response. Also tracks which OPARAMs
      * were rendered during the course of the droplet.
      */
     public class DropletResult {

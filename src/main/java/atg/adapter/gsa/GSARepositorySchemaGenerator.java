@@ -244,7 +244,7 @@ public class GSARepositorySchemaGenerator {
                 pTable, pRepository.getDatabaseTableInfo()
         );
         pTable.collectColumnsForName(columns);
-        AccessibleTableColumns atable = new AccessibleTableColumns(columns);
+        AccessibleTableColumns accessibleTableColumns = new AccessibleTableColumns(columns);
 
         // --------------------------
         // Table Definition
@@ -260,12 +260,12 @@ public class GSARepositorySchemaGenerator {
         ColumnDefinitionNode columnDefinition = null;
         boolean proceed = false;
 
-        for ( columnDefinition = atable.getHead(), proceed = true;
+        for ( columnDefinition = accessibleTableColumns.getHead(), proceed = true;
               columnDefinition != null && proceed;
               columnDefinition = columnDefinition.mNext ) {
             // No need to iterate the next time if there is just one element in the
             // linked list
-            if ( atable.getHead() == atable.getTail() ) {
+            if ( accessibleTableColumns.getHead() == accessibleTableColumns.getTail() ) {
                 proceed = false;
             }
 
@@ -288,8 +288,8 @@ public class GSARepositorySchemaGenerator {
             // Primary Key
             // --------------------------
 
-            if ( atable.getPrimaryKeys().contains(c.getName()) || c.getName()
-                                                                   .equals(atable.getMultiColumnName()) ) {
+            if ( accessibleTableColumns.getPrimaryKeys().contains(c.getName()) || c.getName()
+                                                                   .equals(accessibleTableColumns.getMultiColumnName()) ) {
                 c.setPrimaryKey(true);
             }
 
@@ -297,7 +297,7 @@ public class GSARepositorySchemaGenerator {
             // Null/NotNull
             // --------------------------
 
-            if ( columnDefinition.mIsRequired || atable.getPrimaryKeys()
+            if ( columnDefinition.mIsRequired || accessibleTableColumns.getPrimaryKeys()
                                                        .contains(columnDefinition.mColumnName) ) {
                 c.setRequired(true);
             } else {
@@ -378,7 +378,7 @@ public class GSARepositorySchemaGenerator {
                 // Foreign Keys
                 // --------------------------
 
-                if ( atable.getForeignKeys() != null && !columns.mVersioned ) {
+                if ( accessibleTableColumns.getForeignKeys() != null && !columns.mVersioned ) {
                     // TODO: Add ForeignKeys
                 }
             }

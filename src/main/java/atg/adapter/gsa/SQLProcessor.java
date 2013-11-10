@@ -233,7 +233,7 @@ public class SQLProcessor {
     }
 
     /**
-     * Perform the specified SQL statement in a new transaction which is commited.  Autocommit
+     * Perform the specified SQL statement in a new transaction which is committed.  Autocommit
      * on the connection is set to true if isSetAutoCommit() is true.
      *
      * @param pSQL SQL to execute

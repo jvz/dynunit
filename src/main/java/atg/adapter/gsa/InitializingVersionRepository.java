@@ -158,7 +158,7 @@ public class InitializingVersionRepository
     // do we want to show the create table statements that are executed
     private boolean mShowCreate = false;
 
-    public void setloggingCreateTables(boolean pLog) {
+    public void setLoggingCreateTables(boolean pLog) {
         mShowCreate = pLog;
     }
 
@@ -266,7 +266,7 @@ public class InitializingVersionRepository
      *          d) if a mapping exists for a db type in 'sqlCreateFiles' then a corresponding
      *             entry (to the specific db type, or to default) must exist.  Otherwise an
      * exception
-     *             is thrown at starup.
+     *             is thrown at startup.
      *  </pre>
      * <p>Also, when a file specified in the property 'sqlCreateFiles' is used (i.e. output
      * from startSQLRepository is not being used) then the initializingGSA will always
@@ -844,7 +844,7 @@ public class InitializingVersionRepository
                     logDebug("pUser = " + pUser);
                 }
                 if ( isLoggingDebug() ) {
-                    logDebug("pWrokspaceId = " + pWorkspaceId);
+                    logDebug("pWorkspaceId = " + pWorkspaceId);
                 }
                 if ( isLoggingDebug() ) {
                     logDebug("pBranchId = " + pBranchId);
@@ -886,7 +886,8 @@ public class InitializingVersionRepository
 
                 //do importFiles
                 if ( pProjectName != null ) {
-                    // If porjectName is supplied, we will use projectName, projectType, user to create a project and get its workspaceId.
+                    // If projectName is supplied, we will use projectName, projectType,
+                    // user to create a project and get its workspaceId.
                     TemplateParser.importFiles(
                             this,
                             loadFiles,

@@ -111,7 +111,7 @@ public class DropletInvokerTest
         DynamoHttpServletRequest request = invoker.getRequest();
 
         assertNotNull("Request must not be null.", request);
-        assertNotNull("Request's session must not be null.", request.getSession());
+        assertNotNull("Request session must not be null.", request.getSession());
         // test unset if value isn't set
 
         DropletResult result = invoker.invokeDroplet("/atg/dynamo/droplet/Switch");
@@ -174,7 +174,7 @@ public class DropletInvokerTest
         );
 
         // use an old-fashioned for, because we want to test numeric
-        // lookups, too.
+        // look-ups, too.
         for ( int i = 0; i < strings.length; i++ ) {
             RenderedOutputParameter oparam = listOutputs.get(i);
 

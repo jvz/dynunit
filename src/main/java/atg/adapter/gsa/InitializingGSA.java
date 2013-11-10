@@ -155,7 +155,7 @@ public class InitializingGSA
     // do we want to show the create table statements that are executed
     private boolean mShowCreate = false;
 
-    public void setloggingCreateTables(boolean pLog) {
+    public void setLoggingCreateTables(boolean pLog) {
         mShowCreate = pLog;
     }
 
@@ -276,7 +276,7 @@ public class InitializingGSA
      *           d) if a mapping exists for a db type in 'sqlCreateFiles' then a corresponding
      *              entry (to the specific db type, or to default) must exist.  Otherwise an
      * exception
-     *              is thrown at starup.
+     *              is thrown at startup.
      *
      * </pre>
      * <p/>
@@ -642,7 +642,7 @@ public class InitializingGSA
      *
      * @throws RepositoryException   if an error occurs while retrieving a list of the tables
      *                               associated with the repository
-     * @throws SQLProcessorException if an error occured trying to drop the tables
+     * @throws SQLProcessorException if an error occurred trying to drop the tables
      */
     public void dropTables()
             throws RepositoryException, SQLProcessorException {
@@ -688,7 +688,7 @@ public class InitializingGSA
      * @return boolean - true if tables were created
      * @throws RepositoryException   if an error occurs while retrieving a list of the tables to
      *                               create
-     * @throws SQLProcessorException if an error occured trying to create the tables
+     * @throws SQLProcessorException if an error occurred trying to create the tables
      */
     private boolean createTables()
             throws RepositoryException, SQLProcessorException {
@@ -737,7 +737,7 @@ public class InitializingGSA
     /**
      * This method imports files using the TemplateParser
      *
-     * @throws RepositoryException if an error occured while importing one of the xml files.
+     * @throws RepositoryException if an error occurred while importing one of the xml files.
      */
     private void importFiles()
             throws RepositoryException {
@@ -793,7 +793,7 @@ public class InitializingGSA
         pStr = stripForeignKey(pStr);
 
         // must be of the following format
-        // fieldname data-type null references foo(id),
+        // field-name data-type null references foo(id),
         String ref = "references ";
         String endRef = ",";
 

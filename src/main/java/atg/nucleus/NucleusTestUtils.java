@@ -45,7 +45,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -57,7 +56,7 @@ import java.util.Properties;
  * @version $Id: //test/UnitTests/base/main/src/Java/atg/nucleus/NucleusTestUtils.java#21 $
  *          <p/>
  *          This class contains some utility methods to make it faster
- *          to write a unit test that needs to resolve componants against Nucleus.
+ *          to write a unit test that needs to resolve components against Nucleus.
  */
 public class NucleusTestUtils {
 
@@ -82,7 +81,7 @@ public class NucleusTestUtils {
     public static String CLASS_VERSION = "$Id: //test/UnitTests/base/main/src/Java/atg/nucleus/NucleusTestUtils.java#21 $$Change: 556195 $";
 
     /**
-     * Whether or not to remove tempoary ATG server directories
+     * Whether or not to remove temporary ATG server directories
      * created by startNucleusWithModules(). True by default, but
      * can be set to false for debugging.
      */
@@ -113,13 +112,12 @@ public class NucleusTestUtils {
     public static File createInitial(File pRoot, List pInitialServices)
             throws IOException {
         Properties prop = new Properties();
-        Iterator iter = pInitialServices.iterator();
         StringBuilder services = new StringBuilder();
-        while ( iter.hasNext() ) {
-            if ( services.length() != 0 ) {
-                services.append(",");
+        for ( Object service : pInitialServices ) {
+            if ( services.length() > 0 ) {
+                services.append(',');
             }
-            services.append((String) iter.next());
+            services.append((String) service);
         }
         prop.put("initialServices", services.toString());
         return NucleusTestUtils.createProperties(
@@ -188,7 +186,7 @@ public class NucleusTestUtils {
      * the whole configuration and binding process.
      *
      * @param pName    The absolute name value to set
-     * @param pService The service whose absolute nameshould be set.
+     * @param pService The service whose absolute name should be set.
      */
     public static void setAbsoluteName(String pName, GenericService pService) {
         pService.mAbsoluteName = pName;
@@ -273,7 +271,7 @@ public class NucleusTestUtils {
      * Returns a file in the pBaseConfigDirectory (or pBaseConfigDirectory +
      * "data") subdirectory of the the passed in class's location.<P>
      * <p/>
-     * The directory location is calculated as (in psuedocode):
+     * The directory location is calculated as (in psuedo-code):
      * <code>
      * (pClassRelativeTo's package location) + "/" + (pConfigDirectory or "data") + "/config"
      * </code>
@@ -353,7 +351,7 @@ public class NucleusTestUtils {
      * Given a URL this method will extract the jar contents to a temp dir and return that path.
      * It also adds a shutdown hook to cleanup the tmp dir on normal jvm completion.
      * If the given URL does not appear to be a path into a jar archive, this method returns
-     * a new File object initialied with <code>dataURL.getFile()</code>.
+     * a new File object initialized with <code>dataURL.getFile()</code>.
      *
      * @return A temporary directory to be used as a configdir
      */
@@ -416,7 +414,7 @@ public class NucleusTestUtils {
      * Returns a file in the pBaseConfigDirectory (or pBaseConfigDirectory +
      * "data") subdirectory of the the passed in class's location.
      * <p/>
-     * The directory location is calculated as (in psuedocode): <code>
+     * The directory location is calculated as (in pseudo-code): <code>
      * (pClassRelativeTo's package location) + "/" + (pConfigDirectory or "data") + "/config"
      * </code>
      * This method always creates the config/data subdirectory if it does not
@@ -455,7 +453,7 @@ public class NucleusTestUtils {
      * specified list of Dynamo modules ("DAS", "DPS", "DSS",
      * "Publishing.base", etc). Additionally adds a directory calculated relative
      * to the location of pClassRelativeTo's package name from the classloader.
-     * The added config directory is calculated as (in psuedocode):
+     * The added config directory is calculated as (in pseudo-code):
      * <code>
      * (pClassRelativeTo's package location) + "/data/" +  (pClassRelativeTo's simpleClassName) +
      * "/config"
@@ -515,7 +513,7 @@ public class NucleusTestUtils {
      * specified list of Dynamo modules ("DAS", "DPS", "DSS",
      * "Publishing.base", etc). Additionally adds a directory calculated relative
      * to the location of pClassRelativeTo's package name from the classloader.
-     * The added config directory is calculated as (in psuedocode):
+     * The added config directory is calculated as (in pseudo-code):
      * <code>
      * (pClassRelativeTo's package location) + "/data/" +  (pBaseConfigDirectory or "config")
      * </code>
@@ -879,7 +877,7 @@ public class NucleusTestUtils {
      * specified list of Dynamo modules ("DAS", "DPS", "DSS",
      * "Publishing.base", etc). Additionally adds a directory calculated relative
      * to the location of pClassRelativeTo's package name from the classloader.
-     * The added config directory is calculated as (in psuedocode):
+     * The added config directory is calculated as (in pseudo-code):
      * <code>
      * (pClassRelativeTo's package location) + "/data/" +  (pBaseConfigDirectory or "config")
      * </code>
@@ -1023,13 +1021,13 @@ public class NucleusTestUtils {
         private final Class mClassRelativeTo;
 
         /**
-         * The base config directory, realtive to mClassRelativeTo's package
+         * The base config directory, relative to mClassRelativeTo's package
          * + "/data". If null, then "config"
          */
         private final String mBaseConfigDirectory;
 
         /**
-         * The Nucleus path of the intial service to resolve.
+         * The Nucleus path of the initial service to resolve.
          */
         private final String mInitialService;
 
@@ -1082,7 +1080,7 @@ public class NucleusTestUtils {
          * "Publishing.base", etc).
          * Additionally sets opts to add a directory calculated relative
          * to the location of pClassRelativeTo's package name from the classloader.
-         * The added config directory is calculated as (in psuedocode):
+         * The added config directory is calculated as (in pseudo-code):
          * <code>
          * (pClassRelativeTo's package location) + "/" + (pConfigDirectory or "data") + "/config"
          * </code>
@@ -1149,7 +1147,7 @@ public class NucleusTestUtils {
 
         /**
          * Set the basic config directory. This is the directory that will be
-         * taked on to the package path of the classRelativeTo class. If this
+         * tacked on to the package path of the classRelativeTo class. If this
          * property is non-null, the relative configuration subdirectory will
          * be ("data/" + baseConfigDirectory).
          */

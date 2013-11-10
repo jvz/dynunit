@@ -36,7 +36,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -434,7 +433,7 @@ public class AtgDustCase
      *
      * @param isDebug Setting this to <code>true</code> will enable debug on all
      *                (currently only on repository related) components, setting it
-     *                to <code>false</code> turn's the debug off again.
+     *                to <code>false</code> turns the debug off again.
      */
     protected void setDebug(boolean isDebug) {
         this.isDebug = isDebug;
@@ -621,7 +620,7 @@ public class AtgDustCase
         } catch ( ClassNotFoundException e ) {
             logger.catching(e);
             logger.debug(
-                    "com.bsdroot.util.concurrent experimantal performance library not found, continuing normally"
+                    "com.bsdroot.util.concurrent experimental performance library not found, continuing normally"
             );
         }
     }

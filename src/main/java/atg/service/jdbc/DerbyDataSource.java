@@ -105,7 +105,7 @@ public class DerbyDataSource
             // the shutdown=true attribute shuts down Derby
             DriverManager.getConnection("jdbc:derby:" + name + ";shutdown=true");
 
-            // To shut down a specific database only, but keeep the
+            // To shut down a specific database only, but keep the
             // engine running (for example for connecting to other
             // databases), specify a database in the connection URL:
             // DriverManager.getConnection("jdbc:derby:" + dbName +

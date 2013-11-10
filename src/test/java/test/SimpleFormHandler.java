@@ -23,7 +23,7 @@ import atg.servlet.DynamoHttpServletResponse;
 import java.io.IOException;
 
 /**
- * A form handler implemention to be used as example code for testing.
+ * A form handler implementation to be used as example code for testing.
  *
  * @author adamb
  */

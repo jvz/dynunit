@@ -65,22 +65,6 @@ public class GSATest
         // TODO Auto-generated constructor stub
     }
 
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp()
-            throws Exception {
-        super.setUp();
-    }
-
-    /*
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown()
-            throws Exception {
-        super.tearDown();
-    }
-
     /**
      * Constructor for GSATest.
      *
@@ -185,7 +169,7 @@ public class GSATest
 
 
     /**
-     * Createa a file using reasonable defaults.
+     * Create a file using reasonable defaults.
      * Your definition file should exist in the same package as the test and should be
      * names <test_name>Repository.xml. Configpath is assumed to be what is returned
      *
@@ -458,24 +442,24 @@ public class GSATest
      * Returns an instance of the property editor, null if there is no
      * property editor
      */
-    PropertyEditor getPropertyEditor(DynamicPropertyDescriptor pDescriptor) {
-        if ( pDescriptor == null ) {
+    PropertyEditor getPropertyEditor(DynamicPropertyDescriptor propertyDescriptor) {
+        if ( propertyDescriptor == null ) {
             return null;
         }
-        Class<?> peclass = pDescriptor.getPropertyEditorClass();
-        if ( peclass == null ) {
-            return pDescriptor.getUIPropertyEditor();
+        Class<?> propertyEditorClass = propertyDescriptor.getPropertyEditorClass();
+        if ( propertyEditorClass == null ) {
+            return propertyDescriptor.getUIPropertyEditor();
         } else {
-            Object peinst = null;
+            Object propertyEditor = null;
             try {
-                peinst = peclass.newInstance();
+                propertyEditor = propertyEditorClass.newInstance();
             } catch ( InstantiationException e ) {
                 logger.catching(Level.ERROR, e);
             } catch ( IllegalAccessException e ) {
                 logger.catching(Level.ERROR, e);
             }
-            if ( peinst instanceof PropertyEditor ) {
-                return (PropertyEditor) peinst;
+            if ( propertyEditor instanceof PropertyEditor ) {
+                return (PropertyEditor) propertyEditor;
             } else {
                 return null;
             }

@@ -1,7 +1,7 @@
 Using AtgDustCase
   
   This part of the tutorial explains the usage of AtgDustCase, a base class 
-  comparable to Junit's TestCase. and the succesor of AtgDustTestCase. Extending AtgDustCase
+  comparable to Junit's TestCase. and the successor of AtgDustTestCase. Extending AtgDustCase
   will provide you with the following functionality:
   
   * Support for Gsa repository based tests

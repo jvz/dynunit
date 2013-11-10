@@ -220,7 +220,7 @@ public class SQLFileParser {
                 // we need to check more than just whether the line starts
                 // with the keyword.  we also have to try to determine that
                 // the keyword we found is actually NOT just the beginning of a
-                // bigger word.  for example, GOogle.
+                // bigger word.  for example, Google.
                 // so...
                 if ( sLineRead.length() == sKeywordList[i].trim().length() ) {
                     // if the whole line is just the keyword...
