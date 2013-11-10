@@ -844,7 +844,7 @@ public class GSATestUtils {
 
         Properties props = new Properties();
         props.put("repositoryName", "TestRepository" + System.currentTimeMillis());
-        StringBuffer definitionFiles = new StringBuffer();
+        StringBuilder definitionFiles = new StringBuilder();
         for ( int i = 0; i < pDefinitionFiles.length; i++ ) {
             Object obj = this.getClass().getClassLoader().getResource(pDefinitionFiles[i]);
             if ( obj != null ) {
@@ -870,7 +870,7 @@ public class GSATestUtils {
         }
         props.put("definitionFiles", definitionFiles.toString());
         if ( pImportFiles != null ) {
-            StringBuffer importFiles = new StringBuffer();
+            StringBuilder importFiles = new StringBuilder();
             for ( int i = 0; i < pImportFiles.length; i++ ) {
                 Object obj = this.getClass().getClassLoader().getResource(
                         pDefinitionFiles[i]
@@ -1117,7 +1117,7 @@ public class GSATestUtils {
         String clazz = "atg.adapter.gsa.InitializingVersionRepository";
         Properties props = new Properties();
         props.put("repositoryName", "TestRepository");
-        StringBuffer definitionFiles = new StringBuffer();
+        StringBuilder definitionFiles = new StringBuilder();
         for ( int i = 0; i < pDefinitionFiles.length; i++ ) {
             definitionFiles.append(pDefinitionFiles[i]);
             if ( i < (pDefinitionFiles.length - 1) ) {

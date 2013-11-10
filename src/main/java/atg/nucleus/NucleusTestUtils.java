@@ -114,7 +114,7 @@ public class NucleusTestUtils {
             throws IOException {
         Properties prop = new Properties();
         Iterator iter = pInitialServices.iterator();
-        StringBuffer services = new StringBuffer();
+        StringBuilder services = new StringBuilder();
         while ( iter.hasNext() ) {
             if ( services.length() != 0 ) {
                 services.append(",");

@@ -425,7 +425,7 @@ public class SQLProcessorEngine
     private String stripNull(String statement) {
         // first make this all uppercase
 
-        StringBuffer subStatements = new StringBuffer();
+        StringBuilder subStatements = new StringBuilder();
         String tempStatement = statement.toUpperCase();
         StringTokenizer st = new StringTokenizer(tempStatement, ",");
         while ( st.hasMoreTokens() ) {

@@ -209,7 +209,7 @@ public class XmlUtils {
      */
     public static String getNodeTextValue(Node pElement) {
         NodeList children = pElement.getChildNodes();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for ( int i = 0; i < children.getLength(); i++ ) {
             if ( children.item(i) instanceof Text ) {
                 Text n = (Text) children.item(i);

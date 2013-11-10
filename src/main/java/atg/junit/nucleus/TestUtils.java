@@ -515,7 +515,7 @@ public class TestUtils
      * use.  returns null if Dynamo is not running.
      */
     public static String getDynamoProductInfo() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         AppModule dynamo = getAtgDynamoModule();
 
         if ( dynamo == null ) {
@@ -541,7 +541,7 @@ public class TestUtils
      * being used.
      */
     public static String getAppServerProductInfo() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append(getAppServerProductName()).append(" version ").append(getAppServerVersion());
         String build = getAppServerBuildNumber();
@@ -1379,7 +1379,7 @@ public class TestUtils
     public static String accessURL(String pUrl, boolean pThrow)
             throws IOException {
         URL url = null;
-        StringBuffer results = new StringBuffer();
+        StringBuilder results = new StringBuilder();
         BufferedReader in = null;
         InputStreamReader isr = null;
         try {

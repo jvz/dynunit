@@ -948,7 +948,7 @@ public class InitializingVersionRepository
         String ref = "references ";
         String endRef = ",";
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int start = 0;
         int end = 0;
         end = pStr.indexOf(ref);
