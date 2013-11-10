@@ -1065,10 +1065,6 @@ public class NucleusTestUtils {
          * @param pInitialService  the nucleus path of the Nucleus component
          *                         to start-up. This is a required property to prevent accidental
          *                         full start-up.
-         *
-         * @return the started Nucleus instance that should later be shut down
-         *         with the shutdownNucleus method.
-         * @throws ServletException if an error occurs
          */
         public NucleusStartupOptions(String[] pModules,
                                      Class pClassRelativeTo,
@@ -1108,12 +1104,7 @@ public class NucleusTestUtils {
          *                             ("data/" + pBaseConfigDirectory) rather than "data/config".
          * @param pInitialService      the nucleus path of the Nucleus component
          *                             to start-up. This is a required property to prevent
-         *                             accidental
-         *                             full start-up.
-         *
-         * @return the started Nucleus instance that should later be shut down
-         *         with the shutdownNucleus method.
-         * @throws ServletException if an error occurs
+         *                             accidental full start-up.
          */
         public NucleusStartupOptions(String[] pModules,
                                      Class pClassRelativeTo,

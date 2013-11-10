@@ -95,7 +95,7 @@ public class DBUtils {
      * an HSQLDB in memory database connecting with user "sa"
      * password ""
      *
-     * @param pTestDBName
+     * @param pPath
      */
     public static Properties getHSQLDBFileDBConnection(String pPath) {
         Properties props = new Properties();
@@ -280,8 +280,6 @@ public class DBUtils {
      * Returns a Properties object preconfigured to create
      * an HSQLDB in memory database connecting with user "sa"
      * password ""
-     *
-     * @param pTestDBName
      */
     public static Properties getHSQLDBInMemoryDBConnection() {
         return getHSQLDBInMemoryDBConnection("testdb");
@@ -453,11 +451,6 @@ public class DBUtils {
         }
     } //void dump( ResultSet rs )
 
-    /**
-     * @param db
-     *
-     * @throws SQLException
-     */
     void executeCreateIdGenerator()
             throws SQLException {
         try {
@@ -602,38 +595,18 @@ public class DBUtils {
     }
 
 
-    /**
-     * @param pProps
-     *
-     * @return
-     */
     public boolean isOracle() {
         return DBUtils.isMSSQLServer(mJDBCProperties);
     }
 
-    /**
-     * @param pProps
-     *
-     * @return
-     */
     public boolean isSybase() {
         return DBUtils.isMSSQLServer(mJDBCProperties);
     }
 
-    /**
-     * @param pProps
-     *
-     * @return
-     */
     public boolean isMSSQLServer() {
         return DBUtils.isMSSQLServer(mJDBCProperties);
     }
 
-    /**
-     * @param pProps
-     *
-     * @return
-     */
     public boolean isDB2() {
         return DBUtils.isDB2(mJDBCProperties);
     }

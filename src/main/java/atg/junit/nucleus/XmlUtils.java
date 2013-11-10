@@ -47,8 +47,8 @@ public class XmlUtils {
     /**
      * Initializes the XML file to be parsed and gets the Document tree for it.
      *
-     * @param File    the XML file to parse
-     * @param boolean true if the file should be validated against its DTD; otherwise false.
+     * @param pXmlFile     the XML file to parse
+     * @param pValidateDoc true if the file should be validated against its DTD; otherwise false.
      *
      * @throws FileNotFoundException if the specified file can not be located.
      * @throws Exception             if an error occurs parsing the file to a DOM.
@@ -69,20 +69,30 @@ public class XmlUtils {
      * retrieves the Node(s) represented within the DOM hierarchy at the location
      * designated by the 'nested' child nodes.
      *
-     * @param File     the XML document in which to look
-     * @param boolean  true if the file should be validated against its DTD; otherwise false.
-     * @param String[] the nested child nodes to retrieve. for example, if you specified
-     *                 an array { "foo", "bar", "flippy" } this method would return all 'flippy'
-     *                 Nodes for the XML
-     *                 document:
-     *                 <pre>
-     *                                                    &lt;foo&lt;
-     *                                                      &lt;bar&lt;
-     *                                                        &lt;flippy .../&lt;
-     *                                                        &lt;flippy .../&lt;
-     *                                                      &lt;/bar&lt;
-     *                                                    &lt;/foo&lt;
-     *                                                  </pre>
+     * @param pXmlFile     the XML document in which to look
+     * @param pValidateDoc true if the file should be validated against its DTD; otherwise false.
+     * @param pChildren    the nested child nodes to retrieve. for example, if you specified
+     *                     an array { "foo", "bar", "flippy" } this method would return all
+     *                     'flippy'
+     *                     Nodes for the XML
+     *                     document:
+     *                     <pre>
+     *
+     *                     &lt;foo&lt;
+     *
+     *                     &lt;bar&lt;
+     *
+     *                      &lt;flippy
+     *                                         .../&lt;
+     *
+     *                      &lt;flippy
+     *                                         .../&lt;
+     *
+     *                     &lt;/bar&lt;
+     *
+     *                     &lt;/foo&lt;
+     *
+     *                     </pre>
      *
      * @return List the requested child Nodes.  an empty List if no child Nodes exist.
      * @throws FileNotFoundException if the specified file can not be located.
@@ -97,19 +107,25 @@ public class XmlUtils {
      * retrieves the Node(s) represented within the DOM hierarchy at the location
      * designated by the 'nested' child nodes.
      *
-     * @param Document the XML document parsed to a DOM
-     * @param String[] the nested child nodes to retrieve. for example, if you specified
-     *                 an array { "foo", "bar", "flippy" } this method would return all 'flippy'
-     *                 Nodes for the XML
-     *                 document:
-     *                 <pre>
-     *                                                    &lt;foo&lt;
-     *                                                      &lt;bar&lt;
-     *                                                        &lt;flippy .../&lt;
-     *                                                        &lt;flippy .../&lt;
-     *                                                      &lt;/bar&lt;
-     *                                                    &lt;/foo&lt;
-     *                                                  </pre>
+     * @param pDocument the XML document parsed to a DOM
+     * @param pChildren the nested child nodes to retrieve. for example, if you specified
+     *                  an array { "foo", "bar", "flippy" } this method would return all 'flippy'
+     *                  Nodes for the XML
+     *                  document:
+     *                  <pre>
+     *
+     *                  &lt;foo&lt;
+     *
+     *                  &lt;bar&lt;
+     *
+     *                  &lt;flippy .../&lt;
+     *
+     *                  &lt;flippy .../&lt;
+     *
+     *                  &lt;/bar&lt;
+     *
+     *                  &lt;/foo&lt;
+     *                                                                                    </pre>
      *
      * @return List the requested child Nodes.  an empty List if no child Nodes exist.
      *         null if the specified Document was null.
@@ -125,19 +141,25 @@ public class XmlUtils {
      * retrieves the Node(s) represented within the DOM hierarchy at the location
      * designated by the 'nested' child nodes.
      *
-     * @param Node     the Node at which to start searching
-     * @param String[] the nested child nodes to retrieve. for example, if you specified
-     *                 an array { "foo", "bar", "flippy" } this method would return all 'flippy'
-     *                 Nodes for the XML
-     *                 document:
-     *                 <pre>
-     *                                                    &lt;foo&lt;
-     *                                                      &lt;bar&lt;
-     *                                                        &lt;flippy .../&lt;
-     *                                                        &lt;flippy .../&lt;
-     *                                                      &lt;/bar&lt;
-     *                                                    &lt;/foo&lt;
-     *                                                  </pre>
+     * @param pNode     the Node at which to start searching
+     * @param pChildren the nested child nodes to retrieve. for example, if you specified
+     *                  an array { "foo", "bar", "flippy" } this method would return all 'flippy'
+     *                  Nodes for the XML
+     *                  document:
+     *                  <pre>
+     *
+     *                  &lt;foo&lt;
+     *
+     *                  &lt;bar&lt;
+     *
+     *                  &lt;flippy .../&lt;
+     *
+     *                  &lt;flippy .../&lt;
+     *
+     *                  &lt;/bar&lt;
+     *
+     *                  &lt;/foo&lt;
+     *                                                                                    </pre>
      *
      * @return List the requested child Nodes.  an empty List if no child Nodes exist.
      */
@@ -165,8 +187,8 @@ public class XmlUtils {
     /**
      * returns the Element NodeList for the specified child of the parent Node.
      *
-     * @param Node   the parent node
-     * @param String the name of the child node(s)
+     * @param pNode  the parent node
+     * @param pChild the name of the child node(s)
      *
      * @return NodeList the children of the parent Node.  null if pChild or pNode is null.
      */
@@ -180,9 +202,9 @@ public class XmlUtils {
     /**
      * Returns the String value of the content of the Node specified.
      *
-     * @param Node the node whose content to get.
+     * @param pElement the node whose content to get.
      *
-     * @return String the value of the content of the Node.  An empty String if the Node
+     * @return the value of the content of the Node.  An empty String if the Node
      *         does not have any content.
      */
     public static String getNodeTextValue(Node pElement) {
@@ -200,10 +222,10 @@ public class XmlUtils {
     /**
      * gets the value of the named attribute.
      *
-     * @param Node   the node whose attribute should be retrieved.
-     * @param String the name of attribute whose value should be retrieved.
+     * @param pNode the node whose attribute should be retrieved.
+     * @param pName the name of attribute whose value should be retrieved.
      *
-     * @return String the value of the attribute.  null if the attribute is not defined
+     * @return the value of the attribute.  null if the attribute is not defined
      *         or if a value has not been specified for it.
      */
     public static String getAttribute(Node pNode, String pName) {
@@ -214,12 +236,12 @@ public class XmlUtils {
      * returns the value of the named attribute, or the specified default if the attribute
      * value is null.
      *
-     * @param Node   the node whose attribute should be retrieved.
-     * @param String the name of attribute whose value should be retrieved.
-     * @param String the default value to return if a value does not exist for the specified
-     *               attribute, or if the specified attribute is not defined in this Node.
+     * @param pNode    the node whose attribute should be retrieved.
+     * @param pName    the name of attribute whose value should be retrieved.
+     * @param pDefault the default value to return if a value does not exist for the specified
+     *                 attribute, or if the specified attribute is not defined in this Node.
      *
-     * @return String the value of the attribute.
+     * @return the value of the attribute.
      */
     public static String getAttribute(Node pNode, String pName, String pDefault) {
         if ( pNode.getAttributes().getNamedItem(pName) == null ) {
@@ -231,12 +253,12 @@ public class XmlUtils {
     /**
      * returns the value of the named attribute as an Integer object.
      *
-     * @param Node   the node whose attribute should be retrieved.
-     * @param String the name of attribute whose value should be retrieved.
-     * @param String the default value to return if a value does not exist for the specified
-     *               attribute, or if the specified attribute is not defined in this Node.
+     * @param pNode      the node whose attribute should be retrieved.
+     * @param pName      the name of attribute whose value should be retrieved.
+     * @param pAllowNull the default value to return if a value does not exist for the specified
+     *                   attribute, or if the specified attribute is not defined in this Node.
      *
-     * @return Integer the value of the attribute. If pAllowNull is true and
+     * @return the value of the attribute. If pAllowNull is true and
      *         no value is specified for the attribute then null is returned.
      * @throws FileFormatException if the value specified by the attribute can not be converted to
      *                             an Integer,
@@ -249,7 +271,7 @@ public class XmlUtils {
         if ( n == null && pAllowNull ) {
             return null;
         }
-        if ( n == null && !pAllowNull ) {
+        if ( n == null ) {
             throw new FileFormatException(
                     "No value specified for required attribute '" + pName + "'."
             );
@@ -260,11 +282,11 @@ public class XmlUtils {
     /**
      * converts the specified String into an Integer.
      *
-     * @param String  the value to convert.
-     * @param String  a descriptor of what the value is for.
-     * @param boolean true if the input value can be null; otherwise false.
+     * @param pValue      the value to convert.
+     * @param pDescriptor a descriptor of what the value is for.
+     * @param pAllowNull  true if the input value can be null; otherwise false.
      *
-     * @return Integer the Integer value of the String input value.
+     * @return the Integer value of the String input value.
      * @throws FileFormatException if the String can not be converted to an Integer or if it is
      *                             null and pAllowNull is false.
      */
@@ -289,10 +311,11 @@ public class XmlUtils {
     /**
      * returns the value of the named attribute as a Long object.
      *
-     * @param Node   the node whose attribute should be retrieved.
-     * @param String the name of attribute whose value should be retrieved.
-     * @param String the default value to return if a value does not exist for the specified
-     *               attribute, or if the specified attribute is not defined in this Node.
+     * @param pNode      the node whose attribute should be retrieved.
+     * @param pName      the name of attribute whose value should be retrieved.
+     * @param pAllowNull [FIXME] the default value to return if a value does not exist for the
+     *                   specified
+     *                   attribute, or if the specified attribute is not defined in this Node.
      *
      * @return Long the value of the attribute. If pAllowNull is true and
      *         no value is specified for the attribute then null is returned.
@@ -307,7 +330,7 @@ public class XmlUtils {
         if ( n == null && pAllowNull ) {
             return null;
         }
-        if ( n == null && !pAllowNull ) {
+        if ( n == null ) {
             throw new FileFormatException(
                     "No value specified for required attribute '" + pName + "'."
             );
@@ -318,11 +341,11 @@ public class XmlUtils {
     /**
      * converts the specified String into a Long.
      *
-     * @param String  the value to convert.
-     * @param String  a descriptor of what the value is for.
-     * @param boolean true if the input value can be null; otherwise false.
+     * @param pValue  the value to convert.
+     * @param pDescriptor  a descriptor of what the value is for.
+     * @param pAllowNull true if the input value can be null; otherwise false.
      *
-     * @return Long the Long value of the String input value.
+     * @return the Long value of the String input value.
      * @throws FileFormatException if the String can not be converted to a Long or if it is
      *                             null and pAllowNull is false.
      */
@@ -348,9 +371,9 @@ public class XmlUtils {
     /**
      * returns the value of the named attribute as a boolean.
      *
-     * @param Node    the node whose attribute should be retrieved.
-     * @param String  the name of attribute whose value should be retrieved.
-     * @param boolean the default value to return if a value does not exist for the specified
+     * @param pNode    the node whose attribute should be retrieved.
+     * @param pName  the name of attribute whose value should be retrieved.
+     * @param pDefault the default value to return if a value does not exist for the specified
      *                attribute, or if the specified attribute is not defined in this Node.
      *
      * @return boolean the value of the attribute. If no value was specified for the
@@ -370,9 +393,9 @@ public class XmlUtils {
     /**
      * converts the specified value into a boolean.
      *
-     * @param String  the value which should be converted.
-     * @param String  a descriptor of what the value is for.
-     * @param boolean the default value to return if the specified value is null or empty.
+     * @param pValue  the value which should be converted.
+     * @param pDescriptor  a descriptor of what the value is for.
+     * @param pDefault the default value to return if the specified value is null or empty.
      *
      * @return boolean the converted value. If the specified value was null or empty
      *         then the default value is returned.
@@ -400,9 +423,9 @@ public class XmlUtils {
     /**
      * returns the value of the named attribute as a Boolean object.
      *
-     * @param Node    the node whose attribute should be retrieved.
-     * @param String  the name of attribute whose value should be retrieved.
-     * @param Boolean the default value to return if a value does not exist for the specified
+     * @param pNode    the node whose attribute should be retrieved.
+     * @param pName  the name of attribute whose value should be retrieved.
+     * @param pDefault the default value to return if a value does not exist for the specified
      *                attribute, or if the specified attribute is not defined in this Node.
      *
      * @return Boolean the value of the attribute. If no value was specified for the

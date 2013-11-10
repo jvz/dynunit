@@ -21,7 +21,6 @@ import atg.adapter.gsa.xml.VersioningContextUtil;
 import atg.adapter.version.VersionRepository;
 import atg.naming.NameContext;
 import atg.nucleus.Configuration;
-import atg.nucleus.GenericService;
 import atg.nucleus.Nucleus;
 import atg.nucleus.NucleusNameResolver;
 import atg.nucleus.NucleusTestUtils;
@@ -1052,7 +1051,7 @@ public class GSATestUtils {
 
     /**
      * @param pConfigRoot
-     * @param pString
+     * @param path
      * @param configPath where in config path the file must be copied.
      *
      * @throws FileNotFoundException

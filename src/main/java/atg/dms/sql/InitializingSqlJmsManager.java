@@ -73,8 +73,6 @@ public class InitializingSqlJmsManager
 
     /**
      * Creates the required tables for this component.
-     *
-     * @throws FileNotFoundException
      */
     public void createSchema() {
         String ddlPath = getDDLPath(getDatabaseName());

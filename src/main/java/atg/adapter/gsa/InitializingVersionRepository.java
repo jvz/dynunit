@@ -480,8 +480,6 @@ public class InitializingVersionRepository
      * Overrides doStartService from VersionRepository to make the
      * repository optionally create required tables by specified sql scripts and load data
      * using the TemplateParser -import flag.
-     *
-     * @throws RepositoryException (?)
      */
     public void doStartService() {
 
@@ -654,8 +652,6 @@ public class InitializingVersionRepository
      *
      * @throws RepositoryException   if an error occurs while retrieving a
      *                               list of the tables associated with the repository
-     * @throws SQLProcessorException if an error occured trying to
-     *                               drop the tables
      */
     public void dropTables()
             throws RepositoryException {

@@ -20,7 +20,7 @@ import atg.applauncher.AppLauncher;
 import atg.applauncher.AppModule;
 import atg.nucleus.DynamoEnv;
 import atg.nucleus.Nucleus;
-import atg.service.dynamo.LicenseImpl; // FIXME: not in dependencies
+import atg.service.dynamo.LicenseImpl;
 import atg.service.email.ContentPart;
 import atg.service.email.EmailEvent;
 import atg.service.email.MimeMessageUtils;
@@ -58,6 +58,7 @@ import java.util.StringTokenizer;
 import java.util.jar.Manifest;
 
 // TODO: holy shit this file is huge
+
 /**
  * This class is used to hold useful utilty methods people may
  * need when running tests.
@@ -1021,11 +1022,11 @@ public class TestUtils
     /**
      * returns the session limit of the specified license component
      *
-     * @param String  the component name of the license in question
-     * @param boolean true if Nucleus should attempt to create the license
-     *                component if it does not exist
+     * @param pLicense the component name of the license in question
+     * @param pResolve true if Nucleus should attempt to create the license
+     *                 component if it does not exist
      *
-     * @return int the session limit for the license.  0 if the license does not
+     * @return The session limit for the license.  0 if the license does not
      *         resolve.
      */
     public static int getSessionLimit(String pLicense, boolean pResolve) {
@@ -1474,8 +1475,8 @@ public class TestUtils
     /**
      * Writes the byte array into the specified file.
      *
-     * @param File   pFile the file to write to
-     * @param byte[] the bytes to write
+     * @param pFile  the file to write to
+     * @param pBytes the bytes to write
      *
      * @throws IOException if an error occurred opening or reading the file.
      */
@@ -1506,8 +1507,8 @@ public class TestUtils
      * array and expands all System property variables in the Strings.
      * it does not check whether resolved file paths exist.
      *
-     * @param String delimited string of files to be converted to array.
-     * @param String delimiter string used to separated files
+     * @param pFiles     delimited string of files to be converted to array.
+     * @param pDelimiter delimiter string used to separated files
      *
      * @return String[] array of expanded paths
      * @throws Exception if files can't be resolved properly
@@ -1522,14 +1523,14 @@ public class TestUtils
      * and expands all variables in the Strings.  it does not check whether
      * resolved file paths exist.
      *
-     * @param String     delimited string of files to be converted to array.
-     * @param String     delimiter string used to separated files
-     * @param Properties optional primary mapping of key/value pairs to
-     *                   substitute into file paths whererever the syntax <tt>{...}</tt>
-     *                   is found.  If parameter is null, or mapping not found, then
-     *                   System.getProperties() is checked.
+     * @param pFiles          delimited string of files to be converted to array.
+     * @param pDelimiter      delimiter string used to separated files
+     * @param pPrimaryMapping optional primary mapping of key/value pairs to
+     *                        substitute into file paths whererever the syntax <tt>{...}</tt>
+     *                        is found.  If parameter is null, or mapping not found, then
+     *                        System.getProperties() is checked.
      *
-     * @return String[] array of expanded paths
+     * @return array of expanded paths
      * @throws Exception if files can't be resolved properly
      */
     public static String[] convertFileArray(String pFiles,
@@ -1552,7 +1553,7 @@ public class TestUtils
      * String using curly braces syntax <tt>{...}</tt> and returns the
      * resulting String.
      *
-     * @param String the string to expand.
+     * @param pString the string to expand.
      *
      * @throws Exception if a System property resolves to null or if
      *                   the enclosing braces are not properly matched.
@@ -1571,13 +1572,13 @@ public class TestUtils
      * such as
      * "appModuleResource?moduleID=MyModule&resource=my/resource/file".
      *
-     * @param String     the string to expand.
-     * @param Properties an optional primary key/value mapping to use
-     *                   for System property substitutions.  If param is null, or if
-     *                   mapping not found, then System.getProperties().getProperty(xxx)
-     *                   is used.
+     * @param pString         the string to expand.
+     * @param pPrimaryMapping an optional primary key/value mapping to use
+     *                        for System property substitutions.  If param is null, or if
+     *                        mapping not found, then System.getProperties().getProperty(foo)
+     *                        is used.
      *
-     * @return String the expanded string.
+     * @return the expanded string.
      * @throws Exception if a System or AppModuleResource property
      *                   resolves to null or if the enclosing braces are not properly
      *                   matched.
@@ -1783,8 +1784,10 @@ public class TestUtils
                             }
                         } catch ( Exception ale ) {
                             logger.catching(ale);
-                            logger.warn("Cannot resolve module '{}'.",
-                                        APPLICATION_PRODUCT_MODULES[i].substring(idx + 1));
+                            logger.warn(
+                                    "Cannot resolve module '{}'.",
+                                    APPLICATION_PRODUCT_MODULES[i].substring(idx + 1)
+                            );
                         }
                     }
                 }
@@ -1814,11 +1817,11 @@ public class TestUtils
      * installed in the Dynamo.  Returned file is <u>not</u> verified
      * to exist.
      *
-     * @param String pModuleName the name of the Dynamo module to look in.  e.g.
-     *               "SystemTests.JSPTest"
-     * @param String pResourceURI the URI of the File to get from the module.  e.g. "mite.xml"
+     * @param pModuleName  the name of the Dynamo module to look in.  e.g.
+     *                     "SystemTests.JSPTest"
+     * @param pResourceURI the URI of the File to get from the module.  e.g. "mite.xml"
      *
-     * @return File the requested file.
+     * @return the requested file.
      */
     public static File getModuleResourceFile(String pModuleName, String pResourceURI) {
         return getAppLauncher().getAppModuleManager().getResourceFile(pModuleName, pResourceURI);
@@ -1828,11 +1831,11 @@ public class TestUtils
      * Resolves an appModuleResource reference by parsing the string
      * into its constituent ModuleID and ResourceURI.
      *
-     * @param String pReference The AppModuleResource reference to resolve.  Expected to be of
-     *               format:
-     *               <br><tt>appModuleResource?moduleID=<i>moduleID</i>&resourceURI=<i>some/URI</i></tt>
+     * @param pReference The AppModuleResource reference to resolve.  Expected to be of
+     *                   format:
+     *                   <br><tt>appModuleResource?moduleID=<i>moduleID</i>&resourceURI=<i>some/URI</i></tt>
      *
-     * @return File the referenced module resource.
+     * @return the referenced module resource.
      * @throws IllegalArgumentException if the specified reference does not have the proper
      *                                  structure.
      */

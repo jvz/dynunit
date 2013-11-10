@@ -437,7 +437,6 @@ public class GSARepositorySchemaGenerator {
      * @param pContinueOnError - If true, continue on error, else fail.
      * @param pDrop            - If true, drops schema first before attempting to create it.
      *
-     * @throws SQLException
      * @throws DatabaseOperationException
      */
     public void createSchema(final boolean pContinueOnError, final boolean pDrop)
@@ -465,7 +464,6 @@ public class GSARepositorySchemaGenerator {
      *
      * @param pContinueOnError - If true, continue on error, else fail.
      *
-     * @throws SQLException
      * @throws DatabaseOperationException
      */
     public void dropSchema(final boolean pContinueOnError)

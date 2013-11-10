@@ -204,8 +204,6 @@ public class SQLProcessor {
      * @param pPassword  password to connect to db
      * @param pDriver    driver specification to connect to db
      * @param pURL       url to connect to db
-     *
-     * @throws SQLException if an error occurs creating the DataSource
      */
     public SQLProcessor(TransactionManager pTxManager,
                         String pUsername,

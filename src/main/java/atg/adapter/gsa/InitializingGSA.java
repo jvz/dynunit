@@ -439,8 +439,6 @@ public class InitializingGSA
      * Overrides doStartService from GSARepository to make the repository
      * optionally create required tables and load data using the TemplateParser
      * -import flag.
-     *
-     * @throws RepositoryException (?)
      */
     public void doStartService() {
         // Loading Column Infos in a separate thread

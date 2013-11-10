@@ -53,7 +53,7 @@ public class GSATest
 
     private final transient Random random = new Random();
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     private final HashMap<String, File> mConfigDir = new HashMap<String, File>();
 
@@ -148,7 +148,6 @@ public class GSATest
      * @param pMethodName
      *
      * @throws Exception
-     * @throws Exception
      */
     void setUpAndTest(File pConfigPathWhereToCreateTheRepository,
                       String[] definitionFiles,
@@ -192,7 +191,6 @@ public class GSATest
      *
      * @param pMethodName
      *
-     * @throws Exception
      * @throws Exception
      */
     protected void setUpAndTest(String pMethodName)
@@ -473,9 +471,9 @@ public class GSATest
             try {
                 peinst = peclass.newInstance();
             } catch ( InstantiationException e ) {
-                log.catching(Level.ERROR, e);
+                logger.catching(Level.ERROR, e);
             } catch ( IllegalAccessException e ) {
-                log.catching(Level.ERROR, e);
+                logger.catching(Level.ERROR, e);
             }
             if ( peinst instanceof PropertyEditor ) {
                 return (PropertyEditor) peinst;
