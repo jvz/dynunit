@@ -366,9 +366,7 @@ public class SQLProcessorEngine
         if ( isLoggingInfo() ) {
             logInfo("Creating tables...");
         }
-        Iterator<String> iter = statements.iterator();
-        while ( iter.hasNext() ) {
-            String statement = iter.next();
+        for ( String statement : statements ) {
             String name = getTableName(statement);
             boolean exists = tableExists(name);
 
@@ -562,9 +560,7 @@ public class SQLProcessorEngine
         int attempt = 0;
         do {
             remainingTables = new ArrayList<String>();
-            Iterator<String> tables = tablesToDrop.iterator();
-            while ( tables.hasNext() ) {
-                String table = tables.next();
+            for ( String table : tablesToDrop ) {
                 if ( tableExists(table) ) {
                     try {
                         logInfo("Attempting to drop table: " + table);
@@ -631,9 +627,8 @@ public class SQLProcessorEngine
         List<String> createStatements = pStatements;
 
         // now get the table name from each statement
-        Iterator<String> iter = createStatements.iterator();
-        while ( iter.hasNext() ) {
-            String thisName = getTableName(iter.next());
+        for ( String createStatement : createStatements ) {
+            String thisName = getTableName(createStatement);
 
             if ( thisName != null && !names.contains(thisName) ) {
                 names.add(thisName);
@@ -800,9 +795,7 @@ public class SQLProcessorEngine
                 refersTo.put(tableName, references);
 
                 // update referencedBy to include this table
-                Iterator<String> refs = references.iterator();
-                while ( refs.hasNext() ) {
-                    String ref = refs.next();
+                for ( String ref : references ) {
                     List<String> v;
                     if ( !referencedBy.containsKey(ref) ) {
                         v = new ArrayList<String>();
@@ -841,9 +834,7 @@ public class SQLProcessorEngine
                 } else {
                     List<String> waitingOnTables = refersTo.get(tableName);
                     boolean okToAdd = true;
-                    Iterator<String> i = waitingOnTables.iterator();
-                    while ( i.hasNext() ) {
-                        String waitingOn = i.next();
+                    for ( String waitingOn : waitingOnTables ) {
                         if ( refersTo.containsKey(waitingOn) ) {
                             okToAdd = false;
                         }
@@ -855,9 +846,7 @@ public class SQLProcessorEngine
                         // let the other tables know this one is made
                         if ( referencedBy.containsKey(tableName) ) {
                             List<String> tablesWaiting = referencedBy.get(tableName);
-                            Iterator<String> j = tablesWaiting.iterator();
-                            while ( j.hasNext() ) {
-                                String table = j.next();
+                            for ( String table : tablesWaiting ) {
                                 List<String> v = refersTo.get(table);
                                 v.remove(tableName);
                             }
@@ -867,9 +856,7 @@ public class SQLProcessorEngine
             }
 
             // after each iteration, remove the newlyAdded statements from the list
-            Iterator<String> k = newlyAdded.iterator();
-            while ( k.hasNext() ) {
-                String s = k.next();
+            for ( String s : newlyAdded ) {
                 statements.remove(s);
             }
 
@@ -877,9 +864,7 @@ public class SQLProcessorEngine
             if ( attempt++ > maxTries ) {
                 if ( isLoggingError() ) {
                     logError("Still trying to resolve: ");
-                    Iterator<String> left = statements.iterator();
-                    while ( left.hasNext() ) {
-                        String table = left.next();
+                    for ( String table : statements ) {
                         logError(table);
                     }
                 }
@@ -934,9 +919,7 @@ public class SQLProcessorEngine
         }
 
         if ( isLoggingDebug() ) {
-            Iterator<String> i = refs.iterator();
-            while ( i.hasNext() ) {
-                String s = i.next();
+            for ( String s : refs ) {
                 logDebug("Found reference: " + s);
             }
         }
@@ -955,9 +938,7 @@ public class SQLProcessorEngine
      */
     private boolean checkReferencesInRepository(List<String> pRepositoryTables,
                                                 List<String> pCheckTables) {
-        Iterator<String> iter = pCheckTables.iterator();
-        while ( iter.hasNext() ) {
-            String name = iter.next();
+        for ( String name : pCheckTables ) {
             if ( !pRepositoryTables.contains(name) ) {
                 return false;
             }

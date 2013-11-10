@@ -31,7 +31,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -340,9 +339,8 @@ public class SQLProcessor {
             throws SQLException, TransactionDemarcationException {
         // just show drops once if preview is true
         if ( pPreview ) {
-            Iterator<String> tables = pNames.iterator();
-            while ( tables.hasNext() ) {
-                dropTable(tables.next(), pCascadeConstraints, pPreview);
+            for ( String pName : pNames ) {
+                dropTable(pName, pCascadeConstraints, pPreview);
             }
             return;
         }
@@ -358,9 +356,7 @@ public class SQLProcessor {
         int attempt = 0;
         do {
             remainingTables = new ArrayList<String>();
-            Iterator<String> tables = tablesToDrop.iterator();
-            while ( tables.hasNext() ) {
-                String table = tables.next();
+            for ( String table : tablesToDrop ) {
                 if ( tableExists(table) ) {
                     try {
                         dropTable(table, pCascadeConstraints, pPreview);

@@ -165,9 +165,8 @@ public class NucleusTestUtils {
                 fw.write(classLine);
             }
             if ( pProps != null ) {
-                Iterator iter = pProps.keySet().iterator();
-                while ( iter.hasNext() ) {
-                    String key = (String) iter.next();
+                for ( Object o : pProps.keySet() ) {
+                    String key = (String) o;
                     String thisLine = key + "=" + StringUtils.replace(
                             pProps.getProperty(key), '\\', "\\\\"
                     ) + "\n";

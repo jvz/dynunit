@@ -31,7 +31,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Properties;
 
 /**
@@ -496,9 +495,7 @@ public class DBUtils {
         logger.info("Attemping to execute " + pFile);
         SQLFileParser parser = new SQLFileParser();
         Collection<String> c = parser.parseSQLFile(pFile.getAbsolutePath());
-        Iterator<String> cmds = c.iterator();
-        while ( cmds.hasNext() ) {
-            String cmd = cmds.next();
+        for ( String cmd : c ) {
             try {
                 if ( "Oracle".equals(mDatabaseType) ) {
                     cmd = StringUtils.replace(cmd, "numeric", "NUMBER");

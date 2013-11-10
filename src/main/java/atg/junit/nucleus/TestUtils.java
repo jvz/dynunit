@@ -686,9 +686,7 @@ public class TestUtils
             String[] children1 = { "version" };
             List<Node> nodes1 = XmlUtils.getNodes(f, false, children1);
             if ( nodes1 != null ) {
-                Iterator<Node> iter1 = nodes1.iterator();
-                while ( iter1.hasNext() ) {
-                    Node n1 = iter1.next();
+                for ( Node n1 : nodes1 ) {
                     version = XmlUtils.getNodeTextValue(n1);
                 }
             }
@@ -874,11 +872,9 @@ public class TestUtils
             String[] children = { "host", "product", "release" };
             List<Node> nodes = XmlUtils.getNodes(f, false, children);
             if ( nodes != null ) {
-                Iterator<Node> iter = nodes.iterator();
                 // I expect there to only be one <host><product><release> node
                 // so this iteration should really just loop over one node.
-                while ( iter.hasNext() ) {
-                    Node n = iter.next();
+                for ( Node n : nodes ) {
                     version = XmlUtils.getAttribute(n, "level", "0") + "." +
                               XmlUtils.getAttribute(n, "ServicePackLevel", "0") + "." +
                               XmlUtils.getAttribute(n, "PatchLevel", "0");
@@ -969,10 +965,8 @@ public class TestUtils
                 return UNKNOWN_INFO;
             }
             String[] children = { "jar" };
-            Iterator<Node> nodes = XmlUtils.getNodes(versionFile, false, children).iterator();
-            while ( nodes.hasNext() ) {
+            for ( Node node : XmlUtils.getNodes(versionFile, false, children) ) {
                 try {
-                    Node node = nodes.next();
                     String name = node.getAttributes().getNamedItem("name").getNodeValue();
                     log("Checking node: " + name);
                     if ( name.equals("jboss.jar") ) {
@@ -1177,9 +1171,7 @@ public class TestUtils
 
             // add the text attachments
             if ( pTextAttachments != null ) {
-                Iterator<String> textkeys = pTextAttachments.keySet().iterator();
-                while ( textkeys.hasNext() ) {
-                    String key = textkeys.next();
+                for ( String key : pTextAttachments.keySet() ) {
                     Object val = pTextAttachments.get(key);
                     if ( val != null ) {
                         MimeBodyPart part = new MimeBodyPart();
@@ -1194,9 +1186,7 @@ public class TestUtils
 
             // add the html attachments
             if ( pHTMLAttachments != null ) {
-                Iterator<String> htmlkeys = pHTMLAttachments.keySet().iterator();
-                while ( htmlkeys.hasNext() ) {
-                    String key = htmlkeys.next();
+                for ( String key : pHTMLAttachments.keySet() ) {
                     Object val = pHTMLAttachments.get(key);
                     if ( val != null ) {
                         MimeBodyPart part = new MimeBodyPart();
@@ -1655,10 +1645,9 @@ public class TestUtils
      */
     public static AppModule getAtgDynamoModule() {
         // get all modules that were started with dynamo
-        Iterator<?> modules = getAppLauncher().getModules().iterator();
 
-        while ( modules.hasNext() ) {
-            AppModule module = (AppModule) modules.next();
+        for ( Object o : getAppLauncher().getModules() ) {
+            AppModule module = (AppModule) o;
             if ( module.getName().equals(getAtgDynamoProductModule()) ) {
                 return module;
             }
@@ -1696,10 +1685,9 @@ public class TestUtils
      */
     public static AppModule getAtgJ2eeServerModule() {
         // get all modules that were started with dynamo
-        Iterator<?> modules = getAppLauncher().getModules().iterator();
 
-        while ( modules.hasNext() ) {
-            AppModule module = (AppModule) modules.next();
+        for ( Object o : getAppLauncher().getModules() ) {
+            AppModule module = (AppModule) o;
             if ( module.getName().equals(getAtgJ2eeServerProductModule()) ) {
                 return module;
             }
@@ -1744,10 +1732,9 @@ public class TestUtils
         List<AppModule> apps = new LinkedList<AppModule>();
 
         // get all modules that were started with dynamo
-        Iterator<?> modules = getAppLauncher().getModules().iterator();
 
-        while ( modules.hasNext() ) {
-            AppModule module = (AppModule) modules.next();
+        for ( Object o : getAppLauncher().getModules() ) {
+            AppModule module = (AppModule) o;
             for ( String APPLICATION_PRODUCT_MODULE : APPLICATION_PRODUCT_MODULES ) {
                 // in order to work around bug 80207, we allow a colon ":" in
                 // the specified module names.  if a colon exists, the name

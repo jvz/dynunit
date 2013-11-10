@@ -32,7 +32,6 @@ import javax.servlet.ServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -509,9 +508,8 @@ public class DropletInvoker {
 
             Map mapFrame = pRequest.getMapForCurrentFrame();
 
-            Iterator iterKeys = mapFrame.keySet().iterator();
-            while ( iterKeys.hasNext() ) {
-                String strKey = (String) iterKeys.next();
+            for ( Object o : mapFrame.keySet() ) {
+                String strKey = (String) o;
                 mFrameParameters.put(strKey, mapFrame.get(strKey));
             }
         }

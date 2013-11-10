@@ -371,9 +371,7 @@ public class GSATestUtils {
      * Deletes any files created by initializing the configpath
      */
     public void cleanup() {
-        Iterator<File> iter = mFilesCreated.iterator();
-        while ( iter.hasNext() ) {
-            File f = iter.next();
+        for ( File f : mFilesCreated ) {
             f.delete();
         }
         mFilesCreated.clear();
@@ -1367,10 +1365,8 @@ public class GSATestUtils {
             System.out.print("\n");
             while ( rs.next() ) {
                 int i = 1;
-                Iterator<?> iter = colNames.iterator();
-                while ( iter.hasNext() ) {
+                for ( Object colName : colNames ) {
                     //String columnName =  iter.next();
-                    iter.next();
                     Object obj = rs.getObject(i++);
                     if ( obj == null ) {
                         obj = "NULL";
