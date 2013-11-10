@@ -663,7 +663,7 @@ public class NucleusTestUtils {
 
             PropertyEditors.registerEditors();
             logger.info("Starting nucleus with arguments: " + listArgs);
-            Nucleus n = Nucleus.startNucleus(listArgs.toArray(new String[0]));
+            Nucleus n = Nucleus.startNucleus(listArgs.toArray(new String[listArgs.size()]));
 
             // remember our temporary server directory for later deletion
             sNucleusToTempAtgServerDirectory.put(n, fileServerDir);
@@ -673,9 +673,9 @@ public class NucleusTestUtils {
 
             return n;
         } catch ( AppLauncherException e ) {
-            throw new ServletException(e);
+            throw logger.throwing(new ServletException(e));
         } catch ( IOException e ) {
-            throw new ServletException(e);
+            throw logger.throwing(new ServletException(e));
         } finally {
             if ( (fileServerDir != null) && sRemoveTempAtgServerDirectories ) {
                 try {

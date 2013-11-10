@@ -124,9 +124,9 @@ public class AtgDustCase
 
     private static final Map<String, Long> CONFIG_FILES_TIMESTAMPS;
 
-    private static final Map<String, Long> CONFIG_FILES_GLOBAL_FORCE = null;
+    private static Map<String, Long> CONFIG_FILES_GLOBAL_FORCE = null;
 
-    private static final Class<?> perflib;
+    private static Class<?> perflib;
 
     private static final File TIMESTAMP_SER = new File(
             System.getProperty("java.io.tmpdir") + File.separator + "atg-dust-tstamp-rh.ser"
@@ -136,7 +136,7 @@ public class AtgDustCase
             System.getProperty("java.io.tmpdir") + File.separator + "atg-dust-gforce-rh.ser"
     );
 
-    private static final long SERIAL_TTL = 43200000L;
+    private static long SERIAL_TTL = 43200000L;
 
     /**
      * Every *.properties file copied using this method will have it's scope (if
@@ -234,7 +234,7 @@ public class AtgDustCase
 
         log.debug("Copying configuration files and forcing global scope on all configs.");
         preCopyingOfConfigurationFiles(
-                srcsAsList.toArray(new String[] { }), excludes
+                srcsAsList.toArray(new String[srcsAsList.size()]), excludes
         );
 
         log.info("Copying configuration files and forcing global scope on all configs");

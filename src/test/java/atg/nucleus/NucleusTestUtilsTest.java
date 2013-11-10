@@ -57,9 +57,9 @@ public class NucleusTestUtilsTest
                 n = new Nucleus(null);
             } catch ( LicenseFailureException licExc ) {
             }
-            Object component = new String("I'm the test component");
+            Object component = "I'm the test component";
             String path = "/foo/Test";
-            Object component2 = new String("I'm the test component too");
+            Object component2 = "I'm the test component too";
             String path2 = "/foo/Test2";
             NucleusTestUtils.addComponent(n, path, component);
             NucleusTestUtils.addComponent(n, path2, component2);

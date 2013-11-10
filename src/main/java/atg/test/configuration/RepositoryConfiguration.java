@@ -214,7 +214,7 @@ public final class RepositoryConfiguration {
 
         final StringBuilder defFiles = new StringBuilder();
         for ( int i = 0; i < definitionFiles.length; i++ ) {
-            defFiles.append("/" + definitionFiles[i]);
+            defFiles.append("/").append(definitionFiles[i]);
         }
         settings.put("definitionFiles", defFiles.toString());
 

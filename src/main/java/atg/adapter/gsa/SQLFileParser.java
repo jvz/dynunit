@@ -544,14 +544,9 @@ public class SQLFileParser {
         v = readFileAndLoadData();
         String s = "";
         for ( int i = 0; i < v.size(); i++ ) {
-            s = v.get(i).toString();
+            s = v.get(i);
             s = trimDebuggingCharacters(s);
-
-            if ( logToSystemOut ) {
-                //logger.info("\n\n" + s );
-            } else {
-                //  if (isLoggingInfo ()) logInfo(s);
-            }
+            logger.info(s);
         }
 
         return v;

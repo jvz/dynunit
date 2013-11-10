@@ -148,9 +148,7 @@ public class FileUtil {
                       it.hasNext(); ) {
                     final Entry<String, String> entry = it.next();
                     out.write(
-                            new StringBuilder(entry.getKey()).append("=").append(
-                                    entry.getValue()
-                            ).toString()
+                            entry.getKey() + "=" + entry.getValue()
                     );
                     out.newLine();
                 }

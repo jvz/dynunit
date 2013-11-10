@@ -502,7 +502,7 @@ public class DropletInvoker {
                                        DynamoHttpServletResponse pResponse) {
             mName = pName;
             //      mFrameParameters = new HashMap(pRequest.getMapForCurrentFrame());
-            mFrameParameters = new HashMap();
+            mFrameParameters = new HashMap<String, Object>();
 
             // because of a bug with entrySet in 9.0, we go through keys
             // and copy manually, here.

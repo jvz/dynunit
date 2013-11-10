@@ -397,7 +397,7 @@ public class ServletTestUtils {
                 );
             } else if ( objValue == null ) {
                 // just ignore, I reckon
-            } else if ( objValue.getClass() == new String[0].getClass() ) {
+            } else if ( objValue.getClass() == String[].class ) {
                 String[] rgstr = (String[]) (objValue);
                 for ( int i = 0; i < rgstr.length; i++ ) {
                     escapeAndAppendParamNameAndValue(
@@ -596,7 +596,7 @@ public class ServletTestUtils {
         mimeTypes.add("xsl");
         mimeTypes.add("text/xml");
 
-        mimeTyper.setExtensionToMimeType(mimeTypes.toArray(new String[0]));
+        mimeTyper.setExtensionToMimeType(mimeTypes.toArray(new String[mimeTypes.size()]));
         mimeTyper.processMimeTypes();
         return mimeTyper;
     }
@@ -676,7 +676,7 @@ public class ServletTestUtils {
          * include() if recordDispaches is true).
          */
         public TestingDispatchRecord[] getDispatchRecords() {
-            return mDispatchRecords.toArray(new TestingDispatchRecord[0]);
+            return mDispatchRecords.toArray(new TestingDispatchRecord[mDispatchRecords.size()]);
         }
 
 
@@ -2323,17 +2323,13 @@ public class ServletTestUtils {
 
 
         public boolean isBlockDispatches() {
-            if ( getResponse() instanceof TestingDynamoHttpServletResponse ) {
-                return ((TestingDynamoHttpServletResponse) getResponse()).isBlockDispatches();
-            }
-            return false;
+            return getResponse() instanceof TestingDynamoHttpServletResponse
+                   && ((TestingDynamoHttpServletResponse) getResponse()).isBlockDispatches();
         }
 
         public boolean isRecordDispatches() {
-            if ( getResponse() instanceof TestingDynamoHttpServletResponse ) {
-                return ((TestingDynamoHttpServletResponse) getResponse()).isRecordDispatches();
-            }
-            return false;
+            return getResponse() instanceof TestingDynamoHttpServletResponse
+                   && ((TestingDynamoHttpServletResponse) getResponse()).isRecordDispatches();
         }
 
 

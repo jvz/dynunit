@@ -53,7 +53,7 @@ public class ConfigurableConfigCreationFilter
      * Get list of component paths to filter out.
      */
     public String[] getDroppedComponents() {
-        return mDroppedComponents.toArray(new String[0]);
+        return mDroppedComponents.toArray(new String[mDroppedComponents.size()]);
     }
 
     /**

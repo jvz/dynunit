@@ -152,9 +152,7 @@ public class XmlUtils {
         } else {
             // otherwise recurse and get the children nodes...
             String[] children = new String[pChildren.length - 1];
-            for ( int j = 0; j < children.length; j++ ) {
-                children[j] = pChildren[j + 1];
-            }
+            System.arraycopy(pChildren, 1, children, 0, children.length);
 
             NodeList nl = ((Element) pNode).getElementsByTagName(pChildren[0]);
             for ( int i = 0; i < nl.getLength(); i++ ) {
@@ -196,8 +194,7 @@ public class XmlUtils {
                 sb.append(n.getNodeValue());
             }
         }
-        String v = sb.toString();
-        return v.toString();
+        return sb.toString();
     }
 
     /**
@@ -382,6 +379,7 @@ public class XmlUtils {
      */
     public static boolean getBooleanValue(String pValue, String pDescriptor, boolean pDefault)
             throws FileFormatException {
+        // XXX: what the fuck
         if ( pValue == null || pValue.trim().length() == 0 ) {
             return pDefault;
         }
@@ -395,7 +393,7 @@ public class XmlUtils {
                     "'. Must be [true|false]"
             );
         }
-        return new Boolean(pValue.trim()).booleanValue();
+        return Boolean.parseBoolean(pValue.trim());
     }
 
     /**
@@ -421,10 +419,8 @@ public class XmlUtils {
         if ( v == null || v.length() == 0 ) {
             return pDefault;
         }
-        return new Boolean(
-                getBooleanValue(
-                        v, pName, true
-                )
+        return getBooleanValue(
+                v, pName, true
         );  // the default 'true' passed to this call should not never to be used
     }
 

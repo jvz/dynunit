@@ -35,7 +35,6 @@ import org.apache.ddlutils.DatabaseOperationException;
 import javax.transaction.TransactionManager;
 import java.io.File;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,7 +42,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Vector;
 
 /**
  * This class is an extension of atg.adapter.gsa.GSARepository. It's purpose is
@@ -675,11 +673,9 @@ public class InitializingGSA
                 }
             } catch ( DatabaseOperationException e ) {
                 throw new RepositoryException(e);
-            } catch ( SQLException e ) {
-                throw new RepositoryException(e);
             }
         } else {
-            Vector statements = getCreateStatements(null, null);
+            List<String> statements = getCreateStatements(null, null);
             SQLProcessorEngine processor = getSQLProcessor();
             processor.dropTablesFromCreateStatements(statements);
 
@@ -725,8 +721,6 @@ public class InitializingGSA
                     createdTables = true;
                 } catch ( DatabaseOperationException e ) {
                     throw new RepositoryException(e);
-                } catch ( SQLException e ) {
-                    throw new RepositoryException(e);
                 }
             }
         } else {
@@ -735,7 +729,7 @@ public class InitializingGSA
             // turn on debug for SQLProcessorEngine if GSA has debug on if
             // (isLoggingDebug())
             spe.setLoggingDebug(true);
-            Vector createStatements = getCreateStatements(null, null);
+            List<String> createStatements = getCreateStatements(null, null);
             createdTables = spe.createTables(createStatements, isDropTablesIfExist());
 
         }
@@ -866,10 +860,10 @@ public class InitializingGSA
      *
      * @throws RepositoryException if an error occurs with the Repository
      */
-    private Vector getCreateStatements(PrintWriter pOut, String pDatabaseName)
+    private List<String> getCreateStatements(PrintWriter pOut, String pDatabaseName)
             throws RepositoryException {
-        Vector tableStatements = new Vector();
-        Vector indexStatements = new Vector();
+        List<String> tableStatements = new ArrayList<String>();
+        List<String> indexStatements = new ArrayList<String>();
 
         // use current database if none is supplied
         if ( pDatabaseName == null ) {
@@ -1082,10 +1076,10 @@ public class InitializingGSA
             setSqlDropFiles(new Properties());
         }
         // make sure all the keys are valid
-        Set keys = new HashSet();
+        Set<Object> keys = new HashSet<Object>();
         keys.addAll(getSqlCreateFiles().keySet());
         keys.addAll(getSqlDropFiles().keySet());
-        Set allow_keys = new HashSet();
+        Set<String> allow_keys = new HashSet<String>();
         for ( int i = 0; i < dbTypes.length; i++ ) {
             keys.remove(dbTypes[i]);
             if ( !dbTypes[i].equals(SYBASE2) ) {
@@ -1137,9 +1131,9 @@ public class InitializingGSA
     /**
      * executes the specified SQL files against this Repository's DataSource.
      *
-     * @param String  [] the files to execute
-     * @param boolean true if execution should stop at first error. if false, then
-     *                a warning will be printed for encountered errors.
+     * @param pFiles       the files to execute
+     * @param pStopAtError true if execution should stop at first error. if false, then
+     *                     a warning will be printed for encountered errors.
      *
      * @throws RepositoryException if pStopAtError is true and an error occurs while executing
      *                             one of the sql statements.

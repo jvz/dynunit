@@ -866,7 +866,7 @@ public class GSATestUtils {
                 );
             }
 
-            definitionFiles.append("/" + pDefinitionFiles[i]);
+            definitionFiles.append("/").append(pDefinitionFiles[i]);
             if ( i < (pDefinitionFiles.length - 1) ) {
                 definitionFiles.append(",");
             }
@@ -1187,7 +1187,7 @@ public class GSATestUtils {
                 }
             }
         }
-        return (String[]) names.toArray(new String[0]);
+        return (String[]) names.toArray(new String[names.size()]);
     }
     // ---------------------------------
 

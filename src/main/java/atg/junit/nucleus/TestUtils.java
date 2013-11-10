@@ -462,15 +462,9 @@ public class TestUtils
     public static boolean isDynamoInstalled() {
         try {
             // if j2ee server is not installed then Dynamo must be...
-            if ( getAtgJ2eeServerInstallDir() == null ) {
-                return true;
-            }
-            // if the j2ee server root is the same as the dynamo root then
-            // we're running only the j2ee server
-            else {
-                return (!getAtgJ2eeServerInstallDir().getCanonicalFile()
-                        .equals(getDynamoRootDir().getCanonicalFile()));
-            }
+            return getAtgJ2eeServerInstallDir() == null
+                   || (!getAtgJ2eeServerInstallDir().getCanonicalFile()
+                    .equals(getDynamoRootDir().getCanonicalFile()));
         } catch ( IOException ioe ) {
             // this should never happen, but if it does return false...
             return false;
@@ -527,15 +521,15 @@ public class TestUtils
             return null;
         }
 
-        sb.append(getDynamoProductName() + " version " + getAtgVersion(dynamo));
+        sb.append(getDynamoProductName()).append(" version ").append(getAtgVersion(dynamo));
         String build = getAtgBuildNumber(dynamo);
         if ( !build.equals(UNKNOWN_INFO) ) {
-            sb.append(" build " + build);
+            sb.append(" build ").append(build);
         }
         String patch_version = getAtgPatchVersion(dynamo);
         String patch_build = getAtgPatchBuildNumber(dynamo);
         if ( !(patch_version == null) && !patch_version.equals(UNKNOWN_INFO) ) {
-            sb.append(" with patch " + patch_version + " build " + patch_build);
+            sb.append(" with patch ").append(patch_version).append(" build ").append(patch_build);
         }
 
         return sb.toString();
@@ -548,15 +542,15 @@ public class TestUtils
     public static String getAppServerProductInfo() {
         StringBuffer sb = new StringBuffer();
 
-        sb.append(getAppServerProductName() + " version " + getAppServerVersion());
+        sb.append(getAppServerProductName()).append(" version ").append(getAppServerVersion());
         String build = getAppServerBuildNumber();
         if ( !build.equals(UNKNOWN_INFO) ) {
-            sb.append(" build " + build);
+            sb.append(" build ").append(build);
         }
         String patch_version = getAppServerPatchVersion();
         String patch_build = getAppServerPatchBuildNumber();
         if ( !(patch_version == null) && !patch_version.equals(UNKNOWN_INFO) ) {
-            sb.append(" with patch " + patch_version + " build " + patch_build);
+            sb.append(" with patch ").append(patch_version).append(" build ").append(patch_build);
         }
 
         return sb.toString();
@@ -1403,7 +1397,7 @@ public class TestUtils
             in = new BufferedReader(isr);
             String line = null;
             while ( (line = in.readLine()) != null ) {
-                results.append(line + "\n");
+                results.append(line).append("\n");
             }
             return results.toString();
         } catch ( MalformedURLException e ) {
@@ -1412,13 +1406,12 @@ public class TestUtils
             } else {
                 results.append(
                         "\nEncountered an unexpected error while trying to retrieve the configuration info."
-                        +
-                        "\nWhen the url "
-                        + url
-                        + " was requested, this error was received: \n"
-                        + getStackTrace(e)
-                        + "\n"
-                );
+                        + "\nWhen the url "
+                )
+                       .append(url)
+                       .append(" was requested, this error was received: \n")
+                       .append(getStackTrace(e))
+                       .append("\n");
             }
         } catch ( IOException ioe ) {
             if ( pThrow ) {
@@ -1426,13 +1419,12 @@ public class TestUtils
             } else {
                 results.append(
                         "\nEncountered an unexpected error while trying to retrieve the configuration info."
-                        +
-                        "\nWhen the url "
-                        + url
-                        + " was requested, this error was received: \n"
-                        + getStackTrace(ioe)
-                        + "\n"
-                );
+                        + "\nWhen the url "
+                )
+                       .append(url)
+                       .append(" was requested, this error was received: \n")
+                       .append(getStackTrace(ioe))
+                       .append("\n");
             }
         } finally {
             if ( in != null ) {
@@ -2051,11 +2043,7 @@ public class TestUtils
                 );
             }
         }
-        if ( isliveconfig != null ) {
-            return isliveconfig.booleanValue();
-        } else {
-            return false;
-        }
+        return isliveconfig != null && isliveconfig.booleanValue();
     }
 
     public static Object invokeMethod(Object pObj,

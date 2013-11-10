@@ -434,17 +434,17 @@ public class SQLProcessorEngine
             int notNullIndex = tok.indexOf("NOT NULL");
             if ( notNullIndex > -1 ) {
                 // safe to return this unmodified
-                subStatements.append(tok + ",\n");
+                subStatements.append(tok).append(",\n");
             } else if ( tok.indexOf("NULL") > -1 ) {
                 // need to strip this one.
                 // we assume that we can just remove the five characters above
                 String temp = StringUtils.replace(tok, "NULL", "");
                 // we also have to remove all the trailing spaces
-                subStatements.append(temp.trim() + ",\n");
+                subStatements.append(temp.trim()).append(",\n");
             } else {
                 // safe to return. no null at all.
                 if ( st.hasMoreTokens() ) {
-                    subStatements.append(tok + ",\n");
+                    subStatements.append(tok).append(",\n");
                 } else
                 // End of statement, so no comma
                 {
