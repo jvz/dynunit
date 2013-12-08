@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package test;
+package atg.tools.dynunit.tests;
 
 import atg.nucleus.Nucleus;
-import atg.nucleus.NucleusTestUtils;
 import atg.nucleus.ServiceException;
-import atg.service.idgen.InitializingSQLIdGenerator;
+import atg.tools.dynunit.nucleus.NucleusTestUtils;
+import atg.tools.dynunit.service.idgen.InitializingSQLIdGenerator;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,12 +41,12 @@ public class IdGeneratorTest
         super.setUp();
         try {
             mNucleus = NucleusTestUtils.startNucleusWithModules(
-                    new String[] { "DAS" },
+                    new String[]{ "DAS" },
                     this.getClass(),
                     this.getClass().getName(),
                     "/atg/dynamo/service/IdGenerator"
             );
-        } catch ( ServletException e ) {
+        } catch (ServletException e) {
             fail(e.getMessage());
         }
     }
@@ -70,10 +70,10 @@ public class IdGeneratorTest
             );
             assertNotNull("no results, table not created " + idgen.getTableName(), result);
         } finally {
-            if ( result != null ) {
+            if (result != null) {
                 result.close();
             }
-            if ( c != null ) {
+            if (c != null) {
                 c.close();
             }
         }
@@ -86,12 +86,12 @@ public class IdGeneratorTest
     protected void tearDown()
             throws Exception {
         super.tearDown();
-        if ( mNucleus != null ) {
+        if (mNucleus != null) {
             try {
                 NucleusTestUtils.shutdownNucleus(mNucleus);
-            } catch ( ServiceException e ) {
+            } catch (ServiceException e) {
                 fail(e.getMessage());
-            } catch ( IOException e ) {
+            } catch (IOException e) {
                 fail(e.getMessage());
             }
         }

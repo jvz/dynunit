@@ -20,11 +20,11 @@ import atg.droplet.TagConverter;
 import atg.nucleus.Nucleus;
 import atg.servlet.DynamoHttpServletRequest;
 import atg.servlet.DynamoHttpServletResponse;
-import atg.servlet.ServletTestUtils;
-import atg.servlet.ServletTestUtils.ServiceParameterCallback;
-import atg.servlet.ServletTestUtils.TestingDynamoHttpServletRequest;
-import atg.servlet.ServletTestUtils.TestingDynamoHttpServletResponse;
 import atg.servlet.ServletUtil;
+import atg.tools.dynunit.servlet.ServletTestUtils;
+import atg.tools.dynunit.servlet.ServletTestUtils.ServiceParameterCallback;
+import atg.tools.dynunit.servlet.ServletTestUtils.TestingDynamoHttpServletRequest;
+import atg.tools.dynunit.servlet.ServletTestUtils.TestingDynamoHttpServletResponse;
 import org.jetbrains.annotations.Nullable;
 
 import javax.servlet.Servlet;
@@ -114,7 +114,7 @@ public class DropletInvoker {
      * @return the servletTestUtils instance used to create requests/responses.
      */
     public ServletTestUtils getServletTestUtils() {
-        if ( mServletTestUtils == null ) {
+        if (mServletTestUtils == null) {
             mServletTestUtils = createServletTestUtils();
         }
         return mServletTestUtils;
@@ -141,10 +141,10 @@ public class DropletInvoker {
      * TestingDynamoHttpServletRequest is given.
      *
      * @return the request used for invokeDroplet if no explicit request and
-     *         response are given.
+     * response are given.
      */
     public TestingDynamoHttpServletRequest getRequest() {
-        if ( mRequest == null ) {
+        if (mRequest == null) {
             mRequest = createRequest();
         }
         return mRequest;
@@ -156,10 +156,10 @@ public class DropletInvoker {
      * are given.
      *
      * @return the response used for invokeDroplet if no explicit request and
-     *         response are given.
+     * response are given.
      */
     public TestingDynamoHttpServletResponse getResponse() {
-        if ( mResponse == null ) {
+        if (mResponse == null) {
             mResponse = (TestingDynamoHttpServletResponse) (getRequest().getResponse());
         }
         return mResponse;
@@ -181,7 +181,8 @@ public class DropletInvoker {
      * Sets the session ID property. The session ID will be used for created our
      * request property, if a request is needed..
      *
-     * @param pSessionId the new value for session ID
+     * @param pSessionId
+     *         the new value for session ID
      */
     public void setSessionId(String pSessionId) {
         mSessionId = pSessionId;
@@ -205,9 +206,10 @@ public class DropletInvoker {
     /**
      * Sets whether OPARAMs exist by default.
      *
-     * @param pOparamsExistByDefault true if serviceParameter() and serviceLocalParameter() will
-     *                               return
-     *                               true by default, even if no parameter by that name was found.
+     * @param pOparamsExistByDefault
+     *         true if serviceParameter() and serviceLocalParameter() will
+     *         return
+     *         true by default, even if no parameter by that name was found.
      */
     public void setOparamsExistByDefault(boolean pOparamsExistByDefault) {
         mOparamsExistByDefault = pOparamsExistByDefault;
@@ -217,7 +219,7 @@ public class DropletInvoker {
      * Returns property oparamsExistByDefault
      *
      * @return true if serviceParameter() and serviceLocalParameter() will return
-     *         true by default, even if no parameter by that name was found.
+     * true by default, even if no parameter by that name was found.
      */
     public boolean getOparamsExistByDefault() {
         return mOparamsExistByDefault;
@@ -236,14 +238,17 @@ public class DropletInvoker {
     /**
      * Add an override for whether the given parameter exists.
      *
-     * @param pName  the name of the OPARAM to say exists (or doesn't).
-     * @param pValue TRUE means say that the specified OPARAM exists, FALSE means say
-     *               the the OPARAM does not exist.
+     * @param pName
+     *         the name of the OPARAM to say exists (or doesn't).
+     * @param pValue
+     *         TRUE means say that the specified OPARAM exists, FALSE means say
+     *         the the OPARAM does not exist.
      */
     public void setOparamExistsOverride(String pName, Boolean pValue) {
-        if ( pValue == null ) {
+        if (pValue == null) {
             mOparamExistsOverrideMap.remove(pName);
-        } else {
+        }
+        else {
             mOparamExistsOverrideMap.put(pName, pValue);
         }
     }
@@ -261,14 +266,19 @@ public class DropletInvoker {
      * Invoke the specified droplet, using the the DropletInvoker instance's
      * request and response.
      *
-     * @param pDropletName          the Nucleus name of the droplet to invoke.
-     * @param pAdditionalParameters additional parameters to set on the request. These parameters
-     *                              are
-     *                              set inside the droplet-specific parameter stack frame.
+     * @param pDropletName
+     *         the Nucleus name of the droplet to invoke.
+     * @param pAdditionalParameters
+     *         additional parameters to set on the request. These parameters
+     *         are
+     *         set inside the droplet-specific parameter stack frame.
      *
      * @return a droplet result object representing the OPARAMs rendered.
-     * @throws ServletException if an error occurs
-     * @throws IOException      if an error occurs
+     *
+     * @throws ServletException
+     *         if an error occurs
+     * @throws IOException
+     *         if an error occurs
      */
     public DropletResult invokeDroplet(String pDropletName,
                                        Map<String, Object> pAdditionalParameters)
@@ -282,11 +292,15 @@ public class DropletInvoker {
      * Invoke the specified droplet, using the the DropletInvoker instance's
      * request and response.
      *
-     * @param pDropletName the Nucleus name of the droplet to invoke.
+     * @param pDropletName
+     *         the Nucleus name of the droplet to invoke.
      *
      * @return a droplet result object representing the OPARAMs rendered.
-     * @throws ServletException if an error occurs
-     * @throws IOException      if an error occurs
+     *
+     * @throws ServletException
+     *         if an error occurs
+     * @throws IOException
+     *         if an error occurs
      */
     public DropletResult invokeDroplet(String pDropletName)
             throws ServletException, IOException {
@@ -298,16 +312,23 @@ public class DropletInvoker {
      * Note that the specified request and response may be the invoker's request
      * and response, or may be externally provided.
      *
-     * @param pDropletName          the Nucleus name of the droplet to invoke.
-     * @param pAdditionalParameters additional parameters to set on the request. These parameters
-     *                              are
-     *                              set inside the droplet-specific parameter stack frame.
-     * @param pRequest              the request to use for droplet invocation.
-     * @param pResponse             the response to use for droplet invocation.
+     * @param pDropletName
+     *         the Nucleus name of the droplet to invoke.
+     * @param pAdditionalParameters
+     *         additional parameters to set on the request. These parameters
+     *         are
+     *         set inside the droplet-specific parameter stack frame.
+     * @param pRequest
+     *         the request to use for droplet invocation.
+     * @param pResponse
+     *         the response to use for droplet invocation.
      *
      * @return a droplet result object representing the OPARAMs rendered.
-     * @throws ServletException if an error occurs
-     * @throws IOException      if an error occurs
+     *
+     * @throws ServletException
+     *         if an error occurs
+     * @throws IOException
+     *         if an error occurs
      */
     public DropletResult invokeDroplet(String pDropletName,
                                        Map<String, Object> pAdditionalParameters,
@@ -317,7 +338,7 @@ public class DropletInvoker {
         DynamoHttpServletRequest requestRestore = ServletUtil.setCurrentRequest(pRequest);
         try {
             Servlet droplet = (Servlet) getRequest().resolveName(pDropletName);
-            if ( droplet == null ) {
+            if (droplet == null) {
                 throw new IllegalArgumentException(
                         "Droplet " + pDropletName + " not found."
                 );
@@ -334,13 +355,19 @@ public class DropletInvoker {
      * Note that the specified request and response may be the invoker's request
      * and response, or may be externally provided.
      *
-     * @param pDropletName the Nucleus name of the droplet to invoke.
-     * @param pRequest     the request to use for droplet invocation.
-     * @param pResponse    the response to use for droplet invocation.
+     * @param pDropletName
+     *         the Nucleus name of the droplet to invoke.
+     * @param pRequest
+     *         the request to use for droplet invocation.
+     * @param pResponse
+     *         the response to use for droplet invocation.
      *
      * @return a droplet result object representing the OPARAMs rendered.
-     * @throws ServletException if an error occurs
-     * @throws IOException      if an error occurs
+     *
+     * @throws ServletException
+     *         if an error occurs
+     * @throws IOException
+     *         if an error occurs
      */
     public DropletResult invokeDroplet(String pDropletName,
                                        TestingDynamoHttpServletRequest pRequest,
@@ -354,16 +381,23 @@ public class DropletInvoker {
      * Note that the specified request and response may be the invoker's request
      * and response, or may be externally provided.
      *
-     * @param pDroplet              the droplet to invoke.
-     * @param pAdditionalParameters additional parameters to set on the request. These parameters
-     *                              are
-     *                              set inside the droplet-specific parameter stack frame.
-     * @param pRequest              the request to use for droplet invocation.
-     * @param pResponse             the response to use for droplet invocation.
+     * @param pDroplet
+     *         the droplet to invoke.
+     * @param pAdditionalParameters
+     *         additional parameters to set on the request. These parameters
+     *         are
+     *         set inside the droplet-specific parameter stack frame.
+     * @param pRequest
+     *         the request to use for droplet invocation.
+     * @param pResponse
+     *         the response to use for droplet invocation.
      *
      * @return a droplet result object representing the OPARAMs rendered.
-     * @throws ServletException if an error occurs
-     * @throws IOException      if an error occurs
+     *
+     * @throws ServletException
+     *         if an error occurs
+     * @throws IOException
+     *         if an error occurs
      */
     public DropletResult invokeDroplet(Servlet pDroplet,
                                        Map<String, Object> pAdditionalParameters,
@@ -378,8 +412,8 @@ public class DropletInvoker {
         try {
             pRequest.pushFrame();
 
-            if ( pAdditionalParameters != null ) {
-                for ( Map.Entry<String, Object> entryCur : pAdditionalParameters.entrySet() ) {
+            if (pAdditionalParameters != null) {
+                for (Map.Entry<String, Object> entryCur : pAdditionalParameters.entrySet()) {
                     pRequest.setParameter(entryCur.getKey(), entryCur.getValue());
                 }
             }
@@ -397,9 +431,12 @@ public class DropletInvoker {
      * Create a new DropletResult. This method exists so can be overridden is
      * subclasses, as needed.
      *
-     * @param pDroplet  the droplet whose invocation our DropletResult will represent
-     * @param pRequest  the request used for the droplet invocation
-     * @param pResponse the response used for the droplet invocation
+     * @param pDroplet
+     *         the droplet whose invocation our DropletResult will represent
+     * @param pRequest
+     *         the request used for the droplet invocation
+     * @param pResponse
+     *         the response used for the droplet invocation
      *
      * @return the result representation.
      */
@@ -413,8 +450,9 @@ public class DropletInvoker {
     /**
      * Create a new ServiceParameterCallback.
      *
-     * @param pResult the DropletResult whose rendered parameters the
-     *                ServiceParameterCallback should add to.
+     * @param pResult
+     *         the DropletResult whose rendered parameters the
+     *         ServiceParameterCallback should add to.
      *
      * @return a newly created ServiceParameterCallback
      */
@@ -444,7 +482,7 @@ public class DropletInvoker {
                 getNucleus(), createValueParametersMapForNewRequest(), 1024, "GET", getSessionId()
         );
 
-        if ( request.getResponse() instanceof TestingDynamoHttpServletResponse ) {
+        if (request.getResponse() instanceof TestingDynamoHttpServletResponse) {
             TestingDynamoHttpServletResponse testResponse = ((TestingDynamoHttpServletResponse) request
                     .getResponse());
             testResponse.setBlockDispatches(true);
@@ -458,9 +496,12 @@ public class DropletInvoker {
      * Called to create a RenderedOutputParameter. Can be overridden to create a
      * RenderedOutputParameter subclass to record additional information.
      *
-     * @param pName     the name of the OPARAM being request
-     * @param pRequest  the request used to render the OPARAM
-     * @param pResponse the response used to render the OPARAM
+     * @param pName
+     *         the name of the OPARAM being request
+     * @param pRequest
+     *         the request used to render the OPARAM
+     * @param pResponse
+     *         the response used to render the OPARAM
      *
      * @return a newly created RenderedOutputParameter (or subclass)
      */
@@ -495,9 +536,12 @@ public class DropletInvoker {
         /**
          * Created a representation of a rendered OutputParameter.
          *
-         * @param pName     the name out the OPARAM
-         * @param pRequest  the request at the time the OPARAM should be rendered.
-         * @param pResponse the response at the time the OPARAM should be rendered.
+         * @param pName
+         *         the name out the OPARAM
+         * @param pRequest
+         *         the request at the time the OPARAM should be rendered.
+         * @param pResponse
+         *         the response at the time the OPARAM should be rendered.
          */
         public RenderedOutputParameter(String pName,
                                        DynamoHttpServletRequest pRequest,
@@ -511,7 +555,7 @@ public class DropletInvoker {
 
             Map mapFrame = pRequest.getMapForCurrentFrame();
 
-            for ( Object o : mapFrame.keySet() ) {
+            for (Object o : mapFrame.keySet()) {
                 String strKey = (String) o;
                 mFrameParameters.put(strKey, mapFrame.get(strKey));
             }
@@ -530,7 +574,7 @@ public class DropletInvoker {
          * Return the map of frame parameters.
          *
          * @return the map of the parameters defined in the stack frame when the
-         *         OPARAM was rendered.
+         * OPARAM was rendered.
          */
         public Map<String, Object> getFrameParameters() {
             return mFrameParameters;
@@ -539,10 +583,11 @@ public class DropletInvoker {
         /**
          * Get the specified frame parameter from the parameter dictionary.
          *
-         * @param pName the name of the parameter to return
+         * @param pName
+         *         the name of the parameter to return
          *
          * @return the parameter value, or null if no parameter by that name was
-         *         found.
+         * found.
          */
         public Object getFrameParameter(String pName) {
             return mFrameParameters.get(pName);
@@ -550,11 +595,11 @@ public class DropletInvoker {
 
         public String toString() {
             return getClass().getName()
-                   + "(name="
-                   + getName()
-                   + ", frameParameters="
-                   + getFrameParameters()
-                   + ")";
+                    + "(name="
+                    + getName()
+                    + ", frameParameters="
+                    + getFrameParameters()
+                    + ")";
         }
     } // end inner-class RenderedOutputParameter
 
@@ -578,9 +623,12 @@ public class DropletInvoker {
         /**
          * Create a new DropletResult.
          *
-         * @param pDroplet  the droplet being invoke
-         * @param pRequest  the request used for the droplet invocation
-         * @param pResponse the response used for the droplet invocation
+         * @param pDroplet
+         *         the droplet being invoke
+         * @param pRequest
+         *         the request used for the droplet invocation
+         * @param pResponse
+         *         the response used for the droplet invocation
          */
         public DropletResult(Servlet pDroplet,
                              DynamoHttpServletRequest pRequest,
@@ -616,12 +664,13 @@ public class DropletInvoker {
         /**
          * Add a rendered OPARAM to our list and map of OPARAMs.
          *
-         * @param pParameter the parameter to add.
+         * @param pParameter
+         *         the parameter to add.
          */
         public void addRenderedParameter(RenderedOutputParameter pParameter) {
             mRenderedParameters.add(pParameter);
             List<RenderedOutputParameter> listParams = mNameToRenderedParameters.get(pParameter.getName());
-            if ( listParams == null ) {
+            if (listParams == null) {
                 listParams = new ArrayList<RenderedOutputParameter>();
                 mNameToRenderedParameters.put(pParameter.getName(), listParams);
             }
@@ -638,10 +687,11 @@ public class DropletInvoker {
         /**
          * Return the list of all rendered OPARAMs with the specified name.
          *
-         * @param pName the name of the oparam to return.
+         * @param pName
+         *         the name of the oparam to return.
          *
          * @return the list of rendered OPARAMS with the specified name, or null if
-         *         none exist.
+         * none exist.
          */
         public List<RenderedOutputParameter> getRenderedOutputParametersByName(String pName) {
             return mNameToRenderedParameters.get(pName);
@@ -650,11 +700,14 @@ public class DropletInvoker {
         /**
          * Return the OPARAM with the specified name.
          *
-         * @param pName the name of the OPARAM to return.
+         * @param pName
+         *         the name of the OPARAM to return.
          *
          * @return the list of rendered OPARAMS with the specified name, or null if
-         *         none exist.
-         * @throws IllegalStateException if multiple OPARAMS with the given name were rendered.
+         * none exist.
+         *
+         * @throws IllegalStateException
+         *         if multiple OPARAMS with the given name were rendered.
          */
         public RenderedOutputParameter getRenderedOutputParameter(String pName) {
             return getRenderedOutputParameter(pName, true);
@@ -663,14 +716,18 @@ public class DropletInvoker {
         /**
          * Return the first rendered OPARAM with the specified name.
          *
-         * @param pName          the name of the OPARAM to return.
-         * @param pEnforceSingle if there is more than one OPARAM with the specified name, throw
-         *                       an IllegalStateException.
+         * @param pName
+         *         the name of the OPARAM to return.
+         * @param pEnforceSingle
+         *         if there is more than one OPARAM with the specified name, throw
+         *         an IllegalStateException.
          *
          * @return the list of rendered OPARAMS with the specified name, or null if
-         *         none exist.
-         * @throws IllegalStateException if multiple OPARAMS with the given name were rendered and
-         *                               pEnforceSingle is true.
+         * none exist.
+         *
+         * @throws IllegalStateException
+         *         if multiple OPARAMS with the given name were rendered and
+         *         pEnforceSingle is true.
          */
         public RenderedOutputParameter getRenderedOutputParameter(String pName,
                                                                   boolean pEnforceSingle) {
@@ -678,8 +735,8 @@ public class DropletInvoker {
 
             RenderedOutputParameter paramResult = null;
 
-            if ( (listParams != null) && !listParams.isEmpty() ) {
-                if ( pEnforceSingle && (listParams.size() > 1) ) {
+            if ((listParams != null) && !listParams.isEmpty()) {
+                if (pEnforceSingle && (listParams.size() > 1)) {
                     throw new IllegalStateException(
                             "More than one rendered OPARAM found for " + pName
                     );
@@ -692,13 +749,15 @@ public class DropletInvoker {
         /**
          * Return the rendered OPARAM with the specified name and index.
          *
-         * @param pName  the name of the OPARAM to return.
-         * @param pIndex the index of the OPARAM to return. Can use a negative index to
-         *               count from the end (-1 equals the last OPARAM rendered with that
-         *               name).
+         * @param pName
+         *         the name of the OPARAM to return.
+         * @param pIndex
+         *         the index of the OPARAM to return. Can use a negative index to
+         *         count from the end (-1 equals the last OPARAM rendered with that
+         *         name).
          *
          * @return the specified OPARAM, or null if an OPARAM with that name and
-         *         index does not exist.
+         * index does not exist.
          */
         public RenderedOutputParameter getRenderedOutputParameter(String pName, int pIndex) {
 
@@ -706,14 +765,14 @@ public class DropletInvoker {
 
             RenderedOutputParameter paramResult = null;
 
-            if ( listParams != null ) {
+            if (listParams != null) {
                 int index = pIndex;
-                if ( index < 0 ) {
+                if (index < 0) {
                     // offset from the end
                     index = listParams.size() + index;
                 }
 
-                if ( (index >= 0) && (index < listParams.size()) ) {
+                if ((index >= 0) && (index < listParams.size())) {
                     paramResult = listParams.get(pIndex);
                 }
             }
@@ -724,16 +783,19 @@ public class DropletInvoker {
          * A convenience method to get the specified parameter from the parameter
          * stack from of a recorded OPARAM invocation.
          *
-         * @param pParameterName       the name of the parameter whose value should be returned
-         *                             (for
-         *                             example, "element")
-         * @param pOutputParameterName the name of the output parameter whose parameter stack frame
-         *                             should be used (for example, "output" or "error")
-         * @param pIndex               the index of the Nth invocation of the output parameter.
+         * @param pParameterName
+         *         the name of the parameter whose value should be returned
+         *         (for
+         *         example, "element")
+         * @param pOutputParameterName
+         *         the name of the output parameter whose parameter stack frame
+         *         should be used (for example, "output" or "error")
+         * @param pIndex
+         *         the index of the Nth invocation of the output parameter.
          *
          * @return the value of the parameter from the named OPARAM invocation, or
-         *         null if either the OPARAM invocation or the parameter to be
-         *         fetched were not found.
+         * null if either the OPARAM invocation or the parameter to be
+         * fetched were not found.
          */
         public Object getFrameParameterOfRenderedParameter(String pParameterName,
                                                            String pOutputParameterName,
@@ -741,7 +803,7 @@ public class DropletInvoker {
             RenderedOutputParameter oparam = getRenderedOutputParameter(
                     pOutputParameterName, pIndex
             );
-            if ( oparam != null ) {
+            if (oparam != null) {
                 return oparam.getFrameParameter(pParameterName);
             }
             return null;
@@ -766,7 +828,8 @@ public class DropletInvoker {
          * Create a new instance that will invoke addRenderedParameter to
          * DropletResult when didServiceParameter() is invoked.
          *
-         * @param pDropletResult to droplet result to record OPARAM rending one.
+         * @param pDropletResult
+         *         to droplet result to record OPARAM rending one.
          */
         public ServiceParameterCallbackImpl(DropletResult pDropletResult) {
             mDropletResult = pDropletResult;
@@ -793,11 +856,12 @@ public class DropletInvoker {
             );
 
             boolean bResult = pResult;
-            if ( null != mOparamExistsOverrideMap.get(pParameterName) ) {
+            if (null != mOparamExistsOverrideMap.get(pParameterName)) {
                 // override map always wins
                 bResult = mOparamExistsOverrideMap.get(pParameterName);
-            } else {
-                if ( !bResult && getOparamsExistByDefault() ) {
+            }
+            else {
+                if (!bResult && getOparamsExistByDefault()) {
                     bResult = true;
                 }
             }

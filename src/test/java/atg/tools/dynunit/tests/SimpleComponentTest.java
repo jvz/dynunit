@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package test;
+package atg.tools.dynunit.tests;
 
-import atg.test.AtgDustCase;
+import atg.tools.dynunit.test.AtgDustCase;
 import com.mycompany.SimpleComponent;
 
 import java.io.File;
@@ -48,7 +48,7 @@ public class SimpleComponentTest
         // re-copy and re-global-scope-force will be executed.
 
         copyConfigurationFiles(
-                new String[] {
+                new String[]{
                         "src/test/resources/config".replace(
                                 "/", File.separator
                         )

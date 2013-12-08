@@ -14,94 +14,53 @@
  * limitations under the License.
  */
 
-package atg.droplet;
+package atg.tools.dynunit.droplet;
 
-import atg.droplet.DropletInvoker.DropletResult;
-import atg.droplet.DropletInvoker.RenderedOutputParameter;
 import atg.nucleus.Nucleus;
-import atg.nucleus.NucleusTestUtils;
 import atg.servlet.DynamoHttpServletRequest;
 import atg.servlet.ServletUtil;
-import junit.framework.TestCase;
-import org.jetbrains.annotations.Nullable;
+import atg.tools.dynunit.droplet.DropletInvoker.DropletResult;
+import atg.tools.dynunit.droplet.DropletInvoker.RenderedOutputParameter;
+import atg.tools.dynunit.nucleus.NucleusTestUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-/**
- * A test for the DropletInvoker.
- * <p/>
- * <p/>
- * <p/>
- * Created: October 19 2009
- *
- * @author Charles Morehead
- * @version $Id: //test/UnitTests/DAS/main/src/Java/atg/droplet/DropletInvokerTest.java#4 $
- */
+public class DropletInvokerTest {
 
-public class DropletInvokerTest
-        extends TestCase {
-
-    //-------------------------------------
-    // Class version string
-
-    /**
-     * Class version string from source code control system.
-     */
-    public static final String CLASS_VERSION = "$Id: //test/UnitTests/DAS/main/src/Java/atg/droplet/DropletInvokerTest.java#4 $";
-
-    //-------------------------------------
-    // Constants
-    // /**  */
-    //public static final String A_CONSTANT = "a constant value";
-
-    //-------------------------------------
-    // Member variables
-
-    @Nullable
     private Nucleus mNucleus;
 
-    //-------------------------------------
-    // Properties
-
-
-    //-------------------------------------
-
-    /**
-     * Start up Nucleus with Initial services
-     */
-    protected void setUp()
+    @Before
+    public void setUp()
             throws Exception {
-        super.setUp();
-
         mNucleus = NucleusTestUtils.startNucleusWithModules(
-                new String[] { "DAS", "DafEar.Tomcat" },
+                new String[]{ "DAS", "DafEar.Tomcat" },
                 this.getClass(),
                 "/atg/dynamo/droplet/Switch"
         );
     }
 
-    /**
-     * Shut down Nucleus
-     */
-    protected void tearDown()
+    @After
+    public void tearDown()
             throws Exception {
-        super.tearDown();
         ServletUtil.setCurrentRequest(null);
-        if ( mNucleus != null ) {
+        if (mNucleus != null) {
             NucleusTestUtils.shutdownNucleus(mNucleus);
             mNucleus = null;
         }
     }
 
 
-    /**
-     * Test the DropletInvoker
-     */
-    public void testInvoker()
+    @Test
+    public void testDropletInvoker()
             throws ServletException, IOException {
         doTestSwitch();
         doTestForEach();
@@ -154,7 +113,7 @@ public class DropletInvokerTest
             throws ServletException, IOException {
         DropletInvoker invoker = new DropletInvoker(mNucleus);
 
-        String[] strings = new String[] { "one", "two", "three", "four", "five" };
+        String[] strings = new String[]{ "one", "two", "three", "four", "five" };
 
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("array", strings);
@@ -177,7 +136,7 @@ public class DropletInvokerTest
 
         // use an old-fashioned for, because we want to test numeric
         // look-ups, too.
-        for ( int i = 0; i < strings.length; i++ ) {
+        for (int i = 0; i < strings.length; i++) {
             RenderedOutputParameter oparam = listOutputs.get(i);
 
             assertEquals(

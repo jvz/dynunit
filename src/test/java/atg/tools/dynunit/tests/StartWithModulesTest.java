@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package test;
+package atg.tools.dynunit.tests;
 
 import atg.nucleus.Nucleus;
-import atg.nucleus.NucleusTestUtils;
 import atg.nucleus.ServiceException;
 import atg.repository.MutableRepository;
+import atg.tools.dynunit.nucleus.NucleusTestUtils;
 import junit.framework.TestCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,12 +64,12 @@ public class StartWithModulesTest
         try {
             System.setProperty("derby.locks.deadlockTrace", "true");
             mNucleus = NucleusTestUtils.startNucleusWithModules(
-                    new String[] { "DAF.Deployment", "DPS" },
+                    new String[]{ "DAF.Deployment", "DPS" },
                     this.getClass(),
                     this.getClass().getName(),
                     "/atg/deployment/DeploymentRepository"
             );
-        } catch ( ServletException e ) {
+        } catch (ServletException e) {
             fail(e.getMessage());
         }
 
@@ -84,12 +84,12 @@ public class StartWithModulesTest
     @Override
     public void tearDown() {
         logger.info("Stopping Nucleus.");
-        if ( mNucleus != null ) {
+        if (mNucleus != null) {
             try {
                 NucleusTestUtils.shutdownNucleus(mNucleus);
-            } catch ( ServiceException e ) {
+            } catch (ServiceException e) {
                 fail(e.getMessage());
-            } catch ( IOException e ) {
+            } catch (IOException e) {
                 fail(e.getMessage());
             }
         }

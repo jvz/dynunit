@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.dynunit.test;
+package atg.tools.dynunit.tests;
 
 import atg.nucleus.Nucleus;
-import atg.nucleus.NucleusTestUtils;
 import atg.nucleus.ServiceException;
 import atg.servlet.DynamoHttpServletRequest;
-import atg.servlet.ServletTestUtils;
 import atg.servlet.ServletUtil;
+import atg.tools.dynunit.nucleus.NucleusTestUtils;
+import atg.tools.dynunit.servlet.ServletTestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +73,7 @@ public class NucleusResolutionTest {
     public void setUpClass()
             throws ServletException {
         nucleus = NucleusTestUtils.startNucleusWithModules(
-                new String[] { "DAS", "DafEar.base" }, this.getClass(), "/atg/dynamo/MyComponent"
+                new String[]{ "DAS", "DafEar.base" }, this.getClass(), "/atg/dynamo/MyComponent"
         );
         assertThat(nucleus, is(notNullValue()));
         request = UTILS.createDynamoHttpServletRequestForSession(
@@ -86,7 +86,7 @@ public class NucleusResolutionTest {
     @AfterClass
     public void tearDownClass()
             throws IOException, ServiceException {
-        if ( nucleus != null ) {
+        if (nucleus != null) {
             NucleusTestUtils.shutdownNucleus(nucleus);
         }
     }

@@ -14,29 +14,31 @@
  * limitations under the License.
  */
 
-/**
- *
- */
-package atg.test;
+package atg.tools.dynunit.test;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 /**
  * @author robert
  */
-public class AtgDustCaseTest
-        extends TestCase {
+public class AtgDustCaseTest {
 
-    private final AtgDustCase atgCase = new AtgDustCase();
+    private AtgDustCase atgCase;
 
-    /**
-     * Test method for
-     * {@link atg.test.AtgDustCase#createPropertyFile(java.lang.String, java.lang.String,
-     * java.lang.Class)}.
-     */
+    @Before
+    public void setUp()
+            throws Exception {
+        atgCase = new AtgDustCase();
+    }
+
+    @Test
     public void testCreatePropertyFile() {
         try {
 
@@ -44,22 +46,23 @@ public class AtgDustCaseTest
                     "target/test-classes/config", "/some/component/impl", Object.class
             );
 
-        } catch ( IOException e ) {
+        } catch (IOException e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
     }
 
+    @Test
     public void testGetMoreCoverage() {
         try {
             atgCase.tearDown();
-        } catch ( Exception e ) {
+        } catch (Exception e) {
             fail("Previous call should not have triggered an Exception");
         }
 
         try {
             atgCase.copyConfigurationFiles(
-                    new String[] {
+                    new String[]{
                             "src/test/resources/config".replace("/", File.separator)
                     }, "target/test-classes/config".replace("/", File.separator), ".svn"
             );
@@ -74,7 +77,7 @@ public class AtgDustCaseTest
 
             // TODO: there must be a way to really test this
             atgCase.setDebug(true);
-        } catch ( Exception e ) {
+        } catch (Exception e) {
             e.printStackTrace();
             fail("Previous call should not have triggered an Exception");
         }
@@ -84,12 +87,12 @@ public class AtgDustCaseTest
     public void _testCopyConfigurationFiles()
             throws Exception {
         atgCase.copyConfigurationFiles(
-                new String[] { "/Users/robert/tmp/back_ex/atgdust-lots-of-props" },
+                new String[]{ "/Users/robert/tmp/back_ex/atgdust-lots-of-props" },
                 "/tmp/atgdust",
                 ".svn"
         );
         atgCase.copyConfigurationFiles(
-                new String[] {
+                new String[]{
                         "/Users/robert/tmp/back_ex/atgdust-lots-of-props/tmp2",
                         "/Users/robert/tmp/back_ex/atgdust-lots-of-props/tmp2"
                 }, "/tmp/atgdust", "excludes"

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package test;
+package atg.tools.dynunit.tests;
 
 import atg.nucleus.Nucleus;
-import atg.nucleus.NucleusTestUtils;
 import atg.nucleus.ServiceException;
 import atg.repository.MutableRepository;
 import atg.servlet.DynamoHttpServletRequest;
-import atg.servlet.ServletTestUtils;
 import atg.servlet.ServletUtil;
+import atg.tools.dynunit.nucleus.NucleusTestUtils;
+import atg.tools.dynunit.servlet.ServletTestUtils;
 import junit.framework.TestCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,12 +59,12 @@ public class ProfileFormHandlerTest
         try {
             System.setProperty("derby.locks.deadlockTrace", "true");
             mNucleus = NucleusTestUtils.startNucleusWithModules(
-                    new String[] { "DPS", "DafEar.base" },
+                    new String[]{ "DPS", "DafEar.base" },
                     this.getClass(),
                     this.getClass().getName(),
                     PROFILE_ADAPTER_REPOSITORY_PATH
             );
-        } catch ( ServletException e ) {
+        } catch (ServletException e) {
             logger.catching(e);
             fail(e.getMessage());
         }
@@ -80,13 +80,13 @@ public class ProfileFormHandlerTest
     @Override
     public void tearDown() {
         logger.info("Stopping Nucleus.");
-        if ( mNucleus != null ) {
+        if (mNucleus != null) {
             try {
                 NucleusTestUtils.shutdownNucleus(mNucleus);
-            } catch ( ServiceException e ) {
+            } catch (ServiceException e) {
                 logger.catching(e);
                 fail(e.getMessage());
-            } catch ( IOException e ) {
+            } catch (IOException e) {
                 logger.catching(e);
                 fail(e.getMessage());
             }
