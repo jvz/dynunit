@@ -37,6 +37,8 @@ dependencies {
     compile group: 'javax.servlet', name: 'servlet-api', version: '2.5'
     compile group: 'javax.servlet.jsp', name: 'jsp-api', version: '2.1'
 
+    compile group: 'com.intellij', name: 'annotations', version: '12.0'
+
     compile fileTree('lib')
 }
 
