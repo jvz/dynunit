@@ -19,6 +19,7 @@ package atg.adapter.gsa;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.jetbrains.annotations.Nullable;
 
 import javax.transaction.InvalidTransactionException;
 import javax.transaction.SystemException;
@@ -30,6 +31,7 @@ class DoInAutoCommit {
 
     private final GSARepositorySchemaGenerator mAutoCommit;
 
+    @Nullable
     private GSARepository mRepository = null;
 
     private static final Logger logger = LogManager.getLogger();

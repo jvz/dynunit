@@ -26,6 +26,7 @@ import org.apache.ddlutils.model.ForeignKey;
 import org.apache.ddlutils.model.IndexColumn;
 import org.apache.ddlutils.model.Reference;
 import org.apache.ddlutils.model.UniqueIndex;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -59,6 +60,7 @@ import java.util.Set;
 public class GSARepositorySchemaGenerator {
 
     // The repository upon which we are working.
+    @Nullable
     private GSARepository mRepository = null;
 
     // The DDLUtils Platform object

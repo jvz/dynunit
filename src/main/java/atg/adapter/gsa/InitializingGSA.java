@@ -30,6 +30,7 @@ import atg.nucleus.ServiceException;
 import atg.nucleus.logging.LogListener;
 import atg.repository.RepositoryException;
 import org.apache.ddlutils.DatabaseOperationException;
+import org.jetbrains.annotations.Nullable;
 
 import javax.transaction.TransactionManager;
 import java.io.File;
@@ -114,6 +115,7 @@ public class InitializingGSA
     // we load the files as Files instead of XMLFiles because the
     // TemplateParser requires a full file path to the import file
     // instead of using the CONFIGPATH
+    @Nullable
     private File[] mImportFiles = null;
 
     public void setImportFiles(File[] pFiles) {

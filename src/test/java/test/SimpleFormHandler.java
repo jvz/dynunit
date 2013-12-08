@@ -19,6 +19,7 @@ package test;
 import atg.droplet.GenericFormHandler;
 import atg.servlet.DynamoHttpServletRequest;
 import atg.servlet.DynamoHttpServletResponse;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -63,7 +64,7 @@ public class SimpleFormHandler
      * @return
      * @throws IOException
      */
-    public boolean handleRedirect(DynamoHttpServletRequest pRequest,
+    public boolean handleRedirect(@NotNull DynamoHttpServletRequest pRequest,
                                   DynamoHttpServletResponse pResponse)
             throws IOException {
         mDidRedirect = false;

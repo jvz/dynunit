@@ -28,6 +28,7 @@ import atg.service.email.SMTPEmailSender;
 import atg.servlet.ServletUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Node;
 
 import javax.activation.DataHandler;
@@ -185,6 +186,7 @@ public class TestUtils
      * by TSM to correlate a specifid result with the testrun used to
      * install and configure the test Dynamo.
      */
+    @Nullable
     private static String TSM_TESTRUN = null;
 
     /**

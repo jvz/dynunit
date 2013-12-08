@@ -19,6 +19,7 @@ package atg.service.jdbc;
 import atg.nucleus.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -136,7 +137,7 @@ public class DerbyDataSource
      *
      * @param e the SQLException from which to print details.
      */
-    private static void printSQLException(SQLException e) {
+    private static void printSQLException(@Nullable SQLException e) {
         // Unwraps the entire exception chain to unveil the real cause of the
         // Exception.
         while ( e != null ) {
@@ -156,12 +157,12 @@ public class DerbyDataSource
      * The JDBC driver is loaded by loading its class. If you are using JDBC 4.0
      * (Java SE 6) or newer, JDBC drivers may be automatically loaded, making
      * this code optional.
-     * 
+     *
      * In an embedded environment, this will also start up the Derby engine
      * (though not any databases), since it is not already running. In a client
      * environment, the Derby engine is being run by the network server
      * framework.
-     * 
+     *
      * In an embedded environment, any static Derby system properties must be
      * set before loading the driver to take effect.
      */

@@ -24,6 +24,7 @@ import atg.servlet.ServletTestUtils;
 import atg.servlet.ServletUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -57,6 +58,7 @@ public class NucleusResolutionTest {
 
     private final Logger log = LogManager.getLogger();
 
+    @NotNull
     @Parameterized.Parameters
     public static Iterable<String> data() {
         return Arrays.asList(

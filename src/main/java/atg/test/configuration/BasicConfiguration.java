@@ -26,6 +26,7 @@ import atg.test.util.FileUtil;
 import atg.xml.tools.apache.ApacheXMLToolsFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +84,7 @@ public final class BasicConfiguration {
      *
      * @throws IOException
      */
-    private void createClientLockManager(final File root)
+    private void createClientLockManager(@NotNull final File root)
             throws IOException {
         this.settings.clear();
         settings.put("lockServerAddress", "localhost");

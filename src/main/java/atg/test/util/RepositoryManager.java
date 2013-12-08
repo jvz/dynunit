@@ -19,6 +19,7 @@ package atg.test.util;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -76,7 +77,7 @@ public class RepositoryManager {
      */
     public void initializeMinimalRepositoryConfiguration(File configRoot,
                                                          String repositoryPath,
-                                                         Map<String, String> settings,
+                                                         @NotNull Map<String, String> settings,
                                                          final boolean dropTables,
                                                          final boolean isDebug,
                                                          String... definitionFiles)

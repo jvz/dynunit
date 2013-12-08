@@ -16,6 +16,9 @@
 
 package atg.test.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * This class contains StringUtils methods not found
  * in 2007.1 and older ATG releases.
@@ -35,7 +38,8 @@ public class DustStringUtils {
      *
      * @return the joined string, with quoting.
      */
-    public static String joinStringsWithQuoting(String[] pStrings, char pSeparator) {
+    @NotNull
+    public static String joinStringsWithQuoting(@Nullable String[] pStrings, char pSeparator) {
         if ( (pStrings == null) || (pStrings.length == 0) ) {
             return "";
         }

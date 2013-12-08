@@ -16,6 +16,8 @@
 
 package atg.adapter.gsa.xml;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author qma
  *         <p/>
@@ -30,6 +32,7 @@ public class VersioningContextUtil {
      * Class version string
      */
 
+    @NotNull
     public static String CLASS_VERSION = "$Id: //test/UnitTests/base/main/src/Java/atg/adapter/gsa/xml/VersioningContextUtil.java#5 $$Change: 535542 $";
 
 

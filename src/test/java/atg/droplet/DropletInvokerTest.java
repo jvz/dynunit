@@ -23,6 +23,7 @@ import atg.nucleus.NucleusTestUtils;
 import atg.servlet.DynamoHttpServletRequest;
 import atg.servlet.ServletUtil;
 import junit.framework.TestCase;
+import org.jetbrains.annotations.Nullable;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -60,6 +61,7 @@ public class DropletInvokerTest
     //-------------------------------------
     // Member variables
 
+    @Nullable
     private Nucleus mNucleus;
 
     //-------------------------------------

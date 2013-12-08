@@ -16,6 +16,8 @@
 
 package atg.nucleus;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -59,7 +61,7 @@ public class ConfigurableConfigCreationFilter
     /**
      * Set the list of component paths to filter out.
      */
-    public void setDroppedComponents(String[] pDroppedComponents) {
+    public void setDroppedComponents(@Nullable String[] pDroppedComponents) {
         mDroppedComponents.clear();
         if ( pDroppedComponents != null ) {
             mDroppedComponents.addAll(Arrays.asList(pDroppedComponents));

@@ -17,6 +17,7 @@
 package atg.service.idgen;
 
 import atg.nucleus.ServiceException;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
@@ -65,6 +66,7 @@ public class InitializingSQLIdGenerator
     /**
      * Returns the create statement appropriate for the current database
      */
+    @NotNull
     public String getCreateStatement() {
         // TODO Add DBCheck and return DB2 syntax
         return CREATE_STATEMENT;

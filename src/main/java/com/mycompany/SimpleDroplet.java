@@ -20,6 +20,7 @@ import atg.nucleus.naming.ParameterName;
 import atg.servlet.DynamoHttpServletRequest;
 import atg.servlet.DynamoHttpServletResponse;
 import atg.servlet.DynamoServlet;
+import org.jetbrains.annotations.Nullable;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -34,6 +35,7 @@ public class SimpleDroplet
      */
     private static final String USERNAME = "username";
 
+    @Nullable
     private String mUsername = null;
 
     private String mUsernameFromInputStream = null;

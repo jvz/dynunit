@@ -16,6 +16,8 @@
 
 package atg.adapter.gsa;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * The purpose of this class is to map from a the database specific type name
  * for a column to the <code>java.sql.Types</code> for that column. Given a
@@ -29,6 +31,7 @@ package atg.adapter.gsa;
  */
 public class DatabaseTypeNameToJDBC {
 
+    @Nullable
     private DatabaseTableInfo mTableInfo = null;
 
     private static final int UNKNOWN = -9999;

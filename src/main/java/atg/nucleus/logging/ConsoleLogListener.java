@@ -19,6 +19,7 @@ package atg.nucleus.logging;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Simple class to get logging in unit testing working. Will print messages and
@@ -31,7 +32,7 @@ public class ConsoleLogListener
         implements LogListener {
 
     @Override
-    public void logEvent(final LogEvent logEvent) {
+    public void logEvent(@Nullable final LogEvent logEvent) {
         if ( logEvent != null ) {
             final Logger logger;
             final Level level;

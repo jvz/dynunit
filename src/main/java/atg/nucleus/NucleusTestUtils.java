@@ -32,6 +32,7 @@ import atg.test.util.DustStringUtils;
 import atg.test.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import javax.servlet.ServletException;
 import java.io.File;
@@ -139,7 +140,7 @@ public class NucleusTestUtils {
      * @throws IOException
      */
     public static File createProperties(String pComponentName,
-                                        File pConfigDir,
+                                        @Nullable File pConfigDir,
                                         String pClass,
                                         Properties pProps)
             throws IOException {

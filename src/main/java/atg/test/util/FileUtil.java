@@ -19,6 +19,8 @@ package atg.test.util;
 import atg.applauncher.core.util.JarUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -59,7 +61,7 @@ public class FileUtil {
      *
      * @throws IOException
      */
-    public static void copyDirectory(String srcDir, String dstDir, final List<String> excludes)
+    public static void copyDirectory(@NotNull String srcDir, @NotNull String dstDir, @NotNull final List<String> excludes)
             throws IOException {
         if ( new File(srcDir).exists() ) {
             new File(dstDir).mkdirs();
@@ -85,7 +87,7 @@ public class FileUtil {
      *
      * @throws IOException
      */
-    private static void copyFile(final String src, final String dst)
+    private static void copyFile(@NotNull final String src, @NotNull final String dst)
             throws IOException {
         final File srcFile = new File(src);
         final File dstFile = new File(dst);
@@ -122,10 +124,10 @@ public class FileUtil {
      *
      * @throws IOException
      */
-    public static void createPropertyFile(final String componentName,
-                                          final File configurationStagingLocation,
-                                          final Class<?> clazz,
-                                          final Map<String, String> settings)
+    public static void createPropertyFile(@NotNull final String componentName,
+                                          @NotNull final File configurationStagingLocation,
+                                          @Nullable final Class<?> clazz,
+                                          @Nullable final Map<String, String> settings)
             throws IOException {
 
         configurationStagingLocation.mkdirs();
@@ -157,7 +159,7 @@ public class FileUtil {
 
     private static final String COULD_NOT_DELETE_TEMP_DIRECTORY = "Couldn't delete temp directory. ";
 
-    public void searchAndReplace(final String originalValue, final String newValue, final File file)
+    public void searchAndReplace(@NotNull final String originalValue, @NotNull final String newValue, @NotNull final File file)
             throws IOException {
 
         final File TMP_FILE = new File(
@@ -205,7 +207,7 @@ public class FileUtil {
      *
      * @param tmpDir
      */
-    public static void deleteDirectoryOnShutdown(final File tmpDir) {
+    public static void deleteDirectoryOnShutdown(@NotNull final File tmpDir) {
         Runtime.getRuntime().addShutdownHook(
                 new Thread() {
                     public void run() {
@@ -219,7 +221,7 @@ public class FileUtil {
         );
     }
 
-    public static void serialize(final File file, final Object o)
+    public static void serialize(@NotNull final File file, final Object o)
             throws IOException {
 
         ObjectOutput out = null;
@@ -233,7 +235,8 @@ public class FileUtil {
         }
     }
 
-    public static Map<String, Long> deserialize(final File file, final long serialTtl) {
+    @Nullable
+    public static Map<String, Long> deserialize(@NotNull final File file, final long serialTtl) {
 
         if ( file.exists() && file.lastModified() < System.currentTimeMillis() - serialTtl ) {
             log.debug(

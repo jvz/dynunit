@@ -24,6 +24,7 @@ import atg.servlet.ServletTestUtils.ServiceParameterCallback;
 import atg.servlet.ServletTestUtils.TestingDynamoHttpServletRequest;
 import atg.servlet.ServletTestUtils.TestingDynamoHttpServletResponse;
 import atg.servlet.ServletUtil;
+import org.jetbrains.annotations.Nullable;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -90,6 +91,7 @@ public class DropletInvoker {
 
     private ServletTestUtils mServletTestUtils;
 
+    @Nullable
     private TestingDynamoHttpServletRequest mRequest;
 
     private TestingDynamoHttpServletResponse mResponse;

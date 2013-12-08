@@ -23,6 +23,7 @@ import atg.xml.tools.XMLToDOMParser;
 import atg.xml.tools.XMLToolsFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -130,7 +131,7 @@ public class XmlUtils {
      * @return List the requested child Nodes.  an empty List if no child Nodes exist.
      *         null if the specified Document was null.
      */
-    public static List<Node> getNodes(Document pDocument, String[] pChildren) {
+    public static List<Node> getNodes(@Nullable Document pDocument, String[] pChildren) {
         if ( pDocument == null ) {
             return null;
         }

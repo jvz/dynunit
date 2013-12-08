@@ -18,6 +18,7 @@ package atg.adapter.gsa;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -74,7 +75,7 @@ public class SQLFileParser {
     // ================= PUBLIC METHODS =================
 
 
-    private String trimDebuggingCharacters(String sText) {
+    private String trimDebuggingCharacters(@Nullable String sText) {
         if ( sText == null ) {
             return sText;
         }

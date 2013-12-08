@@ -17,6 +17,7 @@
 package atg.service.idgen;
 
 import atg.nucleus.ServiceException;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
@@ -35,6 +36,7 @@ public class InitializingObfuscatedSQLIdGenerator
 
     private IdGeneratorInitializer mInitializer;
 
+    @Nullable
     private String mCreateStatement = null;
 
     /**

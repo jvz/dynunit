@@ -22,6 +22,7 @@ import atg.servlet.DynamoHttpServletRequest;
 import atg.servlet.ServletTestUtils;
 import atg.servlet.ServletUtil;
 import junit.framework.TestCase;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Based on {@link TestCase}
@@ -29,6 +30,7 @@ import junit.framework.TestCase;
 public class NucleusResolutionTest
         extends TestCase {
 
+    @Nullable
     private Nucleus mNucleus;
 
     private final ServletTestUtils mServletTestUtils = new ServletTestUtils();

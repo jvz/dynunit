@@ -21,6 +21,7 @@ import atg.nucleus.NucleusTestUtils;
 import atg.nucleus.ServiceException;
 import atg.service.idgen.InitializingSQLIdGenerator;
 import junit.framework.TestCase;
+import org.jetbrains.annotations.Nullable;
 
 import javax.servlet.ServletException;
 import javax.sql.DataSource;
@@ -32,6 +33,7 @@ import java.sql.Statement;
 public class IdGeneratorTest
         extends TestCase {
 
+    @Nullable
     private Nucleus mNucleus = null;
 
     protected void setUp()

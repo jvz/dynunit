@@ -22,6 +22,7 @@ import atg.nucleus.GenericService;
 import atg.service.jdbc.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
@@ -402,7 +403,7 @@ public class SQLProcessor {
      *
      * @throws SQLException if an error occurs trying to close a non-null connection
      */
-    private void close(Connection pConnection)
+    private void close(@Nullable Connection pConnection)
             throws SQLException {
         if ( pConnection != null ) {
             pConnection.close();

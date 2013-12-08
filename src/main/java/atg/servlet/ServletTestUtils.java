@@ -34,6 +34,7 @@ import atg.service.dynamo.AppServerConfig;
 import atg.servlet.exittracking.ExitTrackingHandler;
 import atg.servlet.minimal.WebApplicationInterface;
 import atg.servlet.sessiontracking.GenericHttpSession;
+import org.jetbrains.annotations.Nullable;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -119,7 +120,7 @@ public class ServletTestUtils {
      */
     public TestingDynamoHttpServletRequest createDynamoHttpServletRequestForSession(Nucleus pNucleus,
                                                                                     String pSessionId,
-                                                                                    String pWindowId) {
+                                                                                    @Nullable String pWindowId) {
 
 
         Map<String, Object> mapParams = new HashMap<String, Object>();
@@ -476,7 +477,7 @@ public class ServletTestUtils {
         }
 
         @Override
-        // 9.0 and older won't create a session. 
+        // 9.0 and older won't create a session.
         // If none exists, we make it here.
         public HttpSession getSession(boolean create) {
             HttpSession s = super.getSession(create);
@@ -3956,7 +3957,7 @@ public class ServletTestUtils {
     } // end inner-class TestingDynamoHttpServletRequest
 
 
-    //-------------------------------------------------------  
+    //-------------------------------------------------------
 
     /**
      * A RequestDispatcher that calls through to a testing response

@@ -30,6 +30,7 @@ import atg.service.jdbc.MonitoredDataSource;
 import atg.test.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -91,7 +92,7 @@ public final class RepositoryConfiguration {
      *
      * @throws IOException
      */
-    public void createFakeXADataSource(final File root, Map<String, String> jdbcSettings)
+    public void createFakeXADataSource(@NotNull final File root, Map<String, String> jdbcSettings)
             throws IOException {
 
         // TODO: Something expects the url property name in upper case... still

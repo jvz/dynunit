@@ -21,6 +21,8 @@ import atg.adapter.gsa.SQLFileParser;
 import atg.core.util.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +46,7 @@ public class DBUtils {
 
     private Connection conn; //our connection to the db - persist for life of
 
+    @NotNull
     private final Properties mJDBCProperties;
 
     private static final Logger logger = LogManager.getLogger();
@@ -56,7 +59,8 @@ public class DBUtils {
      *
      * @param pTestDBName
      */
-    public static Properties getHSQLDBInMemoryDBConnection(String pTestDBName) {
+    @NotNull
+    public static Properties getHSQLDBInMemoryDBConnection(@Nullable String pTestDBName) {
         Properties props = new Properties();
         props.put("driver", "org.hsqldb.jdbcDriver");
         if ( pTestDBName != null ) {
@@ -77,6 +81,7 @@ public class DBUtils {
      *
      * @param pTestDBName
      */
+    @NotNull
     public static Properties getHSQLDBRegularDBConnection(String pTestDBName,
                                                           String pHostName,
                                                           Object pUser,
@@ -96,6 +101,7 @@ public class DBUtils {
      *
      * @param pPath
      */
+    @NotNull
     public static Properties getHSQLDBFileDBConnection(String pPath) {
         Properties props = new Properties();
         props.put("driver", "org.hsqldb.jdbcDriver");
@@ -119,6 +125,7 @@ public class DBUtils {
      * @return
      */
 
+    @NotNull
     public static Properties getMSSQLDBConnection(String pHostName,
                                                   String pPort,
                                                   String pDBName,
@@ -146,8 +153,9 @@ public class DBUtils {
      * @return
      */
 
+    @NotNull
     public static Properties getMySQLDBConnection(String pHostName,
-                                                  String pPort,
+                                                  @Nullable String pPort,
                                                   String pDBName,
                                                   String pUser,
                                                   String pPassword) {
@@ -171,6 +179,7 @@ public class DBUtils {
      *
      * @return
      */
+    @NotNull
     public static Properties getDB2DBConnection(String pHostName,
                                                 String pPort,
                                                 String pDBName,
@@ -198,8 +207,9 @@ public class DBUtils {
      * @return
      */
 
+    @NotNull
     public static Properties getOracleDBConnection(String pHostName,
-                                                   String pPort,
+                                                   @Nullable String pPort,
                                                    String pDBName,
                                                    String pUser,
                                                    String pPassword) {
@@ -228,8 +238,9 @@ public class DBUtils {
      * @return
      */
 
+    @NotNull
     public static Properties getSolidDBConnection(String pHostName,
-                                                  String pPort,
+                                                  @Nullable String pPort,
                                                   String pUser,
                                                   String pPassword) {
         Properties props = new Properties();
@@ -258,8 +269,9 @@ public class DBUtils {
      * @return
      */
 
+    @NotNull
     public static Properties getSybaseDBConnection(String pHostName,
-                                                   String pPort,
+                                                   @Nullable String pPort,
                                                    String pDBName,
                                                    String pUser,
                                                    String pPassword) {
@@ -280,6 +292,7 @@ public class DBUtils {
      * an HSQLDB in memory database connecting with user "sa"
      * password ""
      */
+    @NotNull
     public static Properties getHSQLDBInMemoryDBConnection() {
         return getHSQLDBInMemoryDBConnection("testdb");
     }
@@ -299,7 +312,7 @@ public class DBUtils {
      *
      * @throws Exception
      */
-    public DBUtils(Properties pProps)
+    public DBUtils(@NotNull Properties pProps)
             throws Exception {
         this(
                 pProps.getProperty("URL"),
@@ -309,6 +322,7 @@ public class DBUtils {
         );
     }
 
+    @Nullable
     private String mDatabaseType = null;
 
     private String mDatabaseVersion;
@@ -425,7 +439,7 @@ public class DBUtils {
         st.close();
     } // void update()
 
-    void dump(ResultSet rs)
+    void dump(@NotNull ResultSet rs)
             throws SQLException {
 
         // the order of the rows in a cursor
@@ -491,7 +505,7 @@ public class DBUtils {
         }
     }
 
-    public void executeSQLFile(File pFile) {
+    public void executeSQLFile(@NotNull File pFile) {
         logger.info("Attempting to execute {}", pFile);
         SQLFileParser parser = new SQLFileParser();
         Collection<String> c = parser.parseSQLFile(pFile.getAbsolutePath());
@@ -560,7 +574,7 @@ public class DBUtils {
      *
      * @return
      */
-    public static boolean isOracle(Properties pProps) {
+    public static boolean isOracle(@NotNull Properties pProps) {
         return pProps.get("driver").toString().toLowerCase().contains("oracle");
     }
 
@@ -569,7 +583,7 @@ public class DBUtils {
      *
      * @return
      */
-    public static boolean isSybase(Properties pProps) {
+    public static boolean isSybase(@NotNull Properties pProps) {
         return pProps.get("driver").toString().toLowerCase().contains("sybase");
     }
 
@@ -578,7 +592,7 @@ public class DBUtils {
      *
      * @return
      */
-    public static boolean isMSSQLServer(Properties pProps) {
+    public static boolean isMSSQLServer(@NotNull Properties pProps) {
         return pProps.get("driver").equals("com.inet.tds.TdsDriver");
     }
 
@@ -587,7 +601,7 @@ public class DBUtils {
      *
      * @return
      */
-    public static boolean isDB2(Properties pProps) {
+    public static boolean isDB2(@NotNull Properties pProps) {
         return pProps.get("driver").toString().contains("DB2");
     }
 

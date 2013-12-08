@@ -21,6 +21,7 @@ import atg.dtm.TransactionDemarcation;
 import atg.dtm.TransactionDemarcationException;
 import atg.nucleus.GenericService;
 import atg.nucleus.ServiceException;
+import org.jetbrains.annotations.Nullable;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -200,7 +201,7 @@ public class SQLProcessorEngine
      *
      * @param pConnection connection to close, may be null
      */
-    private void close(Connection pConnection) {
+    private void close(@Nullable Connection pConnection) {
         if ( pConnection != null ) {
             try {
                 pConnection.close();
@@ -710,15 +711,15 @@ public class SQLProcessorEngine
    * private Vector getCreateStatements( String pStr ) { String STATEMENT_BEGIN
    * = getCreateTableBeginDelimiter(); String STATEMENT_END =
    * getCreateTableEndDelimiter();
-   * 
+   *
    * Vector statements = new Vector();
-   * 
+   *
    * // we need to make sure we strip off the potential 'missing tableinfos...'
    * // error, so we do that by initially recopying the string from the first //
    * CREATE TABLE. also with this check we catch the condition where the //
    * string being processed has no CREATE TABLE clauses int index =
    * pStr.indexOf( STATEMENT_BEGIN );
-   * 
+   *
    * // now loop through and extract all of the CREATE statements String
    * remaining = pStr.substring( index ); while ( index != -1 ) { int stop =
    * remaining.indexOf( STATEMENT_END ); if ( stop == -1 ) { // error - this
@@ -728,20 +729,20 @@ public class SQLProcessorEngine
    * + STATEMENT_END +
    * "' could not be found. Abandoning parsing of Create table statements.");
    * break; }
-   * 
+   *
    * String thisCreate = remaining.substring(0,stop); if ( isLoggingDebug() )
    * logDebug("Parsed create statement: " + thisCreate ); statements.add(
    * thisCreate );
-   * 
+   *
    * // now see if there are any more statements remaining =
    * remaining.substring( stop + 1 ); index = remaining.indexOf( STATEMENT_BEGIN
    * ); // need to put this here so that we skip everything between the end of
    * the previous // CREATE TABLE and the beginning of the next if ( index != -1
    * ) remaining = remaining.substring( index ); }
-   * 
+   *
    * if ( isLoggingDebug() ) logDebug("Found " + statements.size() +
    * " create statements.");
-   * 
+   *
    * return statements; }
    */
 

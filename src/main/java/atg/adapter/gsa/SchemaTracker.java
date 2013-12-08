@@ -16,6 +16,8 @@
 
 package atg.adapter.gsa;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class SchemaTracker {
         mTableToRepository = pTableToRepository;
     }
 
+    @Nullable
     private static SchemaTracker sSchemaTracker = null;
 
     private SchemaTracker() {
