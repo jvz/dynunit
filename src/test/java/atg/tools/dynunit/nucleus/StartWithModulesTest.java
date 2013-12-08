@@ -19,13 +19,20 @@ package atg.tools.dynunit.nucleus;
 import atg.nucleus.Nucleus;
 import atg.nucleus.ServiceException;
 import atg.repository.MutableRepository;
-import junit.framework.TestCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.servlet.ServletException;
+
 import java.io.IOException;
+
+import static atg.tools.dynunit.nucleus.NucleusTestUtils.shutdownNucleus;
+import static atg.tools.dynunit.nucleus.NucleusTestUtils.startNucleusWithModules;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * This test is an example showing how to startup a Nucleus instance which resolves its
@@ -44,8 +51,7 @@ import java.io.IOException;
  *
  * @author adamb
  */
-public class StartWithModulesTest
-        extends TestCase {
+public class StartWithModulesTest {
 
     private static final Logger logger = LogManager.getLogger();
 
@@ -57,21 +63,17 @@ public class StartWithModulesTest
     /**
      * Starts Nucleus. Fails the test if there is a problem starting Nucleus.
      */
-    @Override
-    public void setUp() {
+    @Before
+    public void setUp()
+            throws ServletException {
         logger.info("Starting Nucleus.");
-        try {
-            System.setProperty("derby.locks.deadlockTrace", "true");
-            mNucleus = NucleusTestUtils.startNucleusWithModules(
-                    new String[]{ "DAF.Deployment", "DPS" },
-                    this.getClass(),
-                    this.getClass().getName(),
-                    "/atg/deployment/DeploymentRepository"
-            );
-        } catch (ServletException e) {
-            fail(e.getMessage());
-        }
-
+        System.setProperty("derby.locks.deadlockTrace", "true");
+        mNucleus = startNucleusWithModules(
+                new String[]{ "DAF.Deployment", "DPS" },
+                this.getClass(),
+                this.getClass().getName(),
+                "/atg/deployment/DeploymentRepository"
+        );
     }
 
     // ------------------------------------
@@ -80,17 +82,12 @@ public class StartWithModulesTest
      * If there is a running Nucleus, this method shuts it down.
      * The test will fail if there is an error while shutting down Nucleus.
      */
-    @Override
-    public void tearDown() {
+    @After
+    public void tearDown()
+            throws IOException, ServiceException {
         logger.info("Stopping Nucleus.");
         if (mNucleus != null) {
-            try {
-                NucleusTestUtils.shutdownNucleus(mNucleus);
-            } catch (ServiceException e) {
-                fail(e.getMessage());
-            } catch (IOException e) {
-                fail(e.getMessage());
-            }
+            shutdownNucleus(mNucleus);
         }
     }
 
@@ -102,6 +99,7 @@ public class StartWithModulesTest
      * Confirms that Nucleus can start given a set of modules and a properly set DYNAMO_HOME
      * environment variable. (ex: DYNAMO_HOME=/home/user/ATG/ATG9.0/home)
      */
+    @Test
     public void testResolveComponentWithNucleus() {
         assertNotNull(mNucleus);
         MutableRepository catalog = (MutableRepository) mNucleus.resolveName(

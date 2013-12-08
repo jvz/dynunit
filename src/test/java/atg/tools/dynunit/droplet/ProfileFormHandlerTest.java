@@ -20,76 +20,62 @@ import atg.nucleus.Nucleus;
 import atg.nucleus.ServiceException;
 import atg.repository.MutableRepository;
 import atg.servlet.DynamoHttpServletRequest;
-import atg.servlet.ServletUtil;
-import atg.tools.dynunit.nucleus.NucleusTestUtils;
 import atg.tools.dynunit.servlet.ServletTestUtils;
-import junit.framework.TestCase;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+
+import static atg.servlet.ServletUtil.setCurrentRequest;
+import static atg.tools.dynunit.nucleus.NucleusTestUtils.shutdownNucleus;
+import static atg.tools.dynunit.nucleus.NucleusTestUtils.startNucleusWithModules;
+import static org.apache.logging.log4j.LogManager.getLogger;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Tests ProfileFormHandler using the config layer from the ATG build.
  *
  * @author adamb
  */
-public class ProfileFormHandlerTest
-        extends TestCase {
+public class ProfileFormHandlerTest {
 
     private static final String PROFILE_ADAPTER_REPOSITORY_PATH = "/atg/userprofiling/ProfileAdapterRepository";
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = getLogger();
 
-    @Nullable
-    private Nucleus mNucleus = null;
+    private Nucleus nucleus;
 
-    private final ServletTestUtils mServletTestUtils = new ServletTestUtils();
+    private DynamoHttpServletRequest previousRequest;
 
-    // ------------------------------------
+    private final ServletTestUtils servletTestUtils = new ServletTestUtils();
 
-    /**
-     * Starts Nucleus. Fails the test if there is a problem starting Nucleus.
-     */
-    @Override
-    public void setUp() {
+    @Before
+    public void setUp()
+            throws ServletException {
         logger.info("Starting Nucleus.");
-        try {
-            System.setProperty("derby.locks.deadlockTrace", "true");
-            mNucleus = NucleusTestUtils.startNucleusWithModules(
-                    new String[]{ "DPS", "DafEar.base" },
-                    this.getClass(),
-                    this.getClass().getName(),
-                    PROFILE_ADAPTER_REPOSITORY_PATH
-            );
-        } catch (ServletException e) {
-            logger.catching(e);
-            fail(e.getMessage());
-        }
 
+        System.setProperty("derby.locks.deadlockTrace", "true");
+        nucleus = startNucleusWithModules(
+                new String[]{ "DPS", "DafEar.base" },
+                this.getClass(),
+                this.getClass().getName(),
+                PROFILE_ADAPTER_REPOSITORY_PATH
+        );
     }
 
-    // ------------------------------------
-
-    /**
-     * If there is a running Nucleus, this method shuts it down.
-     * The test will fail if there is an error while shutting down Nucleus.
-     */
-    @Override
-    public void tearDown() {
+    @After
+    public void tearDown()
+            throws IOException, ServiceException {
+        if (previousRequest != null) {
+            setCurrentRequest(previousRequest);
+        }
         logger.info("Stopping Nucleus.");
-        if (mNucleus != null) {
-            try {
-                NucleusTestUtils.shutdownNucleus(mNucleus);
-            } catch (ServiceException e) {
-                logger.catching(e);
-                fail(e.getMessage());
-            } catch (IOException e) {
-                logger.catching(e);
-                fail(e.getMessage());
-            }
+        if (nucleus != null) {
+            shutdownNucleus(nucleus);
         }
     }
 
@@ -99,9 +85,10 @@ public class ProfileFormHandlerTest
      *
      * @throws Exception
      */
+    @Test
     public void testProfileFormHandler()
             throws Exception {
-        MutableRepository par = (MutableRepository) mNucleus.resolveName(
+        MutableRepository par = (MutableRepository) nucleus.resolveName(
                 PROFILE_ADAPTER_REPOSITORY_PATH
         );
         assertNotNull(par);
@@ -111,30 +98,26 @@ public class ProfileFormHandlerTest
      * Run a second test to be sure that HSQLDB shuts down
      * properly between tests
      */
+    @Test
     public void testProfileFormHandlerAgain()
             throws Exception {
-        assertNotNull(mNucleus.getCreationFilter());
-        Object s = mNucleus.resolveName("/atg/scenario/ScenarioManager");
+        assertNotNull(nucleus.getCreationFilter());
+        Object s = nucleus.resolveName("/atg/scenario/ScenarioManager");
         assertNull(s);
 
-        DynamoHttpServletRequest requestOld = null;
-        try {
-            DynamoHttpServletRequest request = mServletTestUtils.createDynamoHttpServletRequestForSession(
-                    mNucleus, "mySessionId", "new"
-            );
-            requestOld = ServletUtil.setCurrentRequest(request);
-            MutableRepository par = (MutableRepository) mNucleus.resolveName(
-                    PROFILE_ADAPTER_REPOSITORY_PATH
-            );
-            assertNotNull(par);
+        DynamoHttpServletRequest request = servletTestUtils.createDynamoHttpServletRequestForSession(
+                nucleus, "mySessionId", "new"
+        );
+        previousRequest = setCurrentRequest(request);
+        MutableRepository par = (MutableRepository) nucleus.resolveName(
+                PROFILE_ADAPTER_REPOSITORY_PATH
+        );
+        assertNotNull(par);
 
-            assertNotNull(
-                    "Request component",
-                    request.resolveName("/atg/userprofiling/ProfileFormHandler")
-            );
-        } finally {
-            ServletUtil.setCurrentRequest(requestOld);
-        }
+        assertNotNull(
+                "Request component",
+                request.resolveName("/atg/userprofiling/ProfileFormHandler")
+        );
     }
 
 

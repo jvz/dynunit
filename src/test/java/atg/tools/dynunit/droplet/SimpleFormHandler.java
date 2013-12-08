@@ -33,15 +33,15 @@ public class SimpleFormHandler
 
     public static final String REDIRECT_URL_PARAM_NAME = "redirectURL";
 
-    private String mErrorURL = "/error.jsp";
+    private String errorURL = "/error.jsp";
 
     /**
      * Sets the URL to which this formhandler redirects on any error.
      *
-     * @param pURL
+     * @param errorURL
      */
-    public void setErrorURL(String pURL) {
-        mErrorURL = pURL;
+    public void setErrorURL(String errorURL) {
+        this.errorURL = errorURL;
     }
 
     /**
@@ -50,7 +50,7 @@ public class SimpleFormHandler
      * @return
      */
     public String getErrorURL() {
-        return mErrorURL;
+        return errorURL;
     }
 
     /**
@@ -58,29 +58,29 @@ public class SimpleFormHandler
      * basic formhandler with DUST. A Simple "handler" method implementation. It
      * calls redirect given a value in a request parameter.
      *
-     * @param pRequest
-     * @param pResponse
+     * @param request
+     * @param response
      *
      * @return
      *
      * @throws IOException
      */
-    public boolean handleRedirect(@NotNull DynamoHttpServletRequest pRequest,
-                                  DynamoHttpServletResponse pResponse)
+    public boolean handleRedirect(@NotNull DynamoHttpServletRequest request,
+                                  DynamoHttpServletResponse response)
             throws IOException {
-        mDidRedirect = false;
-        String redirectURL = pRequest.getParameter("redirectURL");
+        redirected = false;
+        String redirectURL = request.getParameter(REDIRECT_URL_PARAM_NAME);
         if (redirectURL == null) {
-            pResponse.sendLocalRedirect(mErrorURL, pRequest);
+            response.sendLocalRedirect(errorURL, request);
         }
         else {
-            pResponse.sendLocalRedirect(redirectURL, pRequest);
-            mDidRedirect = true;
+            response.sendLocalRedirect(redirectURL, request);
+            redirected = true;
         }
         return false;
     }
 
-    private boolean mDidRedirect = false;
+    private boolean redirected = false;
 
     /**
      * Set to true if the last request resulted in a successful redirect. False
@@ -88,8 +88,8 @@ public class SimpleFormHandler
      *
      * @return
      */
-    public boolean didRedirect() {
-        return mDidRedirect;
+    public boolean isRedirected() {
+        return redirected;
     }
 
 }

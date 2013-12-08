@@ -18,18 +18,18 @@ package atg.tools.dynunit.nucleus;
 
 import atg.nucleus.Nucleus;
 import com.mycompany.SimpleComponent;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * Based on {@link TestCase}
- */
-public class FirstTest
-        extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class FirstTest {
 
     /**
      * Start up a nucleus given a local test "configpath". In that configpath is a
@@ -37,6 +37,7 @@ public class FirstTest
      *
      * @throws Exception
      */
+    @Test
     public void testComponentStartup()
             throws Exception {
         File configpath = NucleusTestUtils.getConfigpath(this.getClass(), "config");
