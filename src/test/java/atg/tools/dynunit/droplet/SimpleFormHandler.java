@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package atg.tools.dynunit.tests;
+package atg.tools.dynunit.droplet;
 
 import atg.droplet.GenericFormHandler;
 import atg.servlet.DynamoHttpServletRequest;

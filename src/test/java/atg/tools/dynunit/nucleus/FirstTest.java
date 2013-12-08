@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package atg.tools.dynunit.tests;
+package atg.tools.dynunit.nucleus;
 
 import atg.nucleus.Nucleus;
-import atg.tools.dynunit.nucleus.NucleusTestUtils;
 import com.mycompany.SimpleComponent;
 import junit.framework.TestCase;
 

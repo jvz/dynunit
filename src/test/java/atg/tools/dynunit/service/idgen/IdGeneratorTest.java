@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package atg.tools.dynunit.test;
+package atg.tools.dynunit.service.idgen;
 
 import atg.nucleus.Nucleus;
 import atg.nucleus.ServiceException;
 import atg.service.idgen.IdGenerator;
 import atg.tools.dynunit.nucleus.NucleusTestUtils;
-import atg.tools.dynunit.service.idgen.InitializingSQLIdGenerator;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

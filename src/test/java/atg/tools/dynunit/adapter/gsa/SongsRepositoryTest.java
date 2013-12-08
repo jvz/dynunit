@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package atg.tools.dynunit.tests;
+package atg.tools.dynunit.adapter.gsa;
 
 import atg.adapter.gsa.GSARepository;
 import atg.dtm.TransactionDemarcation;

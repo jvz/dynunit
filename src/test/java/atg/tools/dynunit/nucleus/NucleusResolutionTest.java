@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package atg.tools.dynunit.tests;
+package atg.tools.dynunit.nucleus;
 
 import atg.nucleus.Nucleus;
 import atg.nucleus.ServiceException;
 import atg.servlet.DynamoHttpServletRequest;
-import atg.servlet.ServletUtil;
-import atg.tools.dynunit.nucleus.NucleusTestUtils;
 import atg.tools.dynunit.servlet.ServletTestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -37,6 +32,9 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static atg.servlet.ServletUtil.setCurrentRequest;
+import static atg.tools.dynunit.nucleus.NucleusTestUtils.shutdownNucleus;
+import static atg.tools.dynunit.nucleus.NucleusTestUtils.startNucleusWithModules;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -58,7 +56,6 @@ public class NucleusResolutionTest {
 
     private final Logger log = LogManager.getLogger();
 
-    @NotNull
     @Parameterized.Parameters
     public static Iterable<String> data() {
         return Arrays.asList(
@@ -66,13 +63,16 @@ public class NucleusResolutionTest {
         );
     }
 
-    @Parameterized.Parameter
-    public /* not private */ String componentPath;
+    private String componentPath;
 
-    @BeforeClass
-    public void setUpClass()
+    public NucleusResolutionTest(final String componentPath) {
+        this.componentPath = componentPath;
+    }
+
+    @Before
+    public void setUp()
             throws ServletException {
-        nucleus = NucleusTestUtils.startNucleusWithModules(
+        nucleus = startNucleusWithModules(
                 new String[]{ "DAS", "DafEar.base" }, this.getClass(), "/atg/dynamo/MyComponent"
         );
         assertThat(nucleus, is(notNullValue()));
@@ -81,24 +81,16 @@ public class NucleusResolutionTest {
         );
         assertThat(request, is(notNullValue()));
         log.debug("Window ID = {}", DynamoHttpServletRequest.WINDOW_ID_PARAM_NAME);
-    }
-
-    @AfterClass
-    public void tearDownClass()
-            throws IOException, ServiceException {
-        if (nucleus != null) {
-            NucleusTestUtils.shutdownNucleus(nucleus);
-        }
-    }
-
-    @Before
-    public void setUp() {
-        saved = ServletUtil.setCurrentRequest(request);
+        saved = setCurrentRequest(request);
     }
 
     @After
-    public void tearDown() {
-        ServletUtil.setCurrentRequest(saved);
+    public void tearDown()
+            throws IOException, ServiceException {
+        setCurrentRequest(saved);
+        if (nucleus != null) {
+            shutdownNucleus(nucleus);
+        }
     }
 
     @Test

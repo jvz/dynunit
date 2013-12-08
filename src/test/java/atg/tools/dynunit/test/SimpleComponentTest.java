@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package atg.tools.dynunit.tests;
+package atg.tools.dynunit.test;
 
-import atg.tools.dynunit.test.AtgDustCase;
 import com.mycompany.SimpleComponent;
 
 import java.io.File;

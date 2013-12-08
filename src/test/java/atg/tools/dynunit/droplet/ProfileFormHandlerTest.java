@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package atg.tools.dynunit.tests;
+package atg.tools.dynunit.droplet;
 
 import atg.nucleus.Nucleus;
 import atg.nucleus.ServiceException;
 import atg.repository.MutableRepository;
+import atg.servlet.DynamoHttpServletRequest;
+import atg.servlet.ServletUtil;
 import atg.tools.dynunit.nucleus.NucleusTestUtils;
+import atg.tools.dynunit.servlet.ServletTestUtils;
 import junit.framework.TestCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,29 +32,21 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 /**
- * This test is an example showing how to startup a Nucleus instance which resolves its
- * configuration path (CONFIGPATH)
- * from a set of modules within an ATG installation.
- * This saves the test author from having to maintain separate copies of files which exist in the
- * CONFIGPATH of a given module.
- * The location of DYNAMO_HOME is determined by checking the following items in order for the first
- * non-null value:
- * <ul>
- * <li>System Property "atg.dynamo.root"
- * <li>Environment Variable "DYNAMO_ROOT"
- * <li>System Property "atg.dynamo.home"
- * <li>Environment Variable "DYNAMO_HOME"
- * </ul>
+ * Tests ProfileFormHandler using the config layer from the ATG build.
  *
  * @author adamb
  */
-public class StartWithModulesTest
+public class ProfileFormHandlerTest
         extends TestCase {
+
+    private static final String PROFILE_ADAPTER_REPOSITORY_PATH = "/atg/userprofiling/ProfileAdapterRepository";
 
     private static final Logger logger = LogManager.getLogger();
 
     @Nullable
     private Nucleus mNucleus = null;
+
+    private final ServletTestUtils mServletTestUtils = new ServletTestUtils();
 
     // ------------------------------------
 
@@ -64,12 +59,13 @@ public class StartWithModulesTest
         try {
             System.setProperty("derby.locks.deadlockTrace", "true");
             mNucleus = NucleusTestUtils.startNucleusWithModules(
-                    new String[]{ "DAF.Deployment", "DPS" },
+                    new String[]{ "DPS", "DafEar.base" },
                     this.getClass(),
                     this.getClass().getName(),
-                    "/atg/deployment/DeploymentRepository"
+                    PROFILE_ADAPTER_REPOSITORY_PATH
             );
         } catch (ServletException e) {
+            logger.catching(e);
             fail(e.getMessage());
         }
 
@@ -88,32 +84,58 @@ public class StartWithModulesTest
             try {
                 NucleusTestUtils.shutdownNucleus(mNucleus);
             } catch (ServiceException e) {
+                logger.catching(e);
                 fail(e.getMessage());
             } catch (IOException e) {
+                logger.catching(e);
                 fail(e.getMessage());
             }
         }
     }
 
-    // ----------------------------------------
+    /**
+     * TODO: Make it possible to resolve request scoped objects in a test.
+     * Ideally we setup a fake request and make all the code "just work".
+     *
+     * @throws Exception
+     */
+    public void testProfileFormHandler()
+            throws Exception {
+        MutableRepository par = (MutableRepository) mNucleus.resolveName(
+                PROFILE_ADAPTER_REPOSITORY_PATH
+        );
+        assertNotNull(par);
+    }
 
     /**
-     * Resolves a component that is defined within the ATG platform and is not specifically
-     * part of this test's configpath.
-     * Confirms that Nucleus can start given a set of modules and a properly set DYNAMO_HOME
-     * environment variable. (ex: DYNAMO_HOME=/home/user/ATG/ATG9.0/home)
+     * Run a second test to be sure that HSQLDB shuts down
+     * properly between tests
      */
-    public void testResolveComponentWithNucleus() {
-        assertNotNull(mNucleus);
-        MutableRepository catalog = (MutableRepository) mNucleus.resolveName(
-                "/atg/deployment/DeploymentRepository"
-        );
-        assertNotNull("DeploymentRepository should not be null.", catalog);
-        MutableRepository profile = (MutableRepository) mNucleus.resolveName(
-                "/atg/userprofiling/ProfileAdapterRepository"
-        );
-        // Good enough for this test.
-        // Don't want to disturb any data that might be in this repository.
+    public void testProfileFormHandlerAgain()
+            throws Exception {
+        assertNotNull(mNucleus.getCreationFilter());
+        Object s = mNucleus.resolveName("/atg/scenario/ScenarioManager");
+        assertNull(s);
+
+        DynamoHttpServletRequest requestOld = null;
+        try {
+            DynamoHttpServletRequest request = mServletTestUtils.createDynamoHttpServletRequestForSession(
+                    mNucleus, "mySessionId", "new"
+            );
+            requestOld = ServletUtil.setCurrentRequest(request);
+            MutableRepository par = (MutableRepository) mNucleus.resolveName(
+                    PROFILE_ADAPTER_REPOSITORY_PATH
+            );
+            assertNotNull(par);
+
+            assertNotNull(
+                    "Request component",
+                    request.resolveName("/atg/userprofiling/ProfileFormHandler")
+            );
+        } finally {
+            ServletUtil.setCurrentRequest(requestOld);
+        }
     }
+
 
 }

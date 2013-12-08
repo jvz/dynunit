@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package atg.tools.dynunit.tests;
+package atg.tools.dynunit.adapter.gsa;
 
 import atg.adapter.gsa.GSARepository;
 import atg.dtm.TransactionDemarcation;
@@ -22,8 +22,6 @@ import atg.nucleus.Nucleus;
 import atg.repository.MutableRepository;
 import atg.repository.MutableRepositoryItem;
 import atg.repository.RepositoryItem;
-import atg.tools.dynunit.adapter.gsa.GSATest;
-import atg.tools.dynunit.adapter.gsa.GSATestUtils;
 import atg.tools.dynunit.test.util.DBUtils;
 import atg.tools.dynunit.test.util.FileUtil;
 import org.apache.logging.log4j.LogManager;

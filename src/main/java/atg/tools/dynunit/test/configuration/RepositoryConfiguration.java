@@ -19,7 +19,6 @@
  */
 package atg.tools.dynunit.test.configuration;
 
-import atg.adapter.gsa.InitializingGSA;
 import atg.adapter.gsa.event.GSAEventServer;
 import atg.dtm.TransactionDemarcationLogging;
 import atg.dtm.TransactionManagerImpl;
@@ -27,6 +26,7 @@ import atg.dtm.UserTransactionImpl;
 import atg.service.idgen.SQLIdGenerator;
 import atg.service.jdbc.FakeXADataSource;
 import atg.service.jdbc.MonitoredDataSource;
+import atg.tools.dynunit.adapter.gsa.InitializingGSA;
 import atg.tools.dynunit.test.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -193,13 +193,15 @@ public final class RepositoryConfiguration {
     /**
      * @param root
      * @param repositoryPath
-     * @param droptables      <code>true</code> then existing tables will be dropped after
-     *                        the test run, if <code>false</code> then leave the existing
-     *                        tables alone
-     * @param createTables    if set to <code>true</code> all non existing tables needed for
-     *                        the current test run will be created, if set to
-     *                        <code>false</code> this class expects all needed tables for
-     *                        this test run are already created
+     * @param droptables
+     *         <code>true</code> then existing tables will be dropped after
+     *         the test run, if <code>false</code> then leave the existing
+     *         tables alone
+     * @param createTables
+     *         if set to <code>true</code> all non existing tables needed for
+     *         the current test run will be created, if set to
+     *         <code>false</code> this class expects all needed tables for
+     *         this test run are already created
      * @param definitionFiles
      *
      * @throws IOException
@@ -214,7 +216,7 @@ public final class RepositoryConfiguration {
         this.settings.clear();
 
         final StringBuilder defFiles = new StringBuilder();
-        for ( String definitionFile : definitionFiles ) {
+        for (String definitionFile : definitionFiles) {
             defFiles.append("/").append(definitionFile);
         }
         settings.put("definitionFiles", defFiles.toString());
