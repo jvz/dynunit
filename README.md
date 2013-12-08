@@ -3,27 +3,25 @@ DynUnit
 
 Fork of ATG DUST for use with JUnit4 and various newer libraries.
 
-## Usage
-First, you need to copy a few JARs to your local Maven repository (default is `~/.m2/repository/`).
+Usage
+-----
+
+First, you'll need to make some symlinks to your local ATG JARs. Suppose your
+`ATG_HOME` environement variable is set to something like
+`$HOME/ATG/ATG10.1.2`. Then you should execute the following:
 
 ```bash
-export ATG_VERSION=10.1.2
-export ATG_HOME=$HOME/ATG/ATG${ATG_VERSION}
-mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS \
-  -Dversion=$ATG_VERSION -Dpackaging=jar \
-  -Dfile=${ATG_HOME}/DAS/lib/classes.jar -DgeneratePom=true \
-  -Durl=file://$HOME/.m2/repository/ -DlocalRepository=local
+mkdir lib
+cd lib
+for module in DAS DPS DSS; do
+    ln -s $ATG_HOME/$module/lib/classes.jar $module.jar
+    ln -s $ATG_HOME/$module/lib/resources.jar $module-resources.jar
+done
 ```
 
-This has to be done for DAS, DPS, and DSS, as well as their corresponding resources JAR files:
+Next, build the DynUnit JAR file for use in your ATG module:
 
 ```bash
-mvn deploy:deploy-file -DgroupId=atg -DartifactId=DAS-resources \
-  -Dversion=$ATG_VERSION -Dpackaging=jar \
-  -Dfile=${ATG_HOME}/DAS/lib/resources.jar -DgeneratePom=true \
-  -Durl=file://$HOME/.m2/repository/ -DlocalRepository=local
+./gradlew jar
+cp build/libs/dynunit-1.0-SNAPSHOT.jar your/project/libs/
 ```
-
-The `pom.xml` file also needs to be updated with the version numbers in use.
-
-More to come!
