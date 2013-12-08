@@ -53,10 +53,7 @@ public class NucleusTestUtilsTest
             throws Exception {
         Nucleus n = null;
         try {
-            try {
-                n = new Nucleus(null);
-            } catch ( LicenseFailureException licExc ) {
-            }
+            n = new Nucleus("");
             Object component = "I'm the test component";
             String path = "/foo/Test";
             Object component2 = "I'm the test component too";

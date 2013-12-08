@@ -20,7 +20,6 @@ import atg.applauncher.AppLauncher;
 import atg.applauncher.AppModule;
 import atg.nucleus.DynamoEnv;
 import atg.nucleus.Nucleus;
-import atg.service.dynamo.LicenseImpl;
 import atg.service.email.ContentPart;
 import atg.service.email.EmailEvent;
 import atg.service.email.MimeMessageUtils;
@@ -1026,15 +1025,8 @@ public class TestUtils
      *         resolve.
      */
     public static int getSessionLimit(String pLicense, boolean pResolve) {
-        if ( pLicense == null ) {
-            return 0;
-        }
-        LicenseImpl license = (LicenseImpl) Nucleus.getGlobalNucleus()
-                                                   .resolveName(pLicense, pResolve);
-        if ( license == null ) {
-            return 0;
-        }
-        return license.getMaxSessions();
+        // FIXME: LicenseImpl is not in ATG 10
+        return Integer.MAX_VALUE;
     }
 
     // ==================== EMAIL ======================
