@@ -96,7 +96,7 @@ public class VersioningContextUtil {
         //	VersioningContext versioningContext = new VersioningContext(pWorkspaceId, pBranchId, pComment, pDoCheckin);
 
     /*
-	System.out.println("=============pWrokspaceId = " + versioningContext.getWorkspaceId());
+    System.out.println("=============pWrokspaceId = " + versioningContext.getWorkspaceId());
 	System.out.println("=============pBranchId = " + versioningContext.getBranchId());
 	System.out.println("=============pComment = " + versioningContext.getComment());
 	System.out.println("=============pDoCheckin = " + versioningContext.isDoCheckin());
