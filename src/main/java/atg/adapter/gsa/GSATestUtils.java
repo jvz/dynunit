@@ -439,12 +439,12 @@ public class GSATestUtils {
      *          participate in # two-phase commits in the true two-phase commit
      *          style.
      *          #-------------------------------------------------------------------
-     * 
+     *
      * $class=atg.service.jdbc.FakeXADataSource
-     * 
+     *
      * driver=solid.jdbc.SolidDriver URL=jdbc:solid://localhost:1313 user=admin
      * password=admin
-     *  
+     *
      */
         String name = pName;
         if ( name == null ) {
@@ -491,7 +491,7 @@ public class GSATestUtils {
             throws IOException {
     /*
      * ---- #
-     * 
+     *
      * @version $Id:
      *          //product/DAS/main/templates/DAS/config/config/atg/dynamo/service/jdbc/JTDataSource.properties#3
      *          $$Change: 410369 $
@@ -501,13 +501,13 @@ public class GSATestUtils {
      *          with the calling threads current Transaction. It must always be #
      *          given a TransactionManager and an XADataSource.
      *          #-------------------------------------------------------------------
-     * 
+     *
      * $class=atg.service.jdbc.MonitoredDataSource # only use this data source
      * if you do not have an JDBC driver # which provides true XA data sources
      * dataSource=/atg/dynamo/service/jdbc/FakeXADataSource # Minimum and
      * maximum number of connections to keep in the pool min=10 max=10
      * blocking=true
-     * 
+     *
      * #maxBlockTime= #maxCreateTime= #maxCreateAttempts= # # This will log any
      * SQLWarnings that are generated. By default, we turn # these off since
      * they tend to be informational, not really warnings. If # you want the
@@ -660,16 +660,16 @@ public class GSATestUtils {
      *          an # SQL database table. The ids are suitable for use with
      *          persistent # objects.
      *          #-------------------------------------------------------------------
-     * 
+     *
      * $class=atg.service.idgen.SQLIdGenerator
-     * 
+     *
      * dataSource=/atg/dynamo/service/jdbc/JTDataSource
      * transactionManager=/atg/dynamo/transaction/TransactionManager
      * XMLToolsFactory=/atg/dynamo/service/xml/XMLToolsFactory # all properties
      * of type XMLFile *MUST* use an absolute # component path. Applications
      * should append generally # append to this property.
      * initialIdSpaces=/atg/dynamo/service/idspaces.xml
-     * 
+     *
      * ---- #
      */
         Properties props = new Properties();
@@ -696,13 +696,13 @@ public class GSATestUtils {
             throws IOException {
     /*
      * ---- #
-     * 
+     *
      * @version $Id:
      *          //product/DAS/main/templates/DAS/config/config/atg/dynamo/service/xml/XMLToolsFactory.properties#3
      *          $$Change: 410369 $
      *          $class=atg.xml.tools.apache.ApacheXMLToolsFactory $scope=global
      *          parserFeatures=
-     * 
+     *
      * ---- #
      */
         File root = new File(pRoot.getAbsolutePath() + "/atg/dynamo/service/xml");
@@ -724,12 +724,12 @@ public class GSATestUtils {
             throws IOException {
     /*
      * *
-     * 
+     *
      * @version $Id:
      *          //product/DAS/main/templates/DAS/config/config/atg/dynamo/transaction/TransactionManager.properties#3
      *          $$Change: 410369 $ ############################## # # The Dynamo
      *          implementation of javax.transaction.TransactionManager #
-     * 
+     *
      * $class=atg.dtm.TransactionManagerImpl
      */
         Properties props = new Properties();
@@ -827,9 +827,9 @@ public class GSATestUtils {
             throws IOException {
     /*
      * #
-     * 
+     *
      * @version $Id: //test/UnitTests/base/main/src/Java/atg/adapter/gsa/GSATestUtils.java#28 $$Change: 410369 $ $class=atg.adapter.gsa.GSARepository
-     * 
+     *
      * repositoryName=RefRepository definitionFiles=/atg/repository/lv/ref.xml
      * XMLToolsFactory=/atg/dynamo/service/xml/XMLToolsFactory
      * transactionManager=/atg/dynamo/transaction/TransactionManager
@@ -1104,9 +1104,9 @@ public class GSATestUtils {
             throws IOException {
     /*
      * #
-     * 
+     *
      * @version $Id: //test/UnitTests/base/main/src/Java/atg/adapter/gsa/GSATestUtils.java#28 $$Change: 410369 $ $class=atg.adapter.gsa.GSARepository
-     * 
+     *
      * repositoryName=RefRepository definitionFiles=/atg/repository/lv/ref.xml
      * XMLToolsFactory=/atg/dynamo/service/xml/XMLToolsFactory
      * transactionManager=/atg/dynamo/transaction/TransactionManager
@@ -1412,7 +1412,7 @@ public class GSATestUtils {
         for ( Table table : itemDescriptor.getTables() ) {
             if ( !doneTables.contains(table.getName()) ) {
                 dumpTable(table, new ArrayList<String>());
-                doneTables.add(table.getName())
+                doneTables.add(table.getName());
             }
         }
     }
