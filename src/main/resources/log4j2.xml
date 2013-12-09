@@ -23,10 +23,19 @@
         <File name="FILE" fileName="dynunit.log">
             <PatternLayout pattern="%d %p [%c] [%M] [Thread:%t] - [%m]%n"/>
         </File>
+        <File name="DEBUG_FILE" fileName="debug.log">
+            <PatternLayout pattern="%d %p [%c] [%M]: [%m]%n"/>
+        </File>
     </Appenders>
     <Loggers>
-        <Logger name="org.dynunit" level="info">
+        <Logger name="atg.tools.dynunit" level="info">
             <AppenderRef ref="FILE"/>
+        </Logger>
+        <Logger name="atg.tools.dynunit.internal" level="debug">
+            <AppenderRef ref="DEBUG_FILE"/>
+        </Logger>
+        <Logger name="atg.tools.dynunit.nucleus" level="debug">
+            <AppenderRef ref="DEBUG_FILE"/>
         </Logger>
         <Logger name="org.apache.ddlutils" level="error">
             <AppenderRef ref="CONSOLE"/>
