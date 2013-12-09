@@ -143,16 +143,20 @@ public class AtgDustCase
      * Every *.properties file copied using this method will have it's scope (if
      * one is available) set to global.
      *
-     * @param srcDirs  One or more directories containing needed configuration files.
-     * @param dstDir   where to copy the above files to. This will also be the
-     *                 configuration location.
-     * @param excludes One or more directories not to include during the copy
-     *                 process. Use this one to speeds up the test cycle
-     *                 considerably. You can also call it with an empty
-     *                 {@link String[]} or <code>null</code> if nothing should be
-     *                 excluded
+     * @param srcDirs
+     *         One or more directories containing needed configuration files.
+     * @param dstDir
+     *         where to copy the above files to. This will also be the
+     *         configuration location.
+     * @param excludes
+     *         One or more directories not to include during the copy
+     *         process. Use this one to speeds up the test cycle
+     *         considerably. You can also call it with an empty
+     *         {@link String[]} or <code>null</code> if nothing should be
+     *         excluded
      *
-     * @throws IOException Whenever some file related error's occur.
+     * @throws IOException
+     *         Whenever some file related error's occur.
      */
     protected final void copyConfigurationFiles(final String[] srcDirs,
                                                 final String dstDir,
@@ -164,15 +168,15 @@ public class AtgDustCase
         logger.debug("Copying configurating files and forcing global scope on all configs.");
         preCopyingOfConfigurationFiles(srcDirs, excludes);
 
-        for ( final String srcs : srcDirs ) {
+        for (final String srcs : srcDirs) {
             FileUtil.copyDirectory(
-                    srcs, dstDir, Arrays.asList(excludes == null ? new String[] { } : excludes)
+                    srcs, dstDir, Arrays.asList(excludes == null ? new String[]{ } : excludes)
             );
         }
 
         forceGlobalScopeOnAllConfigs(dstDir);
 
-        if ( FileUtil.isDirty() ) {
+        if (FileUtil.isDirty()) {
             FileUtil.serialize(
                     GLOBAL_FORCE_SER, FileUtil.getConfigFilesTimestamps()
             );
@@ -200,29 +204,29 @@ public class AtgDustCase
                 "/", File.separator
         );
         int i = 0;
-        for ( String conf : configs ) {
+        for (String conf : configs) {
             String src = conf.split(" to ")[0];
             String dst = conf.split(" to ")[1];
             configs[i] = (rootConfigDir
-                          + "/"
-                          + src.trim()
-                          + " to "
-                          + rootConfigDir
-                          + "/"
-                          + dst.trim()).replace(
+                    + "/"
+                    + src.trim()
+                    + " to "
+                    + rootConfigDir
+                    + "/"
+                    + dst.trim()).replace(
                     "/", File.separator
             );
             i++;
         }
         i = 0;
-        for ( String dir : excludes ) {
+        for (String dir : excludes) {
             excludes[i] = dir.trim();
             i++;
         }
         final List<String> srcsAsList = new ArrayList<String>();
         final List<String> distsAsList = new ArrayList<String>();
 
-        for ( String config : configs ) {
+        for (String config : configs) {
             srcsAsList.add(config.split(" to ")[0]);
             distsAsList.add(config.split(" to ")[1]);
         }
@@ -240,7 +244,7 @@ public class AtgDustCase
 
         logger.info("Copying configuration files and forcing global scope on all configs");
         // copy all files to it's destination
-        for ( String config : configs ) {
+        for (String config : configs) {
             FileUtil.copyDirectory(
                     config.split(" to ")[0],
                     config.split(" to ")[1],
@@ -252,7 +256,7 @@ public class AtgDustCase
         }
 
         // forcing global scope on all configurations
-        for ( String config : configs ) {
+        for (String config : configs) {
             String dstDir = config.split(" to ")[1];
             // forcing global scope on all property files
             forceGlobalScopeOnAllConfigs(dstDir);
@@ -262,15 +266,19 @@ public class AtgDustCase
     }
 
     /**
-     * @param configurationStagingLocation The location where the property file should be created.
-     *                                     This
-     *                                     will also set the {@link AtgDustCase#configurationLocation}.
-     * @param nucleusComponentPath         Nucleus component path (e.g /Some/Service/Impl).
-     * @param clazz                        The {@link Class} implementing the nucleus component
-     *                                     specified
-     *                                     in previous argument.
+     * @param configurationStagingLocation
+     *         The location where the property file should be created.
+     *         This
+     *         will also set the {@link AtgDustCase#configurationLocation}.
+     * @param nucleusComponentPath
+     *         Nucleus component path (e.g /Some/Service/Impl).
+     * @param clazz
+     *         The {@link Class} implementing the nucleus component
+     *         specified
+     *         in previous argument.
      *
-     * @throws IOException If we have some File related errors
+     * @throws IOException
+     *         If we have some File related errors
      */
     final void createPropertyFile(final String configurationStagingLocation,
                                   final String nucleusComponentPath,
@@ -288,12 +296,16 @@ public class AtgDustCase
     /**
      * Prepares a test against an default in-memory hsql database.
      *
-     * @param repoPath        the nucleus component path of the repository to be tested.
-     * @param definitionFiles one or more repository definition files.
+     * @param repoPath
+     *         the nucleus component path of the repository to be tested.
+     * @param definitionFiles
+     *         one or more repository definition files.
      *
-     * @throws IOException  The moment we have some properties/configuration related
-     *                      error
-     * @throws SQLException Whenever there is a database related error
+     * @throws IOException
+     *         The moment we have some properties/configuration related
+     *         error
+     * @throws SQLException
+     *         Whenever there is a database related error
      */
     protected final void prepareRepository(final String repoPath, final String... definitionFiles)
             throws SQLException, IOException {
@@ -311,41 +323,48 @@ public class AtgDustCase
     /**
      * Prepares a test against an existing database.
      *
-     * @param repositoryPath       The the repository to be tested, specified as nucleus
-     *                             component path.
-     * @param connectionProperties A {@link Properties} instance with the following values (in
-     *                             this example the properties are geared towards an mysql
-     *                             database):
-     *                             <p/>
-     *                             <pre>
-     *                                                                                     final
-     *                             Properties properties = new
-     *                                                         Properties();
+     * @param repositoryPath
+     *         The the repository to be tested, specified as nucleus
+     *         component path.
+     * @param connectionProperties
+     *         A {@link Properties} instance with the following values (in
+     *         this example the properties are geared towards an mysql
+     *         database):
+     *         <p/>
+     *         <pre>
+     *                                                                                             final
+     *                                     Properties properties = new
+     *                                                                 Properties();
      *
-     *                             properties.put(&quot;driver&quot;,
-     *                                                         &quot;com.mysql.jdbc.Driver&quot;);
+     *                                     properties.put(&quot;driver&quot;,
+     *                                                                 &quot;com.mysql.jdbc.Driver&quot;);
      *
-     *                             properties.put(&quot;url&quot;,
-     *                                                         &quot;jdbc:mysql://localhost:3306/someDb&quot;);
+     *                                     properties.put(&quot;url&quot;,
+     *                                                                 &quot;jdbc:mysql://localhost:3306/someDb&quot;);
      *
-     *                             properties.put(&quot;user&quot;,
-     *                                                         &quot;someUserName&quot;);
+     *                                     properties.put(&quot;user&quot;,
+     *                                                                 &quot;someUserName&quot;);
      *
-     *                             properties.put(&quot;password&quot;,
-     *                                                         &quot;somePassword&quot;);
-     *                                                                                     </pre>
-     * @param dropTables           If <code>true</code> then existing tables will be dropped and
-     *                             re-created, if set to <code>false</code> the existing tables
-     *                             will be used.
-     * @param createTables         if set to <code>true</code> all non existing tables needed for
-     *                             the current test run will be created, if set to
-     *                             <code>false</code> this class expects all needed tables for
-     *                             this test run to be already created
-     * @param definitionFiles      One or more needed repository definition files.
+     *                                     properties.put(&quot;password&quot;,
+     *                                                                 &quot;somePassword&quot;);
+     *                                                                                             </pre>
+     * @param dropTables
+     *         If <code>true</code> then existing tables will be dropped and
+     *         re-created, if set to <code>false</code> the existing tables
+     *         will be used.
+     * @param createTables
+     *         if set to <code>true</code> all non existing tables needed for
+     *         the current test run will be created, if set to
+     *         <code>false</code> this class expects all needed tables for
+     *         this test run to be already created
+     * @param definitionFiles
+     *         One or more needed repository definition files.
      *
-     * @throws IOException  The moment we have some properties/configuration related
-     *                      error
-     * @throws SQLException Whenever there is a database related error
+     * @throws IOException
+     *         The moment we have some properties/configuration related
+     *         error
+     * @throws SQLException
+     *         Whenever there is a database related error
      */
     protected final void prepareRepository(final String repositoryPath,
                                            final Properties connectionProperties,
@@ -356,7 +375,7 @@ public class AtgDustCase
 
         final Map<String, String> connectionSettings = new HashMap<String, String>();
 
-        for ( final Entry<Object, Object> entry : connectionProperties.entrySet() ) {
+        for (final Entry<Object, Object> entry : connectionProperties.entrySet()) {
             connectionSettings.put(
                     (String) entry.getKey(), (String) entry.getValue()
             );
@@ -386,10 +405,12 @@ public class AtgDustCase
     /**
      * Method for retrieving a fully injected atg component
      *
-     * @param nucleusComponentPath Path to a nucleus component (e.g. /Some/Service/Impl).
+     * @param nucleusComponentPath
+     *         Path to a nucleus component (e.g. /Some/Service/Impl).
      *
      * @return Fully injected instance of the component registered under
-     *         previous argument or <code>null</code> if there is an error.
+     * previous argument or <code>null</code> if there is an error.
+     *
      * @throws IOException
      */
     protected Object resolveNucleusComponent(final String nucleusComponentPath)
@@ -403,10 +424,11 @@ public class AtgDustCase
     /**
      * Call this method to set the configuration location.
      *
-     * @param configurationLocation The configuration location to set. Most of the time this
-     *                              location is a directory containing all repository definition
-     *                              files and component property files which are needed for the
-     *                              test.
+     * @param configurationLocation
+     *         The configuration location to set. Most of the time this
+     *         location is a directory containing all repository definition
+     *         files and component property files which are needed for the
+     *         test.
      */
     protected final void setConfigurationLocation(final String configurationLocation) {
         this.configurationLocation = new File(configurationLocation);
@@ -423,7 +445,7 @@ public class AtgDustCase
             throws Exception {
         super.tearDown();
         repositoryManager.shutdownInMemoryDbAndCloseConnections();
-        if ( nucleus != null ) {
+        if (nucleus != null) {
             nucleus.doStopService();
             nucleus.stopService();
             nucleus.destroy();
@@ -433,9 +455,10 @@ public class AtgDustCase
     /**
      * Enables or disables the debug level of nucleus components.
      *
-     * @param isDebug Setting this to <code>true</code> will enable debug on all
-     *                (currently only on repository related) components, setting it
-     *                to <code>false</code> turns the debug off again.
+     * @param isDebug
+     *         Setting this to <code>true</code> will enable debug on all
+     *         (currently only on repository related) components, setting it
+     *         to <code>false</code> turns the debug off again.
      */
     protected void setDebug(boolean isDebug) {
         this.isDebug = isDebug;
@@ -448,7 +471,7 @@ public class AtgDustCase
      */
     private void startNucleus(final File configpath)
             throws IOException {
-        if ( nucleus == null || !nucleus.isRunning() ) {
+        if (nucleus == null || !nucleus.isRunning()) {
             ClassLoggingFactory.getFactory();
             basicConfiguration.setDebug(isDebug);
             basicConfiguration.createPropertiesByConfigurationLocation(configpath);
@@ -457,8 +480,8 @@ public class AtgDustCase
             // TODO: Can I safely keep this one disabled?
             // NucleusServlet.addNamingFactoriesAndProtocolHandlers();
 
-            if ( environment != null && !environment.equals("") ) {
-                for ( String property : environment.split(";") ) {
+            if (environment != null && !environment.equals("")) {
+                for (String property : environment.split(";")) {
                     String[] keyvalue = property.split("=");
                     System.setProperty(keyvalue[0], keyvalue[1]);
                     logger.info("{} = {}", keyvalue[0], keyvalue[1]);
@@ -466,17 +489,18 @@ public class AtgDustCase
             }
 
             String fullConfigPath = "";
-            if ( atgConfigPath != null && !atgConfigPath.equals("") ) {
+            if (atgConfigPath != null && !atgConfigPath.equals("")) {
                 fullConfigPath = atgConfigPath + ";" + fullConfigPath;
             }
-            if ( configDstsDir != null && configDstsDir.size() > 0 ) {
-                for ( String dst : configDstsDir ) {
+            if (configDstsDir != null && configDstsDir.size() > 0) {
+                for (String dst : configDstsDir) {
                     fullConfigPath = fullConfigPath + dst + ";";
                 }
-            } else {
+            }
+            else {
                 fullConfigPath = configpath.getAbsolutePath();
             }
-            if ( atgConfigPath != null && !atgConfigPath.equals("") ) {
+            if (localConfig != null && !localConfig.equals("")) {
                 fullConfigPath = fullConfigPath + localConfig.replace("/", File.separator);
             }
 
@@ -484,7 +508,7 @@ public class AtgDustCase
             System.setProperty(
                     "atg.configpath", new File(fullConfigPath).getAbsolutePath()
             );
-            nucleus = Nucleus.startNucleus(new String[] { fullConfigPath });
+            nucleus = Nucleus.startNucleus(new String[]{ fullConfigPath });
 
         }
     }
@@ -497,13 +521,14 @@ public class AtgDustCase
      * enabled the moment {@link AtgDustCase#setDebug(boolean)} was called with
      * <code>true</code>.
      *
-     * @param service an instance of GenericService
+     * @param service
+     *         an instance of GenericService
      *
      * @return the GenericService instance that was passed in with all log
-     *         levels enabled, if it's a {@link GenericService}
+     * levels enabled, if it's a {@link GenericService}
      */
     private Object enableLoggingOnGenericService(final Object service) {
-        if ( service instanceof GenericService ) {
+        if (service instanceof GenericService) {
             ((GenericService) service).setLoggingDebug(isDebug);
             ((GenericService) service).setLoggingInfo(true);
             ((GenericService) service).setLoggingWarning(true);
@@ -517,18 +542,19 @@ public class AtgDustCase
     private void preCopyingOfConfigurationFiles(final String[] srcDirs, final String excludes[])
             throws IOException {
         boolean isDirty = false;
-        for ( final String src : srcDirs ) {
-            for ( final File file : (List<File>) FileUtils.listFiles(
+        for (final String src : srcDirs) {
+            for (final File file : (List<File>) FileUtils.listFiles(
                     new File(
                             src
                     ), null, true
-            ) ) {
-                if ( !Arrays.asList(
-                        excludes == null ? new String[] { } : excludes
-                ).contains(file.getName()) && !file.getPath().contains(".svn") && file.isFile() ) {
-                    if ( CONFIG_FILES_TIMESTAMPS.get(file.getPath()) != null
-                         && file.lastModified() == CONFIG_FILES_TIMESTAMPS.get(file.getPath()) ) {
-                    } else {
+            )) {
+                if (!Arrays.asList(
+                        excludes == null ? new String[]{ } : excludes
+                ).contains(file.getName()) && !file.getPath().contains(".svn") && file.isFile()) {
+                    if (CONFIG_FILES_TIMESTAMPS.get(file.getPath()) != null
+                            && file.lastModified() == CONFIG_FILES_TIMESTAMPS.get(file.getPath())) {
+                    }
+                    else {
                         CONFIG_FILES_TIMESTAMPS.put(
                                 file.getPath(), file.lastModified()
                         );
@@ -537,7 +563,7 @@ public class AtgDustCase
                 }
             }
         }
-        if ( isDirty ) {
+        if (isDirty) {
             logger.debug("Config files timestamps map is dirty an will be re serialized");
 
             FileUtil.serialize(TIMESTAMP_SER, CONFIG_FILES_TIMESTAMPS);
@@ -549,26 +575,27 @@ public class AtgDustCase
 
     private void forceGlobalScopeOnAllConfigs(final String dstDir)
             throws IOException {
-        if ( perflib == null ) {
-            for ( final File file : (List<File>) FileUtils.listFiles(
+        if (perflib == null) {
+            for (final File file : (List<File>) FileUtils.listFiles(
                     new File(
                             dstDir
-                    ), new String[] { "properties" }, true
-            ) ) {
+                    ), new String[]{ "properties" }, true
+            )) {
                 new FileUtil().searchAndReplace(
                         "$scope=", "$scope=global\n", file
                 );
             }
-        } else {
+        }
+        else {
             try {
                 List<File> payload = (List<File>) FileUtils.listFiles(
                         new File(
                                 dstDir
-                        ), new String[] { "properties" }, true
+                        ), new String[]{ "properties" }, true
                 );
 
                 Method schedule = perflib.getMethod(
-                        "schedule", new Class[] {
+                        "schedule", new Class[]{
                         int.class, List.class, Class.class, String.class, Class[].class, List.class
                 }
                 );
@@ -582,12 +609,12 @@ public class AtgDustCase
                         payload,
                         FileUtil.class,
                         "searchAndReplace",
-                        new Class[] {
+                        new Class[]{
                                 String.class, String.class, File.class
                         },
                         list
                 );
-            } catch ( Exception e ) {
+            } catch (Exception e) {
                 logger.catching(e);
             }
         }
@@ -596,19 +623,20 @@ public class AtgDustCase
 
     static {
         final String s = System.getProperty("SERIAL_TTL");
-        logger.debug(
-                s == null ? "SERIAL_TTL has not been set "
-                            + "using default value of: "
-                            + SERIAL_TTL
-                            + " m/s or start VM with -DSERIAL_TTL=some_number_value" :
-                        "SERIAL_TTL is set to:"
-                        + s
-        );
+        if (s == null) {
+            logger.debug(
+                    "SERIAL_TTL has not been set. Using default value of {} ms, or start VM with -DSERIAL_TTL=n",
+                    SERIAL_TTL
+            );
+        }
+        else {
+            logger.debug("SERIAL_TTL set to {}", s);
+        }
         try {
             SERIAL_TTL = s != null ? Long.parseLong(s) * 1000 : SERIAL_TTL;
-        } catch ( NumberFormatException e ) {
+        } catch (NumberFormatException e) {
             logger.catching(e);
-            //logger.error("Error using the -DSERIAL_TTL value: ", e);
+            logger.warn("The value given by SERIAL_TTL, {}, could not be parsed.", s);
         }
         CONFIG_FILES_TIMESTAMPS = FileUtil.deserialize(
                 TIMESTAMP_SER, SERIAL_TTL
@@ -619,7 +647,7 @@ public class AtgDustCase
 
         try {
             perflib = Class.forName("com.bsdroot.util.concurrent.SchedulerService");
-        } catch ( ClassNotFoundException e ) {
+        } catch (ClassNotFoundException e) {
             logger.catching(e);
             logger.debug(
                     "com.bsdroot.util.concurrent experimental performance library not found, continuing normally"
