@@ -7,7 +7,7 @@ Installation
 ------------
 
 First, you'll need to make some symlinks to your local ATG JARs. Suppose your
-`ATG_HOME` environement variable is set to something like
+`ATG_HOME` environment variable is set to something like
 `$HOME/ATG/ATG10.1.2`. Then you should execute the following:
 
 ```bash
@@ -30,18 +30,25 @@ Usage
 -----
 
 A JUnit test runner is still in development, but DynUnit can be invoked without a special test runner using mostly
-standard annotations. Any field which you wish to resolve a Nucleus component to must be annotated with
-`@javax.inject.Inject`, and a class must add a `@atg.tools.dynunit.Nuke` annotation to an injected `Nucleus`
-instance. Named components are specified using the `@javax.inject.Named` annotation with their component path. For
-example:
+standard annotations from `javax.inject`. Any field which you wish to resolve a Nucleus component to must be annotated
+with `@Inject`, and a class must add a `@Nuke` annotation to an injected `Nucleus` instance. Named components are
+specified using the `@Named` annotation with their component path. For example:
 
 ```java
 import atg.nucleus.Nucleus;
 import atg.nucleus.logging.PrintStreamLogger;
 
-import org.junit.*;
-import atg.tools.dynunit.*;
-import javax.inject.*;
+import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import atg.tools.dynunit.Nuke;
+
+import static atg.tools.dynunit.DynUnit.init;
+import static atg.tools.dynunit.DynUnit.stop;
+import static org.junit.Assert.assertFalse;
 
 public class DynUnitTest {
 
@@ -56,18 +63,18 @@ public class DynUnitTest {
     @Before
     public void setUp() {
         // this injects the instances marked above
-        DynUnit.init(this);
+        init(this);
     }
 
     @After
     public void tearDown() {
         // this stops the Nucleus service
-        DynUnit.stop(this);
+        stop(this);
     }
 
     @Test
     public void testScreenLogDisabled() {
-        Assert.assertFalse(screenLog.isLoggingEnabled());
+        assertFalse(screenLog.isLoggingEnabled());
     }
 }
 ```
