@@ -5,17 +5,26 @@ import atg.tools.dynunit.test.configuration.BasicConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static atg.tools.dynunit.util.PropertiesUtil.setSystemProperty;
+import static atg.tools.dynunit.util.PropertiesUtil.setSystemPropertyIfEmpty;
+
+// TODO: needs to be thread-safe if it's a factory like this
+// TODO: should start up a global nucleus to keep track of sub-nuclei
 
 /**
  * @author msicker
  * @version 1.0.0
  */
-public class NucleusFactory {
+public final class NucleusFactory {
 
     private static final Logger logger = LogManager.getLogger();
 
@@ -32,7 +41,7 @@ public class NucleusFactory {
         return logger.exit(Holder.instance);
     }
 
-    private Nucleus nucleus;
+    private Map<File, Nucleus> nuclei = new ConcurrentHashMap<File, Nucleus>();
     private BasicConfiguration configuration = new BasicConfiguration();
     private boolean debug;
     private String environment;
@@ -46,18 +55,36 @@ public class NucleusFactory {
         logger.exit();
     }
 
-    public Nucleus createNucleus(final File configPath)
+    public Nucleus createNucleus(@NotNull final File configPath)
             throws IOException {
         logger.entry(configPath);
-        if (nucleus == null || !nucleus.isRunning()) {
-            setUpConfiguration(configPath);
-            readDynamoLicense();
-            setSystemPropertiesFromEnvironment();
-            final String fullConfigPath = buildAtgConfigPath(configPath);
-            setSystemAtgConfigPath(fullConfigPath);
-            nucleus = initializeNucleusWithConfigPath(fullConfigPath);
+        final Nucleus existing = getAlreadyRunningNucleus(configPath);
+        if (existing != null) {
+            return existing;
         }
+        setUpConfiguration(configPath);
+        readDynamoLicense();
+        setSystemPropertiesFromEnvironment();
+        final String fullConfigPath = buildAtgConfigPath(configPath);
+        setSystemAtgConfigPath(fullConfigPath);
+        final Nucleus nucleus = initializeNucleusWithConfigPath(fullConfigPath);
+        nuclei.put(configPath, nucleus);
         return logger.exit(nucleus);
+    }
+
+    public Nucleus createNucleusWithModules(@NotNull final File configPath, final String[] modules) {
+        throw new UnsupportedOperationException();
+    }
+
+    private Nucleus getAlreadyRunningNucleus(final File configPath) {
+        logger.entry(configPath);
+        if (nuclei.containsKey(configPath)) {
+            final Nucleus nucleus = nuclei.get(configPath);
+            if (nucleus != null && nucleus.isRunning()) {
+                return logger.exit(nucleus);
+            }
+        }
+        return logger.exit(null);
     }
 
     private void setUpConfiguration(final File configPath)
@@ -70,8 +97,8 @@ public class NucleusFactory {
 
     private void readDynamoLicense() {
         logger.entry();
-        System.setProperty("atg.dynamo.license.read", "true");
-        System.setProperty("atg.license.read", "true");
+        setSystemPropertyIfEmpty("atg.dynamo.license.read", "true");
+        setSystemPropertyIfEmpty("atg.license.read", "true");
         logger.exit();
     }
 
@@ -88,7 +115,7 @@ public class NucleusFactory {
                 final String key = entry[0];
                 final String value = entry[1];
                 logger.debug("Setting property {} = {}", key, value);
-                System.setProperty(key, value);
+                setSystemProperty(key, value);
             }
         }
         logger.exit();
@@ -120,7 +147,7 @@ public class NucleusFactory {
         final File systemAtgConfigPath = new File(configPath);
         final String absoluteConfigPath = systemAtgConfigPath.getAbsolutePath();
         logger.info("ATG-Config-Path: {}", absoluteConfigPath);
-        System.setProperty("atg.configpath", absoluteConfigPath);
+        setSystemProperty("atg.configpath", absoluteConfigPath);
         logger.exit();
     }
 
