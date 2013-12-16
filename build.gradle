@@ -7,15 +7,9 @@ jar {
     manifest {
         attributes 'Implementation-Title': 'DynUnit',
                    'Implementation-Version': version,
-                   'ATG-Required': 'DAS DPS DSS'
-    }
-}
-
-uploadArchives {
-    repositories {
-        flatDir {
-            dirs 'repos'
-        }
+                   'ATG-Required': 'DSS',
+                   'ATG-Config-Path': 'config/config.jar',
+                   'ATG-Class-Path': project.libsDir
     }
 }
 
@@ -34,10 +28,11 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.+'
 
     compile group: 'junit', name: 'junit', version: '4.+'
+    compile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.+'
 
     compile group: 'javax.servlet', name: 'servlet-api', version: '2.5'
     compile group: 'javax.servlet.jsp', name: 'jsp-api', version: '2.1'
-    compile group: 'javax.inject', name: 'javax.inject', version: '1'
+    compile group: 'javax.enterprise', name: 'cdi-api', version: '1.1'
 
     compile group: 'com.intellij', name: 'annotations', version: '12.0'
 
@@ -46,14 +41,13 @@ dependencies {
 
 task libs(type: Sync) {
     from configurations.runtime
-    into "$buildDir/libs"
+    into project.libsDir
 }
 
 task('zip')
 
 task zipSources(type: Zip) {
-    from 'src/main/java'
-    include '**/*.java'
+    from project.sourceSets.main.java
     from 'LICENSE'
     from 'NOTICE'
     from 'README.md'
