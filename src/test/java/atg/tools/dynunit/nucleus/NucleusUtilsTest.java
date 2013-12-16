@@ -24,14 +24,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * NucleusTestUtilsTest
+ * NucleusUtilsTest
  *
  * @author adamb
  */
-public class NucleusTestUtilsTest {
+public class NucleusUtilsTest {
 
     /**
-     * Tests the addComponent method of NucleusTestUtils to make sure that when a
+     * Tests the addComponent method of NucleusUtils to make sure that when a
      * component is added that exact same one
      */
     @Test
@@ -44,8 +44,8 @@ public class NucleusTestUtilsTest {
             String path = "/foo/Test";
             Object component2 = "I'm the test component too";
             String path2 = "/foo/Test2";
-            NucleusTestUtils.addComponent(n, path, component);
-            NucleusTestUtils.addComponent(n, path2, component2);
+            NucleusUtils.addComponent(n, path, component);
+            NucleusUtils.addComponent(n, path2, component2);
             Object result = n.resolveName(path);
             Object result2 = n.resolveName(path2);
             // Make sure we get something
@@ -62,16 +62,16 @@ public class NucleusTestUtilsTest {
     }
 
     /**
-     * Tests that NucleusTestUtils is able to find
+     * Tests that NucleusUtils is able to find
      * the global testconfig directory from
      * a system property.
      */
     @Test
     public void testGetGlobalTestConfig() {
-        NucleusTestUtils ntu = new NucleusTestUtils();
+        NucleusUtils ntu = new NucleusUtils();
         String testConfig = "/foo/baz/testconfig/";
-        System.setProperty(NucleusTestUtils.ATG_DUST_TESTCONFIG, testConfig);
+        System.setProperty(NucleusUtils.DYNUNIT_TESTCONFIG, testConfig);
         assertNotNull(testConfig);
-        assertEquals(testConfig, NucleusTestUtils.getGlobalTestConfig());
+        assertEquals(testConfig, NucleusUtils.getGlobalTestConfig());
     }
 }
