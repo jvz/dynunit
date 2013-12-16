@@ -19,7 +19,7 @@ package atg.tools.dynunit.service.idgen;
 import atg.nucleus.Nucleus;
 import atg.nucleus.ServiceException;
 import atg.service.idgen.IdGenerator;
-import atg.tools.dynunit.nucleus.NucleusTestUtils;
+import atg.tools.dynunit.nucleus.NucleusUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -30,6 +30,7 @@ import org.junit.runners.JUnit4;
 
 import javax.servlet.ServletException;
 import javax.sql.DataSource;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -60,8 +61,8 @@ public class IdGeneratorTest {
 
     @BeforeClass
     public static void startUp()
-            throws ServletException {
-        nucleus = NucleusTestUtils.startNucleusWithModules(
+            throws ServletException, FileNotFoundException {
+        nucleus = NucleusUtils.startNucleusWithModules(
                 new String[]{ "DAS" },
                 IdGeneratorTest.class,
                 IdGeneratorTest.class.getName(),
@@ -73,7 +74,7 @@ public class IdGeneratorTest {
     public static void shutDown()
             throws IOException, ServiceException {
         assertThat(nucleus, is(notNullValue()));
-        NucleusTestUtils.shutdownNucleus(nucleus);
+        NucleusUtils.stopNucleus(nucleus);
     }
 
     @Before

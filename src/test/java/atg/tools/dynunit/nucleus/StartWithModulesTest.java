@@ -27,11 +27,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.ServletException;
-
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static atg.tools.dynunit.nucleus.NucleusTestUtils.shutdownNucleus;
-import static atg.tools.dynunit.nucleus.NucleusTestUtils.startNucleusWithModules;
+import static atg.tools.dynunit.nucleus.NucleusUtils.startNucleusWithModules;
+import static atg.tools.dynunit.nucleus.NucleusUtils.stopNucleus;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -65,7 +65,7 @@ public class StartWithModulesTest {
      */
     @Before
     public void setUp()
-            throws ServletException {
+            throws ServletException, FileNotFoundException {
         logger.info("Starting Nucleus.");
         System.setProperty("derby.locks.deadlockTrace", "true");
         mNucleus = startNucleusWithModules(
@@ -87,7 +87,7 @@ public class StartWithModulesTest {
             throws IOException, ServiceException {
         logger.info("Stopping Nucleus.");
         if (mNucleus != null) {
-            shutdownNucleus(mNucleus);
+            stopNucleus(mNucleus);
         }
     }
 

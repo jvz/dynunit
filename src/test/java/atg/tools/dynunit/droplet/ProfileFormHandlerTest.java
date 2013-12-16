@@ -27,11 +27,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.ServletException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static atg.servlet.ServletUtil.setCurrentRequest;
-import static atg.tools.dynunit.nucleus.NucleusTestUtils.shutdownNucleus;
-import static atg.tools.dynunit.nucleus.NucleusTestUtils.startNucleusWithModules;
+import static atg.tools.dynunit.nucleus.NucleusUtils.startNucleusWithModules;
+import static atg.tools.dynunit.nucleus.NucleusUtils.stopNucleus;
 import static org.apache.logging.log4j.LogManager.getLogger;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -55,7 +56,7 @@ public class ProfileFormHandlerTest {
 
     @Before
     public void setUp()
-            throws ServletException {
+            throws ServletException, FileNotFoundException {
         logger.info("Starting Nucleus.");
 
         System.setProperty("derby.locks.deadlockTrace", "true");
@@ -75,7 +76,7 @@ public class ProfileFormHandlerTest {
         }
         logger.info("Stopping Nucleus.");
         if (nucleus != null) {
-            shutdownNucleus(nucleus);
+            stopNucleus(nucleus);
         }
     }
 

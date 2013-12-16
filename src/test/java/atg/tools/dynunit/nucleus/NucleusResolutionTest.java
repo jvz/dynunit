@@ -29,12 +29,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import javax.servlet.ServletException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
 import static atg.servlet.ServletUtil.setCurrentRequest;
-import static atg.tools.dynunit.nucleus.NucleusTestUtils.shutdownNucleus;
-import static atg.tools.dynunit.nucleus.NucleusTestUtils.startNucleusWithModules;
+import static atg.tools.dynunit.nucleus.NucleusUtils.startNucleusWithModules;
+import static atg.tools.dynunit.nucleus.NucleusUtils.stopNucleus;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -71,7 +72,7 @@ public class NucleusResolutionTest {
 
     @Before
     public void setUp()
-            throws ServletException {
+            throws ServletException, FileNotFoundException {
         nucleus = startNucleusWithModules(
                 new String[]{ "DAS", "DafEar.base" }, this.getClass(), "/atg/dynamo/MyComponent"
         );
@@ -89,7 +90,7 @@ public class NucleusResolutionTest {
             throws IOException, ServiceException {
         setCurrentRequest(saved);
         if (nucleus != null) {
-            shutdownNucleus(nucleus);
+            stopNucleus(nucleus);
         }
     }
 

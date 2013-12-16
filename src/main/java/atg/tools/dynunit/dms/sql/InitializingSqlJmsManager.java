@@ -19,7 +19,7 @@ package atg.tools.dynunit.dms.sql;
 import atg.core.io.FileUtils;
 import atg.dms.sql.SqlJmsManager;
 import atg.nucleus.ServiceException;
-import atg.tools.dynunit.nucleus.NucleusTestUtils;
+import atg.tools.dynunit.nucleus.NucleusUtils;
 import org.apache.ddlutils.Platform;
 import org.apache.ddlutils.PlatformFactory;
 
@@ -114,7 +114,7 @@ public class InitializingSqlJmsManager
         if (pDatabaseName.toLowerCase().startsWith("hsql")) {
             pDatabaseName = "mysql";
             // Not in the build so take it from source tree
-            File configDir = NucleusTestUtils.getConfigpath(
+            File configDir = NucleusUtils.getConfigPath(
                     InitializingSqlJmsManager.class,
                     InitializingSqlJmsManager.class.getSimpleName(),
                     false

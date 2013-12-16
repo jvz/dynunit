@@ -18,7 +18,6 @@ package atg.tools.dynunit.test;
 
 import atg.nucleus.GenericService;
 import atg.nucleus.Nucleus;
-import atg.nucleus.logging.ClassLoggingFactory;
 import atg.tools.dynunit.nucleus.logging.ConsoleLogListener;
 import atg.tools.dynunit.test.configuration.BasicConfiguration;
 import atg.tools.dynunit.test.configuration.RepositoryConfiguration;
@@ -26,21 +25,28 @@ import atg.tools.dynunit.test.util.FileUtil;
 import atg.tools.dynunit.test.util.RepositoryManager;
 import junit.framework.TestCase;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+
+import static atg.tools.dynunit.util.PropertiesUtil.setSystemProperty;
+import static atg.tools.dynunit.util.PropertiesUtil.setSystemPropertyIfEmpty;
 
 // TODO: this should be converted to some sort of runner
 
@@ -112,7 +118,7 @@ public class AtgDustCase
 
     private Nucleus nucleus;
 
-    private boolean isDebug;
+    private boolean debug;
 
     private String atgConfigPath;
 
@@ -130,11 +136,11 @@ public class AtgDustCase
     private static Class<?> perflib;
 
     private static final File TIMESTAMP_SER = new File(
-            System.getProperty("java.io.tmpdir") + File.separator + "atg-dust-tstamp-rh.ser"
+            FileUtils.getTempDirectory(), "dynunit-timestamp.ser"
     );
 
     private static final File GLOBAL_FORCE_SER = new File(
-            System.getProperty("java.io.tmpdir") + File.separator + "atg-dust-gforce-rh.ser"
+            FileUtils.getTempDirectory(), "dynunit-global-force.ser"
     );
 
     private static long SERIAL_TTL = 43200000L;
@@ -332,22 +338,22 @@ public class AtgDustCase
      *         database):
      *         <p/>
      *         <pre>
-     *                                                                                             final
-     *                                     Properties properties = new
-     *                                                                 Properties();
+     *                                                                                                     final
+     *                                             Properties properties = new
+     *                                                                         Properties();
      *
-     *                                     properties.put(&quot;driver&quot;,
-     *                                                                 &quot;com.mysql.jdbc.Driver&quot;);
+     *                                             properties.put(&quot;driver&quot;,
+     *                                                                         &quot;com.mysql.jdbc.Driver&quot;);
      *
-     *                                     properties.put(&quot;url&quot;,
-     *                                                                 &quot;jdbc:mysql://localhost:3306/someDb&quot;);
+     *                                             properties.put(&quot;url&quot;,
+     *                                                                         &quot;jdbc:mysql://localhost:3306/someDb&quot;);
      *
-     *                                     properties.put(&quot;user&quot;,
-     *                                                                 &quot;someUserName&quot;);
+     *                                             properties.put(&quot;user&quot;,
+     *                                                                         &quot;someUserName&quot;);
      *
-     *                                     properties.put(&quot;password&quot;,
-     *                                                                 &quot;somePassword&quot;);
-     *                                                                                             </pre>
+     *                                             properties.put(&quot;password&quot;,
+     *                                                                         &quot;somePassword&quot;);
+     *                                                                                                     </pre>
      * @param dropTables
      *         If <code>true</code> then existing tables will be dropped and
      *         re-created, if set to <code>false</code> the existing tables
@@ -383,7 +389,7 @@ public class AtgDustCase
         }
         final RepositoryConfiguration repositoryConfiguration = new RepositoryConfiguration();
 
-        repositoryConfiguration.setDebug(isDebug);
+        repositoryConfiguration.setDebug(debug);
         repositoryConfiguration.createPropertiesByConfigurationLocation(configurationLocation);
         repositoryConfiguration.createFakeXADataSource(
                 configurationLocation, connectionSettings
@@ -397,7 +403,7 @@ public class AtgDustCase
                 repositoryPath,
                 connectionSettings,
                 dropTables,
-                isDebug,
+                debug,
                 definitionFiles
         );
     }
@@ -455,36 +461,32 @@ public class AtgDustCase
     /**
      * Enables or disables the debug level of nucleus components.
      *
-     * @param isDebug
+     * @param debug
      *         Setting this to <code>true</code> will enable debug on all
      *         (currently only on repository related) components, setting it
      *         to <code>false</code> turns the debug off again.
      */
-    protected void setDebug(boolean isDebug) {
-        this.isDebug = isDebug;
+    protected void setDebug(final boolean debug) {
+        this.debug = debug;
     }
 
-    /**
-     * @param configpath
-     *
-     * @throws IOException
-     */
-    private void startNucleus(final File configpath)
+    private void startNucleus(final File configPath)
             throws IOException {
         if (nucleus == null || !nucleus.isRunning()) {
-            ClassLoggingFactory.getFactory();
-            basicConfiguration.setDebug(isDebug);
-            basicConfiguration.createPropertiesByConfigurationLocation(configpath);
-            System.setProperty("atg.dynamo.license.read", "true");
-            System.setProperty("atg.license.read", "true");
+            basicConfiguration.setDebug(debug);
+            basicConfiguration.createPropertiesByConfigurationLocation(configPath);
+            setSystemPropertyIfEmpty("atg.dynamo.license.read", "true");
+            setSystemPropertyIfEmpty("atg.license.read", "true");
             // TODO: Can I safely keep this one disabled?
             // NucleusServlet.addNamingFactoriesAndProtocolHandlers();
 
-            if (environment != null && !environment.equals("")) {
-                for (String property : environment.split(";")) {
-                    String[] keyvalue = property.split("=");
-                    System.setProperty(keyvalue[0], keyvalue[1]);
-                    logger.info("{} = {}", keyvalue[0], keyvalue[1]);
+            if (StringUtils.isNotEmpty(environment)) {
+                for (final String property : StringUtils.split(environment, ';')) {
+                    final String[] strings = StringUtils.split(property, '=');
+                    final String key = strings[0];
+                    final String value = strings[1];
+                    setSystemProperty(key, value);
+                    logger.debug("{} = {}", key, value);
                 }
             }
 
@@ -498,7 +500,7 @@ public class AtgDustCase
                 }
             }
             else {
-                fullConfigPath = configpath.getAbsolutePath();
+                fullConfigPath = configPath.getAbsolutePath();
             }
             if (localConfig != null && !localConfig.equals("")) {
                 fullConfigPath = fullConfigPath + localConfig.replace("/", File.separator);
@@ -529,7 +531,7 @@ public class AtgDustCase
      */
     private Object enableLoggingOnGenericService(final Object service) {
         if (service instanceof GenericService) {
-            ((GenericService) service).setLoggingDebug(isDebug);
+            ((GenericService) service).setLoggingDebug(debug);
             ((GenericService) service).setLoggingInfo(true);
             ((GenericService) service).setLoggingWarning(true);
             ((GenericService) service).setLoggingError(true);
@@ -542,12 +544,16 @@ public class AtgDustCase
     private void preCopyingOfConfigurationFiles(final String[] srcDirs, final String excludes[])
             throws IOException {
         boolean isDirty = false;
+        final FileFilter filter = new FileFilter() {
+            @Override
+            public boolean accept(final File file) {
+                return ArrayUtils.contains(excludes, file.getName());
+            }
+        };
+        // TODO: use FileUtils.copyDirectory, etc.
         for (final String src : srcDirs) {
-            for (final File file : (List<File>) FileUtils.listFiles(
-                    new File(
-                            src
-                    ), null, true
-            )) {
+            final Collection<File> srcFiles = FileUtils.listFiles(new File(src), null, true);
+            for (final File file : srcFiles) {
                 if (!Arrays.asList(
                         excludes == null ? new String[]{ } : excludes
                 ).contains(file.getName()) && !file.getPath().contains(".svn") && file.isFile()) {
@@ -576,14 +582,12 @@ public class AtgDustCase
     private void forceGlobalScopeOnAllConfigs(final String dstDir)
             throws IOException {
         if (perflib == null) {
-            for (final File file : (List<File>) FileUtils.listFiles(
+            for (final File file : FileUtils.listFiles(
                     new File(
                             dstDir
                     ), new String[]{ "properties" }, true
             )) {
-                new FileUtil().searchAndReplace(
-                        "$scope=", "$scope=global\n", file
-                );
+                FileUtil.forceGlobalScope(file);
             }
         }
         else {

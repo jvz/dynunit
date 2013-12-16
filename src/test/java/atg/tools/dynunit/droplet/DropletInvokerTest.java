@@ -21,7 +21,7 @@ import atg.servlet.DynamoHttpServletRequest;
 import atg.servlet.ServletUtil;
 import atg.tools.dynunit.droplet.DropletInvoker.DropletResult;
 import atg.tools.dynunit.droplet.DropletInvoker.RenderedOutputParameter;
-import atg.tools.dynunit.nucleus.NucleusTestUtils;
+import atg.tools.dynunit.nucleus.NucleusUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +41,7 @@ public class DropletInvokerTest {
     @Before
     public void setUp()
             throws Exception {
-        mNucleus = NucleusTestUtils.startNucleusWithModules(
+        mNucleus = NucleusUtils.startNucleusWithModules(
                 new String[]{ "DAS", "DafEar.Tomcat" },
                 this.getClass(),
                 "/atg/dynamo/droplet/Switch"
@@ -53,7 +53,7 @@ public class DropletInvokerTest {
             throws Exception {
         ServletUtil.setCurrentRequest(null);
         if (mNucleus != null) {
-            NucleusTestUtils.shutdownNucleus(mNucleus);
+            NucleusUtils.stopNucleus(mNucleus);
             mNucleus = null;
         }
     }

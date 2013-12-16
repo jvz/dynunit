@@ -40,10 +40,10 @@ public class FirstTest {
     @Test
     public void testComponentStartup()
             throws Exception {
-        File configpath = NucleusTestUtils.getConfigpath(this.getClass(), "config");
+        File configpath = NucleusUtils.getConfigPath(this.getClass(), "config");
         // Put test .properties file in configpath path
         Properties props = new Properties();
-        File propFile = NucleusTestUtils.createProperties(
+        File propFile = NucleusUtils.createProperties(
                 "test/SimpleComponentGlobalScope",
                 configpath,
                 "com.mycompany.SimpleComponent",
@@ -52,8 +52,8 @@ public class FirstTest {
         propFile.deleteOnExit();
         List<String> initial = new ArrayList<String>();
         initial.add("/test/SimpleComponentGlobalScope");
-        NucleusTestUtils.createInitial(configpath, initial);
-        Nucleus n = NucleusTestUtils.startNucleus(configpath);
+        NucleusUtils.createInitial(configpath, initial);
+        Nucleus n = NucleusUtils.startNucleus(configpath);
         SimpleComponent testComponent = null;
         try {
             testComponent = (SimpleComponent) n.resolveName("/test/SimpleComponentGlobalScope");

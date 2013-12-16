@@ -30,7 +30,7 @@ import atg.nucleus.ServiceEvent;
 import atg.nucleus.ServiceException;
 import atg.repository.Repository;
 import atg.repository.RepositoryException;
-import atg.tools.dynunit.nucleus.NucleusTestUtils;
+import atg.tools.dynunit.nucleus.NucleusUtils;
 import atg.tools.dynunit.test.util.DBUtils;
 import atg.versionmanager.VersionManager;
 import atg.versionmanager.Workspace;
@@ -432,7 +432,7 @@ public class GSATestUtils {
             throws IOException {
         Properties prop = new Properties();
         prop.put("initialServiceName", "/Initial");
-        return NucleusTestUtils.createProperties("Nucleus", pRoot, "atg.nucleus.Nucleus", prop);
+        return NucleusUtils.createProperties("Nucleus", pRoot, "atg.nucleus.Nucleus", prop);
     }
 
 
@@ -466,7 +466,7 @@ public class GSATestUtils {
         pJDBCProperties.put(
                 "transactionManager", "/atg/dynamo/transaction/TransactionManager"
         );
-        return NucleusTestUtils.createProperties(
+        return NucleusUtils.createProperties(
                 name, new File(
                 pRoot.getAbsolutePath() + "/atg/dynamo/service/jdbc"
         ), "atg.service.jdbc.FakeXADataSource", pJDBCProperties
@@ -553,7 +553,7 @@ public class GSATestUtils {
         props.put("loggingSQLDebug", "false");
 
 
-        return NucleusTestUtils.createProperties(
+        return NucleusUtils.createProperties(
                 name, new File(
                 pRoot.getAbsolutePath() + "/atg/dynamo/service/jdbc"
         ), "atg.service.jdbc.MonitoredDataSource", props
@@ -574,7 +574,7 @@ public class GSATestUtils {
 
         Properties prop = new Properties();
         prop.put("handlerCount", "0");
-        return NucleusTestUtils.createProperties(
+        return NucleusUtils.createProperties(
                 "SQLRepositoryEventServer",
                 new File(pRoot.getAbsolutePath() + "/atg/dynamo/server"),
                 "atg.adapter.gsa.event.GSAEventServer",
@@ -600,7 +600,7 @@ public class GSATestUtils {
         Properties prop = new Properties();
         prop.put("cropStackTrace", "false");
         prop.put("loggingEnabled", String.valueOf(pLogging));
-        return NucleusTestUtils.createProperties(
+        return NucleusUtils.createProperties(
                 "ScreenLog", new File(
                 pRoot.getAbsolutePath() + "/atg/dynamo/service/logging"
         ), "atg.nucleus.logging.PrintStreamLogger", prop
@@ -623,7 +623,7 @@ public class GSATestUtils {
         Properties prop = new Properties();
         prop.put("logListeners", "atg/dynamo/service/logging/ScreenLog");
         prop.put("loggingDebug", "false");
-        return NucleusTestUtils.createProperties(
+        return NucleusUtils.createProperties(
                 "GLOBAL", new File(
                 pRoot.getAbsolutePath() + "/"
         ), null, prop
@@ -652,7 +652,7 @@ public class GSATestUtils {
         props.put("lockServerAddress", "localhost");
         props.put("lockServerPort", "9010");
         props.put("useLockServer", "false");
-        return NucleusTestUtils.createProperties(
+        return NucleusUtils.createProperties(
                 "ClientLockManager", new File(
                 pRoot.getAbsolutePath() + "/atg/dynamo/service"
         ), "atg.service.lockmanager.ClientLockManager", props
@@ -696,7 +696,7 @@ public class GSATestUtils {
         );
         props.put("XMLToolsFactory", "/atg/dynamo/service/xml/XMLToolsFactory");
         // props.put("initialIdSpaces", "/atg/dynamo/service/idspaces.xml ");
-        return NucleusTestUtils.createProperties(
+        return NucleusUtils.createProperties(
                 "IdGenerator", new File(
                 pRoot.getAbsolutePath() + "/atg/dynamo/service/"
         ), "atg.service.idgen.SQLIdGenerator", props
@@ -723,7 +723,7 @@ public class GSATestUtils {
      * ---- #
      */
         File root = new File(pRoot.getAbsolutePath() + "/atg/dynamo/service/xml");
-        return NucleusTestUtils.createProperties(
+        return NucleusUtils.createProperties(
                 "XMLToolsFactory",
                 root,
                 "atg.xml.tools.apache.ApacheXMLToolsFactory",
@@ -753,14 +753,14 @@ public class GSATestUtils {
         props.put("loggingDebug", "false");
         File root = new File(pRoot, "/atg/dynamo/transaction");
         root.mkdirs();
-        NucleusTestUtils.createProperties(
+        NucleusUtils.createProperties(
                 "TransactionDemarcationLogging",
                 root,
                 "atg.dtm.TransactionDemarcationLogging",
                 props
         );
 
-        return NucleusTestUtils.createProperties(
+        return NucleusUtils.createProperties(
                 "TransactionManager", root, "atg.dtm.TransactionManagerImpl", props
         );
     }
@@ -773,7 +773,7 @@ public class GSATestUtils {
             throws IOException {
         Properties props = new Properties();
         props.put("transactionManager", "/atg/dynamo/transaction/TransactionManager");
-        return NucleusTestUtils.createProperties(
+        return NucleusUtils.createProperties(
                 "UserTransaction",
                 new File(pRoot, "/atg/dynamo/transaction"),
                 "atg.dtm.UserTransactionImpl",
@@ -963,7 +963,7 @@ public class GSATestUtils {
         if (mVersioned) {
             props.putAll(additionalVersionProperties(pRoot, pRepositoryPath, repositoryName));
         }
-        return NucleusTestUtils.createProperties(repositoryName, root, clazz, props);
+        return NucleusUtils.createProperties(repositoryName, root, clazz, props);
     }
 
     /**
@@ -990,42 +990,42 @@ public class GSATestUtils {
                 null
         );
         // create the AssetFactory
-        NucleusTestUtils.createProperties(
+        NucleusUtils.createProperties(
                 "/atg/adapter/version/versionmanager/AssetFactory",
                 pRoot,
                 "atg.versionmanager.impl.AssetFactoryRepositoryImpl",
                 null
         );
         // create the AssetVersionFactory
-        NucleusTestUtils.createProperties(
+        NucleusUtils.createProperties(
                 "/atg/adapter/version/versionmanager/AssetVersionFactory",
                 pRoot,
                 "atg.versionmanager.impl.AssetVersionFactoryRepositoryImpl",
                 null
         );
 
-        NucleusTestUtils.createProperties(
+        NucleusUtils.createProperties(
                 "/atg/adapter/version/versionmanager/BranchFactory",
                 pRoot,
                 "atg.versionmanager.impl.BranchFactoryRepositoryImpl",
                 null
         );
 
-        NucleusTestUtils.createProperties(
+        NucleusUtils.createProperties(
                 "/atg/adapter/version/versionmanager/DevelopmentLineFactory",
                 pRoot,
                 "atg.versionmanager.impl.DevelopmentLineFactoryRepositoryImpl",
                 null
         );
 
-        NucleusTestUtils.createProperties(
+        NucleusUtils.createProperties(
                 "/atg/adapter/version/versionmanager/SnapshotFactory",
                 pRoot,
                 "atg.versionmanager.impl.SnapshotFactoryRepositoryImpl",
                 null
         );
 
-        NucleusTestUtils.createProperties(
+        NucleusUtils.createProperties(
                 "/atg/adapter/version/versionmanager/WorkspaceFactory",
                 pRoot,
                 "atg.versionmanager.impl.WorkspaceFactoryRepositoryImpl",
@@ -1044,7 +1044,7 @@ public class GSATestUtils {
         props.put("sendCheckinEvents", "false");
         props.put("clientLockManager", "/atg/dynamo/service/ClientLockManager");
 
-        NucleusTestUtils.createProperties(
+        NucleusUtils.createProperties(
                 "/atg/adapter/version/versionmanager/VersionManagerService",
                 pRoot,
                 "atg.versionmanager.VersionManager",
@@ -1175,7 +1175,7 @@ public class GSATestUtils {
         File root = new File(pRoot, repositoryDir);
         root.mkdirs();
 
-        return NucleusTestUtils.createProperties(repositoryName, root, clazz, props);
+        return NucleusUtils.createProperties(repositoryName, root, clazz, props);
     }
 
     // ---------------------------------
