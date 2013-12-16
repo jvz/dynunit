@@ -12,6 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
+ * Simple LogListener that translates log events to Log4j2.
+ *
  * @author msicker
  * @version 1.0.0
  */
