@@ -1,6 +1,7 @@
 package atg.tools.dynunit.util;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,7 +10,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Properties;
 
 /**
@@ -81,6 +81,43 @@ public final class ComponentUtil {
             throws IOException {
         logger.entry(parent, name, klass, properties);
         final File output = newComponent(parent, name, klass.getCanonicalName(), properties);
+        return logger.exit(output);
+    }
+
+    public static File newComponent(final File parent,
+                                    final String name,
+                                    final Class<?> klass)
+            throws IOException {
+        logger.entry(parent, name, klass);
+        final File output = newComponent(parent, name, klass, new Properties());
+        return logger.exit(output);
+    }
+
+    /**
+     * Creates a new component properties file in {@code parent} named {@code name} and configured with the given
+     * {@code properties}. This particular builder does not specify a class, so unless the {@code $class} property is
+     * given in the {@code properties}, then the created file will be treated as a general configuration as ATG does
+     * when no class is specified. This is useful for creating {@code GLOBAL.properties} files as well as overriding
+     * default components.
+     *
+     * @param parent
+     *         Directory to place the new component properties file.
+     * @param name
+     *         Name of component to create. Determines the file name.
+     * @param properties
+     *         Any properties to set in the component properties file.
+     *
+     * @return Newly created (or recreated) component properties file.
+     *
+     * @throws IOException
+     *         if the properties file couldn't be written to.
+     */
+    public static File newComponent(final File parent,
+                                    final String name,
+                                    final Properties properties)
+            throws IOException {
+        logger.entry(parent, name, properties);
+        final File output = newComponent(parent, name, "", properties);
         return logger.exit(output);
     }
 
@@ -221,15 +258,18 @@ public final class ComponentUtil {
                                                        final Properties properties)
             throws IOException {
         logger.entry(output, canonicalClassName, properties);
-        PrintWriter pw = null;
+        BufferedWriter out = null;
         try {
-            pw = new PrintWriter(new BufferedWriter(new FileWriter(output)));
-            pw.print("$class=");
-            pw.print(canonicalClassName);
-            properties.store(pw, null);
+            out = new BufferedWriter(new FileWriter(output));
+            if (StringUtils.isNotEmpty(canonicalClassName)) {
+                out.write("$class=");
+                out.write(canonicalClassName);
+                out.newLine();
+            }
+            properties.store(out, null);
         } finally {
-            if (pw != null) {
-                pw.close();
+            if (out != null) {
+                out.close();
             }
             logger.exit();
         }
