@@ -16,172 +16,175 @@
 
 package atg.tools.dynunit.test.util;
 
-import atg.applauncher.core.util.JarUtils;
+import atg.core.util.JarUtils;
+import atg.tools.dynunit.util.ComponentUtil;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.nio.channels.FileChannel;
+import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- * A collection of utility methods for dealing with the filesystem.
+ * This class is practically replaceable with FileUtils.
  *
  * @author robert
+ * @author msicker
  */
-@SuppressWarnings("unchecked")
 public class FileUtil {
+
+    private FileUtil() {
+    }
 
     private static final Logger log = LogManager.getLogger();
 
-    private static boolean isDirty = false;
+    private static boolean dirty = false;
 
-    private static Map<String, Long> CONFIG_FILES_TIMESTAMPS, CONFIG_FILES_GLOBAL_FORCE;
+    @Deprecated
+    private static Map<String, Long> CONFIG_FILES_GLOBAL_FORCE;
 
-    /**
-     * @param srcDir
-     * @param dstDir
-     * @param excludes
-     *
-     * @throws IOException
-     */
-    public static void copyDirectory(@NotNull String srcDir, @NotNull String dstDir, @NotNull final List<String> excludes)
-            throws IOException {
-        if ( new File(srcDir).exists() ) {
-            new File(dstDir).mkdirs();
-            for ( final String file : new File(srcDir).list() ) {
-                final String source = srcDir + File.separator + file, destination = dstDir
-                                                                                    + File.separator
-                                                                                    + file;
-                boolean dir = new File(source).isDirectory();
-                if ( dir && !excludes.contains(file) ) {
-                    copyDirectory(source, destination, excludes);
-                } else {
-                    if ( !excludes.contains(file) ) {
-                        copyFile(source, destination);
-                    }
-                }
+    private static final ConcurrentHashMap<String, Long> configFilesLastModified = new ConcurrentHashMap<String, Long>();
+
+    private static final File configFilesLastModifiedCache = new File(
+            FileUtils.getTempDirectory(), "dynunit-config-cache.ser"
+    );
+
+    public static File newTempFile()
+    throws IOException {
+        log.entry();
+        final File tempFile = File.createTempFile("dynunit-", null);
+        tempFile.deleteOnExit();
+        return log.exit(tempFile);
+    }
+
+    public static void copyDirectory(@NotNull String srcDir,
+                                     @NotNull String dstDir,
+                                     @NotNull final List<String> excludes)
+    throws IOException {
+        log.entry(srcDir, dstDir, excludes);
+        Validate.notEmpty(srcDir);
+        Validate.notEmpty(dstDir);
+        final File source = new File(srcDir);
+        if (!source.exists()) {
+            throw log.throwing(new FileNotFoundException(srcDir));
+        }
+        final File destination = new File(dstDir);
+        FileUtils.copyDirectory(source, destination, new FileFilter() {
+            @Override
+            public boolean accept(final File file) {
+                return excludes.contains(file.getName());
             }
-        }
+        });
+        log.exit();
     }
 
     /**
-     * @param src
-     * @param dst
-     *
-     * @throws IOException
+     * @see atg.tools.dynunit.util.ComponentUtil#newComponent(java.io.File, String, Class, java.util.Properties)
      */
-    private static void copyFile(@NotNull final String src, @NotNull final String dst)
-            throws IOException {
-        final File srcFile = new File(src);
-        final File dstFile = new File(dst);
-
-        if ( CONFIG_FILES_TIMESTAMPS != null
-             && CONFIG_FILES_TIMESTAMPS.get(src) != null
-             && CONFIG_FILES_TIMESTAMPS.get(src) == srcFile.lastModified()
-             && dstFile.exists() ) {
-            log.debug("{} last modified hasn't changed and destination still exists", src);
-        } else {
-            log.debug("Copy: src file {} ts {}", src, srcFile.lastModified());
-            log.debug("Copy: dest file {} ts {}", dst, dstFile.lastModified());
-
-            final FileChannel srcChannel = new FileInputStream(src).getChannel();
-            final FileChannel dstChannel = new FileOutputStream(dst).getChannel();
-            dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-            dstChannel.close();
-            srcChannel.close();
-        }
-
-    }
-
-    // XXX: can't this use java.util.Properties
-
-    /**
-     * @param componentName                The name of the nucleus component
-     * @param configurationStagingLocation A valid not <code>null</code> directory.
-     * @param clazz                        The class implementing the nucleus component
-     * @param settings                     An implementation of {@link Map} containing all needed
-     *                                     properties
-     *                                     the component is depended on (eg key = username, value =
-     *                                     test).
-     *                                     Can be <code>null</code> or empty.
-     *
-     * @throws IOException
-     */
+    @Deprecated
     public static void createPropertyFile(@NotNull final String componentName,
                                           @NotNull final File configurationStagingLocation,
                                           @Nullable final Class<?> clazz,
                                           @Nullable final Map<String, String> settings)
             throws IOException {
+        log.entry(componentName, configurationStagingLocation, clazz, settings);
+        final Properties properties = new Properties();
+        properties.putAll(settings);
+        ComponentUtil.newComponent(configurationStagingLocation, componentName, clazz, properties);
+        log.exit();
+    }
 
-        configurationStagingLocation.mkdirs();
-        final File propertyFile = new File(
-                configurationStagingLocation,
-                componentName.replace("/", File.separator) + ".properties"
-        );
-        new File(propertyFile.getParent()).mkdirs();
-        propertyFile.createNewFile();
-        final BufferedWriter out = new BufferedWriter(new FileWriter(propertyFile));
+    public static void forceGlobalScope(final File file)
+            throws IOException {
+        forceComponentScope(file, "global");
+    }
 
-        try {
-            if ( clazz != null ) {
-                out.write("$class=" + clazz.getName());
-                out.newLine();
-            }
-            if ( settings != null ) {
-                for ( final Entry<String, String> entry : settings.entrySet() ) {
-                    out.write(
-                            entry.getKey() + "=" + entry.getValue()
-                    );
+    public static void forceComponentScope(final File file, final String scope)
+            throws IOException {
+        final long oldLastModified = getConfigFileLastModified(file);
+        if (oldLastModified < file.lastModified()) {
+            final File tempFile = newTempFile();
+            BufferedWriter out = null;
+            BufferedReader in = null;
+            try {
+                out = new BufferedWriter(new FileWriter(tempFile));
+                in = new BufferedReader(new FileReader(file));
+                for (String line = in.readLine(); line != null; line = in.readLine()) {
+                    if (line.contains("$scope")) {
+                        out.write("$scope=");
+                        out.write(scope);
+                    }
+                    else {
+                        out.write(line);
+                    }
                     out.newLine();
                 }
+                FileUtils.copyFile(tempFile, file);
+                setConfigFileLastModified(file);
+                dirty = true;
+            } finally {
+                if (in != null) {
+                    in.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
             }
-        } finally {
-            out.close();
         }
     }
 
-    private static final String COULD_NOT_DELETE_TEMP_DIRECTORY = "Couldn't delete temp directory. ";
-
-    public void searchAndReplace(@NotNull final String originalValue, @NotNull final String newValue, @NotNull final File file)
+    private static void persistConfigCache()
             throws IOException {
+        FileUtils.touch(configFilesLastModifiedCache);
+        final OutputStream out = new BufferedOutputStream(new FileOutputStream(configFilesLastModifiedCache));
+        SerializationUtils.serialize(configFilesLastModified, out);
+    }
 
-        final File TMP_FILE = new File(
-                System.getProperty("java.io.tmpdir")
-                + File.separator
-                + System.currentTimeMillis()
-                + this
-                + "-atg-dust-rh.tmp"
-        );
-        TMP_FILE.deleteOnExit();
+    /**
+     * @see #forceGlobalScope(java.io.File)
+     * @see #forceComponentScope(java.io.File, String)
+     */
+    @Deprecated
+    public static void searchAndReplace(@NotNull final String originalValue,
+                                        @NotNull final String newValue,
+                                        @NotNull final File file)
+    throws IOException {
+        final File tempFile = newTempFile();
 
         if ( CONFIG_FILES_GLOBAL_FORCE != null
              && CONFIG_FILES_GLOBAL_FORCE.get(file.getPath()) != null
              && CONFIG_FILES_GLOBAL_FORCE.get(file.getPath()) == file.lastModified()
              && file.exists() ) {
-            isDirty = false;
+            dirty = false;
             log.debug(
                     "{} last modified hasn't changed and file still exists, "
                     + "no need for global scope force", file.getPath()
             );
         } else {
-            final BufferedWriter out = new BufferedWriter(new FileWriter(TMP_FILE));
+            final BufferedWriter out = new BufferedWriter(new FileWriter(tempFile));
             final BufferedReader in = new BufferedReader(new FileReader(file));
             String str;
             while ( (str = in.readLine()) != null ) {
@@ -194,48 +197,42 @@ public class FileUtil {
             }
             out.close();
             in.close();
-            JarUtils.copy(TMP_FILE, file, true, false);
+            JarUtils.copy(tempFile, file, true, false);
             CONFIG_FILES_GLOBAL_FORCE.put(file.getPath(), file.lastModified());
-            isDirty = true;
+            dirty = true;
         }
 
     }
 
     /**
-     * Deletes the given directory when the JVM exits.
-     * This method does so by implementing a shutdown hook.
-     *
-     * @param tmpDir
+     * @see org.apache.commons.io.FileUtils#forceDeleteOnExit(java.io.File)
      */
+    @Deprecated
     public static void deleteDirectoryOnShutdown(@NotNull final File tmpDir) {
-        Runtime.getRuntime().addShutdownHook(
-                new Thread() {
-                    public void run() {
-                        try {
-                            atg.core.io.FileUtils.deleteDir(tmpDir.getAbsolutePath());
-                        } catch ( IOException e ) {
-                            log.error(FileUtil.COULD_NOT_DELETE_TEMP_DIRECTORY, e);
-                        }
-                    }
-                }
-        );
-    }
-
-    public static void serialize(@NotNull final File file, final Object o)
-            throws IOException {
-
-        ObjectOutput out = null;
         try {
-            out = new ObjectOutputStream(new FileOutputStream(file));
-            out.writeObject(o);
-        } finally {
-            if ( out != null ) {
-                out.close();
-            }
+            FileUtils.forceDeleteOnExit(tmpDir);
+        } catch (IOException e) {
+            log.catching(Level.ERROR, e);
         }
     }
 
+    /**
+     * @see org.apache.commons.lang3.SerializationUtils#serialize(java.io.Serializable, java.io.OutputStream)
+     */
+    @Deprecated
+    public static void serialize(@NotNull final File file, final Object o)
+            throws IOException {
+        Validate.isInstanceOf(Serializable.class, o);
+        final Serializable object = (Serializable) o;
+        SerializationUtils.serialize(object, new FileOutputStream(file));
+    }
+
+    /**
+     * @see org.apache.commons.lang3.SerializationUtils#deserialize(java.io.InputStream)
+     */
     @Nullable
+    @Deprecated
+    @SuppressWarnings("unchecked")
     public static Map<String, Long> deserialize(@NotNull final File file, final long serialTtl) {
 
         if ( file.exists() && file.lastModified() < System.currentTimeMillis() - serialTtl ) {
@@ -271,19 +268,44 @@ public class FileUtil {
     }
 
     public static void setConfigFilesTimestamps(Map<String, Long> config_files_timestamps) {
-        CONFIG_FILES_TIMESTAMPS = config_files_timestamps;
     }
 
+    @Deprecated
     public static void setConfigFilesGlobalForce(Map<String, Long> config_files_global_force) {
         CONFIG_FILES_GLOBAL_FORCE = config_files_global_force;
     }
 
     public static boolean isDirty() {
-        return isDirty;
+        return dirty;
     }
 
+    @Deprecated
     public static Map<String, Long> getConfigFilesTimestamps() {
         return CONFIG_FILES_GLOBAL_FORCE;
+    }
+
+    private static long getConfigFileLastModified(final String configFile) {
+        if (configFile == null || !configFilesLastModified.containsKey(configFile)) {
+            return 0L;
+        }
+        return configFilesLastModified.get(configFile);
+    }
+
+    private static long getConfigFileLastModified(final File configFile) {
+        if (configFile == null) {
+            return 0L;
+        }
+        return getConfigFileLastModified(configFile.getPath());
+    }
+
+    private static void setConfigFileLastModified(final String configFile, final long lastModified) {
+        Validate.notEmpty(configFile);
+        configFilesLastModified.put(configFile, lastModified);
+    }
+
+    private static void setConfigFileLastModified(final File configFile) {
+        Validate.notNull(configFile);
+        setConfigFileLastModified(configFile.getPath(), configFile.lastModified());
     }
 
 }
