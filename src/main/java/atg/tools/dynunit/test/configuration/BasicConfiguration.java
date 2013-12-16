@@ -14,150 +14,103 @@
  * limitations under the License.
  */
 
-/**
- *
- */
 package atg.tools.dynunit.test.configuration;
 
 import atg.nucleus.Nucleus;
-import atg.nucleus.logging.PrintStreamLogger;
 import atg.service.lockmanager.ClientLockManager;
-import atg.tools.dynunit.test.util.FileUtil;
-import atg.xml.tools.apache.ApacheXMLToolsFactory;
+import atg.tools.dynunit.nucleus.logging.ApacheLogListener;
+import atg.tools.dynunit.util.ComponentUtil;
+import atg.xml.tools.XMLToolsFactoryImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Properties;
 
 /**
- * <i>This class is a merger of atg.tools.dynunit.test.util.DBUtils and
- * atg.adapter.gsa.GSATestUtils. The result will hopefully be a class that just
- * has the bare minimums needed for testing against an existing and/or in-memory
- * database.</i>
- * <p>
- * This class will created all properties files needed for non repository based
- * tests.
- * </p>
+ * Provides a simple Nucleus configuration to start with for simple Nucleus tests. Only sets up some essential
+ * services.
  *
  * @author robert
+ * @author msicker
  */
 public final class BasicConfiguration {
 
-    private String isDebug = Boolean.FALSE.toString();
+    private static final Logger logger = LogManager.getLogger();
+    private boolean debug = false;
+    private File root;
+    private File atgDynamoService;
 
-    private final Map<String, String> settings = new HashMap<String, String>();
-
-    private static final Logger log = LogManager.getLogger();
-
-    public void setDebug(final boolean isDebug) {
-        this.isDebug = Boolean.toString(isDebug);
+    public boolean isDebug() {
+        logger.entry();
+        return logger.exit(debug);
     }
 
-    public BasicConfiguration() {
-        super();
+    public void setDebug(final boolean debug) {
+        logger.entry(debug);
+        this.debug = debug;
+        logger.exit();
     }
 
-    /**
-     * @param root
-     *
-     * @throws IOException
-     */
     public void createPropertiesByConfigurationLocation(final File root)
             throws IOException {
+        logger.entry(root);
+        this.root = root;
+        atgDynamoService = new File(root, "atg" + File.separatorChar + "dynamo" + File.separatorChar + "service");
 
-        this.createClientLockManager(root);
-        this.createGlobal(root);
-        this.createInitialServices(root);
-        this.createScreenLog(root);
-        this.createXMLToolsFactory(root);
+        createClientLockManager();
+        createApacheLog();
+        createGlobal();
+        createInitialServices();
+        createXMLToolsFactory();
 
-        log.info("Created basic configuration fileset");
-
+        logger.info("Created basic configuration fileset");
+        logger.exit();
     }
 
-    /**
-     * @param root
-     *
-     * @throws IOException
-     */
-    private void createClientLockManager(@NotNull final File root)
+    private void createClientLockManager()
             throws IOException {
-        this.settings.clear();
-        settings.put("lockServerAddress", "localhost");
-        settings.put("lockServerPort", "9010");
-        settings.put("useLockServer", "false");
-        FileUtil.createPropertyFile(
-                "ClientLockManager", new File(
-                root.getAbsolutePath() + "/atg/dynamo/service"
-        ), ClientLockManager.class, settings
-        );
+        logger.entry();
+        final Properties properties = new Properties();
+        properties.setProperty("lockServerAddress", "localhost");
+        // FIXME: shouldn't this look for an available port?
+        properties.setProperty("lockServerPort", "9010");
+        properties.setProperty("useLockServer", "false");
+        ComponentUtil.newComponent(atgDynamoService, ClientLockManager.class, properties);
+        logger.exit();
     }
 
-    /**
-     * @param root
-     *
-     * @throws IOException
-     */
-    private void createGlobal(final File root)
+    private void createApacheLog()
             throws IOException {
-        this.settings.clear();
-        settings.put("logListeners", "/atg/dynamo/service/logging/ScreenLog");
-        settings.put("loggingDebug", isDebug);
-        FileUtil.createPropertyFile(
-                "GLOBAL", new File(root.getAbsolutePath() + "/"), null, settings
-        );
-
+        logger.entry();
+        final File atgDynamoServiceLogging = new File(atgDynamoService, "logging");
+        ComponentUtil.newComponent(atgDynamoServiceLogging, "ApacheLog", ApacheLogListener.class);
+        logger.exit();
     }
 
-    /**
-     * Creates initial services properties like Initial, AppServerConfig, Nucleus,
-     * etc, etc.
-     *
-     * @param root
-     *
-     * @throws IOException
-     */
-    private void createInitialServices(final File root)
+    private void createGlobal()
             throws IOException {
-        this.settings.clear();
-        settings.put("initialServiceName", "/Initial");
-        FileUtil.createPropertyFile("Nucleus", root, Nucleus.class, settings);
+        final Properties properties = new Properties();
+        // we definitely want to override the default log listeners here as ATG provides a couple rather useless ones
+        // by default: a screen log (which appears to use JCL) and a log dispatcher which writes different log level
+        // events to different log files like warn.log, debug.log, etc.
+        properties.setProperty("logListeners", "/atg/dynamo/service/logging/ApacheLog");
+        properties.setProperty("loggingDebug", Boolean.toString(isDebug()));
+        ComponentUtil.newComponent(root, "GLOBAL", properties);
     }
 
-    /**
-     * @param root
-     *
-     * @throws IOException
-     */
-    private void createScreenLog(final File root)
+    private void createInitialServices()
             throws IOException {
-
-        this.settings.clear();
-        settings.put("cropStackTrace", "false");
-        settings.put("loggingEnabled", isDebug);
-        FileUtil.createPropertyFile(
-                "ScreenLog", new File(
-                root.getAbsolutePath() + "/atg/dynamo/service/logging"
-        ), PrintStreamLogger.class, settings
-        );
+        final Properties properties = new Properties();
+        properties.setProperty("initialServiceName", "/Initial");
+        ComponentUtil.newComponent(root, Nucleus.class, properties);
     }
 
-    /**
-     * @param root
-     *
-     * @throws IOException
-     */
-    private void createXMLToolsFactory(final File root)
+    private void createXMLToolsFactory()
             throws IOException {
-        FileUtil.createPropertyFile(
-                "XMLToolsFactory", new File(
-                root.getAbsolutePath() + "/atg/dynamo/service/xml"
-        ), ApacheXMLToolsFactory.class, new HashMap<String, String>()
-        );
+        final File xml = new File(atgDynamoService, "xml");
+        ComponentUtil.newComponent(xml, "XMLToolsFactory", XMLToolsFactoryImpl.class);
     }
 
 }
