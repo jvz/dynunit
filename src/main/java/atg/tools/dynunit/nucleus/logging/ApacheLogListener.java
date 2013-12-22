@@ -5,7 +5,6 @@ import atg.nucleus.logging.ErrorLogEvent;
 import atg.nucleus.logging.ExternalLogSystemLogListener;
 import atg.nucleus.logging.InfoLogEvent;
 import atg.nucleus.logging.LogEvent;
-import atg.nucleus.logging.LogListener;
 import atg.nucleus.logging.TraceLogEvent;
 import atg.nucleus.logging.WarningLogEvent;
 import org.apache.logging.log4j.Level;
@@ -19,8 +18,7 @@ import org.apache.logging.log4j.Logger;
  * @version 1.0.0
  */
 public class ApacheLogListener
-        extends ExternalLogSystemLogListener
-implements LogListener {
+        extends ExternalLogSystemLogListener {
 
     @Override
     public void logEvent(final LogEvent logEvent) {

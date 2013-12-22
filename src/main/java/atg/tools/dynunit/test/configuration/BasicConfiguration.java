@@ -18,6 +18,7 @@ package atg.tools.dynunit.test.configuration;
 
 import atg.nucleus.Nucleus;
 import atg.service.lockmanager.ClientLockManager;
+import atg.tools.dynunit.nucleus.logging.ApacheClassLoggingFactory;
 import atg.tools.dynunit.nucleus.logging.ApacheLogListener;
 import atg.tools.dynunit.util.ComponentUtil;
 import atg.xml.tools.XMLToolsFactoryImpl;
@@ -86,11 +87,13 @@ public final class BasicConfiguration {
         logger.entry();
         final File atgDynamoServiceLogging = new File(atgDynamoService, "logging");
         ComponentUtil.newComponent(atgDynamoServiceLogging, "ApacheLog", ApacheLogListener.class);
+        ComponentUtil.newComponent(atgDynamoServiceLogging, "ClassLoggingFactory", ApacheClassLoggingFactory.class);
         logger.exit();
     }
 
     private void createGlobal()
             throws IOException {
+        logger.entry();
         final Properties properties = new Properties();
         // we definitely want to override the default log listeners here as ATG provides a couple rather useless ones
         // by default: a screen log (which appears to use JCL) and a log dispatcher which writes different log level
@@ -98,19 +101,24 @@ public final class BasicConfiguration {
         properties.setProperty("logListeners", "/atg/dynamo/service/logging/ApacheLog");
         properties.setProperty("loggingDebug", Boolean.toString(isDebug()));
         ComponentUtil.newComponent(root, "GLOBAL", properties);
+        logger.exit();
     }
 
     private void createInitialServices()
             throws IOException {
+        logger.entry();
         final Properties properties = new Properties();
         properties.setProperty("initialServiceName", "/Initial");
         ComponentUtil.newComponent(root, Nucleus.class, properties);
+        logger.exit();
     }
 
     private void createXMLToolsFactory()
             throws IOException {
+        logger.entry();
         final File xml = new File(atgDynamoService, "xml");
         ComponentUtil.newComponent(xml, "XMLToolsFactory", XMLToolsFactoryImpl.class);
+        logger.exit();
     }
 
 }
