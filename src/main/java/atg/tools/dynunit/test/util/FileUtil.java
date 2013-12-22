@@ -54,12 +54,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author robert
  * @author msicker
  */
-public class FileUtil {
+public final class FileUtil {
 
     private FileUtil() {
     }
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     private static boolean dirty = false;
 
@@ -73,23 +73,23 @@ public class FileUtil {
     );
 
     public static File newTempFile()
-    throws IOException {
-        log.entry();
+            throws IOException {
+        logger.entry();
         final File tempFile = File.createTempFile("dynunit-", null);
         tempFile.deleteOnExit();
-        return log.exit(tempFile);
+        return logger.exit(tempFile);
     }
 
     public static void copyDirectory(@NotNull String srcDir,
                                      @NotNull String dstDir,
                                      @NotNull final List<String> excludes)
-    throws IOException {
-        log.entry(srcDir, dstDir, excludes);
+            throws IOException {
+        logger.entry(srcDir, dstDir, excludes);
         Validate.notEmpty(srcDir);
         Validate.notEmpty(dstDir);
         final File source = new File(srcDir);
         if (!source.exists()) {
-            throw log.throwing(new FileNotFoundException(srcDir));
+            throw logger.throwing(new FileNotFoundException(srcDir));
         }
         final File destination = new File(dstDir);
         FileUtils.copyDirectory(source, destination, new FileFilter() {
@@ -98,7 +98,7 @@ public class FileUtil {
                 return excludes.contains(file.getName());
             }
         });
-        log.exit();
+        logger.exit();
     }
 
     /**
@@ -110,11 +110,11 @@ public class FileUtil {
                                           @Nullable final Class<?> clazz,
                                           @Nullable final Map<String, String> settings)
             throws IOException {
-        log.entry(componentName, configurationStagingLocation, clazz, settings);
+        logger.entry(componentName, configurationStagingLocation, clazz, settings);
         final Properties properties = new Properties();
         properties.putAll(settings);
         ComponentUtil.newComponent(configurationStagingLocation, componentName, clazz, properties);
-        log.exit();
+        logger.exit();
     }
 
     public static void forceGlobalScope(final File file)
@@ -171,26 +171,28 @@ public class FileUtil {
     public static void searchAndReplace(@NotNull final String originalValue,
                                         @NotNull final String newValue,
                                         @NotNull final File file)
-    throws IOException {
+            throws IOException {
         final File tempFile = newTempFile();
 
-        if ( CONFIG_FILES_GLOBAL_FORCE != null
-             && CONFIG_FILES_GLOBAL_FORCE.get(file.getPath()) != null
-             && CONFIG_FILES_GLOBAL_FORCE.get(file.getPath()) == file.lastModified()
-             && file.exists() ) {
+        if (CONFIG_FILES_GLOBAL_FORCE != null
+                && CONFIG_FILES_GLOBAL_FORCE.get(file.getPath()) != null
+                && CONFIG_FILES_GLOBAL_FORCE.get(file.getPath()) == file.lastModified()
+                && file.exists()) {
             dirty = false;
-            log.debug(
+            logger.debug(
                     "{} last modified hasn't changed and file still exists, "
-                    + "no need for global scope force", file.getPath()
+                            + "no need for global scope force", file.getPath()
             );
-        } else {
+        }
+        else {
             final BufferedWriter out = new BufferedWriter(new FileWriter(tempFile));
             final BufferedReader in = new BufferedReader(new FileReader(file));
             String str;
-            while ( (str = in.readLine()) != null ) {
-                if ( str.contains(originalValue) ) {
+            while ((str = in.readLine()) != null) {
+                if (str.contains(originalValue)) {
                     out.write(newValue);
-                } else {
+                }
+                else {
                     out.write(str);
                     out.newLine();
                 }
@@ -212,7 +214,7 @@ public class FileUtil {
         try {
             FileUtils.forceDeleteOnExit(tmpDir);
         } catch (IOException e) {
-            log.catching(Level.ERROR, e);
+            logger.catching(Level.ERROR, e);
         }
     }
 
@@ -235,8 +237,8 @@ public class FileUtil {
     @SuppressWarnings("unchecked")
     public static Map<String, Long> deserialize(@NotNull final File file, final long serialTtl) {
 
-        if ( file.exists() && file.lastModified() < System.currentTimeMillis() - serialTtl ) {
-            log.debug(
+        if (file.exists() && file.lastModified() < System.currentTimeMillis() - serialTtl) {
+            logger.debug(
                     "Deleting previous serial {} because it's older than {} ms",
                     file.getPath(),
                     serialTtl
@@ -246,7 +248,7 @@ public class FileUtil {
 
         Map<String, Long> o = null;
         try {
-            if ( file.exists() ) {
+            if (file.exists()) {
                 final ObjectInputStream in = new ObjectInputStream(
                         new FileInputStream(
                                 file
@@ -258,10 +260,10 @@ public class FileUtil {
                     in.close();
                 }
             }
-        } catch ( Exception e ) {
-            log.catching(e);
+        } catch (Exception e) {
+            logger.catching(e);
         }
-        if ( o == null ) {
+        if (o == null) {
             o = new HashMap<String, Long>();
         }
         return o;
