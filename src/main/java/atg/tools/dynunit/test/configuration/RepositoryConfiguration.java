@@ -13,10 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/**
- *
- */
 package atg.tools.dynunit.test.configuration;
 
 import atg.adapter.gsa.event.GSAEventServer;
@@ -28,15 +24,18 @@ import atg.service.jdbc.FakeXADataSource;
 import atg.service.jdbc.MonitoredDataSource;
 import atg.tools.dynunit.adapter.gsa.InitializingGSA;
 import atg.tools.dynunit.test.util.FileUtil;
+import atg.tools.dynunit.util.ComponentUtil;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * <i>This class is a merger of atg.tools.dynunit.test.util.DBUtils and
@@ -50,48 +49,170 @@ import java.util.Map;
  *
  * @author robert
  */
-public final class RepositoryConfiguration {
+public final class RepositoryConfiguration
+        extends ConfigurationProvider {
 
-    // TODO-1 []: re-add versioned repository support?
-    // TODO-2 []: better/more uniform way of handling properties file creation
+    // TODO: re-add versioned repository support?
+    // TODO: better/more uniform way of handling properties file creation
 
-    private String isDebug = Boolean.FALSE.toString();
+    private static final Logger logger = LogManager.getLogger();
 
+    private static final String TX_MANAGER = "/atg/dynamo/transaction/TransactionManager";
+    private static final String JT_DATA_SOURCE = "/atg/dynamo/service/jdbc/JTDataSource";
+    private static final String XA_DATA_SOURCE = "/atg/dynamo/service/jdbc/FakeXADataSource";
+    private static final String XML_TOOLS_FACTORY = "/atg/dynamo/service/xml/XMLToolsFactory";
+
+    private File atgDynamo;
+    private File atgTransaction;
+    private File atgService;
+    private File atgJdbc;
+    private File atgServer;
+
+    @Deprecated
     private final Map<String, String> settings = new HashMap<String, String>();
 
-    private static final Logger logger = LogManager.getLogger(RepositoryConfiguration.class);
-
-    public void setDebug(final boolean isDebug) {
-        this.isDebug = Boolean.toString(isDebug);
+    private String debug() {
+        return Boolean.toString(isDebug());
     }
 
-    public RepositoryConfiguration() {
-        super();
+    private void initPaths() {
+        if (atgDynamo == null) {
+            atgDynamo = new File(getRoot(), "atg" + File.separator + "dynamo");
+            atgTransaction = new File(atgDynamo, "transaction");
+            atgService = new File(atgDynamo, "service");
+            atgJdbc = new File(atgService, "jdbc");
+            atgServer = new File(atgDynamo, "server");
+        }
     }
 
-    /**
-     * @param root
-     *
-     * @throws IOException
-     */
-    public void createPropertiesByConfigurationLocation(final File root)
+    public void createPropertiesByConfigurationLocation()
             throws IOException {
-        this.createTransactionManager(root);
-        this.createUserTransaction(root);
-        this.createIdGenerator(root);
-        this.createIdSpaces(root);
-        this.createSQLRepositoryEventServer(root);
-        this.createJtdDataSource(root);
+        logger.entry();
+        initPaths();
+        createTransactionManager();
+        createUserTransaction();
+        createIdGenerator();
+        createIdSpaces();
+        createSQLRepositoryEventServer();
+        createJTDataSource();
 
         logger.info("Created repository configuration fileset");
+        logger.exit();
     }
 
-    /**
-     * @param root
-     * @param jdbcSettings
-     *
-     * @throws IOException
-     */
+    public void createFakeXADataSource(@NotNull final Properties properties)
+            throws IOException {
+        logger.entry(properties);
+        initPaths();
+        properties.setProperty("transactionManager", TX_MANAGER);
+        ComponentUtil.newComponent(atgJdbc, FakeXADataSource.class, properties);
+        logger.exit();
+    }
+
+    public void createRepository(final String repositoryComponent,
+                                 final boolean dropTables,
+                                 final boolean createTables,
+                                 final String... definitionFiles)
+            throws IOException {
+        logger.entry(repositoryComponent, dropTables, createTables, definitionFiles);
+        final Properties properties = new Properties();
+        properties.setProperty("definitionFiles", StringUtils.join(definitionFiles, ','));
+        properties.setProperty("XMLToolsFactory", XML_TOOLS_FACTORY);
+        properties.setProperty("transactionManager", TX_MANAGER);
+        properties.setProperty("idGenerator", "/atg/dynamo/service/IdGenerator");
+        properties.setProperty("dataSource", JT_DATA_SOURCE);
+        properties.setProperty("lockManager", "/atg/dynamo/service/ClientLockManager");
+        properties.setProperty("idspaces", "/atg/dynamo/service/idspaces.xml");
+        properties.setProperty("groupContainerPath", "/atg/registry/RepositoryGroups");
+        properties.setProperty("restartingAfterTableCreation", "false");
+        properties.setProperty("createTables", Boolean.toString(createTables));
+        properties.setProperty("loggingDebug", debug());
+        properties.setProperty("loggingCreateTables", debug());
+        properties.setProperty("debugLevel", "7");
+
+        // InitializingGSA-specific
+        properties.setProperty("dropTablesIfExist", Boolean.toString(dropTables));
+        properties.setProperty("dropTablesAtShutdown", Boolean.toString(dropTables));
+        properties.setProperty("stripReferences", "true");
+
+        final int lastSlash = repositoryComponent.lastIndexOf('/');
+        final String repositoryDirectoryName = repositoryComponent.substring(0, lastSlash)
+                                                                  .replace('/', File.separatorChar);
+        final String repositoryName = repositoryComponent.substring(lastSlash + 1);
+        final File repositoryDirectory = new File(getRoot(), repositoryDirectoryName);
+        ComponentUtil.newComponent(repositoryDirectory, repositoryName, InitializingGSA.class, properties);
+        logger.exit();
+    }
+
+    private void createTransactionManager()
+            throws IOException {
+        logger.entry();
+        final Properties properties = new Properties();
+        properties.setProperty("loggingDebug", debug());
+        ComponentUtil.newComponent(atgTransaction, TransactionDemarcationLogging.class, properties);
+        ComponentUtil.newComponent(atgTransaction, TransactionManagerImpl.class, properties);
+        logger.exit();
+    }
+
+    private void createUserTransaction()
+            throws IOException {
+        logger.entry();
+        final Properties properties = new Properties();
+        properties.setProperty("transactionManager", TX_MANAGER);
+        ComponentUtil.newComponent(atgTransaction, UserTransactionImpl.class, properties);
+        logger.exit();
+    }
+
+    private void createIdGenerator()
+            throws IOException {
+        logger.entry();
+        final Properties properties = new Properties();
+        properties.setProperty("dataSource", JT_DATA_SOURCE);
+        properties.setProperty("transactionManager", TX_MANAGER);
+        properties.setProperty("XMLToolsFactory", XML_TOOLS_FACTORY);
+        ComponentUtil.newComponent(atgService, "IdGenerator", SQLIdGenerator.class, properties);
+        logger.exit();
+    }
+
+    private void createIdSpaces()
+            throws IOException {
+        logger.entry();
+        FileUtils.copyFileToDirectory(getIdSpacesTemplate(), atgService);
+        logger.exit();
+    }
+
+    // FIXME: load this file better
+    private File getIdSpacesTemplate() {
+        logger.entry();
+        return logger.exit(new File("src/main/resources/atg/tools/dynunit/idspaces.xml"));
+    }
+
+    private void createSQLRepositoryEventServer()
+            throws IOException {
+        logger.entry();
+        final Properties properties = new Properties();
+        properties.setProperty("handlerCount", "0");
+        ComponentUtil.newComponent(atgServer, "SQLRepositoryEventServer", GSAEventServer.class, properties);
+        logger.exit();
+    }
+
+    private void createJTDataSource()
+            throws IOException {
+        logger.entry();
+        final Properties properties = new Properties();
+        properties.setProperty("dataSource", XA_DATA_SOURCE);
+        properties.setProperty("transactionManager", TX_MANAGER);
+        properties.setProperty("min", "10");
+        properties.setProperty("max", "20");
+        properties.setProperty("blocking", "true");
+        properties.setProperty("loggingSQLWarning", debug());
+        properties.setProperty("loggingSQLInfo", debug());
+        properties.setProperty("loggingSQLDebug", debug());
+        ComponentUtil.newComponent(atgJdbc, "JTDataSource", MonitoredDataSource.class, properties);
+        logger.exit();
+    }
+
+    @Deprecated
     public void createFakeXADataSource(@NotNull final File root, Map<String, String> jdbcSettings)
             throws IOException {
 
@@ -122,76 +243,6 @@ public final class RepositoryConfiguration {
 
     /**
      * @param root
-     *
-     * @throws IOException
-     */
-    private void createJtdDataSource(final File root)
-            throws IOException {
-        this.settings.clear();
-        settings.put("dataSource", "/atg/dynamo/service/jdbc/FakeXADataSource");
-        settings.put(
-                "transactionManager", "/atg/dynamo/transaction/TransactionManager"
-        );
-        settings.put("min", "10");
-        settings.put("max", "20");
-        settings.put("blocking", "true");
-        settings.put("loggingSQLWarning", isDebug);
-        settings.put("loggingSQLInfo", isDebug);
-        settings.put("loggingSQLDebug", isDebug);
-
-        FileUtil.createPropertyFile(
-                "JTDataSource", new File(
-                root.getAbsolutePath() + "/atg/dynamo/service/jdbc"
-        ), MonitoredDataSource.class, settings
-        );
-    }
-
-    /**
-     * @param root
-     *
-     * @throws IOException
-     */
-    private void createIdGenerator(final File root)
-            throws IOException {
-        this.settings.clear();
-        settings.put("dataSource", "/atg/dynamo/service/jdbc/JTDataSource");
-        settings.put(
-                "transactionManager", "/atg/dynamo/transaction/TransactionManager"
-        );
-        settings.put(
-                "XMLToolsFactory", "/atg/dynamo/service/xml/XMLToolsFactory"
-        );
-        FileUtil.createPropertyFile(
-                "IdGenerator", new File(
-                root.getAbsolutePath() + "/atg/dynamo/service/"
-        ), SQLIdGenerator.class, settings
-        );
-    }
-
-    /**
-     * @param root
-     *
-     * @throws IOException
-     */
-    private void createIdSpaces(final File root)
-            throws IOException {
-        final String idspaces = "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE id-spaces SYSTEM \"http://www.atg.com/dtds/idgen/idgenerator_1.0.dtd\"><id-spaces><id-space name=\"__default__\" seed=\"1\" batch-size=\"100000\"/><id-space name=\"jms_msg_ids\" seed=\"0\" batch-size=\"10000\"/><id-space name=\"layer\" seed=\"0\" batch-size=\"100\"/></id-spaces>";
-        final File idspacesFile = new File(
-                root.getAbsolutePath() + "/atg/dynamo/service/idspaces.xml"
-        );
-
-        idspacesFile.delete();
-        idspacesFile.getParentFile().mkdirs();
-        idspacesFile.createNewFile();
-        FileWriter out = new FileWriter(idspacesFile);
-        out.write(idspaces);
-        out.write("\n");
-        out.flush();
-        out.close();
-    }
-
-    /**
-     * @param root
      * @param repositoryPath
      * @param droptables
      *         <code>true</code> then existing tables will be dropped after
@@ -206,6 +257,7 @@ public final class RepositoryConfiguration {
      *
      * @throws IOException
      */
+    @Deprecated
     public void createRepositoryConfiguration(final File root,
                                               final String repositoryPath,
                                               final boolean droptables,
@@ -236,8 +288,8 @@ public final class RepositoryConfiguration {
         settings.put("restartingAfterTableCreation", "false");
         settings.put("createTables", Boolean.toString(createTables));
         settings.put("loggingError", "true");
-        settings.put("loggingDebug", isDebug);
-        settings.put("loggingCreateTables", isDebug);
+        settings.put("loggingDebug", debug());
+        settings.put("loggingCreateTables", debug());
         settings.put("debugLevel", "7");
 
         // InitializingGSA specific properties
@@ -253,63 +305,6 @@ public final class RepositoryConfiguration {
         newRoot.mkdirs();
         FileUtil.createPropertyFile(
                 repositoryName, newRoot, InitializingGSA.class, settings
-        );
-    }
-
-    /**
-     * @param root
-     *
-     * @throws IOException
-     */
-    private void createSQLRepositoryEventServer(final File root)
-            throws IOException {
-        this.settings.clear();
-        settings.put("handlerCount", "0");
-        FileUtil.createPropertyFile(
-                "SQLRepositoryEventServer", new File(
-                root.getAbsolutePath() + "/atg/dynamo/server"
-        ), GSAEventServer.class, settings
-        );
-    }
-
-    /**
-     * @param root
-     *
-     * @throws IOException
-     */
-    private void createTransactionManager(final File root)
-            throws IOException {
-        this.settings.clear();
-        settings.put("loggingDebug", isDebug);
-        final File newRoot = new File(root, "/atg/dynamo/transaction");
-        newRoot.mkdirs();
-        FileUtil.createPropertyFile(
-                "TransactionDemarcationLogging",
-                newRoot,
-                TransactionDemarcationLogging.class,
-                settings
-        );
-
-        FileUtil.createPropertyFile(
-                "TransactionManager", newRoot, TransactionManagerImpl.class, settings
-        );
-    }
-
-    /**
-     * @param root
-     *
-     * @throws IOException
-     */
-    private void createUserTransaction(final File root)
-            throws IOException {
-        this.settings.clear();
-        settings.put(
-                "transactionManager", "/atg/dynamo/transaction/TransactionManager"
-        );
-        FileUtil.createPropertyFile(
-                "UserTransaction", new File(
-                root, "/atg/dynamo/transaction"
-        ), UserTransactionImpl.class, settings
         );
     }
 

@@ -16,19 +16,20 @@
 
 package atg.tools.dynunit.test;
 
-import atg.nucleus.GenericService;
 import atg.nucleus.Nucleus;
-import atg.tools.dynunit.nucleus.logging.ConsoleLogListener;
+import atg.tools.dynunit.naming.LoggingNameResolver;
 import atg.tools.dynunit.test.configuration.BasicConfiguration;
 import atg.tools.dynunit.test.configuration.RepositoryConfiguration;
 import atg.tools.dynunit.test.util.FileUtil;
 import atg.tools.dynunit.test.util.RepositoryManager;
+import atg.tools.dynunit.util.ComponentUtil;
 import junit.framework.TestCase;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -104,7 +105,6 @@ import static atg.tools.dynunit.util.PropertiesUtil.setSystemPropertyIfEmpty;
  *
  * @author robert
  */
-@SuppressWarnings("unchecked")
 public class AtgDustCase
         extends TestCase {
 
@@ -117,6 +117,8 @@ public class AtgDustCase
     private File configurationLocation;
 
     private Nucleus nucleus;
+
+    private LoggingNameResolver loggingNameResolver;
 
     private boolean debug;
 
@@ -146,15 +148,14 @@ public class AtgDustCase
     private static long SERIAL_TTL = 43200000L;
 
     /**
-     * Every *.properties file copied using this method will have it's scope (if
-     * one is available) set to global.
+     * Every *.properties file copied using this method will have it's scope (if one is available) set to global.
      *
-     * @param srcDirs
+     * @param sourceDirectories
      *         One or more directories containing needed configuration files.
-     * @param dstDir
+     * @param destinationDirectory
      *         where to copy the above files to. This will also be the
      *         configuration location.
-     * @param excludes
+     * @param excludedDirectories
      *         One or more directories not to include during the copy
      *         process. Use this one to speeds up the test cycle
      *         considerably. You can also call it with an empty
@@ -164,30 +165,31 @@ public class AtgDustCase
      * @throws IOException
      *         Whenever some file related error's occur.
      */
-    protected final void copyConfigurationFiles(final String[] srcDirs,
-                                                final String dstDir,
-                                                final String... excludes)
+    protected final void copyConfigurationFiles(@NotNull final String[] sourceDirectories,
+                                                @NotNull final String destinationDirectory,
+                                                @Nullable final String... excludedDirectories)
             throws IOException {
+        logger.entry(sourceDirectories, destinationDirectory, excludedDirectories);
+        setConfigurationLocation(destinationDirectory);
 
-        setConfigurationLocation(dstDir);
-
-        logger.debug("Copying configurating files and forcing global scope on all configs.");
-        preCopyingOfConfigurationFiles(srcDirs, excludes);
-
-        for (final String srcs : srcDirs) {
-            FileUtil.copyDirectory(
-                    srcs, dstDir, Arrays.asList(excludes == null ? new String[]{ } : excludes)
-            );
+        logger.info("Copying configurating files and forcing global scope on all configs.");
+        preCopyingOfConfigurationFiles(sourceDirectories, excludedDirectories);
+        for (final String sourceDirectory : sourceDirectories) {
+            FileUtils.copyDirectory(new File(sourceDirectory), new File(destinationDirectory), new FileFilter() {
+                @Override
+                public boolean accept(final File file) {
+                    return ArrayUtils.contains(excludedDirectories, file.getName());
+                }
+            });
         }
-
-        forceGlobalScopeOnAllConfigs(dstDir);
+        forceGlobalScopeOnAllConfigs(destinationDirectory);
 
         if (FileUtil.isDirty()) {
             FileUtil.serialize(
                     GLOBAL_FORCE_SER, FileUtil.getConfigFilesTimestamps()
             );
         }
-
+        logger.exit();
     }
 
     /**
@@ -199,6 +201,7 @@ public class AtgDustCase
      */
     protected final void manageConfigurationFiles(Properties properties)
             throws IOException {
+        logger.entry(properties);
 
         String atgConfigPath = properties.getProperty("atgConfigsJars")
                                          .replace("/", File.separator);
@@ -229,8 +232,8 @@ public class AtgDustCase
             excludes[i] = dir.trim();
             i++;
         }
-        final List<String> srcsAsList = new ArrayList<String>();
-        final List<String> distsAsList = new ArrayList<String>();
+        final List<String> srcsAsList = new ArrayList<String>(configs.length);
+        final List<String> distsAsList = new ArrayList<String>(configs.length);
 
         for (String config : configs) {
             srcsAsList.add(config.split(" to ")[0]);
@@ -273,34 +276,28 @@ public class AtgDustCase
 
     /**
      * @param configurationStagingLocation
-     *         The location where the property file should be created.
-     *         This
-     *         will also set the {@link AtgDustCase#configurationLocation}.
+     *         The location where the property file should be created. This will also set the
+     *         {@link AtgDustCase#configurationLocation}.
      * @param nucleusComponentPath
      *         Nucleus component path (e.g /Some/Service/Impl).
-     * @param clazz
-     *         The {@link Class} implementing the nucleus component
-     *         specified
-     *         in previous argument.
+     * @param klass
+     *         The {@link Class} implementing the nucleus component specified in previous argument.
      *
      * @throws IOException
      *         If we have some File related errors
      */
-    final void createPropertyFile(final String configurationStagingLocation,
-                                  final String nucleusComponentPath,
-                                  final Class<?> clazz)
+    protected final void createPropertyFile(final String configurationStagingLocation,
+                                            final String nucleusComponentPath,
+                                            final Class<?> klass)
             throws IOException {
-        this.configurationLocation = new File(configurationStagingLocation);
-        FileUtil.createPropertyFile(
-                nucleusComponentPath,
-                configurationLocation,
-                clazz.getClass(),
-                new HashMap<String, String>()
-        );
+        configurationLocation = new File(configurationStagingLocation);
+        final String componentFileName = nucleusComponentPath.replaceAll("/", File.separator) + ".properties";
+        final File componentFile = new File(configurationLocation, componentFileName);
+        ComponentUtil.newComponentForFile(componentFile, klass);
     }
 
     /**
-     * Prepares a test against an default in-memory hsql database.
+     * Prepares a test against an in-memory hsql database.
      *
      * @param repoPath
      *         the nucleus component path of the repository to be tested.
@@ -338,22 +335,22 @@ public class AtgDustCase
      *         database):
      *         <p/>
      *         <pre>
-     *                                                                                                     final
-     *                                             Properties properties = new
-     *                                                                         Properties();
+     *                                                                                                                     final
+     *                                                             Properties properties = new
+     *                                                                                         Properties();
      *
-     *                                             properties.put(&quot;driver&quot;,
-     *                                                                         &quot;com.mysql.jdbc.Driver&quot;);
+     *                                                             properties.put(&quot;driver&quot;,
+     *                                                                                         &quot;com.mysql.jdbc.Driver&quot;);
      *
-     *                                             properties.put(&quot;url&quot;,
-     *                                                                         &quot;jdbc:mysql://localhost:3306/someDb&quot;);
+     *                                                             properties.put(&quot;url&quot;,
+     *                                                                                         &quot;jdbc:mysql://localhost:3306/someDb&quot;);
      *
-     *                                             properties.put(&quot;user&quot;,
-     *                                                                         &quot;someUserName&quot;);
+     *                                                             properties.put(&quot;user&quot;,
+     *                                                                                         &quot;someUserName&quot;);
      *
-     *                                             properties.put(&quot;password&quot;,
-     *                                                                         &quot;somePassword&quot;);
-     *                                                                                                     </pre>
+     *                                                             properties.put(&quot;password&quot;,
+     *                                                                                         &quot;somePassword&quot;);
+     *                                                                                                                     </pre>
      * @param dropTables
      *         If <code>true</code> then existing tables will be dropped and
      *         re-created, if set to <code>false</code> the existing tables
@@ -390,13 +387,10 @@ public class AtgDustCase
         final RepositoryConfiguration repositoryConfiguration = new RepositoryConfiguration();
 
         repositoryConfiguration.setDebug(debug);
-        repositoryConfiguration.createPropertiesByConfigurationLocation(configurationLocation);
-        repositoryConfiguration.createFakeXADataSource(
-                configurationLocation, connectionSettings
-        );
-        repositoryConfiguration.createRepositoryConfiguration(
-                configurationLocation, repositoryPath, dropTables, createTables, definitionFiles
-        );
+        repositoryConfiguration.setRoot(configurationLocation);
+        repositoryConfiguration.createPropertiesByConfigurationLocation();
+        repositoryConfiguration.createFakeXADataSource(connectionProperties);
+        repositoryConfiguration.createRepository(repositoryPath, dropTables, createTables, definitionFiles);
 
         repositoryManager.initializeMinimalRepositoryConfiguration(
                 configurationLocation,
@@ -409,22 +403,22 @@ public class AtgDustCase
     }
 
     /**
-     * Method for retrieving a fully injected atg component
+     * Method for retrieving a fully injected ATG component.
      *
      * @param nucleusComponentPath
      *         Path to a nucleus component (e.g. /Some/Service/Impl).
      *
-     * @return Fully injected instance of the component registered under
-     * previous argument or <code>null</code> if there is an error.
+     * @return Fully injected instance of the component registered under previous argument or {@code null} if there
+     * is an error.
      *
      * @throws IOException
      */
     protected Object resolveNucleusComponent(final String nucleusComponentPath)
             throws IOException {
+        logger.entry(nucleusComponentPath);
         startNucleus(configurationLocation);
-        return enableLoggingOnGenericService(
-                nucleus.resolveName(nucleusComponentPath)
-        );
+        final Object component = loggingNameResolver.resolveName(nucleusComponentPath);
+        return logger.exit(component);
     }
 
     /**
@@ -437,8 +431,10 @@ public class AtgDustCase
      *         test.
      */
     protected final void setConfigurationLocation(final String configurationLocation) {
+        logger.entry(configurationLocation);
         this.configurationLocation = new File(configurationLocation);
         logger.debug("Using configuration location: {}", this.configurationLocation.getPath());
+        logger.exit();
     }
 
     /**
@@ -474,7 +470,8 @@ public class AtgDustCase
             throws IOException {
         if (nucleus == null || !nucleus.isRunning()) {
             basicConfiguration.setDebug(debug);
-            basicConfiguration.createPropertiesByConfigurationLocation(configPath);
+            basicConfiguration.setRoot(configPath);
+            basicConfiguration.createPropertiesByConfigurationLocation();
             setSystemPropertyIfEmpty("atg.dynamo.license.read", "true");
             setSystemPropertyIfEmpty("atg.license.read", "true");
             // TODO: Can I safely keep this one disabled?
@@ -511,34 +508,8 @@ public class AtgDustCase
                     "atg.configpath", new File(fullConfigPath).getAbsolutePath()
             );
             nucleus = Nucleus.startNucleus(new String[]{ fullConfigPath });
-
+            loggingNameResolver = new LoggingNameResolver(nucleus);
         }
-    }
-
-    /**
-     * Will enable logging on the object/service that was passed in (as a method
-     * argument) if it's an instance of {@link GenericService}. This method is
-     * automatically called from
-     * {@link AtgDustCase#resolveNucleusComponent(String)}. Debug level is
-     * enabled the moment {@link AtgDustCase#setDebug(boolean)} was called with
-     * <code>true</code>.
-     *
-     * @param service
-     *         an instance of GenericService
-     *
-     * @return the GenericService instance that was passed in with all log
-     * levels enabled, if it's a {@link GenericService}
-     */
-    private Object enableLoggingOnGenericService(final Object service) {
-        if (service instanceof GenericService) {
-            ((GenericService) service).setLoggingDebug(debug);
-            ((GenericService) service).setLoggingInfo(true);
-            ((GenericService) service).setLoggingWarning(true);
-            ((GenericService) service).setLoggingError(true);
-            ((GenericService) service).removeLogListener(new ConsoleLogListener());
-            ((GenericService) service).addLogListener(new ConsoleLogListener());
-        }
-        return service;
     }
 
     private void preCopyingOfConfigurationFiles(final String[] srcDirs, final String excludes[])
@@ -581,6 +552,7 @@ public class AtgDustCase
 
     private void forceGlobalScopeOnAllConfigs(final String dstDir)
             throws IOException {
+        // TODO: convert perflib usage to standard JDK
         if (perflib == null) {
             for (final File file : FileUtils.listFiles(
                     new File(

@@ -36,29 +36,17 @@ import java.util.Properties;
  * @author robert
  * @author msicker
  */
-public final class BasicConfiguration {
+public final class BasicConfiguration
+        extends ConfigurationProvider {
 
     private static final Logger logger = LogManager.getLogger();
-    private boolean debug = false;
-    private File root;
     private File atgDynamoService;
 
-    public boolean isDebug() {
-        logger.entry();
-        return logger.exit(debug);
-    }
-
-    public void setDebug(final boolean debug) {
-        logger.entry(debug);
-        this.debug = debug;
-        logger.exit();
-    }
-
-    public void createPropertiesByConfigurationLocation(final File root)
+    @Override
+    public void createPropertiesByConfigurationLocation()
             throws IOException {
-        logger.entry(root);
-        this.root = root;
-        atgDynamoService = new File(root, "atg" + File.separatorChar + "dynamo" + File.separatorChar + "service");
+        logger.entry();
+        atgDynamoService = new File(getRoot(), "atg" + File.separatorChar + "dynamo" + File.separatorChar + "service");
 
         createClientLockManager();
         createApacheLog();
@@ -100,7 +88,7 @@ public final class BasicConfiguration {
         // events to different log files like warn.log, debug.log, etc.
         properties.setProperty("logListeners", "/atg/dynamo/service/logging/ApacheLog");
         properties.setProperty("loggingDebug", Boolean.toString(isDebug()));
-        ComponentUtil.newComponent(root, "GLOBAL", properties);
+        ComponentUtil.newComponent(getRoot(), "GLOBAL", properties);
         logger.exit();
     }
 
@@ -109,7 +97,7 @@ public final class BasicConfiguration {
         logger.entry();
         final Properties properties = new Properties();
         properties.setProperty("initialServiceName", "/Initial");
-        ComponentUtil.newComponent(root, Nucleus.class, properties);
+        ComponentUtil.newComponent(getRoot(), Nucleus.class, properties);
         logger.exit();
     }
 

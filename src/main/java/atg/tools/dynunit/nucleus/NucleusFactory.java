@@ -91,7 +91,8 @@ public final class NucleusFactory {
             throws IOException {
         logger.entry(configPath);
         configuration.setDebug(debug);
-        configuration.createPropertiesByConfigurationLocation(configPath);
+        configuration.setRoot(configPath);
+        configuration.createPropertiesByConfigurationLocation();
         logger.exit();
     }
 
