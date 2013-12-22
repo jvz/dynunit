@@ -18,6 +18,11 @@ package atg.tools.dynunit.service.jdbc;
 
 
 import atg.service.jdbc.FakeXADataSource;
+import org.apache.commons.lang3.reflect.MethodUtils;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
 
 /**
  * Base class for InitializingDataSource's common functionality.
@@ -29,7 +34,7 @@ import atg.service.jdbc.FakeXADataSource;
 public class InitializingDataSourceBase
         extends FakeXADataSource {
 
-    private String mDatabaseName = "testdb";
+    private String databaseName = "testdb";
 
     /**
      * Returns the name of the database to use with HSQLDB. The default name is
@@ -38,17 +43,37 @@ public class InitializingDataSourceBase
      * @return
      */
     public String getDatabaseName() {
-        return mDatabaseName;
+        return databaseName;
     }
 
     /**
      * Sets the name of the database to be used with HSQLDB
      *
-     * @param pName The name of the HSQLDB database to be created when this datasource
+     * @param databaseName The name of the HSQLDB database to be created when this datasource
      *              starts up.
      */
-    public void setDatabaseName(String pName) {
-        mDatabaseName = pName;
+    public void setDatabaseName(final String databaseName) {
+        this.databaseName = databaseName;
+    }
+
+    /**
+     * Get the driver manager connection used in this data source. This method is provided because the normal method
+     * for accessing the database connection is package-local.
+     *
+     * @return underlying database connection object or {@code null} if it couldn't be found.
+     */
+    @Nullable
+    public Connection getConnection() {
+        try {
+            return (Connection) MethodUtils.invokeMethod(this, "getDriverManagerConnection", null, null);
+        } catch (NoSuchMethodException e) {
+            logError(e);
+        } catch (IllegalAccessException e) {
+            logError(e);
+        } catch (InvocationTargetException e) {
+            logError(e);
+        }
+        return null;
     }
 
 }
