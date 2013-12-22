@@ -24,7 +24,6 @@ import atg.adapter.gsa.Table;
 import atg.adapter.gsa.xml.TemplateParser;
 import atg.dtm.TransactionDemarcation;
 import atg.dtm.TransactionDemarcationException;
-import atg.tools.dynunit.junit.nucleus.TestUtils;
 import atg.naming.NameContext;
 import atg.naming.NameContextBindingEvent;
 import atg.nucleus.Configuration;
@@ -34,6 +33,7 @@ import atg.nucleus.ServiceEvent;
 import atg.nucleus.ServiceException;
 import atg.nucleus.logging.LogListener;
 import atg.repository.RepositoryException;
+import atg.tools.dynunit.junit.nucleus.TestUtils;
 import org.apache.ddlutils.DatabaseOperationException;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,7 +55,7 @@ import java.util.Set;
  * @author mfrenzel
  * @version 1.0
  */
-
+// TODO: clean this shit up
 public class InitializingGSA
         extends GSARepository {
 
@@ -69,8 +69,76 @@ public class InitializingGSA
 
     // -----------------------------------
     // ---From Properties File------------
-
-    private boolean mUseDDLUtils = true;
+    // ---------- methods to help with user-specified SQL files -----------
+    // allowable db types to specify
+    private final String SOLID = "solid";
+    private final String ORACLE = "oracle";
+    private final String MICROSOFT = "microsoft";
+    private final String INFORMIX = "informix";
+    private final String DB2 = "db2";
+    private final String SYBASE = "sybase";
+    private final String SYBASE2 = "Adaptive Server Enterprise"; // sybase 12.5
+    private final String DEFAULT = "default";
+    private final String[] dbTypes = {
+            SOLID, ORACLE, MICROSOFT, INFORMIX, DB2, SYBASE, SYBASE2, DEFAULT
+    }; // hurr what are enums
+    private boolean useDDLUtils = true;
+    // do we want to create tables if they don't exist
+    private boolean createTables = true;
+    // do we want to drop tables that exist if we want to create
+    // a table with the same name
+    private boolean dropTablesIfExist = false;
+    // the XML files containing export data from the TemplateParser
+    // it will be imported into the database after tables are created
+    // we load the files as Files instead of XMLFiles because the
+    // TemplateParser requires a full file path to the import file
+    // instead of using the CONFIGPATH
+    @Nullable
+    private File[] importFiles = null;
+    // do we want to strip the 'references(..)' statements from SQL
+    // created by the GSA
+    private boolean stripReferences = true;
+    // do we want to show the create table statements that are executed
+    private boolean loggingCreateTables = false;
+    /*
+     * the SQLProcessorEngine to use for creating tables this property is optional
+     * because we'll create a default SQLProcessorEngine if the property isn't set
+     */
+    private SQLProcessorEngine processorEngine = null;
+    /**
+     * boolean indicating whether we should perform the import every time Dynamo
+     * starts, or only perform the import if we created at least one table. NOTE:
+     * if dropTablesIfExist is true, the import will occur every time because we
+     * will create tables every time. default: false - only perform the import
+     * when tables are created
+     */
+    private boolean importEveryStartup = false;
+    /**
+     * boolean indicating whether we should drop all tables associated with this
+     * repository when Dynamo is shut down. NOTE: this will only work properly is
+     * Dynamo is shutdown properly. It will not work if Dynamo is just killed
+     * default: false
+     */
+    private boolean dropTablesAtShutdown = false;
+    /**
+     * boolean indicating whether to wrap each imported file in it's own
+     * transaction. this is a new option in D5.5 that has changed the method
+     * signature of atg.adapter.gsa.xml.TemplateParser.importFiles() default: true
+     */
+    private boolean importWithTransaction = true;
+    private Properties sqlCreateFiles = new Properties();
+    private Properties sqlDropFiles = new Properties();
+    private boolean allowNoDrop = true;
+    private boolean executeCreateDropScripts = true;
+    private boolean loadColumnInfosAtInitialStartup = false;
+    // this property is a little tricky and a bit of a hack, but it
+    // allows us to create the tables, etc on startup. When the component
+    // is initially started this will be false, but when it calls restart,
+    // we set it to true for the new instantiation to avoid infinitely
+    // recursing into new repositories
+    private boolean temporaryInstantiation = false;
+    private boolean restartingAfterTableCreation = true;
+    private GSARepositorySchemaGenerator schemaGenerator;
 
     /**
      * If true then Apache DDLUtils will be used to generate the schema. Otherwise
@@ -79,67 +147,54 @@ public class InitializingGSA
      * @return the useDDLUtils
      */
     public boolean isUseDDLUtils() {
-        return mUseDDLUtils;
+        return useDDLUtils;
     }
 
     /**
      * If true then Apache DDLUtils will be used to generate the schema. Otherwise
      * the GSA generated SQL will be used.
      *
-     * @param pUseDDLUtils the useDDLUtils to set
+     * @param pUseDDLUtils
+     *         the useDDLUtils to set
      */
     public void setUseDDLUtils(boolean pUseDDLUtils) {
-        mUseDDLUtils = pUseDDLUtils;
+        useDDLUtils = pUseDDLUtils;
     }
 
-    // do we want to create tables if they don't exist
-    private boolean mCreateTables = true;
-
-    public void setCreateTables(boolean pCreate) {
-        mCreateTables = pCreate;
+    public void setCreateTables(boolean createTables) {
+        this.createTables = createTables;
     }
 
     public boolean isCreateTables() {
-        return mCreateTables;
+        return createTables;
     }
 
-    // do we want to drop tables that exist if we want to create
-    // a table with the same name
-    private boolean mDropTables = false;
-
-    public void setDropTablesIfExist(boolean pDrop) {
-        mDropTables = pDrop;
+    public void setDropTablesIfExist(boolean dropTablesIfExist) {
+        this.dropTablesIfExist = dropTablesIfExist;
     }
 
     public boolean isDropTablesIfExist() {
-        return mDropTables;
+        return dropTablesIfExist;
     }
 
-    // the XML files containing export data from the TemplateParser
-    // it will be imported into the database after tables are created
-    // we load the files as Files instead of XMLFiles because the
-    // TemplateParser requires a full file path to the import file
-    // instead of using the CONFIGPATH
+    public void setImportFiles(@Nullable File[] importFiles) {
+        this.importFiles = importFiles;
+    }
+
     @Nullable
-    private File[] mImportFiles = null;
-
-    public void setImportFiles(File[] pFiles) {
-        mImportFiles = pFiles;
-    }
-
     public File[] getImportFiles() {
-        return mImportFiles;
+        return importFiles;
     }
 
     public String[] getImportFilesAsStrings() {
         File[] f = getImportFiles();
-        if ( f == null ) {
+        if (f == null) {
             return null;
         }
 
         List<String> v = new ArrayList<String>();
-        for ( File aF : f ) {
-            if ( !v.contains(aF.getAbsolutePath()) ) {
+        for (File aF : f) {
+            if (!v.contains(aF.getAbsolutePath())) {
                 v.add(aF.getAbsolutePath());
             }
         }
@@ -147,105 +202,69 @@ public class InitializingGSA
         return v.toArray(new String[v.size()]);
     }
 
-    // do we want to strip the 'references(..)' statements from SQL
-    // created by the GSA
-    private boolean mStripReferences = true;
-
-    public void setStripReferences(boolean pStrip) {
-        mStripReferences = pStrip;
+    public void setStripReferences(boolean stripReferences) {
+        this.stripReferences = stripReferences;
     }
 
     public boolean isStripReferences() {
-        return mStripReferences;
+        return stripReferences;
     }
 
-    // do we want to show the create table statements that are executed
-    private boolean mShowCreate = false;
-
-    public void setLoggingCreateTables(boolean pLog) {
-        mShowCreate = pLog;
+    public void setLoggingCreateTables(boolean loggingCreateTables) {
+        this.loggingCreateTables = loggingCreateTables;
     }
 
     public boolean isLoggingCreateTables() {
-        return mShowCreate;
+        return loggingCreateTables;
     }
 
-    /*
-     * the SQLProcessorEngine to use for creating tables this property is optional
-     * because we'll create a default SQLProcessorEngine if the property isn't set
-     */
-    private SQLProcessorEngine mSQLProcessor = null;
-
-    public void setSQLProcessor(SQLProcessorEngine pEngine) {
-        mSQLProcessor = pEngine;
+    public void setSQLProcessor(SQLProcessorEngine processorEngine) {
+        this.processorEngine = processorEngine;
     }
 
     public SQLProcessorEngine getSQLProcessor() {
         // create a new processor if one isn't set
-        if ( mSQLProcessor == null ) {
-            mSQLProcessor = new SQLProcessorEngine(this);
-            mSQLProcessor.setLoggingDebug(this.isLoggingDebug());
-            mSQLProcessor.setLoggingError(this.isLoggingError());
-            mSQLProcessor.setLoggingInfo(this.isLoggingInfo());
-            mSQLProcessor.setLoggingWarning(this.isLoggingWarning());
+        if (processorEngine == null) {
+            processorEngine = new SQLProcessorEngine(this);
+            processorEngine.setLoggingDebug(this.isLoggingDebug());
+            processorEngine.setLoggingError(this.isLoggingError());
+            processorEngine.setLoggingInfo(this.isLoggingInfo());
+            processorEngine.setLoggingWarning(this.isLoggingWarning());
             LogListener[] listeners = this.getLogListeners();
-            for ( LogListener listener : listeners ) {
-                mSQLProcessor.addLogListener(listener);
+            for (LogListener listener : listeners) {
+                processorEngine.addLogListener(listener);
             }
         }
 
-        return mSQLProcessor;
+        return processorEngine;
     }
 
-    /**
-     * boolean indicating whether we should perform the import every time Dynamo
-     * starts, or only perform the import if we created at least one table. NOTE:
-     * if dropTablesIfExist is true, the import will occur every time because we
-     * will create tables every time. default: false - only perform the import
-     * when tables are created
-     */
-    private boolean mImportEveryStartup = false;
-
-    public void setImportEveryStartup(boolean pImport) {
-        mImportEveryStartup = pImport;
+    public void setImportEveryStartup(boolean importEveryStartup) {
+        this.importEveryStartup = importEveryStartup;
     }
 
     public boolean isImportEveryStartup() {
-        return mImportEveryStartup;
+        return importEveryStartup;
     }
 
-    /**
-     * boolean indicating whether we should drop all tables associated with this
-     * repository when Dynamo is shut down. NOTE: this will only work properly is
-     * Dynamo is shutdown properly. It will not work if Dynamo is just killed
-     * default: false
-     */
-    private boolean mDropTablesAtShutdown = false;
-
-    public void setDropTablesAtShutdown(boolean pDrop) {
-        mDropTablesAtShutdown = pDrop;
+    public void setDropTablesAtShutdown(boolean dropTablesAtShutdown) {
+        this.dropTablesAtShutdown = dropTablesAtShutdown;
     }
 
     public boolean isDropTablesAtShutdown() {
-        return mDropTablesAtShutdown;
+        return dropTablesAtShutdown;
     }
 
-    /**
-     * boolean indicating whether to wrap each imported file in it's own
-     * transaction. this is a new option in D5.5 that has changed the method
-     * signature of atg.adapter.gsa.xml.TemplateParser.importFiles() default: true
-     */
-    private boolean mImportWithTransaction = true;
+    // -------------------------------------------------------------------------
+    // Member properties
 
-    public void setImportWithTransaction(boolean pTran) {
-        mImportWithTransaction = pTran;
+    public void setImportWithTransaction(boolean importWithTransaction) {
+        this.importWithTransaction = importWithTransaction;
     }
 
     public boolean isImportWithTransaction() {
-        return mImportWithTransaction;
+        return importWithTransaction;
     }
-
-    private Properties mSqlCreateFiles = new Properties();
 
     /**
      * Optional mapping of user-specified sql files that should be executed
@@ -306,8 +325,8 @@ public class InitializingGSA
      * for the 'createSqlFile(s)' to run properly, so we err on the conservative
      * side and always reset it.
      */
-    public void setSqlCreateFiles(Properties pFiles) {
-        mSqlCreateFiles = pFiles;
+    public void setSqlCreateFiles(Properties sqlCreateFiles) {
+        this.sqlCreateFiles = sqlCreateFiles;
     }
 
     /**
@@ -316,10 +335,8 @@ public class InitializingGSA
      * 'setSqlCreateFiles' for detailed explanation of this property.
      */
     public Properties getSqlCreateFiles() {
-        return mSqlCreateFiles;
+        return sqlCreateFiles;
     }
-
-    private Properties mSqlDropFiles = new Properties();
 
     /**
      * returns optional mapping of user-specified sql files that should be
@@ -327,8 +344,8 @@ public class InitializingGSA
      * startSQLRepository. see 'setSqlCreateFiles' for detailed explanation of
      * this property.
      */
-    public void setSqlDropFiles(Properties pFiles) {
-        mSqlDropFiles = pFiles;
+    public void setSqlDropFiles(Properties sqlDropFiles) {
+        this.sqlDropFiles = sqlDropFiles;
     }
 
     /**
@@ -338,10 +355,8 @@ public class InitializingGSA
      * this property.
      */
     public Properties getSqlDropFiles() {
-        return mSqlDropFiles;
+        return sqlDropFiles;
     }
-
-    private boolean mAllowNoDrop = true;
 
     /**
      * If true, one may specify create scripts, but no drop scripts. Otherwise it
@@ -350,22 +365,25 @@ public class InitializingGSA
      * @return
      */
     public boolean isAllowNoDrop() {
-        return mAllowNoDrop;
+        return allowNoDrop;
     }
 
-    public void setAllowNotDrop(boolean pDrop) {
-        mAllowNoDrop = pDrop;
+    // -------------------------------------------------------------------------
+    // Methods
+
+    public void setAllowNotDrop(boolean allowNotDrop) {
+        allowNoDrop = allowNotDrop;
     }
 
-    private boolean mExecuteCreateDropScripts = true;
+    // -----------------------------------------
 
     /**
      * if set to true then create and drop scripts mapped through properties
      * 'setSqlCreateFiles' and 'getSqlCreateFiles' will be executed. otherwise the
      * scripts will not be executed at startup.
      */
-    public void setExecuteCreateAndDropScripts(boolean pExec) {
-        mExecuteCreateDropScripts = pExec;
+    public void setExecuteCreateAndDropScripts(boolean executeCreateAndDropScripts) {
+        executeCreateDropScripts = executeCreateAndDropScripts;
     }
 
     /**
@@ -373,17 +391,15 @@ public class InitializingGSA
      * 'setSqlCreateFiles' and 'getSqlCreateFiles' should be executed at startup.
      */
     public boolean isExecuteCreateAndDropScripts() {
-        return mExecuteCreateDropScripts;
+        return executeCreateDropScripts;
     }
-
-    private boolean mLoadColumnInfosAtInitialStartup = false;
 
     /**
      * returns true if the GSA should load JDBC metadata when starting the initial
      * instantiation of the component. default: false
      */
     public boolean isLoadColumnInfosAtInitialStartup() {
-        return mLoadColumnInfosAtInitialStartup;
+        return loadColumnInfosAtInitialStartup;
     }
 
     /**
@@ -395,31 +411,17 @@ public class InitializingGSA
      * uses the value of 'loadColumnInfosAtStartup' to determine whether to load
      * the metadata on the restart.
      */
-    public void setLoadColumnInfosAtInitialStartup(boolean pLoad) {
-        mLoadColumnInfosAtInitialStartup = pLoad;
+    public void setLoadColumnInfosAtInitialStartup(boolean loadColumnInfosAtInitialStartup) {
+        this.loadColumnInfosAtInitialStartup = loadColumnInfosAtInitialStartup;
     }
 
-    // -------------------------------------------------------------------------
-    // Member properties
-
-    // this property is a little tricky and a bit of a hack, but it
-    // allows us to create the tables, etc on startup. When the component
-    // is initially started this will be false, but when it calls restart,
-    // we set it to true for the new instantiation to avoid infinitely
-    // recursing into new repositories
-    private boolean mTemporaryInstantiation = false;
-
-    public void setIsTemporaryInstantiation(boolean pTemp) {
-        mTemporaryInstantiation = pTemp;
+    public void setTemporaryInstantiation(boolean pTemp) {
+        temporaryInstantiation = pTemp;
     }
 
     private boolean isTemporaryInstantiation() {
-        return mTemporaryInstantiation;
+        return temporaryInstantiation;
     }
-
-    private boolean mRestartAfterTableCreation = true;
-
-    private GSARepositorySchemaGenerator mGenerator;
 
     /**
      * Returns true if this repository will attempt to "restart" after creating
@@ -428,19 +430,16 @@ public class InitializingGSA
      * @return
      */
     public boolean isRestartingAfterTableCreation() {
-        return mRestartAfterTableCreation;
+        return restartingAfterTableCreation;
     }
 
     /**
      * Sets if this repository will attempt to "restart" after creating tables. A
      * value of true means that it should restart.
      */
-    public void setRestartingAfterTableCreation(boolean pRestart) {
-        mRestartAfterTableCreation = pRestart;
+    public void setRestartingAfterTableCreation(boolean restartingAfterTableCreation) {
+        this.restartingAfterTableCreation = restartingAfterTableCreation;
     }
-
-    // -------------------------------------------------------------------------
-    // Methods
 
     /**
      * Overrides doStartService from GSARepository to make the repository
@@ -450,14 +449,14 @@ public class InitializingGSA
     public void doStartService() {
         // Loading Column Infos in a separate thread
         // can deadlock the Initializing GSA
-        if ( isLoggingInfo() ) {
+        if (isLoggingInfo()) {
             logInfo("Setting loadColumnInfosInSeparateThread to false.");
         }
         setLoadColumnInfosInSeparateThread(false);
         // if this is the temporary instantiation, we just want to
         // call super.doStartService() and return
-        if ( isTemporaryInstantiation() ) {
-            if ( isLoggingInfo() ) {
+        if (isTemporaryInstantiation()) {
+            if (isLoggingInfo()) {
                 logInfo("Restarting the GSA component to successfully load XML templates...");
             }
             super.doStartService();
@@ -468,10 +467,10 @@ public class InitializingGSA
             // otherwise, this is the 'real' instantiation and we want to
             // do more....
 
-            if ( isLoggingInfo() ) {
+            if (isLoggingInfo()) {
                 logInfo("\nInitializing the primary GSA component and checking tables...");
             }
-            if ( isLoggingDebug() && this.getDebugLevel() <= 6 ) {
+            if (isLoggingDebug() && this.getDebugLevel() <= 6) {
                 logDebug("For additional debugging statements, set debugLevel > 6");
             }
 
@@ -499,17 +498,18 @@ public class InitializingGSA
             try {
                 loadColumnInfosAtStartup = isLoadColumnInfosAtStartup();
                 setLoadColumnInfosAtStartup(isLoadColumnInfosAtInitialStartup());
-                if ( isLoadColumnInfosAtInitialStartup() ) {
-                    if ( isLoggingInfo() ) {
+                if (isLoadColumnInfosAtInitialStartup()) {
+                    if (isLoggingInfo()) {
                         logInfo("Enabled loading of column info for initial startup");
                     }
-                } else {
-                    if ( isLoggingInfo() ) {
+                }
+                else {
+                    if (isLoggingInfo()) {
                         logInfo("Disabled loading of column info for initial startup");
                     }
                 }
-            } catch ( Throwable t ) {
-                if ( isLoggingDebug() ) {
+            } catch (Throwable t) {
+                if (isLoggingDebug()) {
                     logDebug("Could not modify loading of column metadata for preliminary startup.");
                 }
             }
@@ -520,7 +520,7 @@ public class InitializingGSA
             // reset 'LoadColumnInfosAtStartup' to whatever it was originally
             try {
                 setLoadColumnInfosAtStartup(loadColumnInfosAtStartup);
-            } catch ( Throwable t ) {
+            } catch (Throwable t) {
                 logError(t);
             }
 
@@ -531,7 +531,7 @@ public class InitializingGSA
 
             // now create the tables and restart the repository
             boolean createdTables = createTables();
-            if ( isRestartingAfterTableCreation() ) {
+            if (isRestartingAfterTableCreation()) {
                 restart();
             }
 
@@ -544,24 +544,23 @@ public class InitializingGSA
             // the XML definition file successfully :)
 
             // we're now ready to import specified XML files
-            if ( isImportEveryStartup() || createdTables ) {
+            if (isImportEveryStartup() || createdTables) {
                 importFiles();
-            } else {
-                if ( isLoggingInfo() ) {
+            }
+            else {
+                if (isLoggingInfo()) {
                     logInfo("Import not performed because importEveryStartup is false and no tables were created.");
                 }
             }
 
-            if ( isLoggingInfo() ) {
+            if (isLoggingInfo()) {
                 logInfo("Component finished starting up.");
             }
 
-        } catch ( Exception e ) {
+        } catch (Exception e) {
             logError("Caught an unexpected exception trying to start component...", e);
         }
     }
-
-    // -----------------------------------------
 
     /**
      * Restarts the repository. This involves re-reading nucleus properties,
@@ -569,7 +568,7 @@ public class InitializingGSA
      * is a convenience for development purposes (to avoid restarting dynamo when
      * a template has changed), and should not be used on a live site. This method
      * is modified slightly from the restart method of GSARepository because it
-     * sets mTemporaryInstantiation to true so that the doStartService method of
+     * sets temporaryInstantiation to true so that the doStartService method of
      * the new instance does not reload import files or try to recreate tables
      */
     public boolean restart()
@@ -601,16 +600,17 @@ public class InitializingGSA
 
         // we have to set the new repository as temporary so it won't call
         // restart and start an infinite recursion
-        newRepository.setIsTemporaryInstantiation(true);
+        newRepository.setTemporaryInstantiation(true);
 
         newRepository.startService(ev);
-        if ( newRepository.isRunning() ) {
-            synchronized ( this ) {
+        if (newRepository.isRunning()) {
+            synchronized (this) {
                 invalidateCaches();
                 copyFromOtherRepository(newRepository);
             }
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -629,14 +629,14 @@ public class InitializingGSA
         try {
             // clear out state in SchemaTracker
             SchemaTracker.getSchemaTracker().reset();
-            if ( isDropTablesAtShutdown() ) {
-                if ( isLoggingInfo() ) {
+            if (isDropTablesAtShutdown()) {
+                if (isLoggingInfo()) {
                     logInfo("Dropping tables because 'dropTablesAtShutdown' is true....");
                 }
                 dropTables();
             }
-        } catch ( Exception e ) {
-            if ( isLoggingError() ) {
+        } catch (Exception e) {
+            if (isLoggingError()) {
                 logError(e);
             }
         } finally {
@@ -647,18 +647,21 @@ public class InitializingGSA
     /**
      * This method drops all tables required by the GSARepository.
      *
-     * @throws RepositoryException   if an error occurs while retrieving a list of the tables
-     *                               associated with the repository
-     * @throws SQLProcessorException if an error occurred trying to drop the tables
+     * @throws RepositoryException
+     *         if an error occurs while retrieving a list of the tables
+     *         associated with the repository
+     * @throws SQLProcessorException
+     *         if an error occurred trying to drop the tables
      */
     public void dropTables()
             throws RepositoryException, SQLProcessorException {
         // execute SQL files, if specified
         String[] dropFiles = getSpecifiedDropFiles();
-        if ( dropFiles != null ) {
-            if ( isExecuteCreateAndDropScripts() ) {
+        if (dropFiles != null) {
+            if (isExecuteCreateAndDropScripts()) {
                 executeSqlFiles(dropFiles, false);
-            } else if ( isLoggingInfo() ) {
+            }
+            else if (isLoggingInfo()) {
                 logInfo("Skipping execution of SQL scripts b/c property 'executeCreateAndDropScripts' is false or there are no drop scripts.");
             }
             return;
@@ -666,19 +669,20 @@ public class InitializingGSA
 
         // otherwise, just drop tables based on startSQLRepository SQL
 
-        if ( isUseDDLUtils() ) {
+        if (isUseDDLUtils()) {
             try {
-                if ( !Nucleus.getGlobalNucleus().isStopping() ) {
+                if (!Nucleus.getGlobalNucleus().isStopping()) {
                     // build a new one
-                    mGenerator = new GSARepositorySchemaGenerator(this);
+                    schemaGenerator = new GSARepositorySchemaGenerator(this);
                 }
-                if ( mGenerator != null ) {
-                    mGenerator.dropSchema(true);
+                if (schemaGenerator != null) {
+                    schemaGenerator.dropSchema(true);
                 }
-            } catch ( DatabaseOperationException e ) {
+            } catch (DatabaseOperationException e) {
                 throw new RepositoryException(e);
             }
-        } else {
+        }
+        else {
             List<String> statements = getCreateStatements(null, null);
             SQLProcessorEngine processor = getSQLProcessor();
             processor.dropTablesFromCreateStatements(statements);
@@ -693,17 +697,20 @@ public class InitializingGSA
      * wants to drop existing tables
      *
      * @return boolean - true if tables were created
-     * @throws RepositoryException   if an error occurs while retrieving a list of the tables to
-     *                               create
-     * @throws SQLProcessorException if an error occurred trying to create the tables
+     *
+     * @throws RepositoryException
+     *         if an error occurs while retrieving a list of the tables to
+     *         create
+     * @throws SQLProcessorException
+     *         if an error occurred trying to create the tables
      */
     private boolean createTables()
             throws RepositoryException, SQLProcessorException {
         // execute SQL files, if specified
         String[] createFiles = getSpecifiedCreateFiles();
-        if ( createFiles != null ) {
-            if ( !isExecuteCreateAndDropScripts() ) {
-                if ( isLoggingInfo() ) {
+        if (createFiles != null) {
+            if (!isExecuteCreateAndDropScripts()) {
+                if (isLoggingInfo()) {
                     logInfo("Skipping execution of SQL scripts b/c property 'executeCreateAndDropScripts' is false.");
                 }
                 return false;
@@ -717,17 +724,18 @@ public class InitializingGSA
         // otherwise, just execute sql from startSQLRepository
         boolean createdTables = false;
 
-        if ( isUseDDLUtils() ) {
-            if ( isCreateTables() ) {
-                mGenerator = new GSARepositorySchemaGenerator(this);
+        if (isUseDDLUtils()) {
+            if (isCreateTables()) {
+                schemaGenerator = new GSARepositorySchemaGenerator(this);
                 try {
-                    mGenerator.createSchema(true, isDropTablesIfExist());
+                    schemaGenerator.createSchema(true, isDropTablesIfExist());
                     createdTables = true;
-                } catch ( DatabaseOperationException e ) {
+                } catch (DatabaseOperationException e) {
                     throw new RepositoryException(e);
                 }
             }
-        } else {
+        }
+        else {
             // Use GSA Generated SQL
             SQLProcessorEngine spe = getSQLProcessor();
             // turn on debug for SQLProcessorEngine if GSA has debug on if
@@ -744,38 +752,39 @@ public class InitializingGSA
     /**
      * This method imports files using the TemplateParser
      *
-     * @throws RepositoryException if an error occurred while importing one of the xml files.
+     * @throws RepositoryException
+     *         if an error occurred while importing one of the xml files.
      */
     private void importFiles()
             throws RepositoryException {
-        if ( isLoggingInfo() ) {
+        if (isLoggingInfo()) {
             logInfo("Importing files...");
         }
 
         String[] loadFiles = getImportFilesAsStrings();
         // just exit if no files were specified
-        if ( loadFiles == null ) {
-            if ( isLoggingInfo() ) {
+        if (loadFiles == null) {
+            if (isLoggingInfo()) {
                 logInfo("No files specified for import.");
             }
             return;
         }
 
-        if ( isLoggingDebug() ) {
+        if (isLoggingDebug()) {
             logDebug("The following files will be imported:");
-            for ( String loadFile : loadFiles ) {
+            for (String loadFile : loadFiles) {
                 logDebug("file: " + loadFile);
             }
         }
 
         // now load the import files if they were specified
         PrintWriter ps = new PrintWriter(System.out);
-        if ( loadFiles.length > 0 ) {
+        if (loadFiles.length > 0) {
             try {
                 TemplateParser.importFiles(
                         this, loadFiles, ps, isImportWithTransaction()
                 );
-            } catch ( Exception e ) {
+            } catch (Exception e) {
                 throw new RepositoryException(
                         "Exception caught importing files into repository.", e
                 );
@@ -790,9 +799,9 @@ public class InitializingGSA
      * tables.
      */
     private String stripReferences(String pStr) {
-        if ( isLoggingDebug() ) {
+        if (isLoggingDebug()) {
             logDebug("Removing references from SQL string...");
-            if ( this.getDebugLevel() > 6 ) {
+            if (this.getDebugLevel() > 6) {
                 logDebug("SQL string before references are removed: \n" + pStr);
             }
         }
@@ -810,12 +819,12 @@ public class InitializingGSA
         end = pStr.indexOf(ref);
 
         // if unable to find "references ", try "REFERENCES " instead
-        if ( end == -1 ) {
+        if (end == -1) {
             ref = ref.toUpperCase();
             end = pStr.indexOf(ref);
         }
 
-        while ( end != -1 ) {
+        while (end != -1) {
             String temp = pStr.substring(start, end);
             sb.append(temp);
             pStr = pStr.substring(end + ref.length());
@@ -825,7 +834,7 @@ public class InitializingGSA
         String temp2 = pStr.substring(start);
         sb.append(temp2);
 
-        if ( isLoggingDebug() ) {
+        if (isLoggingDebug()) {
             logDebug("Final sql string -> references removed: \n" + sb.toString());
         }
 
@@ -833,9 +842,9 @@ public class InitializingGSA
     }
 
     private String stripForeignKey(String pStr) {
-        if ( isLoggingDebug() ) {
+        if (isLoggingDebug()) {
             logDebug("Removing Foreign Key from SQL string...");
-            if ( this.getDebugLevel() > 6 ) {
+            if (this.getDebugLevel() > 6) {
                 logDebug("SQL string before Foreign Key are removed: \n" + pStr);
             }
         }
@@ -845,15 +854,16 @@ public class InitializingGSA
         int end = 0;
         end = pStr.toLowerCase().lastIndexOf(key);
 
-        while ( end != -1 ) {
+        while (end != -1) {
             flag = 1;
             pStr = pStr.substring(0, end);
             end = pStr.toLowerCase().lastIndexOf(key);
         }
         end = pStr.lastIndexOf(",");
-        if ( flag == 0 ) {
+        if (flag == 0) {
             return pStr;
-        } else {
+        }
+        else {
             return pStr.substring(0, end) + " )";
         }
     }
@@ -862,7 +872,8 @@ public class InitializingGSA
      * This method is used to retrieve all of the CREATE TABLE statements that are
      * needed to generate tables for this GSA
      *
-     * @throws RepositoryException if an error occurs with the Repository
+     * @throws RepositoryException
+     *         if an error occurs with the Repository
      */
     private List<String> getCreateStatements(PrintWriter pOut, String pDatabaseName)
             throws RepositoryException {
@@ -870,7 +881,7 @@ public class InitializingGSA
         List<String> indexStatements = new ArrayList<String>();
 
         // use current database if none is supplied
-        if ( pDatabaseName == null ) {
+        if (pDatabaseName == null) {
             pDatabaseName = getDatabaseName();
         }
 
@@ -881,31 +892,31 @@ public class InitializingGSA
         int i, length = descriptorNames.length;
 
         itemDescriptors = new GSAItemDescriptor[length];
-        for ( i = 0; i < length; i++ ) {
+        for (i = 0; i < length; i++) {
             itemDescriptors[i] = (GSAItemDescriptor) getItemDescriptor(descriptorNames[i]);
         }
 
         String create = null;
         String index = null;
-        for ( i = 0; i < length; i++ ) {
+        for (i = 0; i < length; i++) {
             GSAItemDescriptor desc = itemDescriptors[i];
             Table[] tables = desc.getTables();
-            if ( tables != null ) {
-                for ( Table t : tables ) {
-                    if ( !t.isInherited() ) {
+            if (tables != null) {
+                for (Table t : tables) {
+                    if (!t.isInherited()) {
                         sqlContext.clear();
                         create = t.generateSQL(sqlContext, pDatabaseName);
                         // get rid of any possible CREATE INDEX statements and store those
                         // in their own Vector of statements...
                         index = extractIndexStatement(create);
                         create = removeIndexStatements(create);
-                        if ( isStripReferences() ) {
+                        if (isStripReferences()) {
                             create = stripReferences(create);
                         }
-                        if ( index != null && !indexStatements.contains(index) ) {
+                        if (index != null && !indexStatements.contains(index)) {
                             indexStatements.add(index);
                         }
-                        if ( create != null && !tableStatements.contains(create) ) {
+                        if (create != null && !tableStatements.contains(create)) {
                             tableStatements.add(create);
                         }
                     }
@@ -928,7 +939,7 @@ public class InitializingGSA
         String search = "CREATE INDEX ";
         String copy = pStatement.toUpperCase();
         int i = copy.indexOf(search);
-        if ( i != -1 ) {
+        if (i != -1) {
             return stripTrailingSemiColon(pStatement.substring(i));
         }
 
@@ -944,7 +955,7 @@ public class InitializingGSA
         String search = "CREATE INDEX ";
         String copy = pStatement.toUpperCase();
         int i = copy.indexOf(search);
-        if ( i != -1 ) {
+        if (i != -1) {
             pStatement = pStatement.substring(0, i);
         }
 
@@ -957,38 +968,16 @@ public class InitializingGSA
      * if there is one everything after the semicolon is junk.
      */
     private String stripTrailingSemiColon(String pStr) {
-        if ( pStr == null ) {
+        if (pStr == null) {
             return pStr;
         }
         int idx = pStr.indexOf(";");
-        if ( idx != -1 ) {
+        if (idx != -1) {
             pStr = pStr.substring(0, idx);
         }
 
         return pStr;
     }
-
-    // ---------- methods to help with user-specified SQL files -----------
-    // allowable db types to specify
-    private final String SOLID = "solid";
-
-    private final String ORACLE = "oracle";
-
-    private final String MICROSOFT = "microsoft";
-
-    private final String INFORMIX = "informix";
-
-    private final String DB2 = "db2";
-
-    private final String SYBASE = "sybase";
-
-    private final String SYBASE2 = "Adaptive Server Enterprise"; // sybase 12.5
-
-    private final String DEFAULT = "default";
-
-    private final String[] dbTypes = {
-            SOLID, ORACLE, MICROSOFT, INFORMIX, DB2, SYBASE, SYBASE2, DEFAULT
-    };
 
     /**
      * returns the dbtype for the database being used. returned value will be one
@@ -997,9 +986,9 @@ public class InitializingGSA
      */
     private String getDatabaseType() {
         String type = getDatabaseName();
-        for ( String dbType : dbTypes ) {
-            if ( type.toLowerCase().contains(dbType.toLowerCase()) ) {
-                if ( dbType.equals(SYBASE2) ) {
+        for (String dbType : dbTypes) {
+            if (type.toLowerCase().contains(dbType.toLowerCase())) {
+                if (dbType.equals(SYBASE2)) {
                     return SYBASE;
                 }
                 return dbType;
@@ -1012,25 +1001,26 @@ public class InitializingGSA
      * returns array of user-specified SQL files that should be executed, or null
      * if output from startSQLRepository should be used.
      *
-     * @throws RepositoryException if an error occurs getting the array of files to execute
+     * @throws RepositoryException
+     *         if an error occurs getting the array of files to execute
      */
     private String[] getSpecifiedCreateFiles()
             throws RepositoryException {
         // try to get mapped value for this specific db type, and if it's empty try
         // the default
         String files = (String) getSqlCreateFiles().get(getDatabaseType());
-        if ( files == null ) {
+        if (files == null) {
             files = (String) getSqlCreateFiles().get(DEFAULT);
         }
         // if it's still empty then just return b/c there's nothing to execute
-        if ( files == null ) {
+        if (files == null) {
             return null;
         }
 
         // if file list is not null, convert it and return the array
         try {
             return TestUtils.convertFileArray(files, ":");
-        } catch ( Exception e ) {
+        } catch (Exception e) {
             throw new RepositoryException(e);
         }
     }
@@ -1039,25 +1029,26 @@ public class InitializingGSA
      * returns array of user-specified SQL files that should be executed, or null
      * if output from startSQLRepository should be used.
      *
-     * @throws RepositoryException if an error occurs getting the array of files to execute
+     * @throws RepositoryException
+     *         if an error occurs getting the array of files to execute
      */
     private String[] getSpecifiedDropFiles()
             throws RepositoryException {
         // try to get mapped value for this specific db type, and if it's empty try
         // the default
         String files = (String) getSqlDropFiles().get(getDatabaseType());
-        if ( files == null ) {
+        if (files == null) {
             files = (String) getSqlDropFiles().get(DEFAULT);
         }
         // if it's still empty then just return b/c there's nothing to execute
-        if ( files == null ) {
+        if (files == null) {
             return null;
         }
 
         // if file list is not null, convert it and return the array
         try {
             return TestUtils.convertFileArray(files, ":");
-        } catch ( Exception e ) {
+        } catch (Exception e) {
             throw new RepositoryException(e);
         }
     }
@@ -1067,15 +1058,16 @@ public class InitializingGSA
      * the user mapped a 'createSqlFile' for a db type there is a corresponding
      * 'dropSqlFile' entry, and vice-versa.
      *
-     * @throws RepositoryException if anything is wrong
+     * @throws RepositoryException
+     *         if anything is wrong
      */
     private void validateUserSpecifiedSqlFiles()
             throws RepositoryException {
         // don't let them be null
-        if ( getSqlCreateFiles() == null ) {
+        if (getSqlCreateFiles() == null) {
             setSqlCreateFiles(new Properties());
         }
-        if ( getSqlDropFiles() == null ) {
+        if (getSqlDropFiles() == null) {
             setSqlDropFiles(new Properties());
         }
         // make sure all the keys are valid
@@ -1083,48 +1075,48 @@ public class InitializingGSA
         keys.addAll(getSqlCreateFiles().keySet());
         keys.addAll(getSqlDropFiles().keySet());
         Set<String> allow_keys = new HashSet<String>();
-        for ( String dbType1 : dbTypes ) {
+        for (String dbType1 : dbTypes) {
             keys.remove(dbType1);
-            if ( !dbType1.equals(SYBASE2) ) {
+            if (!dbType1.equals(SYBASE2)) {
                 allow_keys.add(dbType1);
             }
         }
-        if ( keys.size() > 0 ) {
+        if (keys.size() > 0) {
             throw new RepositoryException(
                     "The following keys used in the 'sqlCreateFiles' and/or 'sqlDropFiles' properties "
-                    + "are invalid: "
-                    + keys
-                    + ".  Allowable keys are: "
-                    + allow_keys
+                            + "are invalid: "
+                            + keys
+                            + ".  Allowable keys are: "
+                            + allow_keys
             );
         }
 
         boolean isDefaultCreate = (getSqlCreateFiles().get(DEFAULT) != null);
         boolean isDefaultDrop = (getSqlDropFiles().get(DEFAULT) != null);
         // if there are defaults it will always be ok, so just return
-        if ( isDefaultCreate && isDefaultDrop ) {
+        if (isDefaultCreate && isDefaultDrop) {
             return;
         }
 
         // otherwise, check each dbType individually
-        for ( String dbType : dbTypes ) {
+        for (String dbType : dbTypes) {
             boolean isCreate = (getSqlCreateFiles().get(dbType) != null);
             boolean isDrop = (getSqlDropFiles().get(dbType) != null);
-            if ( !isAllowNoDrop() ) {
-                if ( isCreate && !isDrop && !isDefaultDrop ) {
+            if (!isAllowNoDrop()) {
+                if (isCreate && !isDrop && !isDefaultDrop) {
                     throw new RepositoryException(
                             "Mapping exists for database type "
-                            + dbType
-                            + " in property 'sqlCreateFiles', but not in property 'sqlDropFiles', and "
-                            + "there is no default specified."
+                                    + dbType
+                                    + " in property 'sqlCreateFiles', but not in property 'sqlDropFiles', and "
+                                    + "there is no default specified."
                     );
                 }
-                if ( isDrop && !isCreate && !isDefaultCreate ) {
+                if (isDrop && !isCreate && !isDefaultCreate) {
                     throw new RepositoryException(
                             "Mapping exists for database type "
-                            + dbType
-                            + " in property 'sqlDropFiles', but not in property 'sqlCreateFiles', and "
-                            + "there is no default specified."
+                                    + dbType
+                                    + " in property 'sqlDropFiles', but not in property 'sqlCreateFiles', and "
+                                    + "there is no default specified."
                     );
                 }
             }
@@ -1134,12 +1126,15 @@ public class InitializingGSA
     /**
      * executes the specified SQL files against this Repository's DataSource.
      *
-     * @param pFiles       the files to execute
-     * @param pStopAtError true if execution should stop at first error. if false, then
-     *                     a warning will be printed for encountered errors.
+     * @param pFiles
+     *         the files to execute
+     * @param pStopAtError
+     *         true if execution should stop at first error. if false, then
+     *         a warning will be printed for encountered errors.
      *
-     * @throws RepositoryException if pStopAtError is true and an error occurs while executing
-     *                             one of the sql statements.
+     * @throws RepositoryException
+     *         if pStopAtError is true and an error occurs while executing
+     *         one of the sql statements.
      */
     private void executeSqlFiles(String[] pFiles, boolean pStopAtError)
             throws RepositoryException {
@@ -1160,26 +1155,26 @@ public class InitializingGSA
             // if (getDatabaseType().equals(MICROSOFT))
             //  sp.setAutoCommit(true);
             SQLFileParser parser = new SQLFileParser();
-            for ( String file : pFiles ) {
+            for (String file : pFiles) {
                 // switch the file path so everything is forward slashes
                 file = file.replace('\\', '/');
                 String cmd;
                 Iterator cmds;
-                if ( isLoggingInfo() ) {
+                if (isLoggingInfo()) {
                     logInfo("Executing SQL file: " + file);
                 }
-                if ( !new File(file).exists() ) {
+                if (!new File(file).exists()) {
                     throw new RepositoryException("SQL file " + file + " does not exist.");
                 }
 
                 // parse the file to get commands...
                 try {
                     Collection c = parser.parseSQLFile(file);
-                    if ( isLoggingDebug() ) {
+                    if (isLoggingDebug()) {
                         logDebug("Parsed " + c.size() + " SQL command(s) from file.");
                     }
                     cmds = c.iterator();
-                } catch ( Exception e ) {
+                } catch (Exception e) {
                     // an error parsing the file indicates something very wrong, so bail
                     throw new RepositoryException(
                             "Error encountered parsing SQL file " + file, e
@@ -1187,33 +1182,34 @@ public class InitializingGSA
                 }
 
                 // then execute the commands...
-                while ( cmds.hasNext() ) {
+                while (cmds.hasNext()) {
                     cmd = (String) cmds.next();
-                    if ( cmd.trim().length() == 0 ) {
+                    if (cmd.trim().length() == 0) {
                         continue;
                     }
-                    if ( isLoggingDebug() || isLoggingCreateTables() ) {
+                    if (isLoggingDebug() || isLoggingCreateTables()) {
                         logDebug("Executing SQL cmd [" + cmd + "]");
                     }
                     try {
                         sp.executeSQL(cmd);
-                    } catch ( Exception e ) {
-                        if ( pStopAtError ) {
+                    } catch (Exception e) {
+                        if (pStopAtError) {
                             throw new RepositoryException(
                                     "Error received executing command ["
-                                    + cmd
-                                    + "] from SQL file "
-                                    + file, e
+                                            + cmd
+                                            + "] from SQL file "
+                                            + file, e
                             );
-                        } else {
-                            if ( isLoggingWarning() ) {
+                        }
+                        else {
+                            if (isLoggingWarning()) {
                                 logWarning(
                                         "Error received executing command ["
-                                        + cmd
-                                        + "] from SQL file "
-                                        + file
-                                        + ": "
-                                        + e.getMessage()
+                                                + cmd
+                                                + "] from SQL file "
+                                                + file
+                                                + ": "
+                                                + e.getMessage()
                                 );
                             }
                         }
@@ -1221,16 +1217,15 @@ public class InitializingGSA
                 }
             }
             success = true;
-        } catch ( TransactionDemarcationException e ) {
+        } catch (TransactionDemarcationException e) {
             logError(e);
         } finally {
             try {
                 td.end(!success);
-            } catch ( TransactionDemarcationException e ) {
+            } catch (TransactionDemarcationException e) {
                 logError(e);
             }
         }
     }
 
-} // end of class
-
+}
