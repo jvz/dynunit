@@ -27,7 +27,7 @@ public final class SchemaTracker {
     private SchemaTracker() {}
 
     private static interface Holder {
-        public static final SchemaTracker instance = new SchemaTracker();
+        static final SchemaTracker instance = new SchemaTracker();
     }
 
     public static SchemaTracker getInstance() {
