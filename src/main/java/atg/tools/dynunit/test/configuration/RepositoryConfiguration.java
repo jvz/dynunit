@@ -23,7 +23,6 @@ import atg.service.idgen.SQLIdGenerator;
 import atg.service.jdbc.FakeXADataSource;
 import atg.service.jdbc.MonitoredDataSource;
 import atg.tools.dynunit.adapter.gsa.InitializingGSA;
-import atg.tools.dynunit.test.util.FileUtil;
 import atg.tools.dynunit.util.ComponentUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +52,6 @@ public final class RepositoryConfiguration
         extends ConfigurationProvider {
 
     // TODO: re-add versioned repository support?
-    // TODO: better/more uniform way of handling properties file creation
 
     private static final Logger logger = LogManager.getLogger();
 
@@ -213,38 +211,24 @@ public final class RepositoryConfiguration
     }
 
     @Deprecated
-    public void createFakeXADataSource(@NotNull final File root, Map<String, String> jdbcSettings)
+    public synchronized void createFakeXADataSource(@NotNull final File root, Map<String, String> jdbcSettings)
             throws IOException {
-
-        // TODO: Something expects the url property name in upper case... still
-        // have
-        // to investigate.
-        jdbcSettings.put("URL", jdbcSettings.get("url"));
-
-        // remove the lower case url key/value pair so the generated
-        // FakeXADataSource.properties only contains the upper case URL
-        // key/value.
-        jdbcSettings.remove("url");
-
-        jdbcSettings.put(
-                "transactionManager", "/atg/dynamo/transaction/TransactionManager"
-        );
-
-        FileUtil.createPropertyFile(
-                "FakeXADataSource", new File(
-                root.getAbsolutePath() + "/atg/dynamo/service/jdbc"
-        ), FakeXADataSource.class, jdbcSettings
-        );
-
-        // restore the settings state (re-add url and remove URL)
-        jdbcSettings.put("url", jdbcSettings.get("URL"));
-        jdbcSettings.remove("URL");
+        logger.entry(root, jdbcSettings);
+        final File oldRoot = getRoot();
+        setRoot(root);
+        final Properties properties = new Properties();
+        for (final Map.Entry<String, String> entry : jdbcSettings.entrySet()) {
+            properties.setProperty(entry.getKey(), entry.getValue());
+        }
+        createFakeXADataSource(properties);
+        setRoot(oldRoot);
+        logger.exit();
     }
 
     /**
      * @param root
      * @param repositoryPath
-     * @param droptables
+     * @param dropTables
      *         <code>true</code> then existing tables will be dropped after
      *         the test run, if <code>false</code> then leave the existing
      *         tables alone
@@ -258,54 +242,18 @@ public final class RepositoryConfiguration
      * @throws IOException
      */
     @Deprecated
-    public void createRepositoryConfiguration(final File root,
-                                              final String repositoryPath,
-                                              final boolean droptables,
-                                              final boolean createTables,
-                                              final String... definitionFiles)
+    public synchronized void createRepositoryConfiguration(final File root,
+                                                           final String repositoryPath,
+                                                           final boolean dropTables,
+                                                           final boolean createTables,
+                                                           final String... definitionFiles)
             throws IOException {
-
-        this.settings.clear();
-
-        final StringBuilder defFiles = new StringBuilder();
-        for (String definitionFile : definitionFiles) {
-            defFiles.append("/").append(definitionFile);
-        }
-        settings.put("definitionFiles", defFiles.toString());
-
-        settings.put(
-                "XMLToolsFactory", "/atg/dynamo/service/xml/XMLToolsFactory"
-        );
-        settings.put(
-                "transactionManager", "/atg/dynamo/transaction/TransactionManager"
-        );
-        settings.put("idGenerator", "/atg/dynamo/service/IdGenerator");
-        settings.put("dataSource", "/atg/dynamo/service/jdbc/JTDataSource");
-
-        settings.put("lockManager", "/atg/dynamo/service/ClientLockManager");
-        settings.put("idspaces", "/atg/dynamo/service/idspaces.xml");
-        settings.put("groupContainerPath", "/atg/registry/RepositoryGroups");
-        settings.put("restartingAfterTableCreation", "false");
-        settings.put("createTables", Boolean.toString(createTables));
-        settings.put("loggingError", "true");
-        settings.put("loggingDebug", debug());
-        settings.put("loggingCreateTables", debug());
-        settings.put("debugLevel", "7");
-
-        // InitializingGSA specific properties
-        settings.put("dropTablesIfExist", Boolean.toString(droptables));
-        settings.put("dropTablesAtShutdown", Boolean.toString(droptables));
-        settings.put("stripReferences", "true");
-        final int endIndex = repositoryPath.lastIndexOf("/");
-        final String repositoryDir = repositoryPath.substring(0, endIndex);
-        final String repositoryName = repositoryPath.substring(
-                endIndex + 1, repositoryPath.length()
-        );
-        final File newRoot = new File(root, repositoryDir);
-        newRoot.mkdirs();
-        FileUtil.createPropertyFile(
-                repositoryName, newRoot, InitializingGSA.class, settings
-        );
+        logger.entry(root, repositoryPath, dropTables, createTables, definitionFiles);
+        final File oldRoot = getRoot();
+        setRoot(root);
+        createRepository(repositoryPath, dropTables, createTables, definitionFiles);
+        setRoot(oldRoot);
+        logger.exit();
     }
 
 }
