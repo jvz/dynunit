@@ -40,15 +40,61 @@ import java.sql.SQLException;
 public class DerbyDataSource
         extends InitializingDataSourceBase {
 
-    private static final Logger sLog = LogManager.getLogger();
-
+    private static final Logger logger = LogManager.getLogger();
+    private static final String EMBEDDED_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
+    private static final String PROTOCOL = "jdbc:derby:";
     private String framework = "embedded";
+    private boolean addedShutdownHook = false;
 
-    private final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
+    /**
+     * Shuts down derby
+     *
+     * @param name
+     */
+    private static void shutdown(String name) {
+        try {
+            // the shutdown=true attribute shuts down Derby
+            DriverManager.getConnection(PROTOCOL + name + ";shutdown=true");
 
-    private final String protocol = "jdbc:derby:";
+            // To shut down a specific database only, but keep the
+            // engine running (for example for connecting to other
+            // databases), specify a database in the connection URL:
+            // DriverManager.getConnection("jdbc:derby:" + dbName +
+            // ";shutdown=true");
+        } catch (SQLException se) {
 
-    private final boolean mAddedShutdownHook = false;
+            if (((se.getErrorCode() == 50000) && ("XJ015".equals(se.getSQLState())))) {
+                // we got the expected exception
+                logger.info("Derby shut down normally");
+                // Note that for single database shutdown, the expected
+                // SQL state is "08006", and the error code is 45000.
+            }
+            else if ((se.getErrorCode() == 45000) && ("08006".equals(se.getSQLState()))) {
+                logger.trace("Derby was already shut down.");
+                // database is already shutdown
+            }
+            else {
+                // if the error code or SQLState is different, we have
+                // an unexpected exception (shutdown failed)
+                logger.error("Derby did not shut down normally", se);
+                logSQLException(se);
+            }
+        }
+
+    }
+
+    /**
+     * Logs details of an SQLException chain. Details included are SQL State, Error code, Exception message.
+     *
+     * @param e
+     *         the SQLException from which to print details.
+     */
+    private static void logSQLException(@Nullable SQLException e) {
+        for (; e != null; e = e.getNextException()) {
+            logger.error("SQL State: {}. Error Code: {}. Message: {}.", e.getSQLState(),
+                    e.getErrorCode(), e.getMessage());
+        }
+    }
 
     /**
      * Sets Derby JDBC properties to be used when the first client asks for a
@@ -57,10 +103,10 @@ public class DerbyDataSource
     @Override
     public void doStartService()
             throws ServiceException {
-        sLog.trace("Starting up Derby data source");
+        logger.trace("Starting up Derby data source");
         loadDriver();
-        this.setURL(protocol + getDatabaseName() + ";create=true");
-        this.setDriver(driver);
+        this.setURL(PROTOCOL + getDatabaseName() + ";create=true");
+        this.setDriver(EMBEDDED_DRIVER);
         this.setUser("user1");
         this.setPassword("user1");
     }
@@ -75,7 +121,7 @@ public class DerbyDataSource
         // We can't shutdown now because not all dynamo services
         // that depend on us are guaranteed to be stopped when this method is
         // invoked.
-        if ( !mAddedShutdownHook ) {
+        if (!addedShutdownHook) {
             addShutdownHook(getDatabaseName());
         }
     }
@@ -94,89 +140,38 @@ public class DerbyDataSource
                     }
                 }
         );
-    }
-
-    /**
-     * Shuts down derby
-     *
-     * @param name
-     */
-    private static void shutdown(String name) {
-        try {
-            // the shutdown=true attribute shuts down Derby
-            DriverManager.getConnection("jdbc:derby:" + name + ";shutdown=true");
-
-            // To shut down a specific database only, but keep the
-            // engine running (for example for connecting to other
-            // databases), specify a database in the connection URL:
-            // DriverManager.getConnection("jdbc:derby:" + dbName +
-            // ";shutdown=true");
-        } catch ( SQLException se ) {
-
-            if ( ((se.getErrorCode() == 50000) && ("XJ015".equals(se.getSQLState()))) ) {
-                // we got the expected exception
-                sLog.info("Derby shut down normally");
-                // Note that for single database shutdown, the expected
-                // SQL state is "08006", and the error code is 45000.
-            } else if ( (se.getErrorCode() == 45000) && ("08006".equals(se.getSQLState())) ) {
-                sLog.trace("Derby was already shut down.");
-                // database is already shutdown
-            } else {
-                // if the error code or SQLState is different, we have
-                // an unexpected exception (shutdown failed)
-                sLog.error("Derby did not shut down normally", se);
-                printSQLException(se);
-            }
-        }
-
-    }
-
-    /**
-     * Prints details of an SQLException chain to <code>System.err</code>. Details
-     * included are SQL State, Error code, Exception message.
-     *
-     * @param e the SQLException from which to print details.
-     */
-    private static void printSQLException(@Nullable SQLException e) {
-        // Unwraps the entire exception chain to unveil the real cause of the
-        // Exception.
-        while ( e != null ) {
-            sLog.error("SQL State: {}. Error Code: {}. Message: {}.", e.getSQLState(),
-                       e.getErrorCode(), e.getMessage());
-            e = e.getNextException();
-        }
+        addedShutdownHook = true;
     }
 
     /**
      * Loads the appropriate JDBC driver for this environment/framework. For
      * example, if we are in an embedded environment, we load Derby's embedded
      * Driver, <code>org.apache.derby.jdbc.EmbeddedDriver</code>.
-     */
-    private void loadDriver() {
-    /*
+     * <p/>
      * The JDBC driver is loaded by loading its class. If you are using JDBC 4.0
      * (Java SE 6) or newer, JDBC drivers may be automatically loaded, making
      * this code optional.
-     *
+     * <p/>
      * In an embedded environment, this will also start up the Derby engine
      * (though not any databases), since it is not already running. In a client
      * environment, the Derby engine is being run by the network server
      * framework.
-     *
+     * <p/>
      * In an embedded environment, any static Derby system properties must be
      * set before loading the driver to take effect.
      */
+    private void loadDriver() {
         try {
-            Class.forName(driver).newInstance();
-        } catch ( ClassNotFoundException cnfe ) {
-            sLog.catching(cnfe);
-            sLog.error("Unable to load the JDBC driver {}", driver);
-        } catch ( InstantiationException ie ) {
-            sLog.catching(ie);
-            sLog.error("Unable to instantiate the JDBC driver {}", driver);
-        } catch ( IllegalAccessException iae ) {
-            sLog.catching(iae);
-            sLog.error("Not allowed to access the JDBC driver {}", driver);
+            Class.forName(EMBEDDED_DRIVER).newInstance();
+        } catch (ClassNotFoundException cnfe) {
+            logger.catching(cnfe);
+            logger.error("Unable to load the JDBC driver {}", EMBEDDED_DRIVER);
+        } catch (InstantiationException ie) {
+            logger.catching(ie);
+            logger.error("Unable to instantiate the JDBC driver {}", EMBEDDED_DRIVER);
+        } catch (IllegalAccessException iae) {
+            logger.catching(iae);
+            logger.error("Not allowed to access the JDBC driver {}", EMBEDDED_DRIVER);
         }
     }
 
