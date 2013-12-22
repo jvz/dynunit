@@ -628,7 +628,7 @@ public class InitializingGSA
     public void doStopService() {
         try {
             // clear out state in SchemaTracker
-            SchemaTracker.getSchemaTracker().reset();
+            SchemaTracker.getInstance().reset();
             if (isDropTablesAtShutdown()) {
                 if (isLoggingInfo()) {
                     logInfo("Dropping tables because 'dropTablesAtShutdown' is true....");

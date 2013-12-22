@@ -192,9 +192,7 @@ public class GSARepositorySchemaGenerator {
                 // repository that is reusing a table for multiple
                 // purposes
 
-                List<GSARepository> repositoriesUsingTable = SchemaTracker.getSchemaTracker()
-                                                                          .getTableToRepository()
-                                                                          .get(table.getName());
+                List<GSARepository> repositoriesUsingTable = SchemaTracker.getInstance().getTable(table.getName());
                 // Skip if we have added this table
                 // and it is already in the model
                 // Actually, checking the model
@@ -225,9 +223,7 @@ public class GSARepositorySchemaGenerator {
                     repositoriesUsingTable = new ArrayList<GSARepository>();
                     repositoriesUsingTable.add(pRepository);
                 }
-                SchemaTracker.getSchemaTracker().getTableToRepository().put(
-                        table.getName(), repositoriesUsingTable
-                );
+                SchemaTracker.getInstance().putTable(table.getName(), repositoriesUsingTable);
             }
         }
     }

@@ -17,46 +17,37 @@
 package atg.tools.dynunit.adapter.gsa;
 
 import atg.adapter.gsa.GSARepository;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class SchemaTracker {
+public final class SchemaTracker {
 
-    private HashMap<String, List<GSARepository>> mTableToRepository = new HashMap<String, List<GSARepository>>();
+    private SchemaTracker() {}
 
-    /**
-     * @return the tableToRepository
-     */
-    public HashMap<String, List<GSARepository>> getTableToRepository() {
-        return mTableToRepository;
+    private static interface Holder {
+        public static final SchemaTracker instance = new SchemaTracker();
     }
 
-    /**
-     * @param pTableToRepository the tableToRepository to set
-     */
-    public void setTableToRepository(HashMap<String, List<GSARepository>> pTableToRepository) {
-        mTableToRepository = pTableToRepository;
+    public static SchemaTracker getInstance() {
+        return Holder.instance;
     }
 
-    @Nullable
-    private static SchemaTracker sSchemaTracker = null;
+    private final Map<String, List<GSARepository>> tableRepositoryCache = new ConcurrentHashMap<String, List<GSARepository>>();
 
-    private SchemaTracker() {
+    public List<GSARepository> getTable(final String table) {
+        return tableRepositoryCache.get(table);
     }
 
-    public static SchemaTracker getSchemaTracker() {
-        if ( sSchemaTracker == null ) {
-            sSchemaTracker = new SchemaTracker();
-        }
-        return sSchemaTracker;
+    public void putTable(final String table, final List<GSARepository> repositories) {
+        tableRepositoryCache.put(table, repositories);
     }
 
     /**
      * Resets the state in this class.
      */
     public void reset() {
-        mTableToRepository.clear();
+        tableRepositoryCache.clear();
     }
 }
