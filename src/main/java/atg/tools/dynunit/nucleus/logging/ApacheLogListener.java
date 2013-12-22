@@ -2,6 +2,7 @@ package atg.tools.dynunit.nucleus.logging;
 
 import atg.nucleus.logging.DebugLogEvent;
 import atg.nucleus.logging.ErrorLogEvent;
+import atg.nucleus.logging.ExternalLogSystemLogListener;
 import atg.nucleus.logging.InfoLogEvent;
 import atg.nucleus.logging.LogEvent;
 import atg.nucleus.logging.LogListener;
@@ -18,32 +19,32 @@ import org.apache.logging.log4j.Logger;
  * @version 1.0.0
  */
 public class ApacheLogListener
-        implements LogListener {
+        extends ExternalLogSystemLogListener
+implements LogListener {
 
     @Override
     public void logEvent(final LogEvent logEvent) {
         if (logEvent == null) {
             return;
         }
-        log(
-                getLoggerForEvent(logEvent),
-                getLoggingLevelForEvent(logEvent),
-                getLogMessageForEvent(logEvent),
-                getExceptionForEvent(logEvent)
-        );
+        final Logger logger = getLoggerForEvent(logEvent);
+        final Level level = getLoggingLevelForEvent(logEvent);
+        final String message = logEvent.getMessage();
+        final Throwable exception = logEvent.getThrowable();
+        logger.log(level, message, exception);
     }
 
-    private static Logger getLoggerForEvent(final LogEvent logEvent) {
-        final String originator = logEvent.getOriginator();
-        return originator == null ? LogManager.getRootLogger() : LogManager.getLogger(originator);
+    private Logger getLoggerForEvent(final LogEvent logEvent) {
+        final String originator = getPseudoClassNameForNucleusPath(logEvent.getOriginator());
+        return LogManager.getLogger(originator);
     }
 
-    private static Level getLoggingLevelForEvent(final LogEvent logEvent) {
+    private Level getLoggingLevelForEvent(final LogEvent logEvent) {
         if (logEvent instanceof TraceLogEvent) {
-            return Level.TRACE;
+            return isUseInfoForDebug() ? Level.INFO : Level.TRACE;
         }
         if (logEvent instanceof DebugLogEvent) {
-            return Level.DEBUG;
+            return isUseInfoForDebug() ? Level.INFO : Level.DEBUG;
         }
         if (logEvent instanceof InfoLogEvent) {
             return Level.INFO;
@@ -54,26 +55,6 @@ public class ApacheLogListener
         if (logEvent instanceof ErrorLogEvent) {
             return Level.ERROR;
         }
-        return Level.FATAL;
-    }
-
-    private static String getLogMessageForEvent(final LogEvent logEvent) {
-        return logEvent.getMessage();
-    }
-
-    private static Throwable getExceptionForEvent(final LogEvent logEvent) {
-        return logEvent.getThrowable();
-    }
-
-    private static void log(final Logger logger,
-                            final Level logLevel,
-                            final String logMessage,
-                            final Throwable exception) {
-        if (exception == null) {
-            logger.log(logLevel, logMessage);
-        }
-        else {
-            logger.log(logLevel, logMessage, exception);
-        }
+        return Level.INFO;
     }
 }
