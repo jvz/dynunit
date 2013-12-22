@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package atg.tools.dynunit.test.configuration;
 
 import atg.adapter.gsa.event.GSAEventServer;
@@ -32,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -65,9 +65,6 @@ public final class RepositoryConfiguration
     private File atgService;
     private File atgJdbc;
     private File atgServer;
-
-    @Deprecated
-    private final Map<String, String> settings = new HashMap<String, String>();
 
     private String debug() {
         return Boolean.toString(isDebug());
