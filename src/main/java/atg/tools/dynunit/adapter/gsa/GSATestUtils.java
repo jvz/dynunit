@@ -198,7 +198,7 @@ public class GSATestUtils {
 
         // we have to set the new repository as temporary so it won't call
         // restart and start an infinite recursion
-        //    newRepository.setIsTemporaryInstantiation(true);
+        //    newRepository.setTemporaryInstantiation(true);
 
         // But don't load data
         if (newRepository instanceof InitializingGSA) {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE id-spaces SYSTEM "http://www.atg.com/dtds/idgen/idgenerator_1.0.dtd">
+<id-spaces>
+    <id-space name="__default__" seed="1" batch-size="100000"/>
+    <id-space name="jms_msg_ids" seed="0" batch-size="10000"/>
+    <id-space name="layer" seed="0" batch-size="100"/>
+</id-spaces>

@@ -288,7 +288,7 @@ public final class ComponentUtil {
                 out.write(canonicalClassName);
                 out.newLine();
             }
-            properties.store(out, null);
+            properties.store(out, canonicalClassName);
         } finally {
             if (out != null) {
                 out.close();
