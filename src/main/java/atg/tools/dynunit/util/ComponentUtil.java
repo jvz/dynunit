@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -128,7 +129,8 @@ public final class ComponentUtil {
      * @param parent
      *         Directory to place the new component properties file.
      * @param klass
-     *         Class of component to create. Determines the file name.
+     *         Class of component to create. Determines the file name. If the class name ends with {@code Impl}, that
+     *         is also stripped from the name.
      * @param properties
      *         Any properties to set in the component properties file.
      *
@@ -142,7 +144,7 @@ public final class ComponentUtil {
                                     final Properties properties)
             throws IOException {
         logger.entry(parent, klass, properties);
-        final File output = newComponent(parent, klass.getName(), klass.getCanonicalName(), properties);
+        final File output = newComponent(parent, getSimplifiedClassName(klass), klass.getName(), properties);
         return logger.exit(output);
     }
 
@@ -221,7 +223,27 @@ public final class ComponentUtil {
         return logger.exit(output);
     }
 
-    private static void makeDirectory(final File directory)
+    /**
+     * Creates a new component properties file at {@code output} for the class {@code klass}.
+     *
+     * @param output
+     *         The component properties file to write to.
+     * @param klass
+     *         Class of component to create.
+     *
+     * @return The provided {@code output} file.
+     *
+     * @throws IOException
+     *         if {@code output} couldn't be written to.
+     */
+    public static File newComponentForFile(final File output, final Class<?> klass)
+    throws IOException {
+        logger.entry(output, klass);
+        newComponentForFile(output, klass, new Properties());
+        return logger.exit(output);
+    }
+
+    private static void makeDirectory(@Nullable final File directory)
             throws IOException {
         logger.entry(directory);
         if (directory != null) {
@@ -239,8 +261,8 @@ public final class ComponentUtil {
         return logger.exit(new File(parent, name + ".properties"));
     }
 
-    private static void recreateFile(final File file)
-            throws IOException {
+    private static void recreateFile(@Nullable final File file)
+    throws IOException {
         logger.entry(file);
         if (file != null) {
             if (file.exists()) {
@@ -273,6 +295,14 @@ public final class ComponentUtil {
             }
             logger.exit();
         }
+    }
+
+    private static String getSimplifiedClassName(Class<?> klass) {
+        String className = klass.getSimpleName();
+        if (className.endsWith("Impl")) {
+            className = className.substring(0, className.lastIndexOf("Impl"));
+        }
+        return className;
     }
 
 }
