@@ -19,6 +19,9 @@ package atg.tools.dynunit.service.jdbc;
 import atg.nucleus.ServiceException;
 import atg.tools.dynunit.test.util.DBUtils;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
 /**
@@ -38,7 +41,7 @@ public class HSQLDBDataSource
 
     // Don't shutdown HSQLDB by default. It might stop before other components
     // that require it.
-    private boolean mShutdownHSQLDB = true;
+    private boolean shutdownHSQLDB;
 
     /**
      * Returns true if the "SHUTDOWN" sql statement should be sent to HSQLDB
@@ -47,17 +50,17 @@ public class HSQLDBDataSource
      * @return
      */
     public boolean isShutdownHSQLDB() {
-        return mShutdownHSQLDB;
+        return shutdownHSQLDB;
     }
 
     /**
      * Sets the boolean which controls if HSQLDB should be shutdown when doStopService
      * is called on this component.
      *
-     * @param shouldShutdownHSQLDB
+     * @param shutdownHSQLDB
      */
-    public void setShutdownHSQLDB(boolean shouldShutdownHSQLDB) {
-        mShutdownHSQLDB = shouldShutdownHSQLDB;
+    public void setShutdownHSQLDB(boolean shutdownHSQLDB) {
+        this.shutdownHSQLDB = shutdownHSQLDB;
     }
 
     // --------------------------
@@ -88,14 +91,11 @@ public class HSQLDBDataSource
      */
     @Override
     public void doStopService() {
-        throw new UnsupportedOperationException();
-        /*
-        if ( mShutdownHSQLDB ) {
+        if (shutdownHSQLDB) {
             vlogInfo("HSQLDB DataSource shutting down.");
             Connection connection = null;
             try {
-                // FIXME: yay more access problems
-                connection = this.getDriverManagerConnection();
+                connection = this.getConnection();
                 Statement st = connection.createStatement();
                 st.execute("SHUTDOWN");
             } catch ( SQLException e ) {
@@ -110,7 +110,6 @@ public class HSQLDBDataSource
                 }
             }
         }
-        */
 
     }
 }
