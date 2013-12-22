@@ -1,5 +1,21 @@
 <?xml version="1.0"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.google.com/schemas/sitemap/0.84 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!--
+  ~ Copyright 2013 Matt Sicker and Contributors
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  <url>
   <loc>http://atgdust.sourceforge.net/</loc>
   <changefreq>daily</changefreq>
@@ -15,18 +31,18 @@
   <changefreq>daily</changefreq>
   <priority>0.50</priority>
  </url>
- <url>  
+ <url>
   <loc>http://atgdust.sourceforge.net/first-test.html</loc>
   <lastmod>2008-1-29</lastmod>
   <changefreq>daily</changefreq>
   <priority>0.50</priority>
  </url>
- <url>  
+ <url>
   <loc>http://atgdust.sourceforge.net/atgdustcase.html</loc>
   <changefreq>daily</changefreq>
   <priority>0.50</priority>
  </url>
- <url>  
+ <url>
   <loc>http://atgdust.sourceforge.net/atgdustcase.html</loc>
   <changefreq>daily</changefreq>
   <priority>0.60</priority>
